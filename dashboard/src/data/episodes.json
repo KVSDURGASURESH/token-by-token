@@ -1,0 +1,20 @@
+{
+  "project": "Token by Token",
+  "tagline": "Inference Lab",
+  "repository": "https://github.com/KVSDURGASURESH/token-by-token",
+  "episodes": [
+    {
+      "id": "episode-0",
+      "number": 0,
+      "title": "Warm-up",
+      "summary": "Follow a request through prefill, decode and the KV cache. Explore the recorded vLLM and SGLang runs, their costs and the limits of the comparison.",
+      "status": "available",
+      "evidence": "Exploratory recorded study",
+      "guide": "episodes/00-warm-up/README.md",
+      "dashboardView": "qwen32b-runtime-study",
+      "model": "Qwen2.5-32B-Instruct · BF16",
+      "hardware": "One H100 80GB per run",
+      "runtimes": "vLLM 0.29.0 · SGLang 0.5.20"
+    }
+  ]
+}

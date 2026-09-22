@@ -14,9 +14,17 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Check publication files and reachable history
+        run: |
+          python3 scripts/check_publication_privacy.py
+          python3 scripts/check_publication_privacy.py --history
+      - name: Check episode navigation
+        run: python3 scripts/update_episode_index.py --check
       - name: Verify the immutable historical snapshot
         run: python3 scripts/verify_bundle.py data/public
       - name: Rehearse the zero-cost fixture

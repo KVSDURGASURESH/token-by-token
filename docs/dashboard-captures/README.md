@@ -34,3 +34,7 @@ utilization or a bottleneck.
 | `03-native-telemetry-720.png` | 662 × 1445 | `5ab606c77796c56494895a203631126d8f1d1e8787bf7299f1492cbf7fccbd87` |
 | `04-gpu-peaks-1440.png` | 1324 × 741 | `6f0e2afd7c8aaa667945df7e3e9329d0c3311d12b704841bcdc9ebf538067847` |
 | `04-gpu-peaks-720.png` | 662 × 572 | `7b374e3916217f085212bbc553a16245378e423f0e98aeda64cbf297d9bb34e0` |
+
+The dashboard now opens on a series index. To revisit these same chart panels,
+choose Episode 0 or open `http://127.0.0.1:5173/#episode-0`. The captures and
+underlying historical evidence have not changed.

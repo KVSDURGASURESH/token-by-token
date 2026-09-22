@@ -60,6 +60,22 @@ main {
 .view-switch a { color: var(--muted); text-decoration: none; padding: 5px 0; }
 .view-switch a[aria-current="page"] { color: var(--safe); border-bottom: 2px solid var(--safe); }
 .view-switch a:focus-visible, .reader-point:focus-visible { outline: 2px solid var(--safe); outline-offset: 5px; }
+/* The series index reads like a field notebook; measurement views retain their chart theme. */
+body:has(.lab-home), html:has(.lab-home){background:#f4f1e8;color:#203d3b;color-scheme:light}
+.lab-home{padding:30px clamp(22px,5vw,72px) 42px;font:17px/1.65 Georgia,'Times New Roman',serif}
+.lab-home .view-switch{max-width:1060px;border-color:#c4cbc0;font:13px/1.5 'Avenir Next',Helvetica,sans-serif;margin-bottom:54px}
+.lab-home .view-switch a{color:#536562}.lab-home .view-switch a[aria-current=page]{color:#006d6b;border-color:#006d6b}
+.lab-home a{color:#006d6b;text-underline-offset:4px}.lab-home a:focus-visible{outline:2px solid #006d6b;outline-offset:5px}
+.episode-index{max-width:1060px;margin:auto}.lab-introduction{position:relative;padding-right:180px;padding-bottom:34px}
+.lab-logo{position:absolute;right:8px;top:16px;width:112px;height:112px}.lab-eyebrow{font:12px/1.6 'Avenir Next',Helvetica,sans-serif;letter-spacing:.13em;text-transform:uppercase;margin-bottom:22px;color:#536562}
+.lab-introduction h1{font:normal clamp(48px,6vw,76px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.05em;max-width:none;margin:0 0 24px}
+.lab-deck{font-size:clamp(25px,3vw,35px);line-height:1.3;letter-spacing:-.02em;margin-bottom:26px}.lab-purpose{max-width:690px;color:#425652;font-size:17px;line-height:1.75;margin-bottom:15px}
+.lab-section-heading{padding:25px 0 12px;border-top:2px solid #203d3b}.lab-section-heading h2,.lab-start h2{font:normal 27px/1.3 Georgia,serif;margin:0 0 9px}.lab-section-heading p{font:14px/1.5 'Avenir Next',Helvetica,sans-serif;color:#536562;margin-bottom:12px}
+.episode-list{list-style:none;margin:0;padding:0}.episode-list>li{display:grid;grid-template-columns:100px 1fr;gap:30px;border-top:1px solid #c4cbc0;padding:28px 0 30px}.episode-number{font:normal 52px/1.1 Georgia,serif;color:#6b8279}.episode-state{font:11px/1.6 'Avenir Next',Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px;color:#006d6b}.episode-state span{color:#536562}
+.episode-entry h3{font:normal 28px/1.3 Georgia,serif;margin:0 0 12px;letter-spacing:-.02em}.episode-entry h3 a{color:#203d3b;text-decoration:none}.episode-entry h3 a:hover{text-decoration:underline}.episode-entry h3 span{font-size:20px;margin-left:12px}.episode-entry>p:not(.episode-state){max-width:720px;font-size:17px;color:#425652;margin-bottom:13px}.episode-entry .episode-context{font:13px/1.6 'Avenir Next',Helvetica,sans-serif!important;color:#536562}
+.episode-links{display:flex;flex-wrap:wrap;gap:12px 28px;font:14px/1.6 'Avenir Next',Helvetica,sans-serif;margin-top:19px}.lab-next{padding:18px 0 27px;border-top:1px solid #c4cbc0;color:#536562;font:14px/1.7 'Avenir Next',Helvetica,sans-serif}
+.lab-start{display:grid;grid-template-columns:260px 1fr;gap:30px;padding:25px 0;border-top:1px solid #c4cbc0}.lab-start p{margin:0 0 15px;color:#425652}.lab-start p:last-child{display:flex;flex-wrap:wrap;gap:15px 25px;font:14px/1.6 'Avenir Next',Helvetica,sans-serif}.lab-footer{border-top:1px solid #c4cbc0;margin-top:12px;padding-top:20px;display:flex;justify-content:space-between;gap:20px;color:#536562;font:12px/1.6 'Avenir Next',Helvetica,sans-serif}
+@media(max-width:680px){.lab-home{padding:22px}.lab-home .view-switch{margin-bottom:32px}.lab-introduction{padding-right:0;padding-bottom:26px}.lab-logo{position:static;width:64px;height:64px;margin-bottom:24px}.lab-eyebrow{font-size:10px}.lab-introduction h1{font-size:46px}.lab-deck{font-size:26px}.lab-purpose{font-size:16px}.episode-list>li{grid-template-columns:44px 1fr;gap:14px}.episode-number{font-size:35px}.episode-entry h3{font-size:24px}.episode-entry>p:not(.episode-state){font-size:16px}.episode-state span{display:block}.lab-start{grid-template-columns:1fr;gap:8px}.lab-footer{flex-wrap:wrap}}
 .reader-import { display: grid; gap: 12px; padding: 24px; background: var(--panel); border: 1px solid var(--line); }
 .reader-import label { font-size: 21px; font-weight: 560; }
 .reader-import input { max-width: 100%; font: inherit; font-size: 15px; color: var(--ink); }

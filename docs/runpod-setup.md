@@ -1,7 +1,7 @@
 # Runpod setup, GPU selection, and cost control
 
 This is the canonical setup guide for a fresh measurement. It does not
-authorize a provider call. Try the README's [zero-cost quickstart](../README.md#zero-cost-quickstart)
+authorize a provider call. Try the README's [zero-cost quickstart](../README.md#start-here)
 and local dashboard first; they use the checked-in offline fixture and create
 no Runpod resource.
 
