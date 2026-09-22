@@ -1,12 +1,12 @@
 # Episode 0 — cost evidence
 
-Amounts below describe two different historical studies. They are retained provider-balance debits or explicitly labeled estimates, not a transaction-level invoice. No new paid experiment was run for this publication.
+Amounts below describe two different historical studies. They are retained provider-balance debits or explicitly labeled estimates, not a transaction-level invoice. No new paid experiment was run for this publication. The starting/final balance snapshots are not included in the retained evidence available here. The two session debits are therefore retained reported amounts that readers cannot independently reconcile against a provider bill; the estimates below are arithmetic derived from those summaries.
 
 | Activity | Amount (USD) | Evidence and interpretation |
 |---|---:|---|
 | September 20 H100 baseline + stress | **≈ 2.19** | [Retained plan](../data/public/plan.json), `observed_cli_debit_usd`, and [report](../data/public/report.md). Rounded conservative CLI debit for both runs combined. |
 | Offline fixture rehearsal / local dashboard | **0 provider charge** | Local fixture workflow; no provider calls or resources. Local electricity and hardware costs are not estimated. |
-| September 19 RTX PRO 6000 trial | **4.1280** | [Earlier report](prior-study/report.md), “Cost and limitations”: aggregate session charge from starting/final provider balances. |
+| September 19 RTX PRO 6000 trial | **4.1280** | [Earlier report](prior-study/report.md#cost-and-limitations), “Cost and limitations”: aggregate session charge from starting/final provider balances. |
 | Earlier trial: measured serving windows | **≈ 1.4121**, included above | Derived from 1,208.942s + 1,223.389s at the recorded $2.09/GPU-hour. Not an invoice line item. |
 | Earlier trial: remaining session time | **≈ 2.7159**, included above | Residual after subtracting the measured-window estimate. Includes provisioning, downloads, startup, warm-up, retries, probes, evidence collection and cleanup; no per-step allocation is available. |
 | Failed community scheduling | **0 GPU charge** | [Earlier journal](prior-study/journal.md), J01: no pod created. |

@@ -231,3 +231,5 @@ unknown until verified.
   lab; publish only the aggregate charge.
 - **Impact:** The total session charge was $4.1280. No Runpod pod remained after
   the study. Exact account balances remain private evidence.
+
+Publication note: the historical local source path was redacted; event descriptions and costs are unchanged.
