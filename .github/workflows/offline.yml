@@ -1,0 +1,38 @@
+name: Offline validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  fixture-and-dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify the immutable historical snapshot
+        run: python3 scripts/verify_bundle.py data/public
+      - name: Rehearse the zero-cost fixture
+        run: python3 scripts/rehearse_workflow.py --output "$RUNNER_TEMP/rehearsal"
+      - name: Verify the rehearsed fixture
+        run: python3 scripts/verify_bundle.py "$RUNNER_TEMP/rehearsal"
+      - name: Run offline tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - name: Install dashboard dependencies from lockfile
+        run: npm --prefix dashboard ci
+      - name: Type-check dashboard
+        run: npm --prefix dashboard run check
+      - name: Build dashboard
+        run: npm --prefix dashboard run build

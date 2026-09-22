@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "planning_only": true,
+  "experiment_id": "inference-lab-qwen32b-h100-reproduction",
+  "budget": {"max_usd": "5.00", "minimum_final_balance_usd": "5.00"},
+  "resource": {"gpu_count": 1, "cloud": "SECURE", "terminate_after_minutes": 120},
+  "model": {
+    "repository": "Qwen/Qwen2.5-32B-Instruct",
+    "revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd"
+  },
+  "runtimes": [
+    {"id": "vllm", "version": "0.29.0", "fallbacks": []},
+    {"id": "sglang", "version": "0.5.20", "fallbacks": []}
+  ],
+  "workload": {
+    "cells": [
+      {"input_tokens": 128, "output_tokens": 128, "concurrency": 1, "requests": 128, "repetitions": 3, "timeout_seconds": 180},
+      {"input_tokens": 128, "output_tokens": 128, "concurrency": 32, "requests": 128, "repetitions": 3, "timeout_seconds": 180},
+      {"input_tokens": 2048, "output_tokens": 128, "concurrency": 4, "requests": 128, "repetitions": 3, "timeout_seconds": 300},
+      {"input_tokens": 2048, "output_tokens": 128, "concurrency": 32, "requests": 128, "repetitions": 3, "timeout_seconds": 600},
+      {"input_tokens": 8192, "output_tokens": 128, "concurrency": 8, "requests": 128, "repetitions": 3, "timeout_seconds": 900},
+      {"input_tokens": 8192, "output_tokens": 128, "concurrency": 32, "requests": 128, "repetitions": 3, "timeout_seconds": 1800}
+    ]
+  }
+}

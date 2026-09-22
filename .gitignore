@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.env.*
+node_modules/
+dashboard/dist/
+dist/
+raw/
+private/
+*.jsonl

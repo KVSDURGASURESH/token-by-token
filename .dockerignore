@@ -1,0 +1,14 @@
+.git
+.github
+.env
+.env.*
+*.zip
+__pycache__
+*.py[cod]
+dashboard
+docs
+evidence
+private-evidence
+raw
+node_modules
+dist

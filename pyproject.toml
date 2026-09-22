@@ -1,0 +1,14 @@
+[project]
+name = "inference-lab-episode-0"
+version = "0.0.0"
+description = "Local publication candidate for an exploratory inference runtime study"
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+live = ["transformers==5.17.0"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
