@@ -130,15 +130,9 @@ A new paid run must follow the canonical [Runpod setup](docs/runpod-setup.md),
 needs an immutable image digest, maximum charge, exact approval, permanent
 deletion of every created resource, and provider-side verification of deletion.
 
-## Contributors
-
-Built with AI assistance from:
-
-- **Claude** (Anthropic)
-- **Codex** (OpenAI)
-
 ## Contributing and licensing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing an episode or
-experiment. No `LICENSE` or data license is included yet; license selection is
-still pending.
+experiment. Original repository materials are available under the
+[MIT License](LICENSE); see [OWNERSHIP.md](OWNERSHIP.md) for its scope and the
+third-party boundaries.

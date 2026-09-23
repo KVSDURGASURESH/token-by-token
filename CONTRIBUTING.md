@@ -1,8 +1,9 @@
 # Contributing to Token by Token
 
-This repository is public. Licenses for its code, data, and documentation have
-not been selected yet. The following sections describe how to prepare a
-reviewable change.
+This repository uses the [MIT License](LICENSE). Original contributions are
+supplied under the same license. Retain all existing third-party copyright,
+license, and attribution notices. The following sections describe how to
+prepare a reviewable change.
 
 ## Add or update an episode
 
