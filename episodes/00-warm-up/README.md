@@ -70,26 +70,10 @@ The repository supports three distinct workflows:
 2. Verify and inspect the checksum-bound historical snapshot.
 3. Prepare a fresh paid measurement under a newly approved digest-bound plan.
 
-Run the Python fixture workflow from the repository root:
-
-```bash
-python3 scripts/verify_bundle.py data/public
-python3 scripts/rehearse_workflow.py --output /tmp/inference-lab-episode-0
-python3 scripts/verify_bundle.py /tmp/inference-lab-episode-0
-python3 -m unittest discover -s tests -p 'test_*.py' -v
-```
-
-Start the read-only React dashboard with Node.js 22.12 or newer and npm:
-
-```bash
-npm --prefix dashboard ci
-npm --prefix dashboard run check
-npm --prefix dashboard run build
-npm --prefix dashboard run dev
-```
-
-Open the loopback URL printed by Vite. The included results need no GPU or
-provider account. The dashboard opens on the [episode index](http://127.0.0.1:5173/#episodes);
+Follow the root README's [copyable zero-cost quickstart](../../README.md#start-here)
+for the canonical prerequisite checks, fixture rehearsal, expected output, and
+loopback-only dashboard command. The included results need no GPU or provider
+account. The dashboard opens on the [episode index](http://127.0.0.1:5173/#episodes);
 choose Episode 0 or open [its study view](http://127.0.0.1:5173/#episode-0).
 **Open local results** (`#local-results`) accepts a normalized benchmark JSON
 and optional matching runtime summary; files remain in the browser and are not
