@@ -1,9 +1,8 @@
 # Contributing to Token by Token
 
-This repository is a private publication candidate and is not yet licensed for
-public contribution. The process below documents the intended review contract;
-external contributions should open only after the owner selects explicit terms
-for code, data, and documentation.
+This repository is public. Licenses for its code, data, and documentation have
+not been selected yet. The following sections describe how to prepare a
+reviewable change.
 
 ## Add or update an episode
 
@@ -80,7 +79,7 @@ requires a new plan and approval.
 
 Every authorized paid workflow must permanently delete every created resource
 and verify deletion with a fresh provider-side read before claiming completion.
-Publication remains a separate action.
+Publishing new experiment evidence remains a separate, reviewed action.
 
 ## Evidence changes
 

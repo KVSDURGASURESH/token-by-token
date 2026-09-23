@@ -35,12 +35,11 @@ or authorization to spend.
 
 ## Start here
 
-The repository currently exists at
-[`KVSDURGASURESH/token-by-token`](https://github.com/KVSDURGASURESH/token-by-token)
-and remains private while the owner chooses code, data, and documentation
-licenses. If you have access, the commands below take you from a fresh clone to
-the checked-in results, a repeatable zero-cost rehearsal, and the local
-dashboard. Run them in a POSIX shell on macOS, Linux, or WSL.
+The repository is public at
+[`KVSDURGASURESH/token-by-token`](https://github.com/KVSDURGASURESH/token-by-token).
+The commands below take you from a fresh clone to the checked-in results, a
+repeatable zero-cost rehearsal, and the local dashboard. Run them in a POSIX
+shell on macOS, Linux, or WSL.
 
 ### 1. Clone and check prerequisites
 
@@ -141,6 +140,5 @@ Built with AI assistance from:
 ## Contributing and licensing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing an episode or
-experiment. No `LICENSE` or data license is included yet, so external
-contribution and public redistribution remain pending the owner's licensing
-decision.
+experiment. No `LICENSE` or data license is included yet; license selection is
+still pending.
