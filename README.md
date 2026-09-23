@@ -131,6 +131,13 @@ A new paid run must follow the canonical [Runpod setup](docs/runpod-setup.md),
 needs an immutable image digest, maximum charge, exact approval, permanent
 deletion of every created resource, and provider-side verification of deletion.
 
+## Contributors
+
+Built with AI assistance from:
+
+- **Claude** (Anthropic)
+- **Codex** (OpenAI)
+
 ## Contributing and licensing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing an episode or
