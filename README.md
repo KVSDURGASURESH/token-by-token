@@ -67,7 +67,9 @@ For a zero-GPU streamed request race, use the Episode 1
 the same versioned configuration and runner. Quick test results are interactive
 diagnostics, not the ShareGPT/GSM8K benchmark evidence defined for Episode 1.
 For a second-machine checkout, follow the concise
-[Episode 1 remote handoff](docs/episode-1-preparation/remote-handoff.md).
+[Episode 1 remote handoff](docs/episode-1-preparation/remote-handoff.md). Agents
+resuming work across machines should start with the repository's timestamped
+[cross-machine handoff log](handoffs/README.md).
 
 ## Evidence and spending boundary
 

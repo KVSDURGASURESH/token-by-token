@@ -1,5 +1,9 @@
 # Episode 1 remote-machine handoff
 
+For agent-to-agent continuation, first read the timestamped
+[`handoffs/` log](../../handoffs/README.md), which records the current branch,
+baseline commit, completed checks, ownership, and remaining gates.
+
 This checkout is the source-complete Episode 1 handoff. It includes the pinned
 standard-benchmark contract, candidate runtime specification, compiler,
 authorization verifier, RunPod adapter, fresh-process supervisor, capture and
