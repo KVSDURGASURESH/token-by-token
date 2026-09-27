@@ -46,6 +46,9 @@ STREAM_REQUEST_FIELDS = {
     "maximum_output_tokens", "temperature", "top_p", "seed", "timeout_seconds",
     "max_response_bytes", "absolute_deadline_ns", "cancel_event", "api_key",
     "acknowledge_insecure_non_loopback_http", "thinking_enabled",
+    "ignore_eos", "top_k", "use_max_completion_tokens",
+    "repetition_penalty", "require_exact_prompt_tokens", "expected_prompt_tokens",
+    "stop", "content_callback",
 }
 
 
@@ -168,11 +171,19 @@ class StreamingError(RuntimeError):
         actual_send_ns: int | None = None,
         deadline_exceeded: bool = False,
         request_timed_out: bool = False,
+        first_content_ns: int | None = None,
+        last_content_ns: int | None = None,
+        content_event_count: int = 0,
+        inter_chunk_gaps_ns: tuple[int, ...] = (),
     ) -> None:
         super().__init__(message)
         self.actual_send_ns = actual_send_ns
         self.deadline_exceeded = deadline_exceeded
         self.request_timed_out = request_timed_out
+        self.first_content_ns = first_content_ns
+        self.last_content_ns = last_content_ns
+        self.content_event_count = content_event_count
+        self.inter_chunk_gaps_ns = inter_chunk_gaps_ns
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -928,10 +939,16 @@ def _request_payload(request: Mapping[str, Any]) -> dict[str, Any]:
         or not 1 <= maximum_output_tokens <= 4096
     ):
         raise StreamingError("maximum_output_tokens must be between 1 and 4096")
+    if "use_max_completion_tokens" in request and not isinstance(request.get("use_max_completion_tokens"), bool):
+        raise StreamingError("use_max_completion_tokens must be boolean")
     payload: dict[str, Any] = {
         "model": request.get("model"),
         "messages": messages,
-        "max_tokens": maximum_output_tokens,
+        (
+            "max_completion_tokens"
+            if request.get("use_max_completion_tokens") is True
+            else "max_tokens"
+        ): maximum_output_tokens,
         "temperature": request.get("temperature", 0.0),
         "top_p": request.get("top_p", 1.0),
         "seed": request.get("seed"),
@@ -942,6 +959,33 @@ def _request_payload(request: Mapping[str, Any]) -> dict[str, Any]:
         payload["chat_template_kwargs"] = {
             "enable_thinking": request.get("thinking_enabled") is True
         }
+    if "ignore_eos" in request:
+        if not isinstance(request.get("ignore_eos"), bool):
+            raise StreamingError("ignore_eos must be boolean")
+        payload["ignore_eos"] = request["ignore_eos"]
+    if "top_k" in request:
+        top_k = request.get("top_k")
+        if isinstance(top_k, bool) or not isinstance(top_k, int):
+            raise StreamingError("top_k must be an integer")
+        payload["top_k"] = top_k
+    if "stop" in request:
+        stop = request.get("stop")
+        if not isinstance(stop, (str, list)) or (
+            isinstance(stop, str) and (not stop or len(stop) > 256)
+        ) or (
+            isinstance(stop, list)
+            and (
+                not 1 <= len(stop) <= 8
+                or any(not isinstance(item, str) or not item or len(item) > 256 for item in stop)
+            )
+        ):
+            raise StreamingError("stop must be a nonempty string or 1-8 nonempty strings")
+        payload["stop"] = stop
+    if "repetition_penalty" in request:
+        penalty = request.get("repetition_penalty")
+        if isinstance(penalty, bool) or not isinstance(penalty, (int, float)) or not math.isfinite(float(penalty)) or penalty <= 0:
+            raise StreamingError("repetition_penalty must be positive and finite")
+        payload["repetition_penalty"] = penalty
     try:
         json.dumps(payload, ensure_ascii=False, allow_nan=False)
     except (TypeError, ValueError) as exc:
@@ -970,6 +1014,23 @@ def _validate_runtime_capabilities(request: Mapping[str, Any]) -> None:
         raise StreamingError("runtime capability contract contains unknown fields")
     if "thinking_enabled" in request and capabilities.get("thinking_enabled") is not True:
         raise StreamingError("unsupported optional request field: thinking_enabled")
+    require_prompt_tokens = request.get("require_exact_prompt_tokens", False)
+    if not isinstance(require_prompt_tokens, bool):
+        raise StreamingError("require_exact_prompt_tokens must be boolean")
+    expected_prompt_tokens = request.get("expected_prompt_tokens")
+    if require_prompt_tokens:
+        if (
+            isinstance(expected_prompt_tokens, bool)
+            or not isinstance(expected_prompt_tokens, int)
+            or expected_prompt_tokens < 1
+        ):
+            raise StreamingError(
+                "expected_prompt_tokens must be a positive integer when exact prompt tokens are required"
+            )
+    elif "expected_prompt_tokens" in request:
+        raise StreamingError(
+            "expected_prompt_tokens requires require_exact_prompt_tokens"
+        )
 
 
 def stream_chat(
@@ -984,6 +1045,7 @@ def stream_chat(
     timeout_kind = "request"
     response_sockets: tuple[Any, Any] = (None, None)
     transport_owner: _TransportOwner | None = None
+    content_times: list[int] = []
     try:
         _validate_runtime_capabilities(request)
         url = require_safe_http_url(
@@ -1009,24 +1071,29 @@ def stream_chat(
         cancel_event = request.get("cancel_event")
         if cancel_event is not None and not callable(getattr(cancel_event, "is_set", None)):
             raise StreamingError("cancel_event must expose is_set()")
+        content_callback = request.get("content_callback")
+        if content_callback is not None and not callable(content_callback):
+            raise StreamingError("content_callback must be callable")
 
         text_parts: list[str] = []
-        content_times: list[int] = []
         output_tokens: int | None = None
+        input_tokens: int | None = None
         stop_reason: str | None = None
         saw_done = False
+        terminal_event_ns: int | None = None
         total_bytes = 0
         decoder = codecs.getincrementaldecoder("utf-8")()
         text_buffer = ""
         event_lines: list[str] = []
 
         def consume_event(lines: list[str]) -> None:
-            nonlocal output_tokens, saw_done, stop_reason
+            nonlocal input_tokens, output_tokens, saw_done, stop_reason, terminal_event_ns
             data_lines = [line[5:].lstrip(" ") for line in lines if line.startswith("data:")]
             if not data_lines:
                 return
             data = "\n".join(data_lines)
             if data == "[DONE]":
+                terminal_event_ns = clock()
                 saw_done = True
                 return
             try:
@@ -1057,8 +1124,21 @@ def stream_chat(
                         or completion_tokens < 0
                     ):
                         raise StreamingError("malformed completion token count")
+                    if output_tokens is not None and output_tokens != completion_tokens:
+                        raise StreamingError("conflicting completion token counts in streamed usage")
                     output_tokens = completion_tokens
                     has_completion_tokens = True
+                prompt_tokens = usage.get("prompt_tokens")
+                if prompt_tokens is not None:
+                    if (
+                        isinstance(prompt_tokens, bool)
+                        or not isinstance(prompt_tokens, int)
+                        or prompt_tokens < 0
+                    ):
+                        raise StreamingError("malformed prompt token count")
+                    if input_tokens is not None and input_tokens != prompt_tokens:
+                        raise StreamingError("conflicting prompt token counts in streamed usage")
+                    input_tokens = prompt_tokens
             if "choices" not in event and not has_completion_tokens:
                 raise StreamingError("malformed streaming event shape")
             choices = event.get("choices", [])
@@ -1076,8 +1156,9 @@ def stream_chat(
             delta = first["delta"]
             if not isinstance(delta, dict):
                 raise StreamingError("malformed streaming delta")
-            if not delta and first.get("finish_reason") is None:
-                raise StreamingError("malformed empty streaming delta")
+            # Some OpenAI-compatible servers emit a legal empty delta as a
+            # framing/heartbeat event.  It is deliberately not content and
+            # therefore must not establish TTFT.
             finish_reason = first.get("finish_reason")
             if finish_reason is not None:
                 if not isinstance(finish_reason, str) or not finish_reason:
@@ -1096,6 +1177,8 @@ def stream_chat(
             if content:
                 text_parts.append(content)
                 content_times.append(received_ns)
+                if content_callback is not None:
+                    content_callback(content, received_ns)
 
         transport_start_ns = time.monotonic_ns()
         deadline_ns, timeout_kind = _absolute_deadline(
@@ -1177,12 +1260,16 @@ def stream_chat(
                 except UnicodeDecodeError as exc:
                     raise StreamingError("stream response is not valid UTF-8") from exc
                 raise StreamingError("stream terminated before [DONE]")
-        _remaining_seconds(
-            deadline_ns,
-            actual_send_ns=actual_send_ns,
-            timeout_kind=timeout_kind,
-        )
-        end_ns = clock()
+        if terminal_event_ns is None:
+            raise StreamingError("stream terminated before [DONE]")
+        if terminal_event_ns > deadline_ns:
+            raise StreamingError(
+                "absolute request deadline exceeded (timed out)",
+                actual_send_ns=actual_send_ns,
+                deadline_exceeded=timeout_kind == "run",
+                request_timed_out=timeout_kind == "request",
+            )
+        end_ns = terminal_event_ns
         if not content_times:
             raise StreamingError(
                 "exact streaming content evidence and TTFT are required",
@@ -1193,6 +1280,17 @@ def stream_chat(
                 "exact streamed usage with completion tokens is required",
                 actual_send_ns=actual_send_ns,
             )
+        if request.get("require_exact_prompt_tokens") is True:
+            if input_tokens is None:
+                raise StreamingError(
+                    "exact streamed usage with prompt tokens is required",
+                    actual_send_ns=actual_send_ns,
+                )
+            if input_tokens != request["expected_prompt_tokens"]:
+                raise StreamingError(
+                    "streamed usage prompt token count does not match the pinned tokenizer count",
+                    actual_send_ns=actual_send_ns,
+                )
         if stop_reason is None:
             raise StreamingError(
                 "exact finish reason is required",
@@ -1209,10 +1307,19 @@ def stream_chat(
                 (later - earlier) / 1_000_000
                 for earlier, later in zip(content_times, content_times[1:])
             ],
+            "inter_chunk_gaps_ns": [
+                later - earlier
+                for earlier, later in zip(content_times, content_times[1:])
+            ],
             "e2e_ms": (end_ns - actual_send_ns) / 1_000_000,
             "output_tokens": output_tokens,
+            "input_tokens": input_tokens,
             "stop_reason": stop_reason,
             "actual_send_ns": actual_send_ns,
+            "first_content_ns": content_times[0],
+            "last_content_ns": content_times[-1],
+            "terminal_ns": end_ns,
+            "content_event_count": len(content_times),
             "error": None,
         }
     except Exception as exc:
@@ -1244,4 +1351,10 @@ def stream_chat(
             ),
             deadline_exceeded=deadline_exceeded,
             request_timed_out=request_timed_out,
+            first_content_ns=(content_times[0] if content_times else None),
+            last_content_ns=(content_times[-1] if content_times else None),
+            content_event_count=len(content_times),
+            inter_chunk_gaps_ns=tuple(
+                later - earlier for earlier, later in zip(content_times, content_times[1:])
+            ),
         ) from None

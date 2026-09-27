@@ -15,6 +15,19 @@
       "model": "Qwen2.5-32B-Instruct · BF16",
       "hardware": "One H100 80GB per run",
       "runtimes": "vLLM 0.29.0 · SGLang 0.5.20"
+    },
+    {
+      "id": "episode-1",
+      "number": 1,
+      "title": "Measure What Matters",
+      "summary": "Define equal work, quality gates and auditable latency before comparing serving runtimes. Inspect the provider-free contract fixture prepared for the first measured run.",
+      "status": "planned",
+      "evidence": "Local contract fixture — no provider measurement",
+      "guide": "episodes/01-measure-what-matters/README.md",
+      "dashboardView": "episode1-fixture",
+      "model": "Qwen2.5-32B-Instruct · BF16 candidate",
+      "hardware": "Candidate: one H100 80GB (unverified)",
+      "runtimes": "vLLM 0.29.0 · SGLang 0.5.20"
     }
   ]
 }

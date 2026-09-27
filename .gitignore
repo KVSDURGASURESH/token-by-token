@@ -8,4 +8,5 @@ dashboard/dist/
 dist/
 raw/
 private/
+/context/
 *.jsonl

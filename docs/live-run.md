@@ -1,8 +1,18 @@
 # Live endpoint benchmark and teardown
 
-This is the ordered procedure for an approved run. It has not been executed by
-the packaged repository. Provider commands are operator-driven and may run only
-after the exact current plan is approved.
+> **Episode 1 stop boundary:** this is the retained Episode 0 one-runtime
+> procedure (16,384 context with prefix reuse enabled). It cannot execute the
+> Episode 1 paired 4,096-context/prefix-off protocol. Episode 1 now has a
+> dedicated compiler, guarded production entry point, provider adapter and
+> fresh-process supervisor; use the
+> [Episode 1 execution architecture](episode-1-preparation/execution-architecture.md)
+> and [operator preflight](episode-1-preparation/operator-preflight.md). It
+> remains blocked until its private build/provider inputs and exact approvals
+> are present. No command in this document authorizes it.
+
+This historical procedure has not been executed by the packaged repository.
+Provider commands are operator-driven and may run only after an exact current
+plan is compiled and approved for this separate workflow.
 
 ## Gate 0 — local validation and private workspace
 
@@ -13,10 +23,14 @@ digest in the plan. Verify current `runpodctl` help for create, get, list, and
 delete. Recheck the offer, price, balance, auto-recharge state, and pre-run cost
 capture described in [evidence capture](evidence-capture.md).
 
-Prefer a provider-enforced, provider-readable `--terminate-after` deadline.
-The installed CLI must expose the flag, and a provider-owned read after
-creation must round-trip the deadline. Documentation or successful argument
-parsing alone is insufficient proof. If that behavior cannot be proved,
+Require a supported provider-enforced, provider-readable permanent-deletion
+deadline. Current `runpodctl` has removed the nonfunctional
+`--terminate-after`/`--stop-after` flags; an older client accepting either flag
+does not satisfy this gate.
+No supported deadline flag is currently known to this project. If the provider
+later supplies one, a provider-owned read after creation must round-trip the
+deadline; documentation or successful argument parsing alone is insufficient
+proof. Until that behavior is proved,
 local-only mode requires the separate exact
 `ACCEPT LOCAL-WATCHDOG RISK` acknowledgement, an execution-ready plan binding
 both watchdog script hashes, and two detached `caffeinate` watchdogs. That
@@ -24,22 +38,12 @@ acknowledgement grants no spend permission.
 
 ## Gate 1 — create after exact approval
 
-After the digest-and-cap approval, create only the Pod bound by the plan. A
-current CLI shape is:
-
-```bash
-runpodctl pod create \
-  --name inference-lab-approved-arm \
-  --image DERIVED_OPERATOR_IMAGE@sha256:APPROVED_DIGEST \
-  --gpu-id APPROVED_GPU_OFFER \
-  --gpu-count 1 \
-  --data-center-ids APPROVED_DATACENTER \
-  --cloud-type SECURE \
-  --container-disk-in-gb APPROVED_GB \
-  --ssh=true \
-  --terminate-after APPROVED_DURATION \
-  -o json
-```
+After the digest-and-cap approval, create only the Pod bound by the plan. There
+is deliberately no copy/paste create command here: the required provider
+termination guard is unavailable today. A future reviewed command must bind the
+approved image digest, exact GPU offer and location, cloud type, disk, SSH
+setting, and a provider-supported deletion deadline whose value can be read
+back. Any unavailable or changed field stops the run and requires a new plan.
 
 Add `--registry-auth-id APPROVED_REGISTRY_AUTH_ID` only when the approved image
 requires it and current CLI help exposes the flag. The identifier belongs in
@@ -208,8 +212,10 @@ Before deletion, copy `gpu.csv`, the runtime metrics JSONL, both summaries,
 sanitized launch/help/hardware metadata, and server logs from the Pod to the
 private operator evidence directory using the exact `scp`/SFTP command shown
 by the current Runpod connection panel. Compare local byte counts or hashes,
-open each copied file, and confirm collectors have stopped. Do not delete until
-the required evidence is local. Do not copy model weights, caches, credentials,
+open each copied file, and confirm collectors have stopped. Export only the
+bounded essential evidence that fits inside the approved teardown horizon.
+Evidence export must never delay deletion past that horizon; record an export
+gap and delete instead. Do not copy model weights, caches, credentials,
 provider configuration, raw secrets, or unrelated logs.
 
 Delete in every terminal path, including startup or smoke failure:

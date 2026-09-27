@@ -84,6 +84,16 @@ class PublicationPrivacyTests(unittest.TestCase):
         )
         self.assertEqual(MODULE.scan_text("package-lock.json", text), set())
 
+    def test_lock_version_is_not_an_ip_but_same_line_private_ip_is(self):
+        harmless = "nvidia-curand==" + "10.4." + "0.35"
+        self.assertEqual(MODULE.scan_text("vllm.lock", harmless), set())
+        findings = MODULE.scan_text(
+            "vllm.lock", harmless + "  # mirror " + "10.0." + "0.8"
+        )
+        self.assertEqual({item.category for item in findings}, {"private-host"})
+        findings = MODULE.scan_text("vllm.lock", "# mirror==" + "10.0." + "0.8")
+        self.assertEqual({item.category for item in findings}, {"private-host"})
+
     def test_history_scans_only_commits_reachable_from_head(self):
         private_path = "/" + "home" + "/private-person/workspace/evidence.json"
         with tempfile.TemporaryDirectory() as directory:

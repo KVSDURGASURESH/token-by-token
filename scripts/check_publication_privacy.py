@@ -27,6 +27,7 @@ EXCLUDED_DIRS = {
     ".venv",
     "__pycache__",
     "build",
+    "context",
     "dependencies",
     "dist",
     "generated",
@@ -43,6 +44,8 @@ LOCKFILE_NAMES = {
     "poetry.lock",
     "uv.lock",
     "yarn.lock",
+    "sglang-wheel.lock",
+    "vllm.lock",
 }
 RESERVED_EMAIL_DOMAINS = {"example.com", "example.net", "example.org", "test.invalid"}
 PRIVATE_HOST_SUFFIXES = (
@@ -83,6 +86,10 @@ IP_RE = re.compile(r"(?<![A-F0-9:.])(?:\d{1,3}\.){3}\d{1,3}(?![A-F0-9:.])", re.I
 PRIVATE_NAME_RE = re.compile(
     r"\b[A-Z0-9-]+(?:\.[A-Z0-9-]+)*(?:\.corp|\.internal|\.lan|\.local)\b",
     re.IGNORECASE,
+)
+LOCKED_DEPENDENCY_VERSION_LINE_RE = re.compile(
+    r"(?i)^\s*[A-Z0-9_.-]+(?:\[[A-Z0-9_,.-]+\])?\s*==\s*"
+    r"(?:\d+!)?\d+(?:\.\d+){3}(?:[A-Z0-9_.+-]*)?\s*\\?\s*$"
 )
 
 
@@ -276,6 +283,11 @@ def _scan_line(location: str, line_number: int, line: str, *, lockfile: bool) ->
         if _private_host(match.group(1) or match.group(2)):
             add("private-host")
     for match in IP_RE.finditer(line):
+        # Package versions may resemble IPv4 addresses. Exempt only the token
+        # immediately following ``package==``; URLs, comments, and any other
+        # private address on the same lockfile line remain subject to scanning.
+        if lockfile and LOCKED_DEPENDENCY_VERSION_LINE_RE.fullmatch(line):
+            continue
         if _private_host(match.group(0)):
             add("private-host")
     return findings

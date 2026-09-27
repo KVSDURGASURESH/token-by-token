@@ -26,6 +26,7 @@ fully bound plan and the owner's exact approval before any resource is created.
 | Episode | Experiment | Status | Evidence |
 |---:|---|---|---|
 | 0 | [Warm-up](episodes/00-warm-up/README.md) | Available | Exploratory recorded study |
+| 1 | Measure What Matters | Planned | Local contract fixture — no provider measurement |
 <!-- END EPISODE INDEX -->
 
 The [three capstone projects](docs/capstone-projects.md) explain where these
@@ -46,11 +47,12 @@ cd token-by-token
 python3 scripts/verify_bundle.py data/public
 python3 scripts/rehearse_workflow.py --output /tmp/inference-lab-episode-0
 python3 scripts/verify_bundle.py /tmp/inference-lab-episode-0
+python3 -m pip install '.[test]'
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-Requirements: Python 3.12. These commands use only the standard library, do
-not use credentials, and do not contact a provider. The rehearsal output must
+Requirements: Python 3.12; the test extra installs the pinned JSON Schema
+validator. These commands do not use credentials or contact a provider. The rehearsal output must
 be a new or empty directory. It is labeled `fixture_zero_cost`, records zero
 provider attempts and resources, and compiles a deliberately nonapprovable
 plan with zero cost.
@@ -59,6 +61,13 @@ Continue with [Episode 0](episodes/00-warm-up/README.md) to inspect the retained
 study, start the [local dashboard](episodes/00-warm-up/README.md#explore-it-locally),
 and understand the experiment's limits. Once the dashboard is running, its
 [episode index](http://127.0.0.1:5173/#episodes) is the default home.
+
+For a zero-GPU streamed request race, use the Episode 1
+[Quick test](docs/episode-1-preparation/quick-test.md). Its browser and CLI use
+the same versioned configuration and runner. Quick test results are interactive
+diagnostics, not the ShareGPT/GSM8K benchmark evidence defined for Episode 1.
+For a second-machine checkout, follow the concise
+[Episode 1 remote handoff](docs/episode-1-preparation/remote-handoff.md).
 
 ## Evidence and spending boundary
 

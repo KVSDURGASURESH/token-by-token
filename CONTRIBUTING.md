@@ -48,6 +48,7 @@ python3 scripts/check_publication_privacy.py --history
 python3 scripts/verify_bundle.py data/public
 python3 scripts/rehearse_workflow.py --output /tmp/inference-lab-episode-0
 python3 scripts/verify_bundle.py /tmp/inference-lab-episode-0
+python3 -m pip install '.[test]'
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 npm --prefix dashboard ci
 npm --prefix dashboard run check

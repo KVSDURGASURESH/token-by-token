@@ -1,0 +1,235 @@
+{
+  "approval_phrase": null,
+  "blocks": [
+    {
+      "block_id": "block-01",
+      "cell_order": [
+        "fixed-short",
+        "fixed-medium",
+        "natural-quality"
+      ],
+      "fresh_process_required": true,
+      "pair_id": "pair-1",
+      "position": 1,
+      "runtime": "vllm-0.29.0"
+    },
+    {
+      "block_id": "block-02",
+      "cell_order": [
+        "fixed-short",
+        "fixed-medium",
+        "natural-quality"
+      ],
+      "fresh_process_required": true,
+      "pair_id": "pair-1",
+      "position": 2,
+      "runtime": "sglang-0.5.20"
+    },
+    {
+      "block_id": "block-03",
+      "cell_order": [
+        "fixed-medium",
+        "fixed-short",
+        "natural-quality"
+      ],
+      "fresh_process_required": true,
+      "pair_id": "pair-2",
+      "position": 1,
+      "runtime": "sglang-0.5.20"
+    },
+    {
+      "block_id": "block-04",
+      "cell_order": [
+        "fixed-medium",
+        "fixed-short",
+        "natural-quality"
+      ],
+      "fresh_process_required": true,
+      "pair_id": "pair-2",
+      "position": 2,
+      "runtime": "vllm-0.29.0"
+    },
+    {
+      "block_id": "block-05",
+      "cell_order": [
+        "fixed-short",
+        "fixed-medium",
+        "natural-quality"
+      ],
+      "fresh_process_required": true,
+      "pair_id": "pair-3",
+      "position": 1,
+      "runtime": "vllm-0.29.0"
+    },
+    {
+      "block_id": "block-06",
+      "cell_order": [
+        "fixed-short",
+        "fixed-medium",
+        "natural-quality"
+      ],
+      "fresh_process_required": true,
+      "pair_id": "pair-3",
+      "position": 2,
+      "runtime": "sglang-0.5.20"
+    }
+  ],
+  "candidate_hardware": {
+    "count": 1,
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "provider_verified": false
+  },
+  "cells": [
+    {
+      "cell_deadline_seconds": 180,
+      "concurrency": 1,
+      "id": "fixed-short",
+      "input_tokens": 512,
+      "mode": "fixed_output",
+      "output_tokens": 128,
+      "request_deadline_seconds": 30,
+      "requests": 32,
+      "slos_ms": {
+        "e2e": 10000,
+        "ttft": 1000
+      },
+      "warmups": 4
+    },
+    {
+      "cell_deadline_seconds": 120,
+      "concurrency": 4,
+      "id": "fixed-medium",
+      "input_tokens": 2048,
+      "mode": "fixed_output",
+      "output_tokens": 128,
+      "request_deadline_seconds": 30,
+      "requests": 32,
+      "slos_ms": {
+        "e2e": 10000,
+        "ttft": 2000
+      },
+      "warmups": 4
+    },
+    {
+      "cell_deadline_seconds": 120,
+      "concurrency": 1,
+      "id": "natural-quality",
+      "input_tokens": null,
+      "mode": "natural_stop",
+      "output_tokens": 128,
+      "request_deadline_seconds": 20,
+      "requests": 24,
+      "slos_ms": {
+        "e2e": 5000,
+        "ttft": 1000
+      },
+      "warmups": 4
+    }
+  ],
+  "classification": "planning_only",
+  "controls": {
+    "adapters": false,
+    "constrained_decoding": false,
+    "kv_memory_fraction": 0.9,
+    "max_active_requests": 4,
+    "prefix_reuse": false,
+    "quantization": false,
+    "repetition_penalty": 1,
+    "speculation": false,
+    "temperature": 0,
+    "top_k": "disabled_by_validated_runtime_dialect",
+    "top_p": 1
+  },
+  "execution_ready": false,
+  "hashes": {
+    "chat_template_sha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "corpus_sha256": "2511738817b2a9f69bf500273dfdb4ecf397873ba645b27d0e5cd538d3ce1309",
+    "harness_sha256": "a90d6e944c8157a2dc7702fe70ca58bf01e49adc57a366bde3c17f6c18aa47e3",
+    "prompt_evidence_sha256": "7a677a21e56e28ab2ca054c3018b3d23a9023395a5f2c085ffcf9ed055a69307",
+    "tokenizer_asset_manifest_sha256": "5445d56028bf2d1a14c566e10b0fce155c370a0691e774e03a03feb560e58c84"
+  },
+  "model": {
+    "max_context_tokens": 4096,
+    "precision": "bf16",
+    "repository": "Qwen/Qwen2.5-32B-Instruct",
+    "revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd"
+  },
+  "operator_policy_proposal": {
+    "approved": false,
+    "maximum_resource_lifetime_minutes": 120,
+    "maximum_spend_usd": 15,
+    "minimum_final_balance_usd": 5
+  },
+  "protocol_sha256": "c3d51d6ecf9733c96780fa35530201d94f636e95bae4cc65d0c3e904e2256d85",
+  "provider_inputs": {
+    "account_balance": null,
+    "container_digests": "unknown",
+    "price_per_hour": null,
+    "stock": "unknown",
+    "supported_flags": "unknown"
+  },
+  "quality": {
+    "schema_valid_required": 24,
+    "semantic_correct_minimum": 23,
+    "tasks_per_block": 24
+  },
+  "question": "Can two serving runtimes execute declared work while preserving a small quality contract and auditable latency/goodput measurements?",
+  "runtimes": [
+    {
+      "derived_image_digest": null,
+      "gpu_compatibility_verified": false,
+      "id": "vllm-0.29.0",
+      "launch_flags": [
+        "--revision=5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+        "--tokenizer-revision=5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+        "--dtype=bfloat16",
+        "--kv-cache-dtype=bfloat16",
+        "--gpu-memory-utilization=0.90",
+        "--generation-config=vllm",
+        "--max-model-len=4096",
+        "--max-num-seqs=4",
+        "--no-enable-prefix-caching",
+        "--host=127.0.0.1",
+        "--port=8000"
+      ],
+      "request_dialect": {
+        "disabled_top_k": 0,
+        "max_tokens_field": "max_completion_tokens"
+      },
+      "upstream_linux_amd64_digest": "sha256:082ca6f035279109041ffd3fe0695cb568b29bc580b35c4f297a66a08b216c1b"
+    },
+    {
+      "derived_image_digest": null,
+      "gpu_compatibility_verified": false,
+      "id": "sglang-0.5.20",
+      "launch_flags": [
+        "--revision=5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+        "--dtype=bfloat16",
+        "--kv-cache-dtype=bfloat16",
+        "--mem-fraction-static=0.90",
+        "--sampling-defaults=openai",
+        "--context-length=4096",
+        "--max-running-requests=4",
+        "--disable-radix-cache",
+        "--enable-metrics",
+        "--host=127.0.0.1",
+        "--port=8000"
+      ],
+      "request_dialect": {
+        "disabled_top_k": -1,
+        "max_tokens_field": "max_completion_tokens"
+      },
+      "upstream_linux_amd64_digest": "sha256:4bf342cb756a7105e6df9ae81abeb62e891ff70d34b83fdd7a891fa46a494eca"
+    }
+  ],
+  "same_device_pairing": "conditional; otherwise comparisons must be labeled unpaired",
+  "schema_version": "episode1.v1",
+  "scope_limit": "measurement pilot; not capacity, significance, or winner evidence",
+  "seed": 20260923,
+  "totals": {
+    "fixed_requests": 384,
+    "measured_requests": 528,
+    "natural_requests": 144,
+    "warmups": 72
+  }
+}

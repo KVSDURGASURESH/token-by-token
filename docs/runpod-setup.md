@@ -1,7 +1,15 @@
 # Runpod setup, GPU selection, and cost control
 
-This is the canonical setup guide for a fresh measurement. It does not
-authorize a provider call. Try the README's [zero-cost quickstart](../README.md#start-here)
+> **Episode 1 stop boundary:** most commands and the 16,384-context,
+> prefix-enabled settings below belong to the retained Episode 0 one-runtime
+> workflow. They cannot compile or launch Episode 1. Episode 1 is 4,096 context,
+> prefix-off, paired/fresh-process work and has its own guarded compiler and
+> execution entry point. It remains non-executable until the private build,
+> provider, guard, and authorization inputs are supplied and verified. Start with the
+> [Episode 1 operator preflight](episode-1-preparation/operator-preflight.md).
+
+This guide does not authorize a provider call. Try the README's
+[zero-cost quickstart](../README.md#start-here)
 and local dashboard first; they use the checked-in offline fixture and create
 no Runpod resource.
 
@@ -208,13 +216,16 @@ Only after the exact approval above:
    exposure off unless the plan explicitly includes them.
 6. Review every displayed charge and the full configuration against the plan.
    If any field differs, stop and recompile; do not click **Deploy**.
-7. Ensure the approved termination guard can be created and read back. The
-   repository's preferred path uses `runpodctl pod create` with the bound
-   `--terminate-after` value. If the console cannot preserve that exact guard,
-   use the reviewed CLI command in the live-run guide rather than deploying
-   through the console.
-8. Deploy exactly one runtime arm. Immediately record the returned Pod ID and
-   guard state in private evidence and start the independent local watchdog.
+7. Stop: current `runpodctl` removed `--terminate-after` and `--stop-after`
+   because the accepted deadline did not stop Pods and could not be read back.
+   An older CLI accepting the flag is not a guard. Do not deploy until a
+   supported provider-enforced permanent-deletion deadline can be created and
+   freshly read back, or the owner separately gives the exact degraded-mode
+   acceptance `ACCEPT LOCAL-WATCHDOG RISK` for a digest-bound plan whose two
+   detached watchdogs have passed the documented arming checks.
+8. Only after that guard gate and the normal digest-bound spending approval,
+   deploy exactly one runtime arm. Record the returned opaque Pod identifier
+   and guard/watchdog state only in private evidence.
 
 The provider-facing creation command and both supported guard modes live only
 in Gate 1 of the [ordered live-run procedure](live-run.md)
@@ -225,7 +236,7 @@ so they do not drift between guides.
 Continue through [the live-run procedure](live-run.md) without skipping gates:
 
 1. Wait for **Running**, then compare `runpodctl pod get` output with the
-   approved GPU, image digest, storage, access, and termination guard.
+   approved GPU, image digest, storage, access, and effective guard mode.
 2. Use the SSH command shown by Runpod or `runpodctl ssh info POD_ID`. Establish
    the documented local forwarding path to Pod loopback port 8000. Keep the
    endpoint off the public proxy.

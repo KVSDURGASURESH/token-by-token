@@ -24,10 +24,10 @@ export function EpisodeIndex() {
               <span className="episode-number" aria-hidden="true">{String(episode.number).padStart(2, "0")}</span>
               <div className="episode-entry">
                 <p className="episode-state">{episode.status === "available" ? "Available" : "Planned"} <span>· {episode.evidence}</span></p>
-                <h3>{episode.status === "available" ? <a href={`#${episode.id}`}>Episode {episode.number} — {episode.title} <span aria-hidden="true">↗</span></a> : `Episode ${episode.number} — ${episode.title}`}</h3>
+                <h3>{episode.dashboardView ? <a href={`#${episode.id}`}>Episode {episode.number} — {episode.title} <span aria-hidden="true">↗</span></a> : `Episode ${episode.number} — ${episode.title}`}</h3>
                 <p>{episode.summary}</p>
                 <p className="episode-context">{episode.model} / {episode.hardware}</p>
-                {episode.status === "available" && <div className="episode-links"><a href={`#${episode.id}`}>Explore results</a><a href={`${repo}/blob/main/${episode.guide}`}>Read the experiment guide ↗</a></div>}
+                {episode.dashboardView && <div className="episode-links"><a href={`#${episode.id}`}>{episode.status === "available" ? "Explore results" : "Inspect local fixture"}</a><a href={`${repo}/blob/main/${episode.guide}`}>Read the experiment guide ↗</a></div>}
               </div>
             </li>
           ))}
