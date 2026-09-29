@@ -11,10 +11,12 @@ for comparable Episode 1 claims.
 
 ## Zero-GPU demo
 
-From the repository root, build the dashboard and start its loopback bridge:
+From the repository root, use the combined launcher. On a fresh checkout it
+installs the pinned dashboard dependencies and builds the UI before starting
+the loopback bridge; later launches reuse the existing build:
 
 ```bash
-npm --prefix dashboard run build && PYTHONPATH=src .venv/bin/python scripts/episode1_playground.py demo
+scripts/quick-test demo
 ```
 
 Open <http://127.0.0.1:8765/#quick-test>. Choose a single request or two-lane
@@ -23,14 +25,15 @@ local streaming fixtures; they create no provider resource and need no secret.
 **Stop** aborts the browser request and signals the runner cancellation event,
 which prevents later repetition waves from being dispatched.
 
-The matching CLI uses the same bridge and configuration schema:
+Leave that process running. In another terminal, the matching CLI uses the
+same bridge and configuration schema:
 
 ```bash
-PYTHONPATH=src .venv/bin/python scripts/episode1_playground.py request \
+scripts/quick-test request \
   --profile demo-fast --prompt 'Explain TTFT in one sentence.' \
   --output /tmp/quick-test-result.json
 
-PYTHONPATH=src .venv/bin/python scripts/episode1_playground.py compare \
+scripts/quick-test compare \
   --profile demo-fast --profile demo-steady \
   --prompt 'Explain TTFT in one sentence.' --repetitions 3
 ```
@@ -38,7 +41,7 @@ PYTHONPATH=src .venv/bin/python scripts/episode1_playground.py compare \
 Use **Save config** in the UI and replay it without translating fields:
 
 ```bash
-PYTHONPATH=src .venv/bin/python scripts/episode1_playground.py compare \
+scripts/quick-test compare \
   --config quick-test.json
 ```
 
@@ -66,7 +69,7 @@ Then start the bridge on loopback only:
 
 ```bash
 LOCAL_LLM_API_KEY='set outside the browser' \
-  PYTHONPATH=src .venv/bin/python scripts/episode1_playground.py serve \
+  scripts/quick-test serve \
   --profiles /private/path/quick-test-profiles.json
 ```
 

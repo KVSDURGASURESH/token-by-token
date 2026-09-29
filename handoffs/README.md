@@ -10,7 +10,7 @@ YYYY-MM-DDTHH-MM-SSZ-<short-topic>.md
 
 ## Current handoff
 
-- [2026-09-27T09-42-18Z — Episode 1 RunPod preparation](2026-09-27T09-42-18Z-episode-1-runpod.md)
+- [2026-09-29T04-02-32Z — Quick-test launcher readiness](2026-09-29T04-02-32Z-quick-test-launcher.md)
 
 ## Update convention
 

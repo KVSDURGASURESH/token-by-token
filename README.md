@@ -66,6 +66,9 @@ For a zero-GPU streamed request race, use the Episode 1
 [Quick test](docs/episode-1-preparation/quick-test.md). Its browser and CLI use
 the same versioned configuration and runner. Quick test results are interactive
 diagnostics, not the ShareGPT/GSM8K benchmark evidence defined for Episode 1.
+Run `scripts/quick-test demo` to bootstrap and launch the dashboard, then use
+`scripts/quick-test request` or `scripts/quick-test compare` from another
+terminal against the same loopback bridge.
 For a second-machine checkout, follow the concise
 [Episode 1 remote handoff](docs/episode-1-preparation/remote-handoff.md). Agents
 resuming work across machines should start with the repository's timestamped
