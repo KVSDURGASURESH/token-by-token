@@ -10,7 +10,7 @@ YYYY-MM-DDTHH-MM-SSZ-<short-topic>.md
 
 ## Current handoff
 
-- [2026-09-29T04-02-32Z — Quick-test launcher readiness](2026-09-29T04-02-32Z-quick-test-launcher.md)
+- [2026-09-30T09-09-58Z — All-episodes experiment planner](2026-09-30T09-09-58Z-experiment-planner.md)
 
 ## Update convention
 

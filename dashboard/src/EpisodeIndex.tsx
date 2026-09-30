@@ -1,5 +1,7 @@
 import catalog from "./data/episodes.json";
 
+type CatalogEpisode = (typeof catalog.episodes)[number] & { dashboardView?: string; guide?: string; roadmapAnchor?: string; templateId?: string };
+
 export function EpisodeIndex() {
   const repo = catalog.repository;
   return (
@@ -19,20 +21,20 @@ export function EpisodeIndex() {
           <p>Open an episode for its experiment, charts and evidence.</p>
         </div>
         <ol className="episode-list">
-          {catalog.episodes.map(episode => (
+          {(catalog.episodes as CatalogEpisode[]).map(episode => (
             <li key={episode.id}>
               <span className="episode-number" aria-hidden="true">{String(episode.number).padStart(2, "0")}</span>
               <div className="episode-entry">
                 <p className="episode-state">{episode.status === "available" ? "Available" : "Planned"} <span>· {episode.evidence}</span></p>
-                <h3>{episode.dashboardView ? <a href={`#${episode.id}`}>Episode {episode.number} — {episode.title} <span aria-hidden="true">↗</span></a> : `Episode ${episode.number} — ${episode.title}`}</h3>
+                <h3>{episode.dashboardView ? <a href={`#${episode.id}`}>Episode {episode.number} — {episode.title} <span aria-hidden="true">↗</span></a> : <a href={`#experiment-planner?episode=${episode.number}`}>Episode {episode.number} — {episode.title} <span aria-hidden="true">↗</span></a>}</h3>
                 <p>{episode.summary}</p>
                 <p className="episode-context">{episode.model} / {episode.hardware}</p>
-                {episode.dashboardView && <div className="episode-links"><a href={`#${episode.id}`}>{episode.status === "available" ? "Explore results" : "Inspect local fixture"}</a><a href={`${repo}/blob/main/${episode.guide}`}>Read the experiment guide ↗</a></div>}
+                <div className="episode-links">{episode.dashboardView && <a href={`#${episode.id}`}>{episode.status === "available" ? "Explore recorded results" : "Inspect local fixture"}</a>}{episode.templateId && <a href={`#experiment-planner?episode=${episode.number}`}>Design experiment</a>}{episode.guide ? <a href={`${repo}/blob/main/${episode.guide}`}>Read the experiment guide ↗</a> : episode.roadmapAnchor && <a href={`${repo}/blob/main/docs/roadmap.md#${episode.roadmapAnchor}`}>Read roadmap stage ↗</a>}</div>
               </div>
             </li>
           ))}
         </ol>
-        <p className="lab-next">More episodes will appear here as experiments are completed. The <a href={`${repo}/blob/main/docs/roadmap.md`}>experiment map ↗</a> is the maintained plan for what comes next.</p>
+        <p className="lab-next">The complete 16-stage roadmap is visible here. Planned stages are experiment proposals, not results; use the planner to create a safe configuration draft and publish evidence only after measurement.</p>
       </section>
 
       <section className="lab-start" aria-labelledby="lab-start-title">

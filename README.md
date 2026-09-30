@@ -26,7 +26,22 @@ fully bound plan and the owner's exact approval before any resource is created.
 | Episode | Experiment | Status | Evidence |
 |---:|---|---|---|
 | 0 | [Warm-up](episodes/00-warm-up/README.md) | Available | Exploratory recorded study |
-| 1 | Measure What Matters | Planned | Local contract fixture — no provider measurement |
+| 1 | Measurement and quality contracts | Planned | Local contract fixture — no provider measurement |
+| 2 | Equal-work runtime baseline | Planned | Planned — no measurements |
+| 3 | Model internals: weights to optimization | Planned | Planned companion study — no measurements |
+| 4 | LoRA and QLoRA with held-out evaluation | Planned | Planned companion study — no measurements |
+| 5 | Jev and LLMs on labeled decision tasks | Planned | Planned companion study — no measurements |
+| 6 | Packaging, accelerator preflight and memory containment | Planned | Planned — no measurements |
+| 7 | Saturation, SLO and cost | Planned | Planned — no measurements |
+| 8 | Prefix reuse | Planned | Planned — no measurements |
+| 9 | Batching, scheduling and mixed traffic | Planned | Planned — no measurements |
+| 10 | Attention kernels and precision | Planned | Planned — no measurements |
+| 11 | Speculative decoding and structured outputs | Planned | Planned — no measurements |
+| 12 | Parallelism within one node | Planned | Planned — no measurements |
+| 13 | Parallelism across nodes | Planned | Planned — no measurements |
+| 14 | Prefill/decode disaggregation and cache-aware routing | Planned | Planned — no measurements |
+| 15 | Slurm and Kubernetes orchestration | Planned | Planned platform study — no measurements |
+| 16 | Release gates, recovery and capstone synthesis | Planned | Planned capstone synthesis — no measurements |
 <!-- END EPISODE INDEX -->
 
 The [three capstone projects](docs/capstone-projects.md) explain where these

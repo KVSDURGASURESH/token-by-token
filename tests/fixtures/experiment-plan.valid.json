@@ -1,0 +1,13 @@
+{
+  "schema_version":"inference-lab.experiment-plan.v1","planning_only":true,"execution_ready":false,"execution_authorized":false,
+  "identity":{"episode":8,"track":"serving","template_id":"episode-8-prefix-reuse","template_version":1,"label":"Prefix reuse — 日本語"},
+  "hypothesis":"slow_first_token",
+  "model":{"model_id":"Qwen/Qwen2.5-32B-Instruct","revision":"unknown","tokenizer_id":"Qwen/Qwen2.5-32B-Instruct","tokenizer_revision":"unknown","template_id":"unknown"},
+  "runtime_lanes":[{"engine":"vllm","selected":true,"requested_version":null,"image_digest":null},{"engine":"sglang","selected":true,"requested_version":null,"image_digest":null}],
+  "hardware":{"gpu_type":"NVIDIA H100 80GB","gpu_memory_gb":80,"gpu_count":1,"node_count":1},
+  "optimizations":{"prefix_caching":"requested","cache_policy":"mixed","chunked_prefill":"off","chunk_token_budget":null,"attention_backend":"auto","weight_precision":"bf16","weight_artifact":"unknown","kv_precision":"auto","speculative_method":"none","draft_model_id":"","structured_output":"none"},
+  "workload":{"input_tokens":2048,"output_tokens":128,"output_contract":"natural_stop","load_mode":"concurrency","concurrency":4,"arrival_rate_rps":null,"warmup_requests":8,"requests":128,"repetitions":3,"timeout_seconds":300,"cache_state":"mixed"},
+  "quality":{"dataset":"held-out-set","dataset_version":"v1","metric":"task_acceptance","threshold":0.9,"require_schema_validity":true,"require_semantic_correctness":true},
+  "slos":{"ttft_ms":1000,"tpot_ms":50,"end_to_end_ms":15000,"max_error_rate":0.01},
+  "cost":{"desired_budget_usd":"5.00","hourly_rate_usd":null,"rate_source":"unavailable","rate_date":null,"planned_duration_hours":"1.00"}
+}

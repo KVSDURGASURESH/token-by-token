@@ -3,31 +3,22 @@
   "tagline": "Inference Lab",
   "repository": "https://github.com/KVSDURGASURESH/token-by-token",
   "episodes": [
-    {
-      "id": "episode-0",
-      "number": 0,
-      "title": "Warm-up",
-      "summary": "Follow a request through prefill, decode and the KV cache. Explore the recorded vLLM and SGLang runs, their costs and the limits of the comparison.",
-      "status": "available",
-      "evidence": "Exploratory recorded study",
-      "guide": "episodes/00-warm-up/README.md",
-      "dashboardView": "qwen32b-runtime-study",
-      "model": "Qwen2.5-32B-Instruct · BF16",
-      "hardware": "One H100 80GB per run",
-      "runtimes": "vLLM 0.29.0 · SGLang 0.5.20"
-    },
-    {
-      "id": "episode-1",
-      "number": 1,
-      "title": "Measure What Matters",
-      "summary": "Define equal work, quality gates and auditable latency before comparing serving runtimes. Inspect the provider-free contract fixture prepared for the first measured run.",
-      "status": "planned",
-      "evidence": "Local contract fixture — no provider measurement",
-      "guide": "episodes/01-measure-what-matters/README.md",
-      "dashboardView": "episode1-fixture",
-      "model": "Qwen2.5-32B-Instruct · BF16 candidate",
-      "hardware": "Candidate: one H100 80GB (unverified)",
-      "runtimes": "vLLM 0.29.0 · SGLang 0.5.20"
-    }
+    {"id":"episode-0","number":0,"title":"Warm-up","summary":"Follow a request through prefill, decode and the KV cache. Explore the recorded vLLM and SGLang runs, their costs and the limits of the comparison.","status":"available","evidence":"Exploratory recorded study","guide":"episodes/00-warm-up/README.md","dashboardView":"qwen32b-runtime-study","model":"Qwen2.5-32B-Instruct · BF16","hardware":"One H100 80GB per run","runtimes":"vLLM 0.29.0 · SGLang 0.5.20"},
+    {"id":"episode-1","number":1,"title":"Measurement and quality contracts","summary":"Declare equal work, quality gates, latency SLOs, memory limits and budget before comparing configurations.","status":"planned","evidence":"Local contract fixture — no provider measurement","guide":"episodes/01-measure-what-matters/README.md","roadmapAnchor":"measurement-and-quality-contracts","templateId":"episode-1-contract","dashboardView":"episode1-fixture","model":"Qwen2.5-32B-Instruct · BF16 candidate","hardware":"Candidate: one H100 80GB (unverified)","runtimes":"vLLM 0.29.0 · SGLang 0.5.20"},
+    {"id":"episode-2","number":2,"title":"Equal-work runtime baseline","summary":"Compare HF/PyTorch, vLLM and SGLang under the same model, corpus, template and output contract.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"equal-work-runtime-baseline","templateId":"episode-2-runtime-baseline","model":"Selected in planner","hardware":"Candidate hardware — availability unverified","runtimes":"vLLM · SGLang · control"},
+    {"id":"episode-3","number":3,"title":"Model internals: weights to optimization","summary":"Trace weights, attention, gradients and optimizer state with a small inspectable model.","status":"planned","evidence":"Planned companion study — no measurements","roadmapAnchor":"model-internals-weights-to-optimization","templateId":"episode-3-model-internals","model":"Small inspectable model — selected in planner","hardware":"Companion study","runtimes":"Training/model track"},
+    {"id":"episode-4","number":4,"title":"LoRA and QLoRA with held-out evaluation","summary":"Compare adapter training with fixed data, budgets and held-out quality evaluation.","status":"planned","evidence":"Planned companion study — no measurements","roadmapAnchor":"lora-and-qlora-with-held-out-evaluation","templateId":"episode-4-lora-qlora","model":"Base and adapter lineage — selected in planner","hardware":"Companion study","runtimes":"Training/model track"},
+    {"id":"episode-5","number":5,"title":"Jev and LLMs on labeled decision tasks","summary":"Compare typed and LLM decision approaches on one versioned labeled task contract.","status":"planned","evidence":"Planned companion study — no measurements","roadmapAnchor":"jev-and-llms-on-labeled-decision-tasks","templateId":"episode-5-jev-decisions","model":"Decision systems — selected in planner","hardware":"Companion study","runtimes":"Decision track"},
+    {"id":"episode-6","number":6,"title":"Packaging, accelerator preflight and memory containment","summary":"Verify reproducible containers, accelerator visibility, model loading and bounded memory behavior.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"packaging-accelerator-preflight-and-memory-containment","templateId":"episode-6-packaging","model":"Selected in planner","hardware":"Candidate accelerator — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-7","number":7,"title":"Saturation, SLO and cost","summary":"Sweep concurrency and offered rate to find SLO-qualified goodput and attributable cost.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"saturation-slo-and-cost","templateId":"episode-7-saturation","model":"Selected in planner","hardware":"Candidate GPU topology — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-8","number":8,"title":"Prefix reuse","summary":"Control exact shared-prefix ratios and compare cold and warm cache behavior.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"prefix-reuse","templateId":"episode-8-prefix-reuse","model":"Selected in planner","hardware":"Candidate GPU topology — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-9","number":9,"title":"Batching, scheduling and mixed traffic","summary":"Study chunked prefill and scheduler behavior under controlled long/short traffic mixes.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"batching-scheduling-and-mixed-traffic","templateId":"episode-9-scheduling","model":"Selected in planner","hardware":"Candidate GPU topology — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-10","number":10,"title":"Attention kernels and precision","summary":"Compare verified attention backends, then separately compare weight and KV precision.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"attention-kernels-and-precision","templateId":"episode-10-attention-precision","model":"Selected in planner","hardware":"Candidate GPU topology — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-11","number":11,"title":"Speculative decoding and structured outputs","summary":"Evaluate compatible proposal paths and constrained generation without assuming speedup.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"speculative-decoding-and-structured-outputs","templateId":"episode-11-speculative-structured","model":"Target and optional draft — selected in planner","hardware":"Candidate GPU topology — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-12","number":12,"title":"Parallelism within one node","summary":"Compare DP, TP and justified PP or EP layouts under one declared GPU budget.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"parallelism-within-one-node","templateId":"episode-12-single-node-parallelism","model":"Selected in planner","hardware":"Candidate multi-GPU node — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-13","number":13,"title":"Parallelism across nodes","summary":"Test placement and communication costs on a documented multi-node network topology.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"parallelism-across-nodes","templateId":"episode-13-multi-node-parallelism","model":"Selected in planner","hardware":"Candidate multi-node topology — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-14","number":14,"title":"Prefill/decode disaggregation and cache-aware routing","summary":"Compare colocated and supported disaggregated serving with queue- and cache-aware routing.","status":"planned","evidence":"Planned — no measurements","roadmapAnchor":"prefilldecode-disaggregation-and-cache-aware-routing","templateId":"episode-14-disaggregation-routing","model":"Selected in planner","hardware":"Candidate serving pools — unverified","runtimes":"vLLM · SGLang"},
+    {"id":"episode-15","number":15,"title":"Slurm and Kubernetes orchestration","summary":"Compare representative scheduled jobs and long-running services as platform choices, separate from engines.","status":"planned","evidence":"Planned platform study — no measurements","roadmapAnchor":"slurm-and-kubernetes-orchestration","templateId":"episode-15-orchestration","model":"Workload selected in planner","hardware":"Candidate platform resources — unverified","runtimes":"Platform track"},
+    {"id":"episode-16","number":16,"title":"Release gates, recovery and capstone synthesis","summary":"Combine promising settings, reject regressions and exercise rollback and recovery against original gates.","status":"planned","evidence":"Planned capstone synthesis — no measurements","roadmapAnchor":"release-gates-recovery-and-capstone-synthesis","templateId":"episode-16-release-gates","model":"Selected release candidate","hardware":"Candidate release topology — unverified","runtimes":"Selected serving/runtime path"}
   ]
 }
