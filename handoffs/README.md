@@ -10,7 +10,7 @@ YYYY-MM-DDTHH-MM-SSZ-<short-topic>.md
 
 ## Current handoff
 
-- [2026-09-30T09-09-58Z — All-episodes experiment planner](2026-09-30T09-09-58Z-experiment-planner.md)
+- [2026-10-01T07-39-48Z — Episodes 1–16 local stack](2026-10-01T07-39-48Z-episode-suite-local-stack.md)
 
 ## Update convention
 

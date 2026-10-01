@@ -1,0 +1,59 @@
+name: inference-lab
+services:
+  episode-console:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: inference-lab-episode-console:local
+    command: ["serve", "--host", "0.0.0.0", "--port", "8765", "--profiles", "/config/profiles.json", "--dashboard-dir", "/app/dashboard/dist"]
+    ports:
+      - "127.0.0.1:8765:8765"
+    volumes:
+      - "${EPISODE_PROFILES_FILE:-./examples/episode-run-profiles.example.json}:/config/profiles.json:ro"
+    environment:
+      VLLM_API_KEY: "${VLLM_API_KEY:-}"
+      SGLANG_API_KEY: "${SGLANG_API_KEY:-}"
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/healthz', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1g
+
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics:v1.151.0
+    command:
+      - -storageDataPath=/victoria-metrics-data
+      - -retentionPeriod=30d
+      - -promscrape.config=/etc/victoria-metrics/scrape.yml
+    ports:
+      - "127.0.0.1:8428:8428"
+    volumes:
+      - victoria-metrics-data:/victoria-metrics-data
+      - ./deploy/victoria-metrics/scrape.yml:/etc/victoria-metrics/scrape.yml:ro
+    depends_on:
+      episode-console:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+
+volumes:
+  victoria-metrics-data:

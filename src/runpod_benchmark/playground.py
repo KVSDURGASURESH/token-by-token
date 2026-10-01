@@ -17,6 +17,7 @@ from collections.abc import Callable, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
+from .metrics import summarize_requests
 from .streaming import REQUIRED_STREAM_CAPABILITIES, StreamingError, stream_chat
 
 
@@ -36,8 +37,11 @@ _LANE_KEYS = {"id", "profile_id", "label"}
 _SAMPLING_KEYS = {"maximum_output_tokens", "temperature", "top_p", "top_k", "seed", "stop"}
 _PROFILE_KEYS = {
     "id", "label", "url", "runtime_id", "model", "api_key_env",
-    "supported_optional_fields", "context_length",
+    "supported_optional_fields", "context_length", "gpu_type", "gpu_count",
+    "node_count", "parallelism", "runtime_controls", "gpu_telemetry",
 }
+_PARALLELISM_KEYS = {"dp", "tp", "pp", "ep"}
+_RUNTIME_CONTROL_KEYS = {"prompt_caching", "chunked_prefill", "continuous_batching"}
 
 
 class PlaygroundValidationError(ValueError):
@@ -95,10 +99,41 @@ def validate_profiles(raw: Sequence[Mapping[str, Any]]) -> dict[str, dict[str, A
             isinstance(context, bool) or not isinstance(context, int) or not 256 <= context <= 1_000_000
         ):
             raise PlaygroundValidationError("context_length is invalid")
+        gpu_type = profile.get("gpu_type")
+        if gpu_type is not None and (not isinstance(gpu_type, str) or not gpu_type.strip() or len(gpu_type) > 128):
+            raise PlaygroundValidationError("gpu_type is invalid")
+        integer_fields: dict[str, int | None] = {}
+        for field in ("gpu_count", "node_count"):
+            value = profile.get(field)
+            if value is not None and (isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= 1024):
+                raise PlaygroundValidationError(f"{field} is invalid")
+            integer_fields[field] = value
+        parallelism = _object(profile.get("parallelism", {}), "parallelism")
+        _closed(parallelism, _PARALLELISM_KEYS, "parallelism")
+        for field in _PARALLELISM_KEYS:
+            value = parallelism.get(field, 1)
+            if isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= 1024:
+                raise PlaygroundValidationError(f"parallelism.{field} is invalid")
+            parallelism[field] = value
+        controls = _object(profile.get("runtime_controls", {}), "runtime_controls")
+        _closed(controls, _RUNTIME_CONTROL_KEYS, "runtime_controls")
+        for field in _RUNTIME_CONTROL_KEYS:
+            value = controls.get(field, "unknown")
+            if value not in {"enabled", "disabled", "unknown"}:
+                raise PlaygroundValidationError(f"runtime_controls.{field} must be enabled, disabled, or unknown")
+            controls[field] = value
+        gpu_telemetry = profile.get("gpu_telemetry", "unavailable")
+        if gpu_telemetry not in {"unavailable", "local_nvidia_smi"}:
+            raise PlaygroundValidationError("gpu_telemetry must be unavailable or local_nvidia_smi")
         result[identifier] = {
             **profile,
             "supported_optional_fields": list(optional),
             "context_length": context,
+            "gpu_type": gpu_type.strip() if isinstance(gpu_type, str) else None,
+            **integer_fields,
+            "parallelism": parallelism,
+            "runtime_controls": controls,
+            "gpu_telemetry": gpu_telemetry,
         }
     return result
 
@@ -113,6 +148,12 @@ def public_profiles(profiles: Mapping[str, Mapping[str, Any]]) -> list[dict[str,
             "model": profile["model"],
             "supported_optional_fields": profile["supported_optional_fields"],
             "context_length": profile.get("context_length"),
+            "gpu_type": profile.get("gpu_type"),
+            "gpu_count": profile.get("gpu_count"),
+            "node_count": profile.get("node_count"),
+            "parallelism": profile.get("parallelism"),
+            "runtime_controls": profile.get("runtime_controls"),
+            "gpu_telemetry": profile.get("gpu_telemetry"),
         }
         for profile in profiles.values()
     ]
@@ -282,6 +323,9 @@ def _attempt(
             "status": "completed",
             "ttft_ms": result.get("ttft_ms"),
             "e2e_ms": result.get("e2e_ms"),
+            "content_span_ms": span,
+            "inter_chunk_ms": result.get("inter_chunk_ms", []),
+            "input_tokens": result.get("input_tokens"),
             "output_tokens": count,
             "generation_tokens_per_second": rate,
             "content_event_count": result.get("content_event_count"),
@@ -297,6 +341,7 @@ def _attempt(
             "status": "cancelled" if cancelled else "error",
             "error": "request cancelled" if cancelled else str(exc)[:1024],
             "ttft_ms": None, "e2e_ms": None, "output_tokens": None,
+            "content_span_ms": None, "inter_chunk_ms": [], "input_tokens": None,
             "generation_tokens_per_second": None, "content_event_count": 0,
             "token_count_provenance": "unavailable",
             "timing_provenance": "runner_monotonic_clock",
@@ -324,6 +369,7 @@ def run_config(
         for lane in config["lanes"]
     ]
     attempts: dict[str, list[dict[str, Any]]] = {lane["id"]: [] for lane in config["lanes"]}
+    run_started = time.monotonic()
     workers = min(len(work), max(len(config["lanes"]), config["concurrency"] * len(config["lanes"])))
     with ThreadPoolExecutor(max_workers=workers) as pool:
         for offset in range(0, len(work), workers):
@@ -341,6 +387,7 @@ def run_config(
                 future_map[future] = lane["id"]
             for future in as_completed(future_map):
                 attempts[future_map[future]].append(future.result())
+    measured_wall_seconds = time.monotonic() - run_started
     lane_results = []
     for lane in config["lanes"]:
         rows = sorted(attempts[lane["id"]], key=lambda item: item["repetition"])
@@ -355,6 +402,11 @@ def run_config(
             "cancelled": sum(row["status"] == "cancelled" for row in rows),
             "mean_ttft_ms": mean("ttft_ms"), "mean_e2e_ms": mean("e2e_ms"),
             "mean_generation_tokens_per_second": mean("generation_tokens_per_second"),
+            "summary": summarize_requests(
+                [{**row, "success": row["status"] == "completed"} for row in rows],
+                measured_wall_seconds,
+                {},
+            ),
             "attempts": rows,
         })
     result = {
@@ -366,6 +418,9 @@ def run_config(
             "ttft_ms": "first nonempty content event minus actual runner send time",
             "e2e_ms": "terminal [DONE] event minus actual runner send time",
             "generation_tokens_per_second": "(server completion tokens - 1) / first-to-last content span; unavailable for fewer than two tokens or a nonpositive span",
+            "tpot_ms": "first-to-last content span / (server completion tokens - 1)",
+            "client_inter_chunk_ms": "gap between nonempty SSE content events; shown separately because an event is not guaranteed to equal one token",
+            "tail_latency": "p95 and p99 use linear interpolation at rank (n - 1) * q; small samples carry warnings",
         },
         "lanes": lane_results,
     }

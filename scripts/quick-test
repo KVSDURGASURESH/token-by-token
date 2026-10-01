@@ -14,6 +14,7 @@ Commands:
   serve      Build when needed, then launch the dashboard for configured endpoints
   request    Run one CLI request through an already-running bridge
   compare    Run a CLI comparison through an already-running bridge
+  episode    Run one Episode 1-16 endpoint rehearsal through the bridge
   setup      Install pinned dashboard dependencies and build the dashboard
   help       Show this message
 
@@ -22,6 +23,7 @@ Examples:
   scripts/quick-test request --profile demo-fast --prompt 'Explain TTFT.'
   scripts/quick-test compare --profile demo-fast --profile demo-steady \
     --prompt 'Explain TTFT.' --repetitions 3
+  scripts/quick-test episode --episode 8 --profile demo-fast --profile demo-steady
   scripts/quick-test serve --profiles /private/path/quick-test-profiles.json
 EOF
 }
@@ -64,7 +66,7 @@ case "$command" in
     PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}" \
       exec "$(python_command)" "$ROOT/scripts/episode1_playground.py" "$command" "$@"
     ;;
-  request|compare)
+  request|compare|episode)
     PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}" \
       exec "$(python_command)" "$ROOT/scripts/episode1_playground.py" "$command" "$@"
     ;;

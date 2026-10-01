@@ -89,3 +89,58 @@ repetitions, and at most four concurrent repetition waves.
   **Export private raw** is an explicit local action and includes them.
 - Repetitions improve a quick diagnostic but do not turn it into the formal
   ShareGPT serving benchmark or GSM8K evaluation.
+
+## Episode 1–16 console
+
+The `#episode-runner` dashboard contains runnable endpoint rehearsal packs for
+all 16 planned episodes. It exposes the same closed configuration through the
+form, CLI flags, and JSON. `suite_repetitions` repeats the complete ordered pack
+from the first cell to the last; `repetitions` controls requests inside each
+cell.
+
+```bash
+scripts/quick-test episode \
+  --episode 8 --profile vllm-runpod --profile sglang-runpod \
+  --suite-repetitions 5 --repetitions 1 --batch-size 4 \
+  --context-tokens 2048 --sequence-tokens 128 --timeout 120 \
+  --output /tmp/episode-8-result.json
+
+scripts/quick-test episode --config examples/episode-run.example.json
+```
+
+The UI reports TTFT, TPOT, end-to-end p95/p99, client inter-chunk p95, request
+success, and runner throughput summaries. Client inter-chunk cadence is not
+claimed as exact token ITL. GPU utilization and memory are shown only when the
+bridge runs on the GPU host and the endpoint profile opts into
+`local_nvidia_smi`; a remote OpenAI-compatible endpoint does not expose those
+values. Runtime, GPU, cache/prefill/batching, and DP/TP/PP/EP fields describe an
+already-running endpoint and are not mutations made by the test client.
+
+## Local Docker deployment with VictoriaMetrics
+
+Copy `examples/episode-run-profiles.example.json` to a private file, replace
+the endpoint metadata, and export only the credential environment variables
+named by that file. Then launch the local stack:
+
+```bash
+export EPISODE_PROFILES_FILE=/absolute/private/path/episode-profiles.json
+export VLLM_API_KEY='set-in-this-shell-only'
+export SGLANG_API_KEY='set-in-this-shell-only'
+docker compose up --build -d
+docker compose ps
+```
+
+- Console: <http://127.0.0.1:8765/#episode-runner>
+- Health: <http://127.0.0.1:8765/healthz>
+- Prometheus exposition: <http://127.0.0.1:8765/metrics>
+- VictoriaMetrics VMUI: <http://127.0.0.1:8428/vmui/>
+
+VictoriaMetrics scrapes every five seconds and retains data in the named
+`victoria-metrics-data` volume for 30 days. The application has a Grafana-style
+live summary; VMUI provides stored time-series queries. Stop the containers
+without deleting history using `docker compose down`. To remove metrics too,
+explicitly run `docker compose down -v`.
+
+Rollback is `docker compose down`, followed by checkout of the prior commit and
+`docker compose up --build -d`. No compose service creates, changes, or deletes
+a RunPod resource.

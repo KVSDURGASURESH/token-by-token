@@ -32,6 +32,12 @@ from runpod_benchmark.playground import (  # noqa: E402
     validate_profiles,
     without_raw_text,
 )
+from runpod_benchmark.episode_suite import (  # noqa: E402
+    SCHEMA_VERSION as EPISODE_SCHEMA_VERSION,
+    public_registry,
+    run_episode,
+    validate_episode_run,
+)
 
 
 class State:
@@ -41,6 +47,36 @@ class State:
         self.nonce = secrets.token_urlsafe(32)
         self.runs: dict[str, threading.Event] = {}
         self.lock = threading.Lock()
+        self.metrics_text = "# HELP inference_lab_up Local episode bridge health.\n# TYPE inference_lab_up gauge\ninference_lab_up 1\n"
+
+    def record_episode_metrics(self, result: dict[str, Any]) -> None:
+        lines = [
+            "# HELP inference_lab_up Local episode bridge health.",
+            "# TYPE inference_lab_up gauge", "inference_lab_up 1",
+            "# HELP inference_lab_requests_total Requests observed in the latest completed episode run.",
+            "# TYPE inference_lab_requests_total gauge",
+        ]
+        for cell in result.get("cells", []):
+            for lane in cell.get("result", {}).get("lanes", []):
+                labels = f'episode="{result["episode"]}",suite_round="{cell["suite_round"]}",cell="{cell["cell_id"]}",profile="{lane.get("profile_id", "unknown")}"'
+                lines.append(f'inference_lab_requests_total{{{labels},status="attempted"}} {lane.get("attempted", 0)}')
+                lines.append(f'inference_lab_requests_total{{{labels},status="successful"}} {lane.get("successful", 0)}')
+                for metric_name, metric in lane.get("summary", {}).get("metrics", {}).items():
+                    if not metric.get("available") or not metric.get("statistics"):
+                        continue
+                    safe_name = "".join(char if char.isalnum() or char == "_" else "_" for char in metric_name)
+                    for statistic in ("mean", "p50", "p95", "p99"):
+                        value = metric["statistics"].get(statistic)
+                        if isinstance(value, (int, float)):
+                            lines.append(f'inference_lab_{safe_name}{{{labels},statistic="{statistic}"}} {value}')
+        for metric_name, metric in result.get("gpu_telemetry", {}).items():
+            if isinstance(metric, dict) and metric.get("available") and metric.get("statistics"):
+                for statistic in ("mean", "p50", "p95", "p99"):
+                    value = metric["statistics"].get(statistic)
+                    if isinstance(value, (int, float)):
+                        lines.append(f'inference_lab_{metric_name}{{episode="{result["episode"]}",statistic="{statistic}"}} {value}')
+        with self.lock:
+            self.metrics_text = "\n".join(lines) + "\n"
 
 
 def _json_bytes(value: object) -> bytes:
@@ -55,8 +91,8 @@ def _load_profiles(path: pathlib.Path | None, *, demo: bool, port: int) -> dict[
     if demo:
         base = f"http://127.0.0.1:{port}/demo"
         raw.extend([
-            {"id": "demo-fast", "label": "Demo / quick lane", "url": f"{base}/fast/v1/chat/completions", "runtime_id": "vllm", "model": "episode1-demo", "supported_optional_fields": ["top_k", "seed", "stop"], "context_length": 4096},
-            {"id": "demo-steady", "label": "Demo / steady lane", "url": f"{base}/steady/v1/chat/completions", "runtime_id": "sglang", "model": "episode1-demo", "supported_optional_fields": ["top_k", "seed", "stop"], "context_length": 4096},
+            {"id": "demo-fast", "label": "Demo / quick lane", "url": f"{base}/fast/v1/chat/completions", "runtime_id": "vllm", "model": "episode1-demo", "supported_optional_fields": ["top_k", "seed", "stop"], "context_length": 4096, "gpu_type": None, "gpu_count": None, "node_count": 1, "parallelism": {"dp": 1, "tp": 1, "pp": 1, "ep": 1}, "runtime_controls": {"prompt_caching": "unknown", "chunked_prefill": "unknown", "continuous_batching": "enabled"}, "gpu_telemetry": "unavailable"},
+            {"id": "demo-steady", "label": "Demo / steady lane", "url": f"{base}/steady/v1/chat/completions", "runtime_id": "sglang", "model": "episode1-demo", "supported_optional_fields": ["top_k", "seed", "stop"], "context_length": 4096, "gpu_type": None, "gpu_count": None, "node_count": 1, "parallelism": {"dp": 1, "tp": 1, "pp": 1, "ep": 1}, "runtime_controls": {"prompt_caching": "unknown", "chunked_prefill": "unknown", "continuous_batching": "enabled"}, "gpu_telemetry": "unavailable"},
         ])
     return validate_profiles(raw)
 
@@ -107,6 +143,18 @@ class Handler(BaseHTTPRequestHandler):
         return value
 
     def do_GET(self) -> None:
+        if self.path == "/healthz":
+            self._send_json(HTTPStatus.OK, {"status": "ok"})
+            return
+        if self.path == "/metrics":
+            with self.state.lock:
+                body = self.state.metrics_text.encode()
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if not self._host_ok() or not self._origin_ok():
             self._send_json(HTTPStatus.FORBIDDEN, {"error": "forbidden host or origin"})
             return
@@ -117,6 +165,9 @@ class Handler(BaseHTTPRequestHandler):
                 "profiles": public_profiles(self.state.profiles),
                 "limits": {"repetitions": 20, "concurrency": 4, "context_length_default": 4096},
             })
+            return
+        if self.path == "/api/episode-suite":
+            self._send_json(HTTPStatus.OK, public_registry())
             return
         self._static()
 
@@ -130,6 +181,8 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if self.path == "/api/run":
                 self._run_stream(self._body())
+            elif self.path == "/api/episode-run":
+                self._episode_stream(self._body())
             elif self.path == "/api/cancel":
                 body = self._body()
                 run_id = body.get("run_id")
@@ -161,6 +214,42 @@ class Handler(BaseHTTPRequestHandler):
         def worker() -> None:
             try:
                 run_config(checked, self.state.profiles, emit=events.put, cancel_event=cancellation)
+            except Exception as exc:
+                events.put({"type": "fatal", "error": str(exc)[:1024]})
+            finally:
+                events.put(None)
+
+        threading.Thread(target=worker, daemon=True).start()
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.end_headers()
+        self._event({"type": "accepted", "run_id": run_id})
+        try:
+            while True:
+                item = events.get(timeout=checked["request_timeout_seconds"] + 5)
+                if item is None:
+                    break
+                self._event(item)
+        except (BrokenPipeError, ConnectionResetError, queue.Empty):
+            cancellation.set()
+        finally:
+            with self.state.lock:
+                self.state.runs.pop(run_id, None)
+
+    def _episode_stream(self, config: dict[str, Any]) -> None:
+        checked = validate_episode_run(config, self.state.profiles)
+        run_id = "episode-" + secrets.token_hex(8)
+        cancellation = threading.Event()
+        events: queue.Queue[dict[str, Any] | None] = queue.Queue()
+        with self.state.lock:
+            self.state.runs[run_id] = cancellation
+
+        def worker() -> None:
+            try:
+                result = run_episode(checked, self.state.profiles, emit=events.put, cancel_event=cancellation)
+                self.state.record_episode_metrics(result)
             except Exception as exc:
                 events.put({"type": "fatal", "error": str(exc)[:1024]})
             finally:
@@ -238,9 +327,9 @@ def serve(args: argparse.Namespace) -> int:
     if dashboard is not None and not (dashboard / "index.html").is_file():
         raise SystemExit(f"dashboard build missing: {dashboard / 'index.html'}")
     profiles = _load_profiles(args.profiles, demo=args.demo, port=args.port)
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
+    server = ThreadingHTTPServer((args.host, args.port), Handler)
     server.state = State(profiles, dashboard)  # type: ignore[attr-defined]
-    print(f"Episode 1 quick test: http://127.0.0.1:{args.port}/#quick-test", flush=True)
+    print(f"Episode test console: http://127.0.0.1:{args.port}/#episode-runner", flush=True)
     print("Local diagnostic only; not benchmark evidence.", flush=True)
     try:
         server.serve_forever()
@@ -308,12 +397,54 @@ def client(args: argparse.Namespace) -> int:
     return 0
 
 
+def episode_client(args: argparse.Namespace) -> int:
+    base = args.bridge.rstrip("/")
+    caps = _capabilities(base)
+    raw_config = json.loads(args.config.read_text(encoding="utf-8")) if args.config else {
+        "schema_version": EPISODE_SCHEMA_VERSION,
+        "episode": args.episode,
+        "profile_ids": args.profile,
+        "suite_repetitions": args.suite_repetitions,
+        "repetitions": args.repetitions,
+        "batch_size": args.batch_size,
+        "context_tokens": args.context_tokens,
+        "sequence_tokens": args.sequence_tokens,
+        "request_timeout_seconds": args.timeout,
+    }
+    config = validate_episode_run(raw_config, {item["id"]: item for item in caps["profiles"]})
+    request = urllib.request.Request(
+        base + "/api/episode-run", data=_json_bytes(config), method="POST",
+        headers={"Content-Type": "application/json", "Accept": "text/event-stream", "X-Episode1-Session": caps["session"]},
+    )
+    final = None
+    with urllib.request.urlopen(request, timeout=config["request_timeout_seconds"] + 15) as response:
+        for raw in response:
+            line = raw.decode("utf-8").rstrip("\r\n")
+            if not line.startswith("data: "):
+                continue
+            event = json.loads(line[6:])
+            if event.get("type") == "cell":
+                print(f"episode {config['episode']} round {event.get('suite_round')}/{config['suite_repetitions']}: {event.get('cell_label')} — {event.get('state')}", file=sys.stderr)
+            elif event.get("type") == "fatal":
+                raise SystemExit(event.get("error", "episode run failed"))
+            elif event.get("type") == "complete":
+                final = event["result"]
+    if final is None:
+        raise SystemExit("bridge ended without a completed episode result")
+    if args.output:
+        args.output.write_text(json.dumps(final, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    else:
+        print(json.dumps(final, indent=2, sort_keys=True))
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     sub = result.add_subparsers(dest="command", required=True)
     for name in ("serve", "demo"):
         command = sub.add_parser(name, help="serve the loopback bridge" + (" with built-in mock endpoints" if name == "demo" else ""))
         command.add_argument("--port", type=int, default=8765)
+        command.add_argument("--host", default="127.0.0.1", help="listen address; containers use 0.0.0.0")
         command.add_argument("--profiles", type=pathlib.Path)
         command.add_argument("--dashboard-dir", type=pathlib.Path, default=ROOT / "dashboard" / "dist")
         command.set_defaults(func=serve, demo=name == "demo")
@@ -336,6 +467,19 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--concurrency", type=int, default=1)
         command.add_argument("--output", type=pathlib.Path)
         command.set_defaults(func=client)
+    command = sub.add_parser("episode", help="run one Episode 1-16 endpoint rehearsal through a local bridge")
+    command.add_argument("--bridge", default="http://127.0.0.1:8765")
+    command.add_argument("--config", type=pathlib.Path, help="complete episode run JSON; when set, workload flags are ignored")
+    command.add_argument("--episode", type=int)
+    command.add_argument("--profile", action="append", default=[])
+    command.add_argument("--timeout", type=float, default=120)
+    command.add_argument("--suite-repetitions", type=int, default=1, help="repeat the entire ordered episode pack 1-10 times")
+    command.add_argument("--repetitions", type=int, default=1)
+    command.add_argument("--batch-size", type=int, default=1)
+    command.add_argument("--context-tokens", type=int, default=2048)
+    command.add_argument("--sequence-tokens", type=int, default=128)
+    command.add_argument("--output", type=pathlib.Path)
+    command.set_defaults(func=episode_client)
     return result
 
 

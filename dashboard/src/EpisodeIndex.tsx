@@ -29,7 +29,7 @@ export function EpisodeIndex() {
                 <h3>{episode.dashboardView ? <a href={`#${episode.id}`}>Episode {episode.number} — {episode.title} <span aria-hidden="true">↗</span></a> : <a href={`#experiment-planner?episode=${episode.number}`}>Episode {episode.number} — {episode.title} <span aria-hidden="true">↗</span></a>}</h3>
                 <p>{episode.summary}</p>
                 <p className="episode-context">{episode.model} / {episode.hardware}</p>
-                <div className="episode-links">{episode.dashboardView && <a href={`#${episode.id}`}>{episode.status === "available" ? "Explore recorded results" : "Inspect local fixture"}</a>}{episode.templateId && <a href={`#experiment-planner?episode=${episode.number}`}>Design experiment</a>}{episode.guide ? <a href={`${repo}/blob/main/${episode.guide}`}>Read the experiment guide ↗</a> : episode.roadmapAnchor && <a href={`${repo}/blob/main/docs/roadmap.md#${episode.roadmapAnchor}`}>Read roadmap stage ↗</a>}</div>
+                <div className="episode-links">{episode.dashboardView && <a href={`#${episode.id}`}>{episode.status === "available" ? "Explore recorded results" : "Inspect local fixture"}</a>}{episode.templateId && <a href={`#experiment-planner?episode=${episode.number}`}>Design experiment</a>}{episode.templateId && <a href={`#episode-runner?episode=${episode.number}`}>Run endpoint rehearsal</a>}{episode.guide ? <a href={`${repo}/blob/main/${episode.guide}`}>Read the experiment guide ↗</a> : episode.roadmapAnchor && <a href={`${repo}/blob/main/docs/roadmap.md#${episode.roadmapAnchor}`}>Read roadmap stage ↗</a>}</div>
               </div>
             </li>
           ))}
