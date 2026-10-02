@@ -23,7 +23,7 @@ Examples:
   scripts/quick-test request --profile demo-fast --prompt 'Explain TTFT.'
   scripts/quick-test compare --profile demo-fast --profile demo-steady \
     --prompt 'Explain TTFT.' --repetitions 3
-  scripts/quick-test episode --episode 8 --profile demo-fast --profile demo-steady
+  scripts/quick-test episode --episode 3 --profile demo-fast --profile demo-steady
   scripts/quick-test serve --profiles /private/path/quick-test-profiles.json
 EOF
 }

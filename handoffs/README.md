@@ -10,7 +10,7 @@ YYYY-MM-DDTHH-MM-SSZ-<short-topic>.md
 
 ## Current handoff
 
-- [2026-10-01T08-27-01Z — Episodes 1–16 mock and dark-dashboard validation](2026-10-01T08-27-01Z-mock-dark-validation.md)
+- [2026-10-02T21-27-47Z — Canonical execution readiness and adapter gaps](2026-10-02T21-27-47Z-canonical-execution-readiness.md)
 
 ## Update convention
 

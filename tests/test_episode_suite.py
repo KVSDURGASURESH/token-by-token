@@ -30,6 +30,10 @@ def config(**overrides):
 
 def test_registry_contains_runnable_packs_for_every_planned_episode():
     assert sorted(PACKS) == list(range(1, 17))
+    assert PACKS[3]["title"] == "Prefix reuse"
+    assert PACKS[10]["title"] == "Slurm and Kubernetes"
+    assert PACKS[11]["title"] == "Model internals"
+    assert PACKS[15]["title"] == "Saturation, SLO and cost"
     for episode in PACKS:
         cells = compile_cells(config(episode=episode, suite_repetitions=1), profiles())
         assert cells
@@ -58,4 +62,6 @@ def test_complete_pack_repeats_are_round_tagged_and_sanitized():
     assert {cell["suite_round"] for cell in result["cells"]} == {1, 2}
     assert all("private response" not in str(cell) for cell in result["cells"])
     assert result["effective_config"]["suite_repetitions"] == 2
+    assert result["episode_numbering_version"] == "episode-catalog.v2"
+    assert result["previous_episode"] == 1
     assert not result["gpu_telemetry"]["gpu_utilization_percent"]["available"]

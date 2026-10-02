@@ -100,10 +100,10 @@ cell.
 
 ```bash
 scripts/quick-test episode \
-  --episode 8 --profile vllm-runpod --profile sglang-runpod \
+  --episode 3 --profile vllm-runpod --profile sglang-runpod \
   --suite-repetitions 5 --repetitions 1 --batch-size 4 \
   --context-tokens 2048 --sequence-tokens 128 --timeout 120 \
-  --output /tmp/episode-8-result.json
+  --output /tmp/episode-3-result.json
 
 scripts/quick-test episode --config examples/episode-run.example.json
 ```

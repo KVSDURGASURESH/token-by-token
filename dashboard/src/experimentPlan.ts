@@ -3,7 +3,7 @@ import templatesData from "./data/experiment-templates.v1.json";
 export type Hypothesis = "slow_first_token" | "slow_decode" | "throughput_collapse" | "high_cost";
 export type Track = "serving" | "model" | "training" | "decision" | "topology" | "platform" | "release";
 export type Engine = "vllm" | "sglang";
-export type ExperimentTemplate = { id: string; version: number; episode: number; track: Track; label: string; hypothesis: Hypothesis; suggestedControls: string[]; note: string };
+export type ExperimentTemplate = { id: string; version: number; episode: number; previousEpisode: number; track: Track; label: string; hypothesis: Hypothesis; suggestedControls: string[]; note: string };
 
 export type ExperimentPlan = {
   schema_version: "inference-lab.experiment-plan.v1";

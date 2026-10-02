@@ -5,7 +5,7 @@ const { chromium } = require("../dashboard/node_modules/playwright");
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const requests = [];
   page.on("request", request => requests.push(request.url()));
-  await page.goto("http://127.0.0.1:5173/#experiment-planner?episode=8");
+  await page.goto("http://127.0.0.1:5173/#experiment-planner?episode=3");
   await page.waitForSelector(".planner-summary code:not(:has-text('Computing'))");
   if (await page.locator("text=No GPU will be created").count() !== 1) throw new Error("Missing permanent safety label");
   if (await page.locator("button", { hasText: /Run|Launch|Execute/ }).count()) throw new Error("Planner exposes execution action");

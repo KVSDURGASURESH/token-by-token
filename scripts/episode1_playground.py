@@ -38,15 +38,21 @@ from runpod_benchmark.episode_suite import (  # noqa: E402
     run_episode,
     validate_episode_run,
 )
+from runpod_benchmark.canonical_launch import (  # noqa: E402
+    CanonicalLaunchController,
+    CanonicalLaunchError,
+)
 
 
 class State:
-    def __init__(self, profiles: dict[str, dict[str, Any]], dashboard: pathlib.Path | None):
+    def __init__(self, profiles: dict[str, dict[str, Any]], dashboard: pathlib.Path | None,
+                 canonical: CanonicalLaunchController | None = None):
         self.profiles = profiles
         self.dashboard = dashboard
         self.nonce = secrets.token_urlsafe(32)
         self.runs: dict[str, threading.Event] = {}
         self.lock = threading.Lock()
+        self.canonical = canonical
         self.metrics_text = "# HELP inference_lab_up Local episode bridge health.\n# TYPE inference_lab_up gauge\ninference_lab_up 1\n"
 
     def record_episode_metrics(self, result: dict[str, Any]) -> None:
@@ -169,6 +175,13 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/episode-suite":
             self._send_json(HTTPStatus.OK, public_registry())
             return
+        if self.path == "/api/canonical-status":
+            status = self.state.canonical.status() if self.state.canonical else {
+                "configured": False, "launch_enabled": False,
+                "phase": "not-configured", "supported_episodes": [1],
+            }
+            self._send_json(HTTPStatus.OK, status)
+            return
         self._static()
 
     def do_POST(self) -> None:
@@ -183,6 +196,14 @@ class Handler(BaseHTTPRequestHandler):
                 self._run_stream(self._body())
             elif self.path == "/api/episode-run":
                 self._episode_stream(self._body())
+            elif self.path == "/api/canonical-preflight":
+                if self.state.canonical is None:
+                    raise CanonicalLaunchError("no canonical launch bundle was configured at server start")
+                self._send_json(HTTPStatus.OK, self.state.canonical.preflight())
+            elif self.path == "/api/canonical-launch":
+                if self.state.canonical is None:
+                    raise CanonicalLaunchError("no canonical launch bundle was configured at server start")
+                self._send_json(HTTPStatus.ACCEPTED, self.state.canonical.launch(self._body().get("approval_phrase")))
             elif self.path == "/api/cancel":
                 body = self._body()
                 run_id = body.get("run_id")
@@ -195,7 +216,7 @@ class Handler(BaseHTTPRequestHandler):
                     self._send_json(HTTPStatus.OK, {"cancelled": True})
             else:
                 self._send_json(HTTPStatus.NOT_FOUND, {"error": "not found"})
-        except (PlaygroundValidationError, json.JSONDecodeError) as exc:
+        except (PlaygroundValidationError, CanonicalLaunchError, json.JSONDecodeError) as exc:
             self._send_json(HTTPStatus.BAD_REQUEST, {"error": str(exc)})
 
     def _event(self, value: object) -> None:
@@ -327,8 +348,12 @@ def serve(args: argparse.Namespace) -> int:
     if dashboard is not None and not (dashboard / "index.html").is_file():
         raise SystemExit(f"dashboard build missing: {dashboard / 'index.html'}")
     profiles = _load_profiles(args.profiles, demo=args.demo, port=args.port)
+    canonical = CanonicalLaunchController(
+        args.canonical_launch_bundle, ROOT,
+        launch_enabled=args.enable_canonical_launch,
+    )
     server = ThreadingHTTPServer((args.host, args.port), Handler)
-    server.state = State(profiles, dashboard)  # type: ignore[attr-defined]
+    server.state = State(profiles, dashboard, canonical)  # type: ignore[attr-defined]
     print(f"Episode test console: http://127.0.0.1:{args.port}/#episode-runner", flush=True)
     print("Local diagnostic only; not benchmark evidence.", flush=True)
     try:
@@ -447,6 +472,10 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--host", default="127.0.0.1", help="listen address; containers use 0.0.0.0")
         command.add_argument("--profiles", type=pathlib.Path)
         command.add_argument("--dashboard-dir", type=pathlib.Path, default=ROOT / "dashboard" / "dist")
+        command.add_argument("--canonical-launch-bundle", type=pathlib.Path,
+                             help="fixed Episode 1 launch bundle selected by the server operator")
+        command.add_argument("--enable-canonical-launch", action="store_true",
+                             help="permit paid launch after all canonical approval gates pass")
         command.set_defaults(func=serve, demo=name == "demo")
     for name in ("request", "compare"):
         command = sub.add_parser(name, help=f"run a {name} through a local bridge")

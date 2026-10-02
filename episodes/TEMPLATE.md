@@ -6,7 +6,11 @@ After copying, update the relative links from `../` to `../../` to match the
 new directory depth.
 Add an entry to `dashboard/src/data/episodes.json`, using Episode 0 as the field
 reference, then run `python3 scripts/update_episode_index.py`. The registry row
-is the episode's machine-readable metadata. Use `dashboardView: "guide"` until
+is the episode's machine-readable metadata. Use the registry's current
+`episodeNumbering.version` in new planning artifacts. Historical evidence keeps
+the numbering version and episode identity recorded when it was produced; use
+the registry's explicit old-to-current map for display and never relabel the
+stored evidence. Use `dashboardView: "guide"` until
 a dedicated renderer exists; never point a new episode at Episode 0's charts.
 
 ## Problem and question

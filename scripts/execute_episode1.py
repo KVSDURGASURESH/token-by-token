@@ -143,7 +143,14 @@ def main(argv: list[str] | None = None) -> int:
         execution = execute_prepared_production(
             prepared, private_evidence_directory=args.private_evidence_directory
         )
-        result["status"] = execution.summary.get("status")
+        deletion_verified = execution.summary.get("deletion_verified") is True
+        if not deletion_verified:
+            raise ValueError("production execution did not verify provider deletion")
+        # A production execution returns only after its workload, evidence export,
+        # cleanup, and provider-side deletion verification have all succeeded.  Its
+        # summary deliberately contains facts rather than a second status field.
+        result["status"] = "complete"
+        result["deletion_verified"] = True
     print(json.dumps(result, sort_keys=True))
     return 0
 

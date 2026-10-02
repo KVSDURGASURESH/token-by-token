@@ -9,10 +9,18 @@ from pathlib import Path
 
 BEGIN = "<!-- BEGIN EPISODE INDEX -->"
 END = "<!-- END EPISODE INDEX -->"
+NUMBERING_VERSION = "episode-catalog.v2"
+OLD_TO_CURRENT = {0: 0, 1: 1, 2: 2, 3: 11, 4: 12, 5: 13, 6: 14, 7: 15,
+                  8: 3, 9: 4, 10: 5, 11: 6, 12: 7, 13: 8, 14: 9, 15: 10, 16: 16}
 
 
 def table(registry: Path, root: Path) -> str:
     catalog = json.loads(registry.read_text(encoding="utf-8"))
+    numbering = catalog.get("episodeNumbering", {})
+    if numbering.get("version") != NUMBERING_VERSION:
+        raise ValueError(f"Episode registry must use {NUMBERING_VERSION}.")
+    if numbering.get("oldToCurrent") != {str(old): new for old, new in OLD_TO_CURRENT.items()}:
+        raise ValueError("Episode registry old-to-current compatibility map is invalid.")
     rows = ["| Episode | Experiment | Status | Evidence |", "|---:|---|---|---|"]
     ids, numbers = set(), set()
     for episode in catalog["episodes"]:
@@ -21,6 +29,9 @@ def table(registry: Path, root: Path) -> str:
             raise ValueError("Episode IDs must be unique and use episode-N.")
         if type(number) is not int or number < 0 or number in numbers or identifier != f"episode-{number}":
             raise ValueError("Episode numbers must be unique nonnegative integers matching their IDs.")
+        previous = episode.get("previousNumber")
+        if type(previous) is not int or OLD_TO_CURRENT.get(previous) != number:
+            raise ValueError("Episode previousNumber must match the versioned compatibility map.")
         ids.add(identifier)
         numbers.add(number)
         status = episode["status"]
@@ -38,6 +49,8 @@ def table(registry: Path, root: Path) -> str:
                 raise ValueError("Episode guide must stay inside the repository.")
             title = f"[{title}]({guide})"
         rows.append(f"| {number} | {title} | {status.capitalize()} | {evidence} |")
+    if [episode["number"] for episode in catalog["episodes"]] != list(range(17)):
+        raise ValueError("Episode registry must be ordered from 0 through 16.")
     return "\n".join(rows)
 
 

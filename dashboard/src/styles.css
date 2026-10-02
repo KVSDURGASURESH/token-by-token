@@ -840,6 +840,22 @@ body:has(.planner-home),html:has(.planner-home){background:#f1eee5;color:#172f2d
 @media(max-width:1050px){.planner-layout{grid-template-columns:1fr}.planner-summary{position:static}.planner-fields.four{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.planner-hero{grid-template-columns:1fr}.planner-safety{max-width:340px}.planner-fields.two,.planner-fields.three,.planner-fields.four,.hypothesis-grid{grid-template-columns:1fr}.runtime-lanes>div{grid-template-columns:1fr}.runtime-lanes .check{padding-bottom:0}.planner-home{padding-inline:14px}.planner-step{padding:18px}.planner-hero h1{font-size:50px}}
 
 /* Keep every route on the same dark canvas while retaining the planner's field-sheet hierarchy. */
+
+.canonical-launch { width: min(1500px, calc(100% - 48px)); margin: 0 auto 80px; }
+.canonical-card { margin: 28px 0; padding: 26px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; background: #101722; border: 1px solid #293647; }
+.canonical-card > div { display: flex; flex-direction: column; gap: 8px; }
+.canonical-card span, .readiness-table header > span { color: #7e91a8; font: 700 11px/1.2 monospace; letter-spacing: .14em; text-transform: uppercase; }
+.canonical-card code { overflow-wrap: anywhere; color: #dcecff; }
+.canonical-card label, .canonical-card pre, .canonical-warning { grid-column: 1 / -1; }
+.canonical-card textarea { width: 100%; margin-top: 8px; padding: 12px; box-sizing: border-box; resize: vertical; background: #080d14; color: #dcecff; border: 1px solid #3c4c60; }
+.canonical-actions { flex-direction: row !important; align-items: end; }
+.canonical-warning { margin: 0; color: #d9b66c; }
+.canonical-card pre { max-height: 240px; overflow: auto; padding: 14px; background: #080d14; color: #afc6df; }
+.readiness-table { padding: 28px; background: #0c121b; border: 1px solid #293647; }
+.readiness-table header h2 { margin: 8px 0; }
+.readiness-table [role="row"] { display: grid; grid-template-columns: 70px 1.1fr 1fr 2.5fr; gap: 18px; align-items: baseline; padding: 14px 0; border-top: 1px solid #253244; }
+.readiness-table [role="row"] p { margin: 0; color: #9fb0c2; }
+@media (max-width: 900px) { .canonical-card { grid-template-columns: 1fr; } .canonical-card label, .canonical-card pre, .canonical-warning { grid-column: auto; } .readiness-table [role="row"] { grid-template-columns: 52px 1fr; } .readiness-table [role="row"] p { grid-column: 2; } }
 body:has(.planner-home),html:has(.planner-home){background:var(--paper);color:var(--ink);color-scheme:dark}
 .planner-home{background-color:var(--paper);background-image:linear-gradient(#4bdcaf0b 1px,transparent 1px),linear-gradient(90deg,#4bdcaf0b 1px,transparent 1px)}
 .planner-home .view-switch{border-color:var(--line)}

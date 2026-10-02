@@ -185,7 +185,7 @@ class ExecuteEpisode1CliAssemblyTests(unittest.TestCase):
                 tokens=[len(item["token_ids"]) for item in self.prompt["fixed"]],
                 telemetry=len(telemetry.specs),
             )
-            return SimpleNamespace(summary={"status": "assembly_stub_complete"})
+            return SimpleNamespace(summary={"deletion_verified": True})
 
         output = io.StringIO()
         with (
@@ -207,7 +207,8 @@ class ExecuteEpisode1CliAssemblyTests(unittest.TestCase):
         result = json.loads(output.getvalue())
         self.assertEqual(0, status)
         self.assertEqual("run", result["mode"])
-        self.assertEqual("assembly_stub_complete", result["status"])
+        self.assertEqual("complete", result["status"])
+        self.assertIs(True, result["deletion_verified"])
         self.assertEqual([512, 2048], observed["tokens"])
         self.assertEqual(len(PRODUCTION_TELEMETRY_SERIES), observed["telemetry"])
         self.assertEqual(1, len(FakeBroker.instances))

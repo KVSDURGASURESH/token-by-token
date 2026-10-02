@@ -1,6 +1,6 @@
 {
   "schema_version": "inference-lab.episode-rehearsal.v1",
-  "episode": 8,
+  "episode": 3,
   "profile_ids": ["vllm-runpod", "sglang-runpod"],
   "suite_repetitions": 5,
   "repetitions": 1,

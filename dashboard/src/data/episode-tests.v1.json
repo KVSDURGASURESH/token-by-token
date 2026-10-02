@@ -1,22 +1,306 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "classification": "endpoint_rehearsal_not_canonical_episode_evidence",
   "episodes": [
-    {"episode":1,"title":"Measurement contract","track":"serving","objective":"Verify the declared prompt, output and latency measurement contract on each selected endpoint.","limitation":"This rehearsal does not replace the pinned ShareGPT and GSM8K release-validation protocol.","cells":[{"id":"short-contract","label":"Short request contract","prompt":"Explain the difference between time to first token and generation speed in three precise sentences.","maximum_output_tokens":96},{"id":"structured-contract","label":"Structured acceptance contract","prompt":"Return JSON with keys definition, risk, and check describing one inference benchmarking error.","maximum_output_tokens":128}]},
-    {"episode":2,"title":"Equal-work runtime baseline","track":"serving","objective":"Send identical work to the selected runtime profiles and retain per-lane latency and output-length evidence.","limitation":"Cold start, device telemetry, exact tokenizer equality and randomized arm order require the formal runner.","cells":[{"id":"equal-short","label":"Equal short work","prompt":"Summarize why equal work is necessary when comparing LLM serving runtimes.","maximum_output_tokens":96},{"id":"equal-long","label":"Equal longer work","prompt":"Write a technical note separating workload equality, output-length equality, quality gates, latency, throughput, and cost.","maximum_output_tokens":192}]},
-    {"episode":3,"title":"Model internals","track":"model","objective":"Rehearse the observable generation contract that accompanies the model-internals lab.","limitation":"An inference endpoint cannot inspect weights, activations, gradients or optimizer state; the core tensor lab remains external.","cells":[{"id":"internals-observable","label":"Observable output contract","prompt":"Describe how embeddings, attention, logits, and sampling transform input tokens into generated tokens.","maximum_output_tokens":160}]},
-    {"episode":4,"title":"LoRA and QLoRA","track":"training","objective":"Compare the serving-side acceptance behavior of profiles configured for base or adapter artifacts.","limitation":"This does not train LoRA or QLoRA, measure training memory, or verify adapter lineage; profiles must already expose the intended artifacts.","cells":[{"id":"adapter-acceptance","label":"Adapter acceptance probe","prompt":"Classify this support request as billing, technical, or account and give a one-sentence rationale: My deployment returns HTTP 503 after loading the model.","maximum_output_tokens":96}]},
-    {"episode":5,"title":"Jev and LLM decisions","track":"decision","objective":"Exercise the shared labeled-decision response contract on configured endpoint profiles.","limitation":"This bridge is OpenAI-compatible; a Jev adapter and labeled corpus are still required for the canonical comparison.","cells":[{"id":"typed-decision","label":"Typed decision probe","prompt":"Return exactly one label from [ALLOW, REVIEW, DENY] for: confidence is low and required evidence is missing.","maximum_output_tokens":24}]},
-    {"episode":6,"title":"Packaging and memory preflight","track":"serving","objective":"Check endpoint reachability, streaming completion and bounded longer-context behavior.","limitation":"GPU visibility, image digest, memory telemetry, controlled OOM and recovery require operator-side evidence.","cells":[{"id":"streaming-preflight","label":"Streaming preflight","prompt":"List five checks for validating an inference container before performance testing.","maximum_output_tokens":128},{"id":"bounded-context","label":"Bounded context probe","prompt":"Explain how KV-cache growth relates to input length, output length, concurrency, and memory pressure.","maximum_output_tokens":192}]},
-    {"episode":7,"title":"Saturation, SLO and cost","track":"serving","objective":"Rehearse bounded concurrent requests and retain runner-observed latency/error aggregates.","limitation":"This bounded bridge is not a saturation harness and does not establish maximum goodput or provider cost.","cells":[{"id":"bounded-load","label":"Bounded load probe","prompt":"Explain SLO-qualified goodput in two sentences.","maximum_output_tokens":96}]},
-    {"episode":8,"title":"Prefix reuse","track":"serving","objective":"Repeat an exact shared prefix across selected endpoints to rehearse cache-sensitive observations.","limitation":"The bridge cannot reset or verify engine prefix-cache state or read native cache-hit counters.","cells":[{"id":"shared-prefix","label":"Exact shared-prefix probe","prompt":"Shared reference: alpha beta gamma delta epsilon. Using only that reference, state the third and fifth terms.","maximum_output_tokens":48},{"id":"shared-prefix-repeat","label":"Exact-prefix repeat","prompt":"Shared reference: alpha beta gamma delta epsilon. Using only that reference, state the third and fifth terms.","maximum_output_tokens":48}]},
-    {"episode":9,"title":"Batching and scheduling","track":"serving","objective":"Rehearse mixed short and long requests under bounded client concurrency.","limitation":"Native scheduler queues, chunk budgets and starvation metrics remain unavailable unless captured outside the endpoint.","cells":[{"id":"short-traffic","label":"Short traffic","prompt":"Define continuous batching.","maximum_output_tokens":48},{"id":"long-traffic","label":"Long traffic","prompt":"Explain continuous batching, chunked prefill, queue delay, decode gaps, fairness, and starvation as separate scheduling concerns.","maximum_output_tokens":192}]},
-    {"episode":10,"title":"Attention and precision","track":"serving","objective":"Compare endpoint profiles that the operator has pinned to attention/precision variants.","limitation":"The bridge cannot verify actual kernel dispatch or checkpoint/KV precision; attach operator-side provenance.","cells":[{"id":"precision-acceptance","label":"Precision quality probe","prompt":"Solve carefully and return only the integer: 173 multiplied by 29.","maximum_output_tokens":24}]},
-    {"episode":11,"title":"Speculation and structured output","track":"serving","objective":"Exercise structured output behavior on profiles configured for baseline or speculative decoding.","limitation":"Accepted draft tokens and verification duration require runtime-native telemetry.","cells":[{"id":"structured-json","label":"Structured JSON probe","prompt":"Return valid JSON only with keys answer and confidence. The answer is the capital of Japan and confidence is a number from 0 to 1.","maximum_output_tokens":64}]},
-    {"episode":12,"title":"Single-node parallelism","track":"topology","objective":"Compare profiles already deployed with declared single-node DP or TP layouts.","limitation":"The bridge does not configure topology or capture collectives, rank placement, NVLink traffic, or memory per rank.","cells":[{"id":"single-node-observable","label":"Single-node serving probe","prompt":"Explain one tradeoff between data parallelism and tensor parallelism for inference.","maximum_output_tokens":96}]},
-    {"episode":13,"title":"Multi-node parallelism","track":"topology","objective":"Compare profiles already deployed on documented multi-node layouts.","limitation":"Node placement, network transport and collective telemetry must be supplied by the operator.","cells":[{"id":"multi-node-observable","label":"Multi-node serving probe","prompt":"Name the evidence needed to attribute a multi-node inference slowdown to communication.","maximum_output_tokens":112}]},
-    {"episode":14,"title":"Disaggregation and routing","track":"topology","objective":"Compare profiles representing colocated or disaggregated/routed serving paths.","limitation":"KV transfer, cache ownership and routing decisions require platform telemetry not exposed by this bridge.","cells":[{"id":"routing-short","label":"Short routed request","prompt":"Define cache-aware routing in one sentence.","maximum_output_tokens":48},{"id":"routing-long","label":"Long routed request","prompt":"Explain how queue delay, cache reuse, load skew, cancellation and fairness interact in cache-aware routing.","maximum_output_tokens":160}]},
-    {"episode":15,"title":"Slurm and Kubernetes","track":"platform","objective":"Exercise service reachability for profiles hosted by the declared orchestration platforms.","limitation":"This does not submit Slurm jobs, mutate Kubernetes, test autoscaling, or validate recovery; platform adapters and evidence are external.","cells":[{"id":"platform-service","label":"Platform service probe","prompt":"List the operational evidence needed to compare Slurm jobs with Kubernetes inference services.","maximum_output_tokens":128}]},
-    {"episode":16,"title":"Release gates and recovery","track":"release","objective":"Run a bounded acceptance rehearsal across candidate profiles and retain sanitized results for gate review.","limitation":"Rollback, fault injection, artifact provenance and provider cleanup remain separate controlled procedures.","cells":[{"id":"release-quality","label":"Release quality probe","prompt":"Return valid JSON only with keys status and reason. Set status to ready only if correctness, latency, error-rate, and cost gates all pass; otherwise use review.","maximum_output_tokens":80},{"id":"release-repeat","label":"Repeatability probe","prompt":"State why a release gate must reject a faster configuration when its quality threshold fails.","maximum_output_tokens":96}]}
-  ]
+    {
+      "episode": 1,
+      "title": "Measurement contract",
+      "track": "serving",
+      "objective": "Verify the declared prompt, output and latency measurement contract on each selected endpoint.",
+      "limitation": "This rehearsal does not replace the pinned ShareGPT and GSM8K release-validation protocol.",
+      "cells": [
+        {
+          "id": "short-contract",
+          "label": "Short request contract",
+          "prompt": "Explain the difference between time to first token and generation speed in three precise sentences.",
+          "maximum_output_tokens": 96
+        },
+        {
+          "id": "structured-contract",
+          "label": "Structured acceptance contract",
+          "prompt": "Return JSON with keys definition, risk, and check describing one inference benchmarking error.",
+          "maximum_output_tokens": 128
+        }
+      ],
+      "previousEpisode": 1
+    },
+    {
+      "episode": 2,
+      "title": "Equal-work runtime baseline",
+      "track": "serving",
+      "objective": "Send identical work to the selected runtime profiles and retain per-lane latency and output-length evidence.",
+      "limitation": "Cold start, device telemetry, exact tokenizer equality and randomized arm order require the formal runner.",
+      "cells": [
+        {
+          "id": "equal-short",
+          "label": "Equal short work",
+          "prompt": "Summarize why equal work is necessary when comparing LLM serving runtimes.",
+          "maximum_output_tokens": 96
+        },
+        {
+          "id": "equal-long",
+          "label": "Equal longer work",
+          "prompt": "Write a technical note separating workload equality, output-length equality, quality gates, latency, throughput, and cost.",
+          "maximum_output_tokens": 192
+        }
+      ],
+      "previousEpisode": 2
+    },
+    {
+      "episode": 3,
+      "title": "Prefix reuse",
+      "track": "serving",
+      "objective": "Repeat an exact shared prefix across selected endpoints to rehearse cache-sensitive observations.",
+      "limitation": "The bridge cannot reset or verify engine prefix-cache state or read native cache-hit counters.",
+      "cells": [
+        {
+          "id": "shared-prefix",
+          "label": "Exact shared-prefix probe",
+          "prompt": "Shared reference: alpha beta gamma delta epsilon. Using only that reference, state the third and fifth terms.",
+          "maximum_output_tokens": 48
+        },
+        {
+          "id": "shared-prefix-repeat",
+          "label": "Exact-prefix repeat",
+          "prompt": "Shared reference: alpha beta gamma delta epsilon. Using only that reference, state the third and fifth terms.",
+          "maximum_output_tokens": 48
+        }
+      ],
+      "previousEpisode": 8
+    },
+    {
+      "episode": 4,
+      "title": "Batching and scheduling",
+      "track": "serving",
+      "objective": "Rehearse mixed short and long requests under bounded client concurrency.",
+      "limitation": "Native scheduler queues, chunk budgets and starvation metrics remain unavailable unless captured outside the endpoint.",
+      "cells": [
+        {
+          "id": "short-traffic",
+          "label": "Short traffic",
+          "prompt": "Define continuous batching.",
+          "maximum_output_tokens": 48
+        },
+        {
+          "id": "long-traffic",
+          "label": "Long traffic",
+          "prompt": "Explain continuous batching, chunked prefill, queue delay, decode gaps, fairness, and starvation as separate scheduling concerns.",
+          "maximum_output_tokens": 192
+        }
+      ],
+      "previousEpisode": 9
+    },
+    {
+      "episode": 5,
+      "title": "Attention and precision",
+      "track": "serving",
+      "objective": "Compare endpoint profiles that the operator has pinned to attention/precision variants.",
+      "limitation": "The bridge cannot verify actual kernel dispatch or checkpoint/KV precision; attach operator-side provenance.",
+      "cells": [
+        {
+          "id": "precision-acceptance",
+          "label": "Precision quality probe",
+          "prompt": "Solve carefully and return only the integer: 173 multiplied by 29.",
+          "maximum_output_tokens": 24
+        }
+      ],
+      "previousEpisode": 10
+    },
+    {
+      "episode": 6,
+      "title": "Speculation and structured output",
+      "track": "serving",
+      "objective": "Exercise structured output behavior on profiles configured for baseline or speculative decoding.",
+      "limitation": "Accepted draft tokens and verification duration require runtime-native telemetry.",
+      "cells": [
+        {
+          "id": "structured-json",
+          "label": "Structured JSON probe",
+          "prompt": "Return valid JSON only with keys answer and confidence. The answer is the capital of Japan and confidence is a number from 0 to 1.",
+          "maximum_output_tokens": 64
+        }
+      ],
+      "previousEpisode": 11
+    },
+    {
+      "episode": 7,
+      "title": "Single-node parallelism",
+      "track": "topology",
+      "objective": "Compare profiles already deployed with declared single-node DP or TP layouts.",
+      "limitation": "The bridge does not configure topology or capture collectives, rank placement, NVLink traffic, or memory per rank.",
+      "cells": [
+        {
+          "id": "single-node-observable",
+          "label": "Single-node serving probe",
+          "prompt": "Explain one tradeoff between data parallelism and tensor parallelism for inference.",
+          "maximum_output_tokens": 96
+        }
+      ],
+      "previousEpisode": 12
+    },
+    {
+      "episode": 8,
+      "title": "Multi-node parallelism",
+      "track": "topology",
+      "objective": "Compare profiles already deployed on documented multi-node layouts.",
+      "limitation": "Node placement, network transport and collective telemetry must be supplied by the operator.",
+      "cells": [
+        {
+          "id": "multi-node-observable",
+          "label": "Multi-node serving probe",
+          "prompt": "Name the evidence needed to attribute a multi-node inference slowdown to communication.",
+          "maximum_output_tokens": 112
+        }
+      ],
+      "previousEpisode": 13
+    },
+    {
+      "episode": 9,
+      "title": "Disaggregation and routing",
+      "track": "topology",
+      "objective": "Compare profiles representing colocated or disaggregated/routed serving paths.",
+      "limitation": "KV transfer, cache ownership and routing decisions require platform telemetry not exposed by this bridge.",
+      "cells": [
+        {
+          "id": "routing-short",
+          "label": "Short routed request",
+          "prompt": "Define cache-aware routing in one sentence.",
+          "maximum_output_tokens": 48
+        },
+        {
+          "id": "routing-long",
+          "label": "Long routed request",
+          "prompt": "Explain how queue delay, cache reuse, load skew, cancellation and fairness interact in cache-aware routing.",
+          "maximum_output_tokens": 160
+        }
+      ],
+      "previousEpisode": 14
+    },
+    {
+      "episode": 10,
+      "title": "Slurm and Kubernetes",
+      "track": "platform",
+      "objective": "Exercise service reachability for profiles hosted by the declared orchestration platforms.",
+      "limitation": "This does not submit Slurm jobs, mutate Kubernetes, test autoscaling, or validate recovery; platform adapters and evidence are external.",
+      "cells": [
+        {
+          "id": "platform-service",
+          "label": "Platform service probe",
+          "prompt": "List the operational evidence needed to compare Slurm jobs with Kubernetes inference services.",
+          "maximum_output_tokens": 128
+        }
+      ],
+      "previousEpisode": 15
+    },
+    {
+      "episode": 11,
+      "title": "Model internals",
+      "track": "model",
+      "objective": "Rehearse the observable generation contract that accompanies the model-internals lab.",
+      "limitation": "An inference endpoint cannot inspect weights, activations, gradients or optimizer state; the core tensor lab remains external.",
+      "cells": [
+        {
+          "id": "internals-observable",
+          "label": "Observable output contract",
+          "prompt": "Describe how embeddings, attention, logits, and sampling transform input tokens into generated tokens.",
+          "maximum_output_tokens": 160
+        }
+      ],
+      "previousEpisode": 3
+    },
+    {
+      "episode": 12,
+      "title": "LoRA and QLoRA",
+      "track": "training",
+      "objective": "Compare the serving-side acceptance behavior of profiles configured for base or adapter artifacts.",
+      "limitation": "This does not train LoRA or QLoRA, measure training memory, or verify adapter lineage; profiles must already expose the intended artifacts.",
+      "cells": [
+        {
+          "id": "adapter-acceptance",
+          "label": "Adapter acceptance probe",
+          "prompt": "Classify this support request as billing, technical, or account and give a one-sentence rationale: My deployment returns HTTP 503 after loading the model.",
+          "maximum_output_tokens": 96
+        }
+      ],
+      "previousEpisode": 4
+    },
+    {
+      "episode": 13,
+      "title": "Jev and LLM decisions",
+      "track": "decision",
+      "objective": "Exercise the shared labeled-decision response contract on configured endpoint profiles.",
+      "limitation": "This bridge is OpenAI-compatible; a Jev adapter and labeled corpus are still required for the canonical comparison.",
+      "cells": [
+        {
+          "id": "typed-decision",
+          "label": "Typed decision probe",
+          "prompt": "Return exactly one label from [ALLOW, REVIEW, DENY] for: confidence is low and required evidence is missing.",
+          "maximum_output_tokens": 24
+        }
+      ],
+      "previousEpisode": 5
+    },
+    {
+      "episode": 14,
+      "title": "Packaging and memory preflight",
+      "track": "serving",
+      "objective": "Check endpoint reachability, streaming completion and bounded longer-context behavior.",
+      "limitation": "GPU visibility, image digest, memory telemetry, controlled OOM and recovery require operator-side evidence.",
+      "cells": [
+        {
+          "id": "streaming-preflight",
+          "label": "Streaming preflight",
+          "prompt": "List five checks for validating an inference container before performance testing.",
+          "maximum_output_tokens": 128
+        },
+        {
+          "id": "bounded-context",
+          "label": "Bounded context probe",
+          "prompt": "Explain how KV-cache growth relates to input length, output length, concurrency, and memory pressure.",
+          "maximum_output_tokens": 192
+        }
+      ],
+      "previousEpisode": 6
+    },
+    {
+      "episode": 15,
+      "title": "Saturation, SLO and cost",
+      "track": "serving",
+      "objective": "Rehearse bounded concurrent requests and retain runner-observed latency/error aggregates.",
+      "limitation": "This bounded bridge is not a saturation harness and does not establish maximum goodput or provider cost.",
+      "cells": [
+        {
+          "id": "bounded-load",
+          "label": "Bounded load probe",
+          "prompt": "Explain SLO-qualified goodput in two sentences.",
+          "maximum_output_tokens": 96
+        }
+      ],
+      "previousEpisode": 7
+    },
+    {
+      "episode": 16,
+      "title": "Release gates and recovery",
+      "track": "release",
+      "objective": "Run a bounded acceptance rehearsal across candidate profiles and retain sanitized results for gate review.",
+      "limitation": "Rollback, fault injection, artifact provenance and provider cleanup remain separate controlled procedures.",
+      "cells": [
+        {
+          "id": "release-quality",
+          "label": "Release quality probe",
+          "prompt": "Return valid JSON only with keys status and reason. Set status to ready only if correctness, latency, error-rate, and cost gates all pass; otherwise use review.",
+          "maximum_output_tokens": 80
+        },
+        {
+          "id": "release-repeat",
+          "label": "Repeatability probe",
+          "prompt": "State why a release gate must reject a faster configuration when its quality threshold fails.",
+          "maximum_output_tokens": 96
+        }
+      ],
+      "previousEpisode": 16
+    }
+  ],
+  "episodeNumberingVersion": "episode-catalog.v2",
+  "compatibility": "Historical episode-suite results retain episode-catalog.v1 IDs; use previousEpisode plus the catalog mapping when comparing them with current plans."
 }

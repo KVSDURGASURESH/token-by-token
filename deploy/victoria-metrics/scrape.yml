@@ -5,3 +5,6 @@ scrape_configs:
     static_configs:
       - targets: ["episode-console:8765"]
     metrics_path: /metrics
+  - job_name: dcgm-exporter
+    file_sd_configs:
+      - files: ["/etc/victoria-metrics/dcgm-targets.yml"]

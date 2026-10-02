@@ -182,7 +182,9 @@ def run_episode(
     result = {
         "schema_version": RESULT_SCHEMA_VERSION,
         "classification": REGISTRY["classification"],
+        "episode_numbering_version": REGISTRY["episodeNumberingVersion"],
         "episode": config["episode"], "title": pack["title"], "track": pack["track"],
+        "previous_episode": pack.get("previousEpisode"),
         "objective": pack["objective"], "limitation": pack["limitation"],
         "config_sha256": digest, "cancelled": cancellation.is_set(), "cells": cells,
         "effective_config": config,

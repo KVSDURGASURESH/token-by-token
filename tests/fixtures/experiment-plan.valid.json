@@ -1,6 +1,6 @@
 {
   "schema_version":"inference-lab.experiment-plan.v1","planning_only":true,"execution_ready":false,"execution_authorized":false,
-  "identity":{"episode":8,"track":"serving","template_id":"episode-8-prefix-reuse","template_version":1,"label":"Prefix reuse — 日本語"},
+  "identity":{"episode":3,"track":"serving","template_id":"episode-3-prefix-reuse","template_version":2,"label":"Prefix reuse — 日本語"},
   "hypothesis":"slow_first_token",
   "model":{"model_id":"Qwen/Qwen2.5-32B-Instruct","revision":"unknown","tokenizer_id":"Qwen/Qwen2.5-32B-Instruct","tokenizer_revision":"unknown","template_id":"unknown"},
   "runtime_lanes":[{"engine":"vllm","selected":true,"requested_version":null,"image_digest":null},{"engine":"sglang","selected":true,"requested_version":null,"image_digest":null}],
