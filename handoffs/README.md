@@ -10,7 +10,7 @@ YYYY-MM-DDTHH-MM-SSZ-<short-topic>.md
 
 ## Current handoff
 
-- [2026-10-02T21-27-47Z — Canonical execution readiness and adapter gaps](2026-10-02T21-27-47Z-canonical-execution-readiness.md)
+- [2026-10-06T12-11-11Z — Static evidence publication](2026-10-06T12-11-11Z-static-evidence-publication.md)
 
 ## Update convention
 

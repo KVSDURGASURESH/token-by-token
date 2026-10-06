@@ -1,7 +1,7 @@
 # Static Evidence, Methodology, and Theme Design
 
 **Date:** 2026-10-06  
-**Status:** Approved in conversation; awaiting written-spec review  
+**Status:** Implemented and locally verified; external publishing unverified
 **Scope:** Token by Token static dashboard, Episode 01 evidence, methodology route, and site-wide Light/Dark themes
 
 ## 1. Objective
@@ -17,7 +17,7 @@ Turn the final H200 benchmark evidence into a public, static learning experience
 
 ## 2. Evidence position
 
-The source repository is synchronized to commit `042dc4c`. Its final report, per-level tables, per-request evidence, and compressed time-series exports are private build inputs, not public site assets.
+The final accepted source release supplied a report, per-level tables, per-request evidence, and compressed time-series exports. These remain private build inputs, not public site assets.
 
 The public study will distinguish three claim classes:
 
@@ -300,3 +300,19 @@ Completion requires:
 - Re-running paid benchmarks or changing provider resources.
 - Treating a private single-level profile run as public engine capacity.
 - Publishing raw prompts, requests, tool payloads, or session content.
+
+## 11. Implementation evidence
+
+The implemented system uses a closed, versioned public schema and committed static JSON. Episode 01 exposes only the two public engine names and the matched 12, 16, and 24-user observations. The methodology route explains the workload population, accumulated request anatomy, session replay, protocol gates, synchronized evidence views, metric definitions, and the observed/not-established boundary without naming the private producer or sponsor.
+
+Local verification completed on 2026-10-06:
+
+- deterministic public-evidence, immutable-snapshot binding, and privacy contract tests passed;
+- TypeScript checking and the production Vite build passed;
+- source and compiled privacy scans reported no high-confidence findings;
+- the production bundle rendered every public hash with off-origin requests blocked;
+- Episode 01, Methodology, the Session Field Note, imported results, planner, and theme behaviors passed browser acceptance at their declared widths;
+- twelve Light/Dark captures were inspected at 1440, 768, and 390 px;
+- Episode 00, legacy hashes, lab routes, and the separate archived concept workspace were preserved.
+
+An independent GPT-6 Astra xhigh review requested changes. Its important privacy, receipt-binding, invalid-level, pre-write validation, Light-mode contrast, navigation-overlap, and Episode 01 guide findings were resolved and the affected tests were rerun. The full command/result record and screenshots are in `docs/validation/2026-10-06-static-site-qa.md`. Three unrelated production-execution tests remain red because this workstation's Python patch version differs from the immutable captured execution environment; the limitation is recorded there. Deployment to an external host, production-domain behavior, and owner-only publishing steps are not verified by the local build.

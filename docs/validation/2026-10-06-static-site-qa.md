@@ -8,7 +8,8 @@ This record covers the privacy-safe Episode 01 evidence page, the public methodo
 
 | Check | Command | Result |
 |---|---|---|
-| Python suite | `PYTHONPATH=src .venv/bin/python -m pytest -q` | **567 passed, 3 skipped, 3 failed.** The three failures are confined to the production-execution environment lock: the captured contract requires CPython 3.12.13 and this workstation is running 3.12.15. No dashboard, evidence, privacy, or publication test failed. |
+| Python suite | `PYTHONPATH=src .venv/bin/python -m pytest -q` | **572 passed, 3 skipped, 3 failed.** The three failures are confined to the production-execution environment lock: the captured contract requires CPython 3.12.13 and this workstation is running 3.12.15. No dashboard, evidence, privacy, or publication test failed. |
+| Focused publication tests | `.venv/bin/python -m pytest tests/test_publication_privacy.py tests/test_offline_workflow.py tests/test_static_evidence_pipeline.py -q` | **27 passed.** |
 | TypeScript | `npm run check --prefix dashboard` | Passed. |
 | Production build | `npm run build --prefix dashboard` | Passed; 49 modules transformed. |
 | Dashboard contracts | `for test in tests/dashboard_*_contract.cjs; do node "$test"; done` | Passed: Episode 01 evidence, methodology, Session Field Note data, and theme contracts. |
@@ -16,7 +17,7 @@ This record covers the privacy-safe Episode 01 evidence page, the public methodo
 | Session Field Note | `node tests/dashboard_session_study_acceptance.cjs http://127.0.0.1:5196/` | Passed at 1440, 768, and 390 px. |
 | Episode 01 | `node tests/dashboard_instrument_acceptance.cjs http://127.0.0.1:5196/` | Passed at 1440, 768, and 390 px. |
 | Methodology | `node tests/dashboard_methodology_acceptance.cjs http://127.0.0.1:5196/` | Passed at 1440, 768, and 390 px. |
-| Themes | `node tests/dashboard_theme_acceptance.cjs http://127.0.0.1:5196/` | Passed across every public route at 1440 and 390 px. |
+| Themes | `node tests/dashboard_theme_acceptance.cjs http://127.0.0.1:5196/` | Passed across every public route at 1440, 1280, 768, and 390 px. |
 | Experiment planner | `node tests/dashboard_planner_acceptance.cjs` | Passed at 390 and 1440 px. The user-owned test file was not modified or staged by this work. |
 | Compiled offline site | `node tests/dashboard_offline_acceptance.cjs dashboard/dist` | Passed: every public hash rendered while non-local requests were blocked. |
 | Source privacy | `.venv/bin/python scripts/check_publication_privacy.py --root .` | Passed with the scanner's documented heuristic limitation. |
@@ -51,6 +52,10 @@ Captures:
 - `docs/dashboard-captures/static-evidence/methodology-dark-1440.png`
 - `docs/dashboard-captures/static-evidence/methodology-dark-768.png`
 - `docs/dashboard-captures/static-evidence/methodology-dark-390.png`
+
+## Independent review resolution
+
+A separate GPT-6 Astra xhigh session reviewed scientific claims, privacy, accessibility, static/offline behavior, theme consistency, and route preservation without editing the branch. Its important findings were closed before this final run: the public Episode 00 renderer now imports a separate allowlisted presentation document while the immutable archival snapshot stays unchanged; validation receipts are checksum-bound to source archives and require the exact successful client/engine/GPU checks; invalid measurement levels are rejected; generated output receives value-level privacy validation before atomic replacement; Light-mode retained-study colors were tokenized and contrast-tested; the 1280 px navigation overlap was removed; and the Episode 01 guide was corrected to the real H200 inference-engine study. The reviewer also identified draft-publication privacy work; those user-owned drafts remain unstaged and are explicitly a prerequisite for later owner publication.
 
 ## Preservation
 

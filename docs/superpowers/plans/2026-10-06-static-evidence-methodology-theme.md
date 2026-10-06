@@ -12,7 +12,7 @@
 
 ## Progress overview
 
-**Current:** Task 8 — responsive, accessibility, preservation, and visual QA
+**Current:** Complete — implementation, independent review, verification, and handoff recorded
 
 - [x] 1. Freeze the public evidence contract and write failing pipeline tests
 - [x] 2. Build and validate the local-only VictoriaMetrics evidence importer
@@ -21,8 +21,8 @@
 - [x] 5. Build the interactive methodology page
 - [x] 6. Add persistent Light/Dark themes across every public route
 - [x] 7. Add compiled-bundle privacy and offline-publication gates
-- [ ] 8. Run responsive, accessibility, preservation, and visual QA
-- [ ] 9. Reconcile documentation, record evidence, and complete final review
+- [x] 8. Run responsive, accessibility, preservation, and visual QA
+- [x] 9. Reconcile documentation, record evidence, and complete final review
 
 ## Non-negotiable constraints
 
@@ -526,7 +526,7 @@ git commit -m "test: gate static publication privacy and offline use"
 - Create: `docs/validation/2026-10-06-static-site-qa.md`
 - Create screenshots under: `docs/dashboard-captures/static-evidence/`
 
-- [ ] **Step 8.1: Run the complete automated suite**
+- [x] **Step 8.1: Run the complete automated suite**
 
 ```bash
 python -m pytest -q
@@ -537,30 +537,30 @@ for test in tests/dashboard_*_contract.cjs; do node "$test"; done
 
 Then run all applicable Playwright acceptance scripts against one local server.
 
-- [ ] **Step 8.2: Verify preservation explicitly**
+- [x] **Step 8.2: Verify preservation explicitly**
 
 Confirm Episode 00, Session Field Note, canonical hash routes, fixture/lab routes, and all concept artifacts still render and retain their data. No route may silently redirect to Episode 01.
 
-- [ ] **Step 8.3: Run keyboard and reduced-motion QA**
+- [x] **Step 8.3: Run keyboard and reduced-motion QA**
 
 Tab through navigation, theme switch, episode selection, load sweeper, request anatomy, and session replay. Verify visible focus, logical order, correct focus restoration, no keyboard traps, and reduced-motion behavior.
 
-- [ ] **Step 8.4: Capture both themes at all target widths**
+- [x] **Step 8.4: Capture both themes at all target widths**
 
 Capture Episode 01 and methodology at 1440, 768, and 390 px in Light and Dark. Inspect typography, clipping, chart labels, semantic colors, overflow, sticky controls, and 200% zoom.
 
-- [ ] **Step 8.5: Run the source and compiled privacy scans one final time**
+- [x] **Step 8.5: Run the source and compiled privacy scans one final time**
 
 ```bash
 python scripts/check_publication_privacy.py --root .
 python scripts/check_publication_privacy.py --root dashboard/dist --files-only
 ```
 
-- [ ] **Step 8.6: Record exact evidence**
+- [x] **Step 8.6: Record exact evidence**
 
 Write the commands, pass/fail results, screenshot paths, inspected routes, browser widths, and known limitations in `docs/validation/2026-10-06-static-site-qa.md`. Do not copy private receipt contents.
 
-- [ ] **Step 8.7: Commit QA fixes and evidence**
+- [x] **Step 8.7: Commit QA fixes and evidence**
 
 ```bash
 git add dashboard/src tests docs/validation/2026-10-06-static-site-qa.md docs/dashboard-captures/static-evidence
@@ -577,19 +577,19 @@ git commit -m "test: verify the static benchmark experience"
 - Modify: this plan
 - Create or modify the current operational handoff under `handoffs/`
 
-- [ ] **Step 9.1: Document the one-time evidence lifecycle**
+- [x] **Step 9.1: Document the one-time evidence lifecycle**
 
 State clearly that VictoriaMetrics/Grafana are needed only when approved source evidence changes; ordinary builds and all public viewing use the committed static JSON alone.
 
-- [ ] **Step 9.2: Document reproducible public build commands**
+- [x] **Step 9.2: Document reproducible public build commands**
 
 Include schema tests, static generation, privacy scan, dashboard build, compiled scan, and offline test. Refer to private inputs by role, never by internal path or identifier.
 
-- [ ] **Step 9.3: Update status documents**
+- [x] **Step 9.3: Update status documents**
 
 Mark the design spec implemented only after all verification passes. Check every completed item in this plan and leave incomplete work unchecked with a concise reason.
 
-- [ ] **Step 9.4: Review the complete diff**
+- [x] **Step 9.4: Review the complete diff**
 
 ```bash
 git status --short
@@ -600,11 +600,11 @@ git log --oneline --decorate -15
 
 Confirm unrelated user changes were not staged or rewritten.
 
-- [ ] **Step 9.5: Request final code/design review and fix findings**
+- [x] **Step 9.5: Request final code/design review and fix findings**
 
 Review for scientific claims, privacy, accessibility, static/offline behavior, theme consistency, and preservation. Re-run affected tests after every fix.
 
-- [ ] **Step 9.6: Commit the handoff**
+- [x] **Step 9.6: Commit the handoff**
 
 ```bash
 git add README.md docs/superpowers/specs/2026-10-06-static-evidence-methodology-theme-design.md docs/superpowers/plans/2026-10-06-static-evidence-methodology-theme.md handoffs
@@ -613,11 +613,11 @@ git commit -m "docs: hand off the static benchmark publication"
 
 ## Definition of done
 
-- [ ] Every progress-overview item and implementation step is checked.
-- [ ] Public source and compiled assets contain no prohibited internal material.
-- [ ] Episode 01 uses only valid matched 12/16/24-user evidence and makes no engine-only causal or capacity claim.
-- [ ] Methodology explains what, why, and how without naming the private tool or sponsor.
-- [ ] Light and Dark themes work on every public route without first-paint flash.
-- [ ] The production bundle works with all non-local network access blocked.
-- [ ] Episode 00, Session Field Note, legacy routes, and archived concepts are preserved.
-- [ ] Exact test/build/QA evidence is recorded, and any unverified external publishing step is labeled unverified.
+- [x] Every progress-overview item and implementation step is checked.
+- [x] Public source and compiled assets contain no prohibited internal material.
+- [x] Episode 01 uses only valid matched 12/16/24-user evidence and makes no engine-only causal or capacity claim.
+- [x] Methodology explains what, why, and how without naming the private tool or sponsor.
+- [x] Light and Dark themes work on every public route without first-paint flash.
+- [x] The production bundle works with all non-local network access blocked.
+- [x] Episode 00, Session Field Note, legacy routes, and archived concepts are preserved.
+- [x] Exact test/build/QA evidence is recorded, and any unverified external publishing step is labeled unverified.

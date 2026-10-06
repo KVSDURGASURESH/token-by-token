@@ -26,7 +26,7 @@ fully bound plan and the owner's exact approval before any resource is created.
 | Episode | Experiment | Status | Evidence |
 |---:|---|---|---|
 | 0 | [Warm-up](episodes/00-warm-up/README.md) | Available | Exploratory recorded study |
-| 1 | Measurement and quality contracts | Planned | Local contract fixture — no provider measurement |
+| 1 | [Measure what matters](episodes/01-measure-what-matters/README.md) | Available | Recorded exploratory H200 runtime comparison — capacity not established |
 | 2 | Equal-work runtime baseline | Planned | Planned — no measurements |
 | 3 | Prefix reuse | Planned | Planned — no measurements |
 | 4 | Batching, scheduling and mixed traffic | Planned | Planned — no measurements |
@@ -77,6 +77,13 @@ study, start the [local dashboard](episodes/00-warm-up/README.md#explore-it-loca
 and understand the experiment's limits. Once the dashboard is running, its
 [episode index](http://127.0.0.1:5173/#episodes) is the default home.
 
+Episode 01 is the recorded H200 deployment comparison. Open
+[`#episode-1`](http://127.0.0.1:5173/#episode-1) to explore the matched 12,
+16, and 24-user evidence, or [`#methodology`](http://127.0.0.1:5173/#methodology)
+to see how realistic multi-turn sessions, protocol gates, and aligned client,
+engine, and GPU measurements become a public result. Both pages are static and
+work in Light or Dark mode.
+
 For a zero-GPU streamed request race, use the Episode 1
 [Quick test](docs/episode-1-preparation/quick-test.md). Its browser and CLI use
 the same versioned configuration and runner. Quick test results are interactive
@@ -102,6 +109,36 @@ A new paid run must follow the canonical [Runpod setup](docs/runpod-setup.md),
 [execution-plan authoring guide](docs/execution-plan-authoring.md). Each run
 needs an immutable image digest, maximum charge, exact approval, permanent
 deletion of every created resource, and provider-side verification of deletion.
+
+### Static publication lifecycle
+
+The metrics import is a one-time construction step for each approved evidence
+release. Local VictoriaMetrics and Grafana are used to validate the source
+windows and produce the allowlisted aggregate document; they are not website
+dependencies. Ordinary builds and every public page use only the committed
+`dashboard/src/data/episode-1-public.v1.json`. The raw metrics export, private
+reports, receipts, containers, and dashboards are neither published nor needed
+again unless the approved source evidence changes.
+
+Rebuild and verify the committed public site with:
+
+```bash
+python3 -m unittest tests.test_static_evidence_pipeline tests.test_episode1_public_evidence tests.test_publication_privacy
+python3 scripts/check_publication_privacy.py --root .
+npm --prefix dashboard ci
+npm --prefix dashboard run check
+npm --prefix dashboard run build
+python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
+node tests/dashboard_offline_acceptance.cjs dashboard/dist
+```
+
+When—and only when—an approved private evidence release changes, regenerate the
+static document locally with `scripts/build_static_benchmark_evidence.py`. Pass
+the three private run directories by evidence role, the successful validation
+receipts, the public schema, and the public output path. Then run the entire
+sequence above. Never commit the private inputs or receipts. The exact local QA
+record is in
+[docs/validation/2026-10-06-static-site-qa.md](docs/validation/2026-10-06-static-site-qa.md).
 
 ## Contributing and licensing
 
