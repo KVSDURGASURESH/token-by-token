@@ -12,7 +12,7 @@
 
 ## Progress overview
 
-**Current:** Task 3 — sanitized static data bundle (next)
+**Current:** Task 3 — generating the deterministic public Episode 01 bundle
 
 - [x] 1. Freeze the public evidence contract and write failing pipeline tests
 - [x] 2. Build and validate the local-only VictoriaMetrics evidence importer

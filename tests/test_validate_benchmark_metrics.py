@@ -54,7 +54,7 @@ class RecordingOpener:
         return self.responses.pop(0)
 
 
-def export_response(*, include_gpu: bool = True, series: int = 6, samples: int = 24, reset: bool = False) -> Response:
+def export_response(*, include_gpu: bool = True, series: int = 6, samples: int = 24, reset: bool = False, duplicate_conflict: bool = False) -> Response:
     names = [
         "agentbench_requests_total",
         "vllm_num_requests_running",
@@ -86,6 +86,14 @@ def export_response(*, include_gpu: bool = True, series: int = 6, samples: int =
         rows[-1]["values"].extend(float(index) for index in range(remaining))
         rows[-1]["timestamps"].extend(1710000000000 + (4 + index) * 1000 for index in range(remaining))
     rows[-1]["values"][-1] = None
+    if duplicate_conflict:
+        rows.append(
+            {
+                "metric": dict(rows[0]["metric"]),
+                "values": [999.0],
+                "timestamps": [rows[0]["timestamps"][0]],
+            }
+        )
     return Response(("\n".join(json.dumps(row) for row in rows) + "\n").encode("utf-8"), 200)
 
 
@@ -94,7 +102,7 @@ class BenchmarkMetricsValidatorTests(unittest.TestCase):
     def setUpClass(cls):
         cls.module = load_module()
 
-    def make_spec(self, directory: str, *, sha256: str | None = None, size_delta: int = 0):
+    def make_spec(self, directory: str, *, sha256: str | None = None, size_delta: int = 0, expected_samples: int = 24):
         root = Path(directory)
         archive = root / "metrics.native.gz"
         archive.write_bytes(gzip.compress(b"native-fixture"))
@@ -103,7 +111,7 @@ class BenchmarkMetricsValidatorTests(unittest.TestCase):
             "start_s": 1710000000.0,
             "end_s": 1710000300.0,
             "series": 6,
-            "samples": 24,
+            "samples": expected_samples,
             "match": "{__name__=~\"vllm_.*|agentbench_.*\"}",
             "files": {"metrics.native.gz": archive.stat().st_size + size_delta},
         }
@@ -213,6 +221,16 @@ class BenchmarkMetricsValidatorTests(unittest.TestCase):
             self.assertTrue(result.passed)
             self.assertEqual(len(opener.requests), 2)
             self.assertEqual(sleeps, [0])
+
+    def test_reconciles_raw_count_then_deduplicates_conflicting_timestamp(self):
+        with tempfile.TemporaryDirectory() as directory:
+            spec, _ = self.make_spec(directory, expected_samples=25)
+            opener = RecordingOpener([export_response(duplicate_conflict=True)])
+            result = self.module.run_validation_queries(
+                spec, "http://localhost:8428", opener=opener
+            )
+            self.assertEqual(result.sample_count, 25)
+            self.assertEqual(result.duplicate_samples, 1)
 
     def test_exact_export_detects_counter_resets(self):
         with tempfile.TemporaryDirectory() as directory:

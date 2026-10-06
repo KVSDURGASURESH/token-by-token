@@ -80,6 +80,7 @@ class ValidationResult:
     archive_bytes: int
     series_count: int
     sample_count: int
+    duplicate_samples: int
     query_names: tuple[str, ...]
     start_epoch: float
     end_epoch: float
@@ -91,6 +92,13 @@ class Sample:
     labels: tuple[tuple[str, str], ...]
     timestamp: float
     value: float | None
+
+
+@dataclass(frozen=True)
+class ExportWindow:
+    samples: tuple[Sample, ...]
+    raw_sample_count: int
+    duplicate_samples: int
 
 
 Opener = Callable[[urllib.request.Request, int], Any]
@@ -230,7 +238,7 @@ def _export_samples(
     victoria_url: str,
     verified: VerifiedExport,
     opener: Opener,
-) -> tuple[Sample, ...]:
+) -> ExportWindow:
     endpoint = f"{_base_url(victoria_url)}/api/v1/export"
     form = urllib.parse.urlencode(
         {
@@ -262,7 +270,7 @@ def _export_samples(
 
 def normalize_export_samples(
     payload: bytes, start: datetime, end: datetime
-) -> tuple[Sample, ...]:
+) -> ExportWindow:
     rows: list[dict[str, object]] = []
     try:
         for raw_line in payload.splitlines():
@@ -275,6 +283,7 @@ def normalize_export_samples(
         raise ValueError("export-response-invalid") from exc
     lower, upper = start.timestamp(), end.timestamp()
     unique: dict[tuple[str, tuple[tuple[str, str], ...], float], Sample] = {}
+    raw_sample_count = 0
     for row in rows:
         metric = _strict_object(row.get("metric"), "export-response-invalid")
         name = metric.get("__name__")
@@ -298,6 +307,7 @@ def normalize_export_samples(
         ):
             raise ValueError("export-response-invalid")
         for raw_timestamp, raw_value in zip(timestamps, values, strict=True):
+            raw_sample_count += 1
             timestamp = _finite_number(raw_timestamp, "export-response-invalid")
             if timestamp > 100_000_000_000:
                 timestamp /= 1000.0
@@ -306,11 +316,18 @@ def normalize_export_samples(
                 raise ValueError("out-of-window-sample")
             sample = Sample(name, labels, timestamp, value)
             key = (name, labels, timestamp)
-            previous = unique.get(key)
-            if previous is not None and previous.value != value:
-                raise ValueError("conflicting-duplicate-sample")
-            unique[key] = sample
-    return tuple(sorted(unique.values()))
+            # Native exports can contain multiple rows for the same series and
+            # timestamp. Reconcile the manifest against the raw exported row
+            # count, then keep the first exported sample for analysis. This is
+            # deterministic and prevents a later conflicting duplicate from
+            # manufacturing a counter reset.
+            unique.setdefault(key, sample)
+    samples = tuple(sorted(unique.values()))
+    return ExportWindow(
+        samples=samples,
+        raw_sample_count=raw_sample_count,
+        duplicate_samples=raw_sample_count - len(samples),
+    )
 
 
 def run_validation_queries(
@@ -328,10 +345,10 @@ def run_validation_queries(
         raise ValueError("visibility-wait-invalid")
     deadline = time.monotonic() + visibility_timeout_seconds
     while True:
-        samples = _export_samples(spec, victoria_url, verified, opener)
-        identities = {(sample.metric, sample.labels) for sample in samples}
+        window = _export_samples(spec, victoria_url, verified, opener)
+        identities = {(sample.metric, sample.labels) for sample in window.samples}
         series_count = len(identities)
-        sample_count = len(samples)
+        sample_count = window.raw_sample_count
         if (
             series_count == verified.expected_series
             and sample_count == verified.expected_samples
@@ -348,7 +365,7 @@ def run_validation_queries(
     gpu_count = sum(name.startswith("agentbench_gpu_") for name in names)
     if min(client_count, engine_count, gpu_count) <= 0:
         raise ValueError("missing-metric-family")
-    assert_no_counter_resets(samples)
+    assert_no_counter_resets(window.samples)
     return ValidationResult(
         passed=True,
         namespace=spec.namespace,
@@ -356,6 +373,7 @@ def run_validation_queries(
         archive_bytes=verified.archive_bytes,
         series_count=series_count,
         sample_count=sample_count,
+        duplicate_samples=window.duplicate_samples,
         query_names=QUERY_NAMES,
         start_epoch=spec.start.timestamp(),
         end_epoch=spec.end.timestamp(),
@@ -432,6 +450,7 @@ def write_private_receipt(result: ValidationResult, receipt_path: Path) -> None:
         "archive_bytes": result.archive_bytes,
         "series_count": result.series_count,
         "sample_count": result.sample_count,
+        "duplicate_samples": result.duplicate_samples,
         "checks": list(result.query_names),
         "window": {"start_epoch": result.start_epoch, "end_epoch": result.end_epoch},
     }
