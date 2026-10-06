@@ -73,6 +73,8 @@ The build fails on forbidden names, absolute paths, endpoint syntax, result/run 
 
 The browser never queries a live time-series service.
 
+VictoriaMetrics and Grafana are **build-time, local-only validation tools**. They are used once when a new private evidence release is accepted—or again only when the source evidence changes. After extraction and verification, the generated static JSON becomes the website's complete data source. Publishing and viewing the site require neither service, their containers, the raw `.gz` exports, nor access to the private evidence repository.
+
 ```text
 private reports + compressed native metrics
                  │
@@ -126,6 +128,19 @@ The static generator emits one versioned JSON document with:
 - public methodology facts.
 
 No runtime fetch is required. The same input produces byte-stable output.
+
+### 4.4 Lifecycle
+
+For each accepted evidence release:
+
+1. start or reuse the loopback-only VictoriaMetrics and Grafana containers;
+2. import and validate the private metrics exports;
+3. generate and privacy-scan the static evidence JSON;
+4. build and test the static website using only that JSON;
+5. prove the website works with network access disabled;
+6. optionally stop the local containers without affecting the built site.
+
+Steps 1–3 are repeated only when approved source evidence changes. Normal site builds may reuse the already generated, version-controlled static JSON and do not require re-importing metrics.
 
 ## 5. Methodology page
 
