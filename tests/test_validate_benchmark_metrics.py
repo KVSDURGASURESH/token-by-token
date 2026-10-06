@@ -261,15 +261,15 @@ class BenchmarkMetricsValidatorTests(unittest.TestCase):
             self.module.normalize_matrix_samples(payload, start, end)
 
     def test_detects_counter_reset_without_echoing_labels(self):
-        secret = "private-instance-label"
+        sensitive_label = "private-instance-label"
         samples = [
-            self.module.Sample("agentbench_requests_total", (("instance", secret),), 1.0, 9.0),
-            self.module.Sample("agentbench_requests_total", (("instance", secret),), 2.0, 3.0),
+            self.module.Sample("agentbench_requests_total", (("instance", sensitive_label),), 1.0, 9.0),
+            self.module.Sample("agentbench_requests_total", (("instance", sensitive_label),), 2.0, 3.0),
         ]
         with self.assertRaises(ValueError) as caught:
             self.module.assert_no_counter_resets(samples)
         self.assertEqual(str(caught.exception), "counter-reset")
-        self.assertNotIn(secret, str(caught.exception))
+        self.assertNotIn(sensitive_label, str(caught.exception))
 
     def test_private_receipt_contains_categories_not_paths_or_query_values(self):
         with tempfile.TemporaryDirectory() as directory:

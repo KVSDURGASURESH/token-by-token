@@ -194,16 +194,12 @@ export function SessionCapacityStudy() {
         </div>
       </section>
 
-      <section className="session-section" aria-labelledby="config-title">
+      <section className="session-section" aria-labelledby="comparison-boundary-title">
         <header className="session-section-heading">
-          <h2 id="config-title">Configuration matrix</h2>
-          <p>Shared model and workload hashes improve comparability. Differing software details prevent a pure hardware-only claim.</p>
+          <h2 id="comparison-boundary-title">Comparison boundary</h2>
+          <p>The public field note names the engine and measured hardware only. Internal serving details are intentionally withheld and cannot support a pure hardware-only claim.</p>
         </header>
-        <div className="session-table-wrap" tabIndex={0} aria-label="Configuration matrix">
-          <table><thead><tr><th>Setting</th><th>RTX PRO 6000</th><th>H200</th></tr></thead>
-            <tbody>{study.configuration.map((row) => <tr key={row.setting}><th scope="row">{row.setting}</th><td>{row.rtx}</td><td>{row.h200}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <div className="boundary-columns" aria-label="Deployment comparison boundary"><section><h3>Public basis</h3><ul><li>Same model family and precision.</li><li>Same recorded session workload and measured user levels.</li><li>One RTX PRO 6000 deployment and one H200 deployment, both served by vLLM.</li></ul></section><section><h3>Withheld</h3><ul><li>Serving profiles, launch flags and internal optimization recipes.</li><li>Software build and package details.</li><li>Any claim that those undisclosed differences were controlled.</li></ul></section></div>
       </section>
 
       <section className="session-section evidence-boundary" aria-labelledby="boundary-title">

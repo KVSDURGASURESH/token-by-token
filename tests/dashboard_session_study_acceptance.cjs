@@ -15,7 +15,7 @@ const screenshotDir = process.env.DASHBOARD_SCREENSHOT_DIR;
   });
   try {
     for (const width of [1440, 768, 390]) {
-      const page = await browser.newPage({ viewport: { width, height: 900 } });
+      const page = await browser.newPage({ viewport: { width, height: 900 }, colorScheme: "dark" });
       const errors = [];
       const requests = [];
       page.on("pageerror", (error) => errors.push(error.message));
@@ -26,7 +26,7 @@ const screenshotDir = process.env.DASHBOARD_SCREENSHOT_DIR;
       assert.equal(await page.getByRole("heading", { name: /Three percent more output/i }).count(), 1);
       assert.equal(await page.getByText("Capacity not established", { exact: true }).count(), 1);
       assert.equal(await page.locator(".session-plot").count(), 3);
-      assert.equal(await page.locator('[aria-label="Configuration matrix"] tbody tr').count() > 5, true);
+      assert.match(await page.getByLabel("Deployment comparison boundary").innerText(), /Serving profiles, launch flags and internal optimization recipes/i);
       assert.equal(await page.locator('[aria-label="Previous study comparison table"] tbody tr').count() > 4, true);
       assert.match(await page.locator(".tension-lanes").innerText(), /359\.81.*371\.32/s);
       assert.match(await page.locator(".tension-lanes").innerText(), /1\.17.*22\.23/s);

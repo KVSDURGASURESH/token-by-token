@@ -12,7 +12,7 @@
 
 ## Progress overview
 
-**Current:** Task 7 — adding compiled-bundle privacy and offline gates
+**Current:** Task 8 — responsive, accessibility, preservation, and visual QA
 
 - [x] 1. Freeze the public evidence contract and write failing pipeline tests
 - [x] 2. Build and validate the local-only VictoriaMetrics evidence importer
@@ -20,7 +20,7 @@
 - [x] 4. Remove internal profile/configuration material from Episode 01
 - [x] 5. Build the interactive methodology page
 - [x] 6. Add persistent Light/Dark themes across every public route
-- [ ] 7. Add compiled-bundle privacy and offline-publication gates
+- [x] 7. Add compiled-bundle privacy and offline-publication gates
 - [ ] 8. Run responsive, accessibility, preservation, and visual QA
 - [ ] 9. Reconcile documentation, record evidence, and complete final review
 
@@ -474,19 +474,19 @@ git commit -m "feat: add persistent light and dark themes"
 - Create: `tests/dashboard_offline_acceptance.cjs`
 - Modify: `.github/workflows/ci.yml` if that is the active workflow; otherwise modify the existing dashboard workflow found during implementation.
 
-- [ ] **Step 7.1: Add failing privacy regressions**
+- [x] **Step 7.1: Add failing privacy regressions**
 
 Add category-only tests for forbidden public benchmark/tool and sponsor names, profile/configuration keys, known private optimization terms, versions attached to engine labels, run/result identifiers, endpoint syntax, and absolute paths. Ensure error output never echoes the matched value.
 
-- [ ] **Step 7.2: Support explicit compiled-asset scanning**
+- [x] **Step 7.2: Support explicit compiled-asset scanning**
 
 Add `--include-dir dashboard/dist` or an equivalent explicit root list so normal source scans continue excluding generic `dist`, while the publication gate scans the generated JS/CSS/HTML bundle.
 
-- [ ] **Step 7.3: Add the offline browser test**
+- [x] **Step 7.3: Add the offline browser test**
 
 Build the site, serve `dashboard/dist`, abort every HTTP request not targeting the local static server, then visit every public hash. Assert charts and methodology content render with no failed external dependency.
 
-- [ ] **Step 7.4: Add CI ordering**
+- [x] **Step 7.4: Add CI ordering**
 
 CI must execute:
 
@@ -498,7 +498,7 @@ Python evidence/privacy tests
 → offline Playwright test
 ```
 
-- [ ] **Step 7.5: Run and commit publication gates**
+- [x] **Step 7.5: Run and commit publication gates**
 
 ```bash
 python -m unittest tests.test_publication_privacy -v

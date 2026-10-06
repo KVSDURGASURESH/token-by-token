@@ -84,6 +84,34 @@ class PublicationPrivacyTests(unittest.TestCase):
         )
         self.assertEqual(MODULE.scan_text("package-lock.json", text), set())
 
+    def test_public_policy_rejects_private_names_versions_and_optimization_terms(self):
+        private_tool = "Agent" + "Bench"
+        private_org = "MIRA" + "STACKLABS"
+        engine_version = "vLLM " + "0.31.0"
+        optimization = "mamba" + "-full-memory-ratio"
+        text = "\n".join((private_tool, private_org, engine_version, optimization))
+        findings = MODULE.scan_text("assets/public.js", text, public_policy=True)
+        self.assertEqual(
+            {item.category for item in findings},
+            {
+                "private-benchmark-name",
+                "private-organization-name",
+                "engine-version",
+                "private-optimization-term",
+            },
+        )
+        rendered = "\n".join(item.render() for item in findings)
+        for value in (private_tool, private_org, engine_version, optimization):
+            self.assertNotIn(value, rendered)
+
+    def test_public_evidence_rejects_private_metadata_keys(self):
+        key = "config" + "uration"
+        findings = MODULE.scan_text(
+            "episode-1-public.v1.json", '{"' + key + '":"withheld"}'
+        )
+        self.assertEqual({item.category for item in findings}, {"private-evidence-key"})
+        self.assertNotIn(key, "\n".join(item.render() for item in findings))
+
     def test_lock_version_is_not_an_ip_but_same_line_private_ip_is(self):
         harmless = "nvidia-curand==" + "10.4." + "0.35"
         self.assertEqual(MODULE.scan_text("vllm.lock", harmless), set())

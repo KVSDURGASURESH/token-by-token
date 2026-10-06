@@ -33,7 +33,7 @@ jobs:
         run: python3 scripts/verify_bundle.py "$RUNNER_TEMP/rehearsal"
       - name: Install Python test dependencies
         run: python3 -m pip install '.[test]'
-      - name: Run offline tests
+      - name: Run Python evidence and privacy tests
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - uses: actions/setup-node@v4
         with:
@@ -46,3 +46,9 @@ jobs:
         run: npm --prefix dashboard run check
       - name: Build dashboard
         run: npm --prefix dashboard run build
+      - name: Scan compiled publication bundle
+        run: python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
+      - name: Install headless browser
+        run: npx --prefix dashboard playwright install --with-deps chromium
+      - name: Verify static bundle works offline
+        run: node tests/dashboard_offline_acceptance.cjs dashboard/dist

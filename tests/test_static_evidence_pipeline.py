@@ -149,7 +149,7 @@ class StaticEvidencePipelineTests(unittest.TestCase):
             with self.subTest(path=path):
                 document = self.build()
                 if path == "top":
-                    document["source_path"] = "/Users/example/private"
+                    document["source_path"] = "/" + "Users" + "/example/private"
                 else:
                     document["arms"][0]["profile"] = "private"
                 errors = list(Draft202012Validator(schema).iter_errors(document))

@@ -91,6 +91,17 @@ LOCKED_DEPENDENCY_VERSION_LINE_RE = re.compile(
     r"(?i)^\s*[A-Z0-9_.-]+(?:\[[A-Z0-9_,.-]+\])?\s*==\s*"
     r"(?:\d+!)?\d+(?:\.\d+){3}(?:[A-Z0-9_.+-]*)?\s*\\?\s*$"
 )
+PUBLIC_TOOL_NAME_RE = re.compile(r"\bagentbench\b", re.IGNORECASE)
+PUBLIC_ORGANIZATION_RE = re.compile(r"\bmirastacklabs\b", re.IGNORECASE)
+ENGINE_VERSION_RE = re.compile(r"\b(?:vllm|sglang)\s+v?\d+(?:\.\d+){1,3}\b", re.IGNORECASE)
+PRIVATE_OPTIMIZATION_RE = re.compile(
+    r"\b(?:extra_buffer_lazy|mamba-full-memory-ratio|triton\s+gdn|language-only\s+mode)\b",
+    re.IGNORECASE,
+)
+EVIDENCE_PRIVATE_KEY_RE = re.compile(
+    r'["\'](?:profile|configuration|run_id|result_id|source_path|endpoint|service_instance_id)["\']\s*:',
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True, order=True)
@@ -240,7 +251,14 @@ def _private_host(host: str | None) -> bool:
     )
 
 
-def _scan_line(location: str, line_number: int, line: str, *, lockfile: bool) -> set[Finding]:
+def _scan_line(
+    location: str,
+    line_number: int,
+    line: str,
+    *,
+    lockfile: bool,
+    public_policy: bool,
+) -> set[Finding]:
     findings: set[Finding] = set()
 
     def add(category: str) -> None:
@@ -248,6 +266,17 @@ def _scan_line(location: str, line_number: int, line: str, *, lockfile: bool) ->
 
     if PRIVATE_KEY_RE.search(line):
         add("private-key")
+    if public_policy:
+        if PUBLIC_TOOL_NAME_RE.search(line):
+            add("private-benchmark-name")
+        if PUBLIC_ORGANIZATION_RE.search(line):
+            add("private-organization-name")
+        if ENGINE_VERSION_RE.search(line):
+            add("engine-version")
+        if PRIVATE_OPTIMIZATION_RE.search(line):
+            add("private-optimization-term")
+    if PurePosixPath(location.split(":", 1)[-1]).name == "episode-1-public.v1.json" and EVIDENCE_PRIVATE_KEY_RE.search(line):
+        add("private-evidence-key")
     if not (lockfile and re.search(r"(?i)\b(?:integrity|checksum|resolved)\b", line)):
         if any(pattern.search(line) for pattern in TOKEN_PATTERNS):
             add("credential-token")
@@ -293,15 +322,25 @@ def _scan_line(location: str, line_number: int, line: str, *, lockfile: bool) ->
     return findings
 
 
-def scan_text(location: str, text: str) -> set[Finding]:
+def scan_text(location: str, text: str, *, public_policy: bool = False) -> set[Finding]:
     lockfile = PurePosixPath(location.split(":", 1)[-1]).name in LOCKFILE_NAMES
     findings: set[Finding] = set()
     for line_number, line in enumerate(text.splitlines(), 1):
-        findings.update(_scan_line(location, line_number, line, lockfile=lockfile))
+        findings.update(
+            _scan_line(
+                location,
+                line_number,
+                line,
+                lockfile=lockfile,
+                public_policy=public_policy,
+            )
+        )
     return findings
 
 
-def scan_snapshot(root: Path, *, files_only: bool = False) -> set[Finding]:
+def scan_snapshot(
+    root: Path, *, files_only: bool = False, public_policy: bool = False
+) -> set[Finding]:
     findings: set[Finding] = set()
     for relative in publication_paths(root, files_only=files_only):
         path = root / relative
@@ -313,7 +352,9 @@ def scan_snapshot(root: Path, *, files_only: bool = False) -> set[Finding]:
         except OSError as exc:
             raise PrivacyCheckError(f"unable to read publication file: {relative.as_posix()}") from exc
         if text is not None:
-            findings.update(scan_text(relative.as_posix(), text))
+            findings.update(
+                scan_text(relative.as_posix(), text, public_policy=public_policy)
+            )
     return findings
 
 
@@ -363,14 +404,27 @@ def scan_history(root: Path) -> set[Finding]:
 
 
 def check(
-    root: Path, *, history: bool = False, files_only: bool = False
+    root: Path,
+    *,
+    history: bool = False,
+    files_only: bool = False,
+    public_policy: bool = False,
 ) -> tuple[Finding, ...]:
     resolved = root.expanduser().resolve()
     if not resolved.is_dir():
         raise PrivacyCheckError("root must be an existing directory")
     if history and files_only:
         raise PrivacyCheckError("--history and --files-only cannot be combined")
-    findings = scan_history(resolved) if history else scan_snapshot(resolved, files_only=files_only)
+    strict_public_policy = public_policy or resolved.name == "dist"
+    findings = (
+        scan_history(resolved)
+        if history
+        else scan_snapshot(
+            resolved,
+            files_only=files_only,
+            public_policy=strict_public_policy,
+        )
+    )
     return tuple(sorted(findings))
 
 
@@ -390,13 +444,23 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="scan package files directly without probing or invoking Git",
     )
+    parser.add_argument(
+        "--public-policy",
+        action="store_true",
+        help="also reject private benchmark names, engine versions, and optimization terms",
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     try:
-        findings = check(args.root, history=args.history, files_only=args.files_only)
+        findings = check(
+            args.root,
+            history=args.history,
+            files_only=args.files_only,
+            public_policy=args.public_policy,
+        )
     except PrivacyCheckError as exc:
         print(f"privacy-check error: {exc}", file=sys.stderr)
         return 2

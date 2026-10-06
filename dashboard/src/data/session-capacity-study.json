@@ -5,8 +5,7 @@
   "classification": "exploratory recorded deployment study",
   "capacity_qualified": false,
   "model": "Qwen/Qwen3.6-27B-FP8",
-  "model_revision": "e89b16ebf1988b3d6befa7de50abc2d76f26eb09",
-  "runtime": "vLLM 0.20.1",
+  "runtime": "vLLM",
   "context_limit_tokens": 131072,
   "actual_prompt_min_tokens": 1170,
   "actual_prompt_max_tokens": 6691,
@@ -23,25 +22,11 @@
     "drain_timeout_seconds": 120,
     "description": "Synthetic multi-turn coding and issue-fix session replay. Tools were not executed and task correctness was not scored."
   },
-  "configuration": [
-    {"setting": "GPU", "rtx": "RTX PRO 6000 Blackwell Server Edition", "h200": "H200"},
-    {"setting": "Memory noted by runbook", "rtx": "~97,887 MiB", "h200": "~143,771 MiB"},
-    {"setting": "Model / precision", "rtx": "Qwen3.6-27B-FP8", "h200": "Qwen3.6-27B-FP8"},
-    {"setting": "Engine", "rtx": "vLLM 0.20.1", "h200": "vLLM 0.20.1"},
-    {"setting": "Tensor parallelism", "rtx": "1", "h200": "1"},
-    {"setting": "Context limit", "rtx": "131,072", "h200": "131,072"},
-    {"setting": "Scheduled sequences", "rtx": "8", "h200": "8"},
-    {"setting": "Batched-token budget", "rtx": "16,384", "h200": "16,384"},
-    {"setting": "Prefix caching", "rtx": "Enabled; session scope", "h200": "Enabled; session scope"},
-    {"setting": "GPU memory flag", "rtx": "0.955 config; 0.95 runbook", "h200": "0.95"},
-    {"setting": "Runtime stack", "rtx": "CUDA 13.0 wheels; Torch 2.11", "h200": "CUDA 12.9 wheels; Torch 2.11"},
-    {"setting": "Additional launch detail", "rtx": "Committed combo omits some H200 flags", "h200": "Language-only mode; Triton GDN prefill"}
-  ],
   "previous_study": [
     {"dimension": "Question", "previous": "How did two serving configurations behave?", "current": "How did two deployments behave as conversational load increased?"},
     {"dimension": "Model", "previous": "Qwen2.5-32B-Instruct · BF16", "current": "Qwen3.6-27B-FP8"},
     {"dimension": "Hardware", "previous": "One H100 80GB per run", "current": "One RTX PRO 6000 or one H200"},
-    {"dimension": "Runtime", "previous": "vLLM 0.29.0 vs SGLang 0.5.20", "current": "vLLM 0.20.1 on both deployments"},
+    {"dimension": "Runtime", "previous": "vLLM vs SGLang", "current": "vLLM on both deployments"},
     {"dimension": "Traffic", "previous": "Deterministic exact-token prompts", "current": "Synthetic multi-turn session replay"},
     {"dimension": "Main lesson", "previous": "Delivered work complicates runtime rankings", "current": "Throughput and waiting complicate user sizing"}
   ],
