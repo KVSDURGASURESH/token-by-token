@@ -12,7 +12,13 @@ const chapters = [
   ["method-meaning", "What it means"],
 ] as const;
 
-const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+const scrollTo = (id: string) => {
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.tabIndex = -1;
+  target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  target.focus({ preventScroll: true });
+};
 
 export function MethodologyPage() {
   return <div className="method-page">

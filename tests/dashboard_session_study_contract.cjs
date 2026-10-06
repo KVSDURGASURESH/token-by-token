@@ -10,8 +10,11 @@ const study = JSON.parse(fs.readFileSync(dataPath, "utf8"));
 
 assert.equal(study.study_id, "session-capacity-2026-10-05");
 assert.equal(study.capacity_qualified, false);
-assert.equal(study.context_limit_tokens, 131072);
 assert.equal(study.actual_prompt_max_tokens, 6691);
+for (const key of ["context_limit_tokens", "server_sequence_cap", "max_output_tokens", "drain_timeout_seconds"]) {
+  assert.equal(key in study, false, `public field note leaked ${key}`);
+  assert.equal(key in study.workload, false, `public field note workload leaked ${key}`);
+}
 assert.deepEqual(study.levels, [2, 4, 8, 16, 32, 64, 100]);
 assert.equal(study.deployments.length, 2);
 

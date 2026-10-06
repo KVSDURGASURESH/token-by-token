@@ -112,6 +112,20 @@ class PublicationPrivacyTests(unittest.TestCase):
         self.assertEqual({item.category for item in findings}, {"private-evidence-key"})
         self.assertNotIn(key, "\n".join(item.render() for item in findings))
 
+    def test_episode_zero_public_copy_omits_revision_versions_and_serving_recipes(self):
+        data = (ROOT / "dashboard/src/data/episode-0-public.json").read_text(
+            encoding="utf-8"
+        ).lower()
+        source = (ROOT / "dashboard/src/PublishedRunpodStudy.tsx").read_text(encoding="utf-8").lower()
+        for forbidden in ("model_revision", "v0.29.0", "v0.5.20", "flashattention", "prefix caching", "chunked prefill", "triton attention"):
+            self.assertNotIn(forbidden, data + source)
+        self.assertIn('from "./data/episode-0-public.json"', source)
+        self.assertNotIn('from "./data/latest.json"', source)
+
+    def test_public_policy_detects_colon_separated_engine_versions(self):
+        findings = MODULE.scan_text("assets/public.js", "vLLM: v0.29.0", public_policy=True)
+        self.assertEqual({item.category for item in findings}, {"engine-version"})
+
     def test_lock_version_is_not_an_ip_but_same_line_private_ip_is(self):
         harmless = "nvidia-curand==" + "10.4." + "0.35"
         self.assertEqual(MODULE.scan_text("vllm.lock", harmless), set())

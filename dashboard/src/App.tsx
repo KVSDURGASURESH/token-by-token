@@ -43,7 +43,7 @@ export function App() {
       <main className={methodology ? "methodology-home" : episode?.dashboardView === "episode1-instrument" ? "instrument-home" : !local && !quick && !planner && !runner && !canonical && !sessionStudy && !episode ? "lab-home" : sessionStudy ? "session-study-home" : planner ? "planner-home" : runner || canonical ? "runner-home" : undefined}>
       <ThemeSwitch />
       <nav className="view-switch reader-navigation" aria-label="Results view">
-        <a href="#episodes" aria-current={!local && !quick && !planner && !runner && !canonical && !sessionStudy && !episode ? "page" : undefined}>Episodes</a>
+        <a href="#episodes" aria-current={!local && !quick && !planner && !runner && !canonical && !sessionStudy && !methodology && !episode ? "page" : undefined}>Episodes</a>
         <a href="#episode-0" aria-current={episode?.id === "episode-0" ? "page" : undefined}>Episode 00</a>
         <a href="#episode-1" aria-current={episode?.id === "episode-1" ? "page" : undefined}>Episode 01</a>
         <a href="#session-study" aria-current={sessionStudy ? "page" : undefined}>Field notes</a>

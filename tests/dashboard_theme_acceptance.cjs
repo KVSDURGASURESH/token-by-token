@@ -16,7 +16,7 @@ const routes = ["episodes", "episode-0", "episode-1", "session-study", "methodol
     assert.equal(await systemPage.evaluate(() => localStorage.getItem("token-by-token-theme")), null);
     await systemContext.close();
 
-    for (const width of [1440, 390]) {
+    for (const width of [1440, 1280, 768, 390]) {
       const context = await browser.newContext({ viewport: { width, height: 1000 }, colorScheme: "dark", reducedMotion: "reduce" });
       const page = await context.newPage();
       await page.goto(`${base}#episodes`, { waitUntil: "networkidle" });
@@ -25,6 +25,16 @@ const routes = ["episodes", "episode-0", "episode-1", "session-study", "methodol
       assert.equal(await group.locator('button[aria-pressed="true"]').count(), 1);
       const box = await group.boundingBox();
       assert(box && box.x + box.width > width - 46 && box.y < 40, "theme switch must remain at the top right");
+      if (width === 1280 || width === 768) {
+        await page.goto(`${base}#episode-1`, { waitUntil: "networkidle" });
+        const beforeTheme = await page.evaluate(() => document.documentElement.dataset.theme);
+        const toolsBox = await page.getByText("Lab tools", { exact: true }).boundingBox();
+        const switchBox = await page.getByRole("group", { name: "Color theme" }).boundingBox();
+        assert(toolsBox && switchBox && (toolsBox.x + toolsBox.width <= switchBox.x || switchBox.x + switchBox.width <= toolsBox.x || toolsBox.y + toolsBox.height <= switchBox.y || switchBox.y + switchBox.height <= toolsBox.y), "theme switch must not geometrically cover Lab tools");
+        await page.getByText("Lab tools", { exact: true }).click();
+        assert.equal(await page.locator("nav details").getAttribute("open"), "", "theme switch must not cover Lab tools");
+        assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), beforeTheme);
+      }
 
       await group.getByRole("button", { name: "Light" }).click();
       assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), "light");

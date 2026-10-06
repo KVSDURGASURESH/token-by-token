@@ -44,7 +44,6 @@ export type StudyFacts = {
 export type PublishedStudy = {
   classification: string;
   model: string;
-  model_revision: string;
   gpu: string;
   precision: string;
   cells: PublishedCell[];

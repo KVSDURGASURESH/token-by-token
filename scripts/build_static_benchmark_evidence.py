@@ -6,9 +6,11 @@ from __future__ import annotations
 import argparse
 import csv
 import gzip
+import hashlib
 import json
 import math
 import os
+import re
 import tempfile
 from collections.abc import Mapping, Sequence
 from collections import defaultdict
@@ -135,6 +137,8 @@ def _public_point(raw: object, *, threshold: float, seen_loads: set[int]) -> dic
     level_valid = point.get("level_valid")
     if not isinstance(level_valid, bool):
         raise ValueError("level_valid must be boolean")
+    if not level_valid:
+        raise ValueError("invalid level cannot be published")
     metrics = _mapping(point.get("metrics"), "metrics")
     missing = set(METRIC_BY_ID).difference(metrics)
     if missing:
@@ -371,16 +375,50 @@ def _counter_rate_samples(
     return _downsample(samples)
 
 
-def _assert_receipts(receipts: Sequence[Path]) -> None:
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    try:
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+    except OSError as exc:
+        raise ValueError("private source archive is unreadable") from exc
+    return digest.hexdigest()
+
+
+def _assert_receipts(receipts: Sequence[Path], run_roots: Sequence[Path]) -> None:
     if not receipts:
         raise ValueError("validated private receipts are required")
+    expected_hashes = {_file_sha256(root / "metrics" / "metrics.csv.gz") for root in run_roots}
+    receipt_hashes: set[str] = set()
     for path in receipts:
         try:
             receipt = _mapping(json.loads(path.read_text(encoding="utf-8")), "receipt")
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
             raise ValueError("private validation receipt is unreadable") from exc
-        if receipt.get("status") != "passed" or receipt.get("dashboard_checks") is None:
+        checks = receipt.get("dashboard_checks")
+        window = receipt.get("window")
+        archive_sha256 = receipt.get("archive_sha256")
+        if (
+            not isinstance(checks, Mapping)
+            or set(checks) != {"client", "engine", "gpu"}
+            or any(state not in {"passed", "passed_with_declared_gaps"} for state in checks.values())
+        ):
+            raise ValueError("private validation receipt dashboard checks failed")
+        if (
+            receipt.get("schema") != "private-metrics-validation.v1"
+            or receipt.get("status") != "passed"
+            or not isinstance(window, Mapping)
+            or not isinstance(window.get("start_epoch"), (int, float))
+            or not isinstance(window.get("end_epoch"), (int, float))
+            or window["start_epoch"] >= window["end_epoch"]
+            or not isinstance(archive_sha256, str)
+            or not re.fullmatch(r"[0-9a-f]{64}", archive_sha256)
+        ):
             raise ValueError("private validation receipt is incomplete")
+        receipt_hashes.add(archive_sha256)
+    if receipt_hashes != expected_hashes:
+        raise ValueError("private validation receipts do not bind the supplied source archives")
 
 
 def build_private_source_from_runs(
@@ -391,7 +429,7 @@ def build_private_source_from_runs(
 ) -> dict[str, object]:
     """Extract only approved aggregates and chart samples from private run directories."""
 
-    _assert_receipts(receipts)
+    _assert_receipts(receipts, (vllm_12_run, vllm_16_24_run, sglang_run))
     run_map = {
         ("vLLM", 12): vllm_12_run,
         ("vLLM", 16): vllm_16_24_run,
@@ -498,6 +536,19 @@ def validate_public_document(document: Mapping[str, object], schema: Mapping[str
         raise ValueError(f"public evidence schema validation failed at {location}")
 
 
+def validate_public_privacy(document: Mapping[str, object]) -> None:
+    payload = json.dumps(document, ensure_ascii=False, sort_keys=True)
+    forbidden = (
+        re.compile(r"(?:vllm|sglang)\s*:?\s*v?\d+\.\d+", re.IGNORECASE),
+        re.compile(r"/(?:Users|home|srv|var|tmp)/"),
+        re.compile(r"\b(?:agentbench|mirastacklabs)\b", re.IGNORECASE),
+        re.compile(r"\b(?:flashattention|prefix caching|chunked prefill|triton attention|pytorch sampling)\b", re.IGNORECASE),
+        re.compile(r"https?://", re.IGNORECASE),
+    )
+    if any(pattern.search(payload) for pattern in forbidden):
+        raise ValueError("public evidence privacy validation failed")
+
+
 def serialize_public_document(document: Mapping[str, object]) -> bytes:
     return (json.dumps(document, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
 
@@ -505,6 +556,7 @@ def serialize_public_document(document: Mapping[str, object]) -> bytes:
 def write_if_valid(document: Mapping[str, object], schema_path: Path, output_path: Path) -> None:
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validate_public_document(document, schema)
+    validate_public_privacy(document)
     payload = serialize_public_document(document)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path: Path | None = None

@@ -13,6 +13,13 @@ export function EpisodeShell({ study, chapters, children }: { study: EvidenceStu
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [open]);
+  const activateChapter = (id: string) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+    target.tabIndex = -1;
+    target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    target.focus({ preventScroll: true });
+  };
 
   return <div className="instrument-shell">
     <header className="instrument-masthead">
@@ -23,7 +30,7 @@ export function EpisodeShell({ study, chapters, children }: { study: EvidenceStu
         </button>
       </div>
       {open && <section id="episode-chooser-panel" className="episode-chooser-panel" aria-label="Episode index">
-        {catalog.episodes.map((episode) => <a key={episode.id} href={`#${episode.id}`} aria-current={episode.id === `episode-${study.number}` ? "page" : undefined} onClick={() => setOpen(false)}>
+        {catalog.episodes.map((episode) => <a key={episode.id} href={episode.status === "available" ? `#${episode.id}` : `#experiment-planner?episode=${episode.number}`} aria-current={episode.id === `episode-${study.number}` ? "page" : undefined} onClick={() => setOpen(false)}>
           <b>{String(episode.number).padStart(2, "0")}</b><span>{episode.title}<small>{episode.status === "available" ? episode.evidence : "Planned"}</small></span>
         </a>)}
       </section>}
@@ -38,7 +45,7 @@ export function EpisodeShell({ study, chapters, children }: { study: EvidenceStu
           <div><dt>How</dt><dd>{study.how}</dd></div>
         </dl>
         <nav className="instrument-chapters" aria-label="Study chapters">
-          {chapters.map((chapter, index) => <button key={chapter.id} type="button" onClick={() => document.getElementById(chapter.id)?.scrollIntoView({ behavior: "smooth", block: "start" })}><span>{String(index + 1).padStart(2, "0")}</span>{chapter.label}</button>)}
+          {chapters.map((chapter, index) => <button key={chapter.id} type="button" onClick={() => activateChapter(chapter.id)}><span>{String(index + 1).padStart(2, "0")}</span>{chapter.label}</button>)}
         </nav>
       </aside>
       <article className="instrument-story">

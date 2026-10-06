@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import math
@@ -84,6 +85,16 @@ class StaticEvidencePipelineTests(unittest.TestCase):
                 self.module.write_if_valid(invalid, SCHEMA, destination)
             self.assertEqual(destination.read_bytes(), b"approved\n")
 
+    def test_write_if_valid_rejects_private_free_text_before_replacement(self):
+        document = self.build()
+        document["study"]["title"] = "private engine v9.9 at /srv/internal/results"
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory) / "public.json"
+            destination.write_bytes(b"approved\n")
+            with self.assertRaisesRegex(ValueError, "privacy"):
+                self.module.write_if_valid(document, SCHEMA, destination)
+            self.assertEqual(destination.read_bytes(), b"approved\n")
+
     def test_rejects_unapproved_engine(self):
         source = copy.deepcopy(self.source)
         source["source_arms"][0]["engine"] = "OtherEngine"
@@ -103,6 +114,41 @@ class StaticEvidencePipelineTests(unittest.TestCase):
         point["level_valid"] = True
         with self.assertRaisesRegex(ValueError, "error rate"):
             self.build(source)
+
+    def test_rejects_invalid_level_even_when_marked_invalid(self):
+        source = copy.deepcopy(self.source)
+        point = source["source_arms"][0]["points"][0]
+        point["metrics"]["error_rate_pct"] = 50
+        point["level_valid"] = False
+        with self.assertRaisesRegex(ValueError, "invalid level"):
+            self.build(source)
+
+    def test_receipts_require_successful_dashboard_checks_and_bind_each_run_archive(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            runs = []
+            receipts = []
+            for index in range(3):
+                run = root / f"run-{index}"
+                archive = run / "metrics" / "metrics.csv.gz"
+                archive.parent.mkdir(parents=True)
+                archive.write_bytes(f"archive-{index}".encode())
+                runs.append(run)
+                receipt = root / f"receipt-{index}.json"
+                receipt.write_text(json.dumps({
+                    "schema": "private-metrics-validation.v1",
+                    "status": "passed",
+                    "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+                    "window": {"start_epoch": 1, "end_epoch": 2},
+                    "dashboard_checks": {"client": "passed", "engine": "passed", "gpu": "passed"},
+                }))
+                receipts.append(receipt)
+            self.module._assert_receipts(receipts, runs)
+            failed = json.loads(receipts[0].read_text())
+            failed["dashboard_checks"]["gpu"] = "failed"
+            receipts[0].write_text(json.dumps(failed))
+            with self.assertRaisesRegex(ValueError, "dashboard"):
+                self.module._assert_receipts(receipts, runs)
 
     def test_rejects_averaged_percentiles(self):
         source = copy.deepcopy(self.source)

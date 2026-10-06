@@ -138,7 +138,7 @@ export function SessionCapacityStudy() {
       <section className="session-section matched-study" aria-labelledby="matched-title">
         <header className="session-section-heading">
           <h2 id="matched-title">The matched 16-user soaks</h2>
-          <p>Fifteen measured minutes per deployment. Up to 32 client requests could be in flight; the server sequence cap was eight.</p>
+          <p>Fifteen measured minutes per deployment. Up to 32 client requests could be in flight; serving profiles and runtime controls remain withheld.</p>
         </header>
         <div className="soak-comparison">{study.deployments.map((deployment) => <SoakColumn deployment={deployment} key={deployment.id} />)}</div>
         <p className="metric-definition">Aggregate output is valid completion tokens divided by cohort duration including bounded drain. Visible TTFT measures the interval from client request start to the first text-content event; missing timings are excluded. Request decode rate is client-derived and may include reasoning or tool events; it is not direct GPU decode speed.</p>
@@ -215,8 +215,8 @@ export function SessionCapacityStudy() {
           </ul></section>
           <section><h3>Not established</h3><ul>
             <li>No “16 production users,” exact knee or universal GPU multiplier.</li>
-            <li>The context limit was 131,072 tokens. Valid prompts peaked at 6,569 tokens in the soaks and 6,691 across the sweeps.</li>
-            <li>Prefix caching was enabled, but per-request cached-token evidence was absent.</li>
+            <li>Valid prompts peaked at 6,569 tokens in the soaks and 6,691 across the sweeps; results do not establish behavior beyond the observed prompt distribution.</li>
+            <li>Serving profiles and cache controls are withheld, so the study does not attribute outcomes to a specific optimization.</li>
             <li>Tools were not executed and coding-task correctness was not scored.</li>
           </ul></section>
         </div>

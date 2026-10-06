@@ -6,7 +6,6 @@
   "capacity_qualified": false,
   "model": "Qwen/Qwen3.6-27B-FP8",
   "runtime": "vLLM",
-  "context_limit_tokens": 131072,
   "actual_prompt_min_tokens": 1170,
   "actual_prompt_max_tokens": 6691,
   "levels": [2, 4, 8, 16, 32, 64, 100],
@@ -14,12 +13,9 @@
     "sessions": 50,
     "turns": 914,
     "slots_per_user": 2,
-    "server_sequence_cap": 8,
-    "max_output_tokens": 512,
     "warmup_seconds": 60,
     "sweep_measure_seconds": 180,
     "soak_measure_seconds": 900,
-    "drain_timeout_seconds": 120,
     "description": "Synthetic multi-turn coding and issue-fix session replay. Tools were not executed and task correctness was not scored."
   },
   "previous_study": [
@@ -34,7 +30,7 @@
     {
       "id": "rtx-pro-6000",
       "label": "RTX PRO 6000",
-      "color": "#ff7043",
+      "color": "var(--session-deployment-a)",
       "soak": {
         "users": 16,
         "measured": 2340,
@@ -63,7 +59,7 @@
     {
       "id": "h200",
       "label": "H200",
-      "color": "#45d6ae",
+      "color": "var(--session-deployment-b)",
       "soak": {
         "users": 16,
         "measured": 3586,

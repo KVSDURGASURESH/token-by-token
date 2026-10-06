@@ -49,6 +49,10 @@ const screenshotDir = process.env.DASHBOARD_SCREENSHOT_DIR;
       const selectedComparison = page.locator('[aria-label="Selected sweep comparison"]');
       assert.match(await selectedComparison.innerText(), /H200.*258\.45.*8\.88.*45\.18.*16\.91%.*521 \/ 627/s);
       assert.match(await selectedComparison.innerText(), /RTX PRO 6000.*228\.46.*17\.88.*20\.46.*0\.39%.*511 \/ 513/s);
+      const publicText = (await page.locator("body").innerText()).toLowerCase();
+      for (const forbidden of ["server sequence cap", "context limit", "prefix caching", "max output tokens"]) {
+        assert.equal(publicText.includes(forbidden), false, `public field note leaked ${forbidden}`);
+      }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth), false);
       assert.deepEqual(errors, []);
       assert(requests.every((request) => new URL(request).origin === new URL(base).origin));
@@ -60,6 +64,22 @@ const screenshotDir = process.env.DASHBOARD_SCREENSHOT_DIR;
       await page.close();
       console.log(`Session study passed at ${width}px: evidence, tables, charts, no overflow, local-only requests.`);
     }
+    const lightPage = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: "light" });
+    await lightPage.addInitScript(() => localStorage.setItem("token-by-token-theme", "light"));
+    await lightPage.goto(`${base}#session-study`, { waitUntil: "networkidle" });
+    const contrasts = await lightPage.evaluate(() => {
+      const luminance = (color) => {
+        const channels = color.match(/[\d.]+/g).slice(0, 3).map(value => Number(value) / 255).map(value => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+      };
+      const background = luminance(getComputedStyle(document.querySelector("main")).backgroundColor);
+      return [...document.querySelectorAll(".session-legend i")].slice(0, 2).map(node => {
+        const foreground = luminance(getComputedStyle(node).backgroundColor);
+        return (Math.max(background, foreground) + 0.05) / (Math.min(background, foreground) + 0.05);
+      });
+    });
+    assert(contrasts.every(value => value >= 3), `Light-mode chart contrast must be at least 3:1; got ${contrasts.join(", ")}`);
+    await lightPage.close();
   } finally {
     await browser.close();
   }

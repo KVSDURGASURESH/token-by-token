@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import studyJson from "./data/latest.json";
+import studyJson from "./data/episode-0-public.json";
 import { ScientificCharts } from "./ScientificCharts";
 import { TelemetryCharts } from "./TelemetryCharts";
 import {
@@ -87,7 +87,7 @@ export function PublishedRunpodStudy() {
           <h1>{identity.title}</h1>
           <p>{study.model} / {study.precision} / {study.gpu}</p>
         </div>
-        <code title={study.model_revision}>revision {study.model_revision.slice(0, 12)}…</code>
+        <code>public aggregate · source revision withheld</code>
       </header>
 
       <section className="metric-strip" aria-label="Study totals">
@@ -117,7 +117,7 @@ export function PublishedRunpodStudy() {
       <section className="evidence-board" aria-labelledby="board-title">
         <div className="section-label">
           <h2 id="board-title">Measured performance</h2>
-          <p>Six categorical workloads pair both runtimes. Input length and concurrency change together across profiles, so the charts do not represent a controlled concurrency sweep.</p>
+          <p>Six categorical workloads pair both runtimes. Input length and concurrency change together across workloads, so the charts do not represent a controlled concurrency sweep.</p>
         </div>
         <ScientificCharts cells={study.cells} />
       </section>
@@ -140,7 +140,7 @@ export function PublishedRunpodStudy() {
             <caption>Complete normalized client-side streaming results. Request totals and metric evidence are reported per row; unavailable evidence is never inferred.</caption>
             <thead>
               <tr>
-                <th>Runtime / profile</th>
+                <th>Runtime / workload</th>
                 <th>TTFT p50 / p95 / p99</th>
                 <th>TPOT p50 / p95 / p99</th>
                 <th>ITL p50 / p95 / p99</th>

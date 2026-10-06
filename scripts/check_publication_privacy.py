@@ -93,7 +93,7 @@ LOCKED_DEPENDENCY_VERSION_LINE_RE = re.compile(
 )
 PUBLIC_TOOL_NAME_RE = re.compile(r"\bagentbench\b", re.IGNORECASE)
 PUBLIC_ORGANIZATION_RE = re.compile(r"\bmirastacklabs\b", re.IGNORECASE)
-ENGINE_VERSION_RE = re.compile(r"\b(?:vllm|sglang)\s+v?\d+(?:\.\d+){1,3}\b", re.IGNORECASE)
+ENGINE_VERSION_RE = re.compile(r"\b(?:vllm|sglang)\s*:?\s*v?\d+(?:\.\d+){1,3}\b", re.IGNORECASE)
 PRIVATE_OPTIMIZATION_RE = re.compile(
     r"\b(?:extra_buffer_lazy|mamba-full-memory-ratio|triton\s+gdn|language-only\s+mode)\b",
     re.IGNORECASE,
