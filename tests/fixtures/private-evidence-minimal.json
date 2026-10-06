@@ -175,7 +175,7 @@
       "engine_version": "8.8.8-private",
       "profile": "private-third-profile",
       "configuration": ["--never-publish-this-recipe"],
-      "source_path": "/Users/example/private-results/run-private-14",
+      "source_path": "private/source/run-private-14",
       "run_id": "private-run-14",
       "marker": "square",
       "line_style": "dotted",

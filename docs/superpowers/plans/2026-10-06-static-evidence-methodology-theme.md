@@ -12,10 +12,10 @@
 
 ## Progress overview
 
-**Current:** Task 2 — local metrics validator (next)
+**Current:** Task 3 — sanitized static data bundle (next)
 
 - [x] 1. Freeze the public evidence contract and write failing pipeline tests
-- [ ] 2. Build and validate the local-only VictoriaMetrics evidence importer
+- [x] 2. Build and validate the local-only VictoriaMetrics evidence importer
 - [ ] 3. Generate the deterministic, privacy-safe Episode 01 data bundle
 - [ ] 4. Remove internal profile/configuration material from Episode 01
 - [ ] 5. Build the interactive methodology page
@@ -159,7 +159,7 @@ git commit -m "feat: define public inference evidence contract"
 - Internal output: value-free local receipt with checksums, counts, validation states, and query names.
 - Public output: none. This tool must never write into `dashboard/`.
 
-- [ ] **Step 2.1: Write failing tests around import isolation**
+- [x] **Step 2.1: Write failing tests around import isolation**
 
 Use an in-process HTTP test server to assert that the validator:
 
@@ -173,7 +173,7 @@ Use an in-process HTTP test server to assert that the validator:
 - detects counter resets and out-of-window samples;
 - records categories, not private values, in errors.
 
-- [ ] **Step 2.2: Implement the validation client**
+- [x] **Step 2.2: Implement the validation client**
 
 Implement these boundaries:
 
@@ -195,7 +195,7 @@ def write_private_receipt(result: ValidationResult, receipt_path: Path) -> None:
 
 Use `urllib.request` from the standard library. Do not log query results, label values, URLs with query strings, or matched content.
 
-- [ ] **Step 2.3: Ignore all local receipts and restored data**
+- [x] **Step 2.3: Ignore all local receipts and restored data**
 
 Add only these targeted patterns to `.gitignore`:
 
@@ -204,7 +204,7 @@ Add only these targeted patterns to `.gitignore`:
 .artifacts/victoriametrics-restore/
 ```
 
-- [ ] **Step 2.4: Run unit tests**
+- [x] **Step 2.4: Run unit tests**
 
 Run:
 
@@ -214,7 +214,7 @@ python -m unittest tests.test_validate_benchmark_metrics -v
 
 Expected: PASS without Docker or network access.
 
-- [ ] **Step 2.5: Perform the real local import and exact-window validation**
+- [x] **Step 2.5: Perform the real local import and exact-window validation**
 
 For each final public source run, execute the validator against the existing loopback VictoriaMetrics container and save the ignored receipt. Import the private third profile only under a separate internal namespace to exercise exclusion, never as a public arm.
 
@@ -226,11 +226,11 @@ Confirm in the receipt:
 - exact-window aggregate queries reconcile with per-level report tables;
 - no out-of-window samples or unhandled counter resets remain.
 
-- [ ] **Step 2.6: Inspect the existing local Grafana dashboards**
+- [x] **Step 2.6: Inspect the existing local Grafana dashboards**
 
 Set each dashboard to the declared UTC measurement window and check client, engine, and GPU panels for gaps, obvious time shifts, and reset artifacts. Record only pass/fail panel categories in the private receipt.
 
-- [ ] **Step 2.7: Commit the importer**
+- [x] **Step 2.7: Commit the importer**
 
 ```bash
 git add .gitignore scripts/validate_benchmark_metrics.py tests/test_validate_benchmark_metrics.py

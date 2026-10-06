@@ -10,3 +10,5 @@ raw/
 private/
 /context/
 *.jsonl
+.artifacts/private-evidence/
+.artifacts/victoriametrics-restore/
