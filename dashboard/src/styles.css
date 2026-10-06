@@ -13,6 +13,26 @@
   --accent: #ff6a38;
   --safe: #4bdcaf;
   --warning: #f0ba4b;
+  --copy: #c3cac7;
+  --focus: #4bdcaf;
+  --shadow: #000;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ink: #172f2d;
+  --muted: #596965;
+  --paper: #fbfaf5;
+  --panel: #f1f0e9;
+  --panel-soft: #e8e8e1;
+  --line: #d3d8d1;
+  --line-strong: #98a8a2;
+  --accent: #c94018;
+  --safe: #006d6b;
+  --warning: #8a5b00;
+  --copy: #455a56;
+  --focus: #006d6b;
+  --shadow: #172f2d;
 }
 
 * {
@@ -32,6 +52,18 @@ body {
   color: var(--ink);
   background: var(--paper);
 }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.theme-switch{position:fixed;z-index:100;top:14px;right:clamp(14px,2vw,30px);display:flex;background:var(--paper);border:1px solid var(--line-strong);box-shadow:5px 5px 0 color-mix(in srgb,var(--shadow) 22%,transparent)}
+.theme-switch button{min-width:58px;padding:8px 10px;border:0;border-right:1px solid var(--line);background:transparent;color:var(--muted);font:700 10px/1 "Avenir Next",Avenir,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.theme-switch button:last-child{border-right:0}.theme-switch button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
 
 main {
   width: 100%;
@@ -61,7 +93,7 @@ main {
 .view-switch a[aria-current="page"] { color: var(--safe); border-bottom: 2px solid var(--safe); }
 .view-switch a:focus-visible, .reader-point:focus-visible { outline: 2px solid var(--safe); outline-offset: 5px; }
 /* The series index reads like a field notebook within the dashboard's dark lab theme. */
-body:has(.lab-home), html:has(.lab-home){background:var(--paper);color:var(--ink);color-scheme:dark}
+body:has(.lab-home), html:has(.lab-home){background:var(--paper);color:var(--ink)}
 .lab-home{padding:30px clamp(22px,5vw,72px) 42px;font:17px/1.65 Georgia,'Times New Roman',serif}
 .lab-home .view-switch{max-width:1060px;border-color:var(--line);font:13px/1.5 'Avenir Next',Helvetica,sans-serif;margin-bottom:54px}
 .lab-home .view-switch a{color:var(--muted)}.lab-home .view-switch a[aria-current=page]{color:var(--safe);border-color:var(--safe)}
@@ -269,7 +301,7 @@ h1 {
   gap: 8px;
   margin: 0;
   padding-left: 20px;
-  color: #c3cac7;
+  color: var(--copy);
   font-size: 13px;
   line-height: 1.55;
 }
@@ -415,13 +447,13 @@ h1 {
 }
 
 .chart-grid {
-  stroke: #273031;
+  stroke: var(--line);
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
 
 .chart-axis {
-  stroke: #778280;
+  stroke: var(--line-strong);
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
@@ -434,13 +466,13 @@ h1 {
 }
 
 .chart-axis-label {
-  fill: #c8cfcc;
+  fill: var(--copy);
   font-size: 12px;
   letter-spacing: 0.015em;
 }
 
 .workload-tick {
-  fill: #c8cfcc;
+  fill: var(--copy);
   font-size: 10px;
 }
 
@@ -462,17 +494,17 @@ h1 {
 }
 
 .scatter-label {
-  fill: #c8cfcc;
+  fill: var(--copy);
   font-size: 10px;
 }
 
 .scatter-leader {
-  stroke: #778280;
+  stroke: var(--line-strong);
   stroke-width: 1;
 }
 
 .output-cap {
-  stroke: #aab2af;
+  stroke: var(--line-strong);
   stroke-dasharray: 5 4;
   stroke-width: 1.5;
 }
@@ -1010,3 +1042,14 @@ body:has(.planner-home),html:has(.planner-home){background:var(--paper);color:va
 @media(max-width:900px){.method-page{grid-template-columns:1fr}.method-rail{position:static;padding-top:20px;overflow-x:auto}.method-rail>p{margin-bottom:10px}.method-rail nav{display:flex;min-width:max-content}.method-rail button{width:145px;border-top:1px solid var(--line)}.method-section{padding-top:56px}}
 @media(max-width:680px){.methodology-home{padding:18px 14px 60px}.method-hero h1{font-size:58px}.method-hero>div,.method-section>header,.request-anatomy,.replay-sessions,.evidence-views section,.definition-ledger,.method-boundary{grid-template-columns:1fr}.population-strata{grid-template-columns:1fr}.population-strata article{border-right:0}.request-layer-controls{border-right:0;border-bottom:1px solid var(--line)}.request-anatomy figure{padding:28px 18px}.replay-sessions section+section,.method-boundary section+section{border-left:0;border-top:1px solid var(--line)}.evidence-views{padding:18px}.evidence-views section{gap:12px}.definition-ledger div{grid-template-columns:1fr;border-right:0}.method-hero>div{gap:20px}}
 @media(prefers-reduced-motion:reduce){.token-shape i{transition:none}}
+
+.lab-purpose,.episode-entry>p:not(.episode-state),.lab-start p,.session-deck,.tension-lane small,.session-table-wrap td,.boundary-columns ul,.instrument-brief dd,.comparison-summary p,.instrument-readouts small,.evidence-boundaries ul{color:var(--copy)}
+.episode-number{color:var(--muted)}.session-axis{stroke:var(--line-strong)}
+:root[data-theme="light"] .lab-logo{box-shadow:0 0 0 1px var(--line),0 18px 50px color-mix(in srgb,var(--shadow) 16%,transparent)}
+:root[data-theme="light"] .episode-chooser-panel{box-shadow:16px 16px 0 color-mix(in srgb,var(--shadow) 18%,transparent)}
+
+@media print{
+  :root,:root[data-theme="dark"]{color-scheme:light;--ink:#172f2d;--muted:#596965;--paper:#fff;--panel:#f4f3ee;--panel-soft:#ecebe5;--line:#d3d8d1;--line-strong:#98a8a2;--accent:#c94018;--safe:#006d6b;--warning:#8a5b00;--copy:#455a56}
+  .theme-switch,.method-rail,.instrument-rail{display:none!important}
+  main{padding:0}.method-page,.instrument-layout{grid-template-columns:1fr}.method-section{break-inside:avoid}
+}

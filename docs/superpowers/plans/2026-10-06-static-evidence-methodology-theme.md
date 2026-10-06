@@ -12,14 +12,14 @@
 
 ## Progress overview
 
-**Current:** Task 6 — adding persistent Light/Dark themes
+**Current:** Task 7 — adding compiled-bundle privacy and offline gates
 
 - [x] 1. Freeze the public evidence contract and write failing pipeline tests
 - [x] 2. Build and validate the local-only VictoriaMetrics evidence importer
 - [x] 3. Generate the deterministic, privacy-safe Episode 01 data bundle
 - [x] 4. Remove internal profile/configuration material from Episode 01
 - [x] 5. Build the interactive methodology page
-- [ ] 6. Add persistent Light/Dark themes across every public route
+- [x] 6. Add persistent Light/Dark themes across every public route
 - [ ] 7. Add compiled-bundle privacy and offline-publication gates
 - [ ] 8. Run responsive, accessibility, preservation, and visual QA
 - [ ] 9. Reconcile documentation, record evidence, and complete final review
@@ -422,7 +422,7 @@ git commit -m "feat: explain the benchmark methodology interactively"
 - Create: `tests/dashboard_theme_contract.cjs`
 - Create: `tests/dashboard_theme_acceptance.cjs`
 
-- [ ] **Step 6.1: Write failing behavior tests**
+- [x] **Step 6.1: Write failing behavior tests**
 
 Assert:
 
@@ -433,11 +433,11 @@ Assert:
 - the control is top-right and keyboard operable;
 - the bootstrap runs before the module script to prevent a theme flash.
 
-- [ ] **Step 6.2: Implement the pre-paint bootstrap**
+- [x] **Step 6.2: Implement the pre-paint bootstrap**
 
 Add a tiny inline script in `<head>` that reads `token-by-token-theme`, validates `light|dark`, otherwise reads system preference, and sets `document.documentElement.dataset.theme`. It must not perform network or telemetry calls.
 
-- [ ] **Step 6.3: Implement the React controller**
+- [x] **Step 6.3: Implement the React controller**
 
 Expose:
 
@@ -449,15 +449,15 @@ export function applyTheme(theme: Theme): void;
 
 `ThemeSwitch` renders two adjacent buttons labelled Light and Dark and announces the active theme without relying on color.
 
-- [ ] **Step 6.4: Tokenize all public colors**
+- [x] **Step 6.4: Tokenize all public colors**
 
 Move page, ink, muted ink, rule, panel, focus, positive, negative, and contextual colors to CSS variables. Derive light mode from the Episode 00 palette; do not introduce new semantic hues.
 
-- [ ] **Step 6.5: Verify every public route in both themes**
+- [x] **Step 6.5: Verify every public route in both themes**
 
 Test Episode 00, Episode 01, Session Field Note, methodology, and index at desktop and mobile widths. Check focus visibility, chart contrast, SVG labels, print behavior, and 200% zoom.
 
-- [ ] **Step 6.6: Commit the theme system**
+- [x] **Step 6.6: Commit the theme system**
 
 ```bash
 git add dashboard/index.html dashboard/src/theme.ts dashboard/src/ThemeSwitch.tsx dashboard/src/App.tsx dashboard/src/styles.css tests/dashboard_theme_contract.cjs tests/dashboard_theme_acceptance.cjs

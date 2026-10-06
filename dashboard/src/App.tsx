@@ -10,6 +10,7 @@ import { CanonicalLaunch } from "./CanonicalLaunch";
 import { SessionCapacityStudy } from "./SessionCapacityStudy";
 import { Episode1Instrument } from "./Episode1Instrument";
 import { MethodologyPage } from "./MethodologyPage";
+import { ThemeSwitch } from "./ThemeSwitch";
 import catalog from "./data/episodes.json";
 
 type CatalogEpisode = (typeof catalog.episodes)[number] & { dashboardView?: string; guide?: string };
@@ -40,6 +41,7 @@ export function App() {
   }, []);
   return (
       <main className={methodology ? "methodology-home" : episode?.dashboardView === "episode1-instrument" ? "instrument-home" : !local && !quick && !planner && !runner && !canonical && !sessionStudy && !episode ? "lab-home" : sessionStudy ? "session-study-home" : planner ? "planner-home" : runner || canonical ? "runner-home" : undefined}>
+      <ThemeSwitch />
       <nav className="view-switch reader-navigation" aria-label="Results view">
         <a href="#episodes" aria-current={!local && !quick && !planner && !runner && !canonical && !sessionStudy && !episode ? "page" : undefined}>Episodes</a>
         <a href="#episode-0" aria-current={episode?.id === "episode-0" ? "page" : undefined}>Episode 00</a>
