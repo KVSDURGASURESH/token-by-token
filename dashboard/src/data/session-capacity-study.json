@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "study_id": "session-capacity-2026-10-05",
+  "title": "Session capacity field note",
+  "classification": "exploratory recorded deployment study",
+  "capacity_qualified": false,
+  "model": "Qwen/Qwen3.6-27B-FP8",
+  "model_revision": "e89b16ebf1988b3d6befa7de50abc2d76f26eb09",
+  "runtime": "vLLM 0.20.1",
+  "context_limit_tokens": 131072,
+  "actual_prompt_min_tokens": 1170,
+  "actual_prompt_max_tokens": 6691,
+  "levels": [2, 4, 8, 16, 32, 64, 100],
+  "workload": {
+    "sessions": 50,
+    "turns": 914,
+    "slots_per_user": 2,
+    "server_sequence_cap": 8,
+    "max_output_tokens": 512,
+    "warmup_seconds": 60,
+    "sweep_measure_seconds": 180,
+    "soak_measure_seconds": 900,
+    "drain_timeout_seconds": 120,
+    "description": "Synthetic multi-turn coding and issue-fix session replay. Tools were not executed and task correctness was not scored."
+  },
+  "configuration": [
+    {"setting": "GPU", "rtx": "RTX PRO 6000 Blackwell Server Edition", "h200": "H200"},
+    {"setting": "Memory noted by runbook", "rtx": "~97,887 MiB", "h200": "~143,771 MiB"},
+    {"setting": "Model / precision", "rtx": "Qwen3.6-27B-FP8", "h200": "Qwen3.6-27B-FP8"},
+    {"setting": "Engine", "rtx": "vLLM 0.20.1", "h200": "vLLM 0.20.1"},
+    {"setting": "Tensor parallelism", "rtx": "1", "h200": "1"},
+    {"setting": "Context limit", "rtx": "131,072", "h200": "131,072"},
+    {"setting": "Scheduled sequences", "rtx": "8", "h200": "8"},
+    {"setting": "Batched-token budget", "rtx": "16,384", "h200": "16,384"},
+    {"setting": "Prefix caching", "rtx": "Enabled; session scope", "h200": "Enabled; session scope"},
+    {"setting": "GPU memory flag", "rtx": "0.955 config; 0.95 runbook", "h200": "0.95"},
+    {"setting": "Runtime stack", "rtx": "CUDA 13.0 wheels; Torch 2.11", "h200": "CUDA 12.9 wheels; Torch 2.11"},
+    {"setting": "Additional launch detail", "rtx": "Committed combo omits some H200 flags", "h200": "Language-only mode; Triton GDN prefill"}
+  ],
+  "previous_study": [
+    {"dimension": "Question", "previous": "How did two serving configurations behave?", "current": "How did two deployments behave as conversational load increased?"},
+    {"dimension": "Model", "previous": "Qwen2.5-32B-Instruct · BF16", "current": "Qwen3.6-27B-FP8"},
+    {"dimension": "Hardware", "previous": "One H100 80GB per run", "current": "One RTX PRO 6000 or one H200"},
+    {"dimension": "Runtime", "previous": "vLLM 0.29.0 vs SGLang 0.5.20", "current": "vLLM 0.20.1 on both deployments"},
+    {"dimension": "Traffic", "previous": "Deterministic exact-token prompts", "current": "Synthetic multi-turn session replay"},
+    {"dimension": "Main lesson", "previous": "Delivered work complicates runtime rankings", "current": "Throughput and waiting complicate user sizing"}
+  ],
+  "deployments": [
+    {
+      "id": "rtx-pro-6000",
+      "label": "RTX PRO 6000",
+      "color": "#ff7043",
+      "soak": {
+        "users": 16,
+        "measured": 2340,
+        "valid": 2319,
+        "visible_ttft_samples": 2316,
+        "output_tps": 245.7181547412,
+        "decode_tps_p50": 34.5508629856,
+        "decode_tps_p10": 31.5769309083,
+        "visible_ttft_p50_s": 4.891369792,
+        "visible_ttft_p95_s": 8.216985583,
+        "e2e_p95_s": 11.079718475,
+        "error_rate": 0.008974359,
+        "valid_output_tokens": 222270,
+        "cohort_seconds": 904.5729658604
+      },
+      "sweep": [
+        {"users": 2, "slots": 4, "measured": 89, "valid": 88, "output_tps": 48.1832042948, "visible_ttft_p50_s": 1.164529625, "visible_ttft_p95_s": 3.113420791, "error_rate": 0.0112359551},
+        {"users": 4, "slots": 8, "measured": 149, "valid": 148, "output_tps": 76.9203009869, "visible_ttft_p50_s": 1.210602792, "visible_ttft_p95_s": 3.425362667, "error_rate": 0.0067114094},
+        {"users": 8, "slots": 16, "measured": 281, "valid": 271, "output_tps": 144.2462906608, "visible_ttft_p50_s": 1.349463917, "visible_ttft_p95_s": 5.473454709, "error_rate": 0.0355871886},
+        {"users": 16, "slots": 32, "measured": 460, "valid": 456, "output_tps": 233.501607133, "visible_ttft_p50_s": 5.191367959, "visible_ttft_p95_s": 8.0064425, "error_rate": 0.0086956522},
+        {"users": 32, "slots": 64, "measured": 513, "valid": 511, "output_tps": 228.4629213981, "visible_ttft_p50_s": 17.876449958, "visible_ttft_p95_s": 20.459291709, "error_rate": 0.0038986355},
+        {"users": 64, "slots": 128, "measured": 360, "valid": 359, "output_tps": 115.4685974538, "visible_ttft_p50_s": 66.795110792, "visible_ttft_p95_s": 75.391442917, "error_rate": 0.0027777778},
+        {"users": 100, "slots": 200, "measured": 375, "valid": 375, "output_tps": 99.8822917906, "visible_ttft_p50_s": 97.298342083, "visible_ttft_p95_s": 110.291617292, "error_rate": 0.0}
+      ]
+    },
+    {
+      "id": "h200",
+      "label": "H200",
+      "color": "#45d6ae",
+      "soak": {
+        "users": 16,
+        "measured": 3586,
+        "valid": 3568,
+        "visible_ttft_samples": 3566,
+        "output_tps": 379.9426568493,
+        "decode_tps_p50": 63.8929732802,
+        "decode_tps_p10": 55.2858088644,
+        "visible_ttft_p50_s": 1.173034042,
+        "visible_ttft_p95_s": 2.828482458,
+        "e2e_p95_s": 4.6168509563,
+        "error_rate": 0.0050195204,
+        "valid_output_tokens": 342887,
+        "cohort_seconds": 902.4703960419
+      },
+      "sweep": [
+        {"users": 2, "slots": 4, "measured": 102, "valid": 101, "output_tps": 54.1477388853, "visible_ttft_p50_s": 0.811809334, "visible_ttft_p95_s": 1.745207666, "error_rate": 0.0098039216},
+        {"users": 4, "slots": 8, "measured": 156, "valid": 150, "output_tps": 79.8469404249, "visible_ttft_p50_s": 0.914450959, "visible_ttft_p95_s": 5.041445209, "error_rate": 0.0384615385},
+        {"users": 8, "slots": 16, "measured": 360, "valid": 358, "output_tps": 187.0701528155, "visible_ttft_p50_s": 0.905389833, "visible_ttft_p95_s": 1.918323416, "error_rate": 0.0055555556},
+        {"users": 16, "slots": 32, "measured": 688, "valid": 686, "output_tps": 359.8099363824, "visible_ttft_p50_s": 1.168019291, "visible_ttft_p95_s": 2.821556292, "error_rate": 0.0029069767},
+        {"users": 32, "slots": 64, "measured": 627, "valid": 521, "output_tps": 258.4495677511, "visible_ttft_p50_s": 8.883524792, "visible_ttft_p95_s": 45.178208833, "error_rate": 0.1690590112},
+        {"users": 64, "slots": 128, "measured": 880, "valid": 876, "output_tps": 371.3219049334, "visible_ttft_p50_s": 22.234826458, "visible_ttft_p95_s": 24.511964667, "error_rate": 0.0045454545},
+        {"users": 100, "slots": 200, "measured": 701, "valid": 510, "output_tps": 183.90162103, "visible_ttft_p50_s": 52.038218958, "visible_ttft_p95_s": 107.43825425, "error_rate": 0.2724679029957204}
+      ]
+    }
+  ]
+}
