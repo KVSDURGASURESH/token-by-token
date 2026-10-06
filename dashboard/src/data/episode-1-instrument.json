@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "study_id": "qwen38-h200-vllm-vs-sglang-2026-10-06",
+  "title": "Measure what matters",
+  "classification": "recorded exploratory runtime comparison",
+  "capacity_qualified": false,
+  "provenance_verified": false,
+  "model": "Qwen/Qwen3.8-27B-FP8",
+  "model_revision": "017b9c7af6b5689d5dd426a76e0bc077eb5ca20a",
+  "precision": "FP8 weights and FP8 KV cache",
+  "hardware": "1× NVIDIA H200 141 GB",
+  "levels": [12, 16, 24],
+  "slots_per_user": 2,
+  "target_decode_tps": 20,
+  "workload": {
+    "kind": "recorded_session_replay",
+    "description": "Real agent and chat corpus replay with OpenHands, Claude Code and chat sessions; each simulated user keeps two sessions open.",
+    "warmup_seconds": 120,
+    "measure_seconds": 300,
+    "minimum_valid_requests": 50,
+    "prompt_tokens_mean_approx": 27000,
+    "prompt_tokens_p50_approx": 23000,
+    "prompt_tokens_p90_approx": 57000
+  },
+  "source": {
+    "repository": "/Users/durgasuresh/Workspaces/MIRASTACKLABS/agentbench",
+    "agentbench_commit": "6d1908d",
+    "captured_at": "2026-10-06T03:01:59-07:00",
+    "artifacts": [
+      "results/bench-qwen38-27b-fp8-h200-runpod-20261006-001139/agents_levels.csv",
+      "results/bench-qwen38-h200-vllm-12/agents_levels.csv",
+      "results/bench-qwen38-h200-sglang-fixed/agents_levels.csv",
+      "results/bench-qwen38-27b-fp8-h200-runpod-20261006-001139/metrics/metrics.csv.gz",
+      "results/bench-qwen38-h200-vllm-12/metrics/metrics.csv.gz",
+      "results/bench-qwen38-h200-sglang-fixed/metrics/metrics.csv.gz"
+    ],
+    "sanitization": "Dashboard bundle contains aggregated measurements only; remote endpoints, service instance IDs, prompts and outputs are excluded."
+  },
+  "arms": [
+    {
+      "id": "vllm",
+      "label": "vLLM 0.31.0",
+      "marker": "circle",
+      "line_style": "solid",
+      "configuration": [
+        "Documented defaults; no H200-specific Qwen3.8 recipe",
+        "Prefix caching enabled; hybrid cache align mode",
+        "FP8 KV cache; 262K context",
+        "max-num-seqs 1024; language-model-only"
+      ],
+      "points": [
+        {
+          "users": 12,
+          "active_streams": 24,
+          "valid_sample_count": 641,
+          "sample_count": 642,
+          "output_tps": 374.7588238735019,
+          "decode_tps_p50": 27.230080514346824,
+          "decode_tps_p10": 21.647357597927805,
+          "ttft_p50_ms": 2327.0245,
+          "ttft_p95_ms": 14548.081291,
+          "tpot_p50_ms": 36.749324468085106,
+          "error_rate": 0.001557632398753894,
+          "tasks_per_hour": 7691.702201957565,
+          "telemetry": {
+            "gpu_utilization_mean_pct": 100.0,
+            "gpu_memory_used_gib": 133.58978,
+            "gpu_power_mean_w": 589.82132,
+            "gpu_power_peak_w": 671.227,
+            "running_requests_mean": 15.31667,
+            "queued_requests_mean": 0.03333,
+            "kv_cache_usage_ratio_mean": 0.17143,
+            "samples": 60
+          },
+          "run_id": "bench-qwen38-h200-vllm-12"
+        },
+        {
+          "users": 16,
+          "active_streams": 32,
+          "valid_sample_count": 665,
+          "sample_count": 666,
+          "output_tps": 376.7270594950265,
+          "decode_tps_p50": 20.18465047518012,
+          "decode_tps_p10": 15.959221959779452,
+          "ttft_p50_ms": 2789.812041,
+          "ttft_p95_ms": 17179.270167,
+          "tpot_p50_ms": 49.54259679797979,
+          "error_rate": 0.0015015015015015015,
+          "tasks_per_hour": 7979.867106981892,
+          "telemetry": {
+            "gpu_utilization_mean_pct": 99.91667,
+            "gpu_memory_used_gib": 133.58978,
+            "gpu_power_mean_w": 599.87182,
+            "gpu_power_peak_w": 686.612,
+            "running_requests_mean": 23.08333,
+            "queued_requests_mean": 0.03333,
+            "kv_cache_usage_ratio_mean": 0.26743,
+            "samples": 60
+          },
+          "run_id": "bench-qwen38-27b-fp8-h200-runpod-20261006-001139"
+        },
+        {
+          "users": 24,
+          "active_streams": 48,
+          "valid_sample_count": 662,
+          "sample_count": 662,
+          "output_tps": 379.4803156121838,
+          "decode_tps_p50": 13.432961575013415,
+          "decode_tps_p10": 9.581166807869453,
+          "ttft_p50_ms": 5455.011208,
+          "ttft_p95_ms": 30787.455542,
+          "tpot_p50_ms": 74.48276938613861,
+          "error_rate": 0.0,
+          "tasks_per_hour": 7943.867049935496,
+          "telemetry": {
+            "gpu_utilization_mean_pct": 100.0,
+            "gpu_memory_used_gib": 133.58978,
+            "gpu_power_mean_w": 625.51087,
+            "gpu_power_peak_w": 693.319,
+            "running_requests_mean": 36.0,
+            "queued_requests_mean": 0.16667,
+            "kv_cache_usage_ratio_mean": 0.42054,
+            "samples": 60
+          },
+          "run_id": "bench-qwen38-27b-fp8-h200-runpod-20261006-001139"
+        }
+      ]
+    },
+    {
+      "id": "sglang",
+      "label": "SGLang 0.5.21",
+      "marker": "diamond",
+      "line_style": "dashed",
+      "configuration": [
+        "Qwen3.8 cookbook configuration with FlashAttention-3",
+        "FP8 KV cache; extra_buffer_lazy; BF16 recurrent state",
+        "mamba-full-memory-ratio 0.355 for the measured prompt distribution",
+        "max-running-requests 1024; 262K context"
+      ],
+      "points": [
+        {
+          "users": 12,
+          "active_streams": 24,
+          "valid_sample_count": 747,
+          "sample_count": 747,
+          "output_tps": 497.3699412736081,
+          "decode_tps_p50": 48.46518390977684,
+          "decode_tps_p10": 33.005161580540744,
+          "ttft_p50_ms": 1667.396959,
+          "ttft_p95_ms": 8229.3205,
+          "tpot_p50_ms": 20.63596386725664,
+          "error_rate": 0.0,
+          "tasks_per_hour": 8962.97776605588,
+          "telemetry": {
+            "gpu_utilization_mean_pct": 98.68333,
+            "gpu_memory_used_gib": 125.67212,
+            "gpu_power_mean_w": 670.81105,
+            "gpu_power_peak_w": 696.519,
+            "running_requests_mean": 13.23333,
+            "queued_requests_mean": 0.05,
+            "kv_cache_memory_usage_gib": 66.1908,
+            "samples": 60
+          },
+          "run_id": "bench-qwen38-h200-sglang-fixed"
+        },
+        {
+          "users": 16,
+          "active_streams": 32,
+          "valid_sample_count": 889,
+          "sample_count": 889,
+          "output_tps": 480.43621543584874,
+          "decode_tps_p50": 36.12446470260522,
+          "decode_tps_p10": 17.482769989167465,
+          "ttft_p50_ms": 2041.941292,
+          "ttft_p95_ms": 9764.01125,
+          "tpot_p50_ms": 27.706553358574613,
+          "error_rate": 0.0,
+          "tasks_per_hour": 10667.915965093734,
+          "telemetry": {
+            "gpu_utilization_mean_pct": 97.73333,
+            "gpu_memory_used_gib": 125.67212,
+            "gpu_power_mean_w": 682.17188,
+            "gpu_power_peak_w": 697.323,
+            "running_requests_mean": 19.01667,
+            "queued_requests_mean": 0.5,
+            "kv_cache_memory_usage_gib": 66.1908,
+            "samples": 60
+          },
+          "run_id": "bench-qwen38-h200-sglang-fixed"
+        },
+        {
+          "users": 24,
+          "active_streams": 48,
+          "valid_sample_count": 601,
+          "sample_count": 601,
+          "output_tps": 365.3459253216277,
+          "decode_tps_p50": 14.641771452930806,
+          "decode_tps_p10": 8.162312232411331,
+          "ttft_p50_ms": 5451.441167,
+          "ttft_p95_ms": 30014.645167,
+          "tpot_p50_ms": 68.29774684126984,
+          "error_rate": 0.0,
+          "tasks_per_hour": 7211.853767365598,
+          "telemetry": {
+            "gpu_utilization_mean_pct": 99.26667,
+            "gpu_memory_used_gib": 125.67593,
+            "gpu_power_mean_w": 692.38293,
+            "gpu_power_peak_w": 700.462,
+            "running_requests_mean": 34.48333,
+            "queued_requests_mean": 1.15,
+            "kv_cache_memory_usage_gib": 66.1908,
+            "samples": 60
+          },
+          "run_id": "bench-qwen38-h200-sglang-fixed"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Capacity was not established under the declared SLOs.",
+    "Hardware and server provenance are marked unverified in the source manifests.",
+    "The runtime configurations differ; this is a recorded deployment comparison, not a pure engine-only benchmark.",
+    "Coherence was skipped on the corrected SGLang run, so serving measurements do not establish task-solving quality.",
+    "Client-visible TTFT is not server queue duration.",
+    "vLLM reports KV-cache usage as a ratio while SGLang reports KV-cache memory in GiB; those values are not directly ranked."
+  ]
+}
