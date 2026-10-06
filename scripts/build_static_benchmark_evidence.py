@@ -4,11 +4,14 @@
 from __future__ import annotations
 
 import argparse
+import csv
+import gzip
 import json
 import math
 import os
 import tempfile
 from collections.abc import Mapping, Sequence
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -36,6 +39,22 @@ METRICS: tuple[dict[str, str], ...] = (
     {"id": "gpu_power_w", "label": "GPU power", "unit": "W", "direction": "contextual", "explanation": "Mean sampled board power in the measured window."},
 )
 METRIC_BY_ID = {metric["id"]: metric for metric in METRICS}
+PUBLIC_SERIES = {
+    ("client", "Request completion rate", "req/s"),
+    ("engine", "Running requests", "requests"),
+    ("engine", "Waiting requests", "requests"),
+    ("gpu", "GPU utilization", "%"),
+    ("gpu", "GPU power", "W"),
+}
+PRIVATE_SERIES_METRICS = {
+    "agentbench_requests_total",
+    "agentbench_gpu_utilization_percent",
+    "agentbench_gpu_power_watts",
+    "vllm_num_requests_running",
+    "vllm_num_requests_waiting",
+    "sglang_num_running_reqs",
+    "sglang_num_queue_reqs",
+}
 
 
 def _mapping(value: object, label: str) -> Mapping[str, Any]:
@@ -137,6 +156,41 @@ def _public_point(raw: object, *, threshold: float, seen_loads: set[int]) -> dic
     }
 
 
+def _public_series(raw: object) -> dict[str, object]:
+    series = _mapping(raw, "series")
+    lane = _text(series.get("lane"), "series.lane")
+    metric = _text(series.get("metric"), "series.metric")
+    unit = _text(series.get("unit"), "series.unit")
+    if (lane, metric, unit) not in PUBLIC_SERIES:
+        raise ValueError("series definition is outside the public allowlist")
+    engine = _text(series.get("engine"), "series.engine")
+    if engine not in PUBLIC_ENGINES:
+        raise ValueError("series engine is outside the public allowlist")
+    users = _count(series.get("users"), "series.users", minimum=1)
+    if users not in PUBLIC_LEVELS:
+        raise ValueError("series load is outside the public study")
+    samples: list[list[float | int]] = []
+    previous_offset = -1
+    for raw_sample in _sequence(series.get("samples"), "series.samples"):
+        sample = _sequence(raw_sample, "series.sample")
+        if len(sample) != 2:
+            raise ValueError("series sample must contain offset and value")
+        offset = _count(sample[0], "series offset")
+        value = _number(sample[1], "series value")
+        if offset > 300 or offset <= previous_offset:
+            raise ValueError("series offsets must be ordered within the measured window")
+        previous_offset = offset
+        samples.append([offset, value])
+    if len(samples) < 2:
+        raise ValueError("series requires at least two samples")
+    return {
+        "lane": lane,
+        "metric": metric,
+        "engine": engine,
+        "users": users,
+        "unit": unit,
+        "samples": samples,
+    }
 def build_public_document(source: Mapping[str, object]) -> dict[str, object]:
     """Select public facts from a private source using a positive allowlist."""
 
@@ -202,10 +256,236 @@ def build_public_document(source: Mapping[str, object]) -> dict[str, object]:
         "metric_definitions": [dict(metric) for metric in METRICS],
         "levels": list(PUBLIC_LEVELS),
         "arms": arms,
-        "synchronized_series": [],
+        "synchronized_series": [
+            _public_series(series)
+            for series in _sequence(root.get("synchronized_series", []), "synchronized_series")
+        ],
         "limitations": limitations,
     }
     return document
+
+
+def _read_csv(path: Path) -> list[dict[str, str]]:
+    try:
+        with path.open(encoding="utf-8", newline="") as handle:
+            return [dict(row) for row in csv.DictReader(handle)]
+    except OSError as exc:
+        raise ValueError("private aggregate table is unreadable") from exc
+
+
+def _rows_by_level(path: Path) -> dict[int, dict[str, str]]:
+    rows: dict[int, dict[str, str]] = {}
+    for row in _read_csv(path):
+        try:
+            level = int(row["level"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("private aggregate table has an invalid level") from exc
+        rows[level] = row
+    return rows
+
+
+def _float_field(row: Mapping[str, str], field: str) -> float:
+    try:
+        return _number(float(row[field]), field)
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError("private aggregate table is incomplete") from exc
+
+
+def _int_field(row: Mapping[str, str], field: str) -> int:
+    try:
+        value = int(row[field])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError("private aggregate table is incomplete") from exc
+    return _count(value, field)
+
+
+def _downsample(samples: list[list[float | int]], maximum: int = 61) -> list[list[float | int]]:
+    if len(samples) <= maximum:
+        return samples
+    indices = {round(index * (len(samples) - 1) / (maximum - 1)) for index in range(maximum)}
+    return [samples[index] for index in sorted(indices)]
+
+
+def _telemetry_rows(path: Path) -> list[tuple[str, float, float, Mapping[str, object]]]:
+    rows: list[tuple[str, float, float, Mapping[str, object]]] = []
+    try:
+        with gzip.open(path, "rt", encoding="utf-8", newline="") as handle:
+            for row in csv.DictReader(handle):
+                if row.get("metric") not in PRIVATE_SERIES_METRICS or not row.get("value"):
+                    continue
+                labels = _mapping(json.loads(row["labels"]), "telemetry labels")
+                rows.append(
+                    (
+                        row["metric"],
+                        _number(float(row["timestamp_ms"]), "telemetry timestamp") / 1000,
+                        _number(float(row["value"]), "telemetry value"),
+                        labels,
+                    )
+                )
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        if isinstance(exc, ValueError) and str(exc).startswith("telemetry"):
+            raise
+        raise ValueError("private telemetry table is invalid") from exc
+    return rows
+
+
+def _gauge_samples(
+    rows: Sequence[tuple[str, float, float, Mapping[str, object]]],
+    metric_name: str,
+    start: float,
+    end: float,
+) -> list[list[float | int]]:
+    buckets: dict[int, list[float]] = defaultdict(list)
+    for metric, timestamp, value, _labels in rows:
+        if metric != metric_name or timestamp < start or timestamp > end:
+            continue
+        offset = max(0, min(300, round(timestamp - start)))
+        buckets[offset].append(value)
+    samples = [[offset, round(sum(values) / len(values), 6)] for offset, values in sorted(buckets.items())]
+    return _downsample(samples)
+
+
+def _counter_rate_samples(
+    rows: Sequence[tuple[str, float, float, Mapping[str, object]]],
+    level: int,
+    start: float,
+    end: float,
+) -> list[list[float | int]]:
+    identities: dict[str, list[tuple[float, float]]] = defaultdict(list)
+    for metric, timestamp, value, labels in rows:
+        if metric != "agentbench_requests_total" or timestamp < start or timestamp > end:
+            continue
+        if str(labels.get("level", "")) != str(level):
+            continue
+        identity = json.dumps(labels, sort_keys=True, separators=(",", ":"))
+        identities[identity].append((timestamp, value))
+    buckets: dict[int, float] = defaultdict(float)
+    for values in identities.values():
+        previous: tuple[float, float] | None = None
+        for timestamp, value in sorted(values):
+            if previous is not None and timestamp > previous[0] and value >= previous[1]:
+                offset = max(0, min(300, round(timestamp - start)))
+                buckets[offset] += (value - previous[1]) / (timestamp - previous[0])
+            previous = (timestamp, value)
+    samples = [[offset, round(value, 6)] for offset, value in sorted(buckets.items())]
+    return _downsample(samples)
+
+
+def _assert_receipts(receipts: Sequence[Path]) -> None:
+    if not receipts:
+        raise ValueError("validated private receipts are required")
+    for path in receipts:
+        try:
+            receipt = _mapping(json.loads(path.read_text(encoding="utf-8")), "receipt")
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise ValueError("private validation receipt is unreadable") from exc
+        if receipt.get("status") != "passed" or receipt.get("dashboard_checks") is None:
+            raise ValueError("private validation receipt is incomplete")
+
+
+def build_private_source_from_runs(
+    vllm_12_run: Path,
+    vllm_16_24_run: Path,
+    sglang_run: Path,
+    receipts: Sequence[Path],
+) -> dict[str, object]:
+    """Extract only approved aggregates and chart samples from private run directories."""
+
+    _assert_receipts(receipts)
+    run_map = {
+        ("vLLM", 12): vllm_12_run,
+        ("vLLM", 16): vllm_16_24_run,
+        ("vLLM", 24): vllm_16_24_run,
+        ("SGLang", 12): sglang_run,
+        ("SGLang", 16): sglang_run,
+        ("SGLang", 24): sglang_run,
+    }
+    cached: dict[Path, tuple[dict[int, dict[str, str]], dict[int, dict[str, str]], list[tuple[str, float, float, Mapping[str, object]]]]] = {}
+    for root in set(run_map.values()):
+        cached[root] = (
+            _rows_by_level(root / "agents_levels.csv"),
+            _rows_by_level(root / "agents" / "server_levels.csv"),
+            _telemetry_rows(root / "metrics" / "metrics.csv.gz"),
+        )
+
+    arms: dict[str, list[dict[str, object]]] = {engine: [] for engine in PUBLIC_ENGINES}
+    synchronized: list[dict[str, object]] = []
+    for engine in PUBLIC_ENGINES:
+        for users in PUBLIC_LEVELS:
+            root = run_map[(engine, users)]
+            aggregate_rows, server_rows, telemetry = cached[root]
+            aggregate = aggregate_rows[users]
+            server = server_rows[users]
+            start = _float_field(aggregate, "measure_start_wall")
+            end = _float_field(aggregate, "measure_end_wall")
+            metrics = {
+                "output_tps": _float_field(aggregate, "successful_output_tokens_per_s"),
+                "ttft_p50_ms": _float_field(aggregate, "ttft_visible_p50"),
+                "ttft_p95_ms": _float_field(aggregate, "ttft_visible_p95"),
+                "tpot_p50_ms": _float_field(aggregate, "tpot_p50"),
+                "decode_p10_tps": _float_field(aggregate, "decode_tps_p10"),
+                "error_rate_pct": _float_field(aggregate, "error_rate") * 100,
+                "running_requests_mean": _float_field(server, "running_reqs_avg"),
+                "waiting_requests_mean": _float_field(server, "queue_reqs_avg"),
+                "cache_context": None,
+                "gpu_utilization_pct": _float_field(server, "gpu_util_avg"),
+                "gpu_memory_gib": _float_field(server, "gpu_mem_max") / (1024**3),
+                "gpu_power_w": _float_field(server, "power_avg"),
+            }
+            arms[engine].append(
+                {
+                    "users": users,
+                    "active_sessions": _int_field(aggregate, "active_streams"),
+                    "total_requests": _int_field(aggregate, "sample_count"),
+                    "valid_requests": _int_field(aggregate, "valid_sample_count"),
+                    "level_valid": aggregate.get("valid") == "True",
+                    "percentile_origin": "direct",
+                    "metrics": metrics,
+                }
+            )
+            engine_metrics = (
+                ("Running requests", "requests", "vllm_num_requests_running" if engine == "vLLM" else "sglang_num_running_reqs"),
+                ("Waiting requests", "requests", "vllm_num_requests_waiting" if engine == "vLLM" else "sglang_num_queue_reqs"),
+            )
+            extracted = [
+                ("client", "Request completion rate", "req/s", _counter_rate_samples(telemetry, users, start, end)),
+                *(('engine', label, unit, _gauge_samples(telemetry, metric, start, end)) for label, unit, metric in engine_metrics),
+                ("gpu", "GPU utilization", "%", _gauge_samples(telemetry, "agentbench_gpu_utilization_percent", start, end)),
+                ("gpu", "GPU power", "W", _gauge_samples(telemetry, "agentbench_gpu_power_watts", start, end)),
+            ]
+            for lane, metric, unit, samples in extracted:
+                if len(samples) < 2:
+                    raise ValueError("private telemetry is incomplete for a public series")
+                synchronized.append(
+                    {"lane": lane, "metric": metric, "engine": engine, "users": users, "unit": unit, "samples": samples}
+                )
+
+    return {
+        "study": {
+            "title": "Episode 01 — The queue changes the winner",
+            "model_family": "Qwen3.8 27B",
+            "precision": "FP8 weights and KV cache",
+            "hardware": "NVIDIA H200",
+            "hardware_count": 1,
+        },
+        "methodology": {
+            "warmup_seconds": 120,
+            "measurement_seconds": 300,
+            "sessions_per_user": 2,
+            "decode_threshold_tps": 20,
+        },
+        "source_arms": [
+            {"engine": "vLLM", "publishable": True, "marker": "circle", "line_style": "solid", "points": arms["vLLM"]},
+            {"engine": "SGLang", "publishable": True, "marker": "diamond", "line_style": "dashed", "points": arms["SGLang"]},
+        ],
+        "synchronized_series": synchronized,
+        "limitations": [
+            "Capacity was not established under the declared service objectives.",
+            "This is a recorded deployment comparison, not an engine-only benchmark.",
+            "TTFT is reported for experience analysis but is not a capacity gate.",
+            "Runtime-native cache gauges use incompatible definitions and are not ranked.",
+        ],
+    }
 
 
 def validate_public_document(document: Mapping[str, object], schema: Mapping[str, object]) -> None:
@@ -243,11 +523,28 @@ def write_if_valid(document: Mapping[str, object], schema_path: Path, output_pat
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--source", type=Path)
+    parser.add_argument("--vllm-12-run", type=Path)
+    parser.add_argument("--vllm-16-24-run", type=Path)
+    parser.add_argument("--sglang-run", type=Path)
+    parser.add_argument("--receipt", type=Path, action="append", default=[])
     parser.add_argument("--schema", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    source = json.loads(args.source.read_text(encoding="utf-8"))
+    run_paths = (args.vllm_12_run, args.vllm_16_24_run, args.sglang_run)
+    if args.source is not None and any(run_paths):
+        parser.error("--source cannot be combined with private run directories")
+    if args.source is not None:
+        source = json.loads(args.source.read_text(encoding="utf-8"))
+    elif all(run_paths):
+        source = build_private_source_from_runs(
+            args.vllm_12_run,
+            args.vllm_16_24_run,
+            args.sglang_run,
+            args.receipt,
+        )
+    else:
+        parser.error("provide --source or all three private run directories")
     document = build_public_document(source)
     write_if_valid(document, args.schema, args.output)
     return 0
