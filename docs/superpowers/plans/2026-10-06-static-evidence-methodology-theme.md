@@ -12,13 +12,13 @@
 
 ## Progress overview
 
-**Current:** Task 5 — building the interactive methodology page
+**Current:** Task 6 — adding persistent Light/Dark themes
 
 - [x] 1. Freeze the public evidence contract and write failing pipeline tests
 - [x] 2. Build and validate the local-only VictoriaMetrics evidence importer
 - [x] 3. Generate the deterministic, privacy-safe Episode 01 data bundle
 - [x] 4. Remove internal profile/configuration material from Episode 01
-- [ ] 5. Build the interactive methodology page
+- [x] 5. Build the interactive methodology page
 - [ ] 6. Add persistent Light/Dark themes across every public route
 - [ ] 7. Add compiled-bundle privacy and offline-publication gates
 - [ ] 8. Run responsive, accessibility, preservation, and visual QA
@@ -362,19 +362,19 @@ git commit -m "feat: publish privacy-safe episode 01 study"
 - Create: `tests/dashboard_methodology_contract.cjs`
 - Create: `tests/dashboard_methodology_acceptance.cjs`
 
-- [ ] **Step 5.1: Write failing route/content tests**
+- [x] **Step 5.1: Write failing route/content tests**
 
 At `#methodology`, assert one H1, seven chapter controls, the 50/30/20 workload population, request-anatomy layers, the two-session replay, protocol gates, three synchronized evidence views, metric definitions, and the observed/not-established boundary.
 
-- [ ] **Step 5.2: Build the editorial page shell**
+- [x] **Step 5.2: Build the editorial page shell**
 
 Use the existing ruled grid, Oswald display face, and Episode 00 palette. Add a sticky vertical chapter rail above 900px and horizontal scrollable chapter controls below it. Do not introduce card-grid dashboard styling.
 
-- [ ] **Step 5.3: Implement Request Anatomy**
+- [x] **Step 5.3: Implement Request Anatomy**
 
 Use accessible buttons to reveal six layers: system instructions, tool definitions, conversation history, tool calls/results, current instruction, expected output. Show anonymized token-shape bands only; no content excerpts.
 
-- [ ] **Step 5.4: Implement the scrub-controlled Two-session replay**
+- [x] **Step 5.4: Implement the scrub-controlled Two-session replay**
 
 Use an `<input type="range">` with a textual ordered-list equivalent. The discrete stages are:
 
@@ -385,15 +385,15 @@ instruction → generation → tool call → tool gap → tool result
 
 Do not autoplay. Under `prefers-reduced-motion: reduce`, disable interpolation and update immediately.
 
-- [ ] **Step 5.5: Implement protocol and synchronized-evidence sections**
+- [x] **Step 5.5: Implement protocol and synchronized-evidence sections**
 
 Render coherence → smoke → warm-up → measured window → validity → threshold → report. Align client-visible, engine-native, and GPU lanes over one time ruler ending at “static approved aggregates.”
 
-- [ ] **Step 5.6: Add plain-language definitions and evidence boundary**
+- [x] **Step 5.6: Add plain-language definitions and evidence boundary**
 
 Distinguish TTFT from server queue time, TPOT from decode tok/s, per-request versus whole-server measures, completion validity versus correctness, and comparable outcomes versus contextual telemetry.
 
-- [ ] **Step 5.7: Run methodology tests at 1440, 768, and 390 px**
+- [x] **Step 5.7: Run methodology tests at 1440, 768, and 390 px**
 
 ```bash
 node tests/dashboard_methodology_contract.cjs
@@ -402,7 +402,7 @@ node tests/dashboard_methodology_acceptance.cjs http://127.0.0.1:5173/
 
 Expected: PASS, no horizontal overflow, and full keyboard operation.
 
-- [ ] **Step 5.8: Commit the methodology route**
+- [x] **Step 5.8: Commit the methodology route**
 
 ```bash
 git add dashboard/src/MethodologyPage.tsx dashboard/src/methodology dashboard/src/App.tsx dashboard/src/styles.css tests/dashboard_methodology_contract.cjs tests/dashboard_methodology_acceptance.cjs
