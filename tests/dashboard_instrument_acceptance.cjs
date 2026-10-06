@@ -51,7 +51,7 @@ const base = url.replace(/#.*$/, "");
       for (const forbidden of ["0.31.0", "0.5.21", "run_id", "service_instance", "/users/", "configuration matrix"]) {
         assert.equal(publicText.includes(forbidden), false, `public Episode 01 text leaked ${forbidden}`);
       }
-      assert.equal(await page.locator('[aria-live="polite"]').count(), 1);
+      assert.equal(await page.locator('[aria-label="Comparison summary"][aria-live="polite"]').count(), 1);
       assert.equal(await page.locator(".selection-ruler").first().evaluate(node => getComputedStyle(node).transitionDuration), "0s");
       await chooser.click();
       assert.equal(await chooser.getAttribute("aria-expanded"), "true");

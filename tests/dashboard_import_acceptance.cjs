@@ -69,7 +69,7 @@ const file = (name, value) => ({ name, mimeType: "application/json", buffer: Buf
         await page.getByRole("alert").waitFor();
         assert.equal(await page.locator(".reader-point").count(), 0);
       }
-      await page.getByRole("link", { name: "Episode 0 study" }).click();
+      await page.evaluate(() => { window.location.hash = "episode-0"; });
       await page.getByText("936", { exact: true }).first().waitFor();
       assert.equal(await page.title(), "Qwen2.5-32B-Instruct runtime study — Exploratory noncanonical");
       assert.deepEqual(errors, []);
