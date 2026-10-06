@@ -13,7 +13,7 @@ export function LoadSweeper({ loads, selected, baseline, pinned, onSelect, onPin
     <div className="sweeper-pin">
       <span>Comparison basis</span>
       <strong>{baseline === null ? "No earlier measured point" : pinned ? `${baseline} users · pinned` : `${baseline} users · previous`}</strong>
-      <button type="button" disabled={selected === loads[0]} onClick={() => onPin(pinned ? null : selected)}>{pinned ? "Release pin" : "Pin current point"}</button>
+      <button type="button" onClick={() => onPin(pinned ? null : selected)}>{pinned ? "Release pin" : "Pin current point"}</button>
     </div>
   </section>;
 }
