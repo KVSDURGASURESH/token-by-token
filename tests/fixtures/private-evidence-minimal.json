@@ -1,0 +1,213 @@
+{
+  "study": {
+    "title": "Serving under conversational load",
+    "model_family": "Open-weight coding model",
+    "precision": "BF16",
+    "hardware": "H200",
+    "hardware_count": 1,
+    "evidence_state": "recorded_deployment_comparison"
+  },
+  "methodology": {
+    "warmup_seconds": 120,
+    "measurement_seconds": 300,
+    "sessions_per_user": 2,
+    "decode_threshold_tps": 20,
+    "ttft_gated": false
+  },
+  "source_arms": [
+    {
+      "publishable": true,
+      "engine": "vLLM",
+      "engine_version": "9.9.9-private",
+      "profile": "internal-vllm-profile",
+      "configuration": ["--private-vllm-flag"],
+      "marker": "circle",
+      "line_style": "solid",
+      "points": [
+        {
+          "users": 12,
+          "active_sessions": 24,
+          "total_requests": 120,
+          "valid_requests": 120,
+          "level_valid": true,
+          "percentile_origin": "direct",
+          "metrics": {
+            "output_tps": 510.5,
+            "ttft_p50_ms": 185.0,
+            "ttft_p95_ms": 430.0,
+            "tpot_p50_ms": 24.5,
+            "decode_p10_tps": 28.0,
+            "error_rate_pct": 0.0,
+            "running_requests_mean": 10.5,
+            "waiting_requests_mean": 1.2,
+            "cache_context": 71.0,
+            "gpu_utilization_pct": 92.0,
+            "gpu_memory_gib": 76.2,
+            "gpu_power_w": 612.0
+          }
+        },
+        {
+          "users": 16,
+          "active_sessions": 32,
+          "total_requests": 160,
+          "valid_requests": 159,
+          "level_valid": true,
+          "percentile_origin": "direct",
+          "metrics": {
+            "output_tps": 560.0,
+            "ttft_p50_ms": 220.0,
+            "ttft_p95_ms": 610.0,
+            "tpot_p50_ms": 25.1,
+            "decode_p10_tps": 24.0,
+            "error_rate_pct": 0.625,
+            "running_requests_mean": 13.8,
+            "waiting_requests_mean": 2.2,
+            "cache_context": 78.0,
+            "gpu_utilization_pct": 95.0,
+            "gpu_memory_gib": 77.0,
+            "gpu_power_w": 628.0
+          }
+        },
+        {
+          "users": 24,
+          "active_sessions": 48,
+          "total_requests": 240,
+          "valid_requests": 238,
+          "level_valid": true,
+          "percentile_origin": "direct",
+          "metrics": {
+            "output_tps": 588.0,
+            "ttft_p50_ms": 390.0,
+            "ttft_p95_ms": 1180.0,
+            "tpot_p50_ms": 27.0,
+            "decode_p10_tps": 21.0,
+            "error_rate_pct": 0.833333,
+            "running_requests_mean": 18.4,
+            "waiting_requests_mean": 5.4,
+            "cache_context": 86.0,
+            "gpu_utilization_pct": 97.0,
+            "gpu_memory_gib": 78.1,
+            "gpu_power_w": 642.0
+          }
+        }
+      ]
+    },
+    {
+      "publishable": true,
+      "engine": "SGLang",
+      "engine_version": "8.8.8-private",
+      "profile": "internal-sglang-profile",
+      "configuration": ["--private-sglang-flag"],
+      "marker": "diamond",
+      "line_style": "dashed",
+      "points": [
+        {
+          "users": 12,
+          "active_sessions": 24,
+          "total_requests": 120,
+          "valid_requests": 120,
+          "level_valid": true,
+          "percentile_origin": "direct",
+          "metrics": {
+            "output_tps": 525.0,
+            "ttft_p50_ms": 171.0,
+            "ttft_p95_ms": 410.0,
+            "tpot_p50_ms": 23.8,
+            "decode_p10_tps": 29.0,
+            "error_rate_pct": 0.0,
+            "running_requests_mean": 10.1,
+            "waiting_requests_mean": 0.9,
+            "cache_context": null,
+            "gpu_utilization_pct": 93.0,
+            "gpu_memory_gib": 75.4,
+            "gpu_power_w": 605.0
+          }
+        },
+        {
+          "users": 16,
+          "active_sessions": 32,
+          "total_requests": 160,
+          "valid_requests": 160,
+          "level_valid": true,
+          "percentile_origin": "direct",
+          "metrics": {
+            "output_tps": 579.0,
+            "ttft_p50_ms": 205.0,
+            "ttft_p95_ms": 570.0,
+            "tpot_p50_ms": 24.6,
+            "decode_p10_tps": 25.0,
+            "error_rate_pct": 0.0,
+            "running_requests_mean": 13.5,
+            "waiting_requests_mean": 1.8,
+            "cache_context": null,
+            "gpu_utilization_pct": 96.0,
+            "gpu_memory_gib": 76.0,
+            "gpu_power_w": 620.0
+          }
+        },
+        {
+          "users": 24,
+          "active_sessions": 48,
+          "total_requests": 240,
+          "valid_requests": 239,
+          "level_valid": true,
+          "percentile_origin": "direct",
+          "metrics": {
+            "output_tps": 612.0,
+            "ttft_p50_ms": 360.0,
+            "ttft_p95_ms": 1030.0,
+            "tpot_p50_ms": 25.9,
+            "decode_p10_tps": 22.0,
+            "error_rate_pct": 0.416667,
+            "running_requests_mean": 18.0,
+            "waiting_requests_mean": 4.8,
+            "cache_context": null,
+            "gpu_utilization_pct": 98.0,
+            "gpu_memory_gib": 77.2,
+            "gpu_power_w": 635.0
+          }
+        }
+      ]
+    },
+    {
+      "publishable": false,
+      "engine": "SGLang",
+      "engine_version": "8.8.8-private",
+      "profile": "private-third-profile",
+      "configuration": ["--never-publish-this-recipe"],
+      "source_path": "/Users/example/private-results/run-private-14",
+      "run_id": "private-run-14",
+      "marker": "square",
+      "line_style": "dotted",
+      "points": [
+        {
+          "users": 14,
+          "active_sessions": 28,
+          "total_requests": 140,
+          "valid_requests": 140,
+          "level_valid": false,
+          "percentile_origin": "direct",
+          "metrics": {
+            "output_tps": 9999.0,
+            "ttft_p50_ms": 1.0,
+            "ttft_p95_ms": 1.0,
+            "tpot_p50_ms": 1.0,
+            "decode_p10_tps": 9999.0,
+            "error_rate_pct": 0.0,
+            "running_requests_mean": 1.0,
+            "waiting_requests_mean": 0.0,
+            "cache_context": 1.0,
+            "gpu_utilization_pct": 1.0,
+            "gpu_memory_gib": 1.0,
+            "gpu_power_w": 1.0
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Recorded deployments differ beyond engine identity.",
+    "Capacity is not established by these observations.",
+    "Runtime-native gauges retain engine-specific definitions."
+  ]
+}

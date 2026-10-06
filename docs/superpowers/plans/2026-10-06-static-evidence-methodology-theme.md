@@ -12,7 +12,9 @@
 
 ## Progress overview
 
-- [ ] 1. Freeze the public evidence contract and write failing pipeline tests
+**Current:** Task 2 — local metrics validator (next)
+
+- [x] 1. Freeze the public evidence contract and write failing pipeline tests
 - [ ] 2. Build and validate the local-only VictoriaMetrics evidence importer
 - [ ] 3. Generate the deterministic, privacy-safe Episode 01 data bundle
 - [ ] 4. Remove internal profile/configuration material from Episode 01
@@ -51,7 +53,7 @@
 - Output: `dashboard/src/data/episode-1-public.v1.json` conforming exactly to `schemas/public-inference-evidence.v1.schema.json`.
 - Exit status: `0` only for complete, deterministic, privacy-compliant evidence; non-zero without emitting partial output.
 
-- [ ] **Step 1.1: Add a failing schema/generator test**
+- [x] **Step 1.1: Add a failing schema/generator test**
 
 Create `tests/test_static_evidence_pipeline.py` using `unittest`. Load the generator by file path, invoke `build_public_document(...)` with the synthetic fixture, and assert:
 
@@ -66,7 +68,7 @@ self.assertNotIn("version", json.dumps(document).lower())
 
 The fixture must use fictional documentation-only paths/IDs and include one deliberately excluded private arm so the test proves positive selection rather than deletion-based sanitization.
 
-- [ ] **Step 1.2: Verify the test fails for the missing implementation**
+- [x] **Step 1.2: Verify the test fails for the missing implementation**
 
 Run:
 
@@ -76,7 +78,7 @@ python -m unittest tests.test_static_evidence_pipeline -v
 
 Expected: FAIL because the schema and generator do not exist.
 
-- [ ] **Step 1.3: Define the strict public schema**
+- [x] **Step 1.3: Define the strict public schema**
 
 Create a Draft 2020-12 schema with `additionalProperties: false` at every object boundary. Allow only:
 
@@ -96,7 +98,7 @@ gpu_memory_gib, gpu_power_w
 
 Every reading is `{available, value, unit, reason, evidence_state}`. Require `value: null` when unavailable and a non-empty reason. Restrict `engine` to `vLLM|SGLang` and levels to `12|16|24`.
 
-- [ ] **Step 1.4: Implement pure validation and deterministic serialization**
+- [x] **Step 1.4: Implement pure validation and deterministic serialization**
 
 In `scripts/build_static_benchmark_evidence.py`, implement:
 
@@ -109,7 +111,7 @@ def write_if_valid(document: Mapping[str, object], schema_path: Path, output_pat
 
 Use a positive field map and `json.dumps(..., sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n"`. Write to a sibling temporary file and replace the destination only after schema and privacy validation succeed.
 
-- [ ] **Step 1.5: Add scientific validation cases**
+- [x] **Step 1.5: Add scientific validation cases**
 
 Tests must reject:
 
@@ -124,7 +126,7 @@ Tests must reject:
 - extra top-level or nested keys;
 - output differences across two identical builds.
 
-- [ ] **Step 1.6: Run and commit the contract slice**
+- [x] **Step 1.6: Run and commit the contract slice**
 
 Run:
 
