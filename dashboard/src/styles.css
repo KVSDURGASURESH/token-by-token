@@ -966,3 +966,30 @@ body:has(.planner-home),html:has(.planner-home){background:var(--paper);color:va
 .runtime-answer{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(240px,.8fr);gap:8px 34px;margin-bottom:34px;padding:24px 0;border-block:1px solid var(--safe)}.runtime-answer>span{grid-column:1/-1;color:var(--safe);font-size:10px;letter-spacing:.14em}.runtime-answer strong{font:520 clamp(28px,3.4vw,50px)/1 "Oswald Variable",sans-serif;text-transform:uppercase}.runtime-answer p{align-self:end;margin:0;color:var(--muted);font-size:11px;line-height:1.55}.comparison-summary>small{grid-column:1/-1;color:var(--muted);font-size:9px}.selected-value{fill:var(--ink)!important;font-size:9px!important;font-weight:700}.validity-note{margin:0;padding:9px 18px;border-bottom:1px solid var(--line);color:var(--muted);font-size:9px;line-height:1.45}.instrument-readouts>section>div{grid-template-columns:repeat(4,1fr)}
 @media(max-width:980px){.instrument-chapters button{width:auto}.instrument-readouts>section>div{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:680px){.runtime-answer{grid-template-columns:1fr}.instrument-plot{overflow:visible}.instrument-plot figcaption,.instrument-plot .instrument-legend,.instrument-plot svg{min-width:0}.instrument-readouts>section>div{grid-template-columns:repeat(2,1fr)}}
+
+.decode-threshold{margin:34px 0;border:1px solid var(--line)}
+.decode-threshold>header{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px;padding:22px;border-bottom:1px solid var(--line)}
+.decode-threshold>header span{grid-column:1/-1;color:var(--safe);font-size:10px;letter-spacing:.14em}
+.decode-threshold h2{margin:0;font:520 clamp(28px,3vw,44px)/1 "Oswald Variable",sans-serif;text-transform:uppercase}
+.decode-threshold header p{align-self:end;margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+.decode-threshold>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.decode-threshold article{padding:22px}.decode-threshold article+article{border-left:1px solid var(--line)}
+.decode-threshold article>div:first-child{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.decode-threshold article i{width:22px;height:4px;background:var(--accent)}
+.decode-threshold .arm-sglang i{background:var(--safe)}
+.decode-threshold h3{margin:0;font:520 23px/1 "Oswald Variable",sans-serif;text-transform:uppercase}
+.decode-threshold article strong{font:520 25px/1 "Oswald Variable",sans-serif}
+.threshold-track{position:relative;height:11px;margin:20px 0 10px;background:var(--panel);border:1px solid var(--line)}
+.threshold-track span{display:block;height:100%;background:var(--accent)}.arm-sglang .threshold-track span{background:var(--safe)}
+.threshold-track b{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--warning)}
+.decode-threshold article p{margin:0;font-size:11px}.threshold-met p{color:var(--safe)}.threshold-missed p{color:var(--accent)}
+.evidence-boundary-panel{padding:70px 0 0}
+.evidence-boundary-panel>header{display:grid;grid-template-columns:1fr 1.5fr;gap:14px 40px;padding-bottom:28px;border-bottom:2px solid var(--line-strong)}
+.evidence-boundary-panel>header span{grid-column:1/-1;color:var(--safe);font-size:10px;letter-spacing:.14em}
+.evidence-boundary-panel h2{margin:0;font:520 clamp(38px,4vw,62px)/.95 "Oswald Variable",sans-serif;text-transform:uppercase}
+.evidence-boundary-panel>header p{align-self:end;margin:0;color:var(--warning);font-size:14px;line-height:1.55}
+.evidence-boundary-panel>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-inline:1px solid var(--line)}
+.evidence-boundary-panel article{padding:26px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.evidence-boundary-panel article:nth-child(2n){border-right:0}.evidence-boundary-panel h3{margin:0 0 10px;color:var(--safe);font:520 24px/1 "Oswald Variable",sans-serif;text-transform:uppercase}
+.evidence-boundary-panel p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}.evidence-boundary-panel strong{color:var(--accent)}
+@media(max-width:680px){.decode-threshold>header,.decode-threshold>div,.evidence-boundary-panel>header,.evidence-boundary-panel>div{grid-template-columns:1fr}.decode-threshold article+article{border-left:0;border-top:1px solid var(--line)}.evidence-boundary-panel article{border-right:0}}

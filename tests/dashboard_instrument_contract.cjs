@@ -11,36 +11,40 @@ assert.equal(episode1.status, "available");
 assert.match(episode1.evidence, /recorded exploratory H200 runtime comparison/i);
 assert.equal(episode1.dashboardView, "episode1-instrument");
 
-const dataPath = path.join(root, "dashboard/src/data/episode-1-instrument.json");
+const dataPath = path.join(root, "dashboard/src/data/episode-1-public.v1.json");
 assert(fs.existsSync(dataPath), "normalized Episode 01 evidence must exist");
 const study = JSON.parse(fs.readFileSync(dataPath, "utf8"));
 
-assert.equal(study.source.agentbench_commit, "6d1908d");
-assert.equal(study.model, "Qwen/Qwen3.8-27B-FP8");
-assert.equal(study.hardware, "1× NVIDIA H200 141 GB");
-assert.equal(study.capacity_qualified, false);
-assert.equal(study.provenance_verified, false);
+assert.equal(study.schema_version, "public-inference-evidence.v1");
+assert.equal(study.study.model_family, "Qwen3.8 27B");
+assert.equal(study.study.hardware, "NVIDIA H200");
+assert.equal(study.methodology.capacity_state, "not_established");
+assert.equal(study.methodology.decode_threshold_tps, 20);
+assert.equal(study.methodology.ttft_gated, false);
 assert.deepEqual(study.levels, [12, 16, 24]);
-assert.deepEqual(study.arms.map((arm) => arm.id), ["vllm", "sglang"]);
+assert.deepEqual(study.arms.map((arm) => arm.engine), ["vLLM", "SGLang"]);
 
 for (const arm of study.arms) {
   assert.deepEqual(arm.points.map((point) => point.users), study.levels);
-  assert(arm.points.every((point) => point.valid_sample_count > 0));
-  assert(arm.points.every((point) => point.error_rate <= 0.01));
+  assert(arm.points.every((point) => point.valid_requests > 0));
+  assert(arm.points.every((point) => point.readings.error_rate_pct.value <= 1));
 }
 
-const vllm12 = study.arms.find((arm) => arm.id === "vllm").points[0];
-const sglang12 = study.arms.find((arm) => arm.id === "sglang").points[0];
-assert.equal(vllm12.output_tps, 374.7588238735019);
-assert.equal(sglang12.output_tps, 497.3699412736081);
-assert.equal(vllm12.tpot_p50_ms, 36.749324468085106);
-assert.equal(sglang12.tpot_p50_ms, 20.63596386725664);
+const vllm12 = study.arms.find((arm) => arm.engine === "vLLM").points[0];
+const sglang12 = study.arms.find((arm) => arm.engine === "SGLang").points[0];
+assert.equal(vllm12.readings.output_tps.value, 374.7588238735019);
+assert.equal(sglang12.readings.output_tps.value, 497.36994127360805);
+assert.equal(vllm12.readings.tpot_p50_ms.value, 36.749324468085106);
+assert.equal(sglang12.readings.tpot_p50_ms.value, 20.63596386725664);
+assert.equal(study.synchronized_series.length > 0, true);
 
 const evidenceSource = fs.readFileSync(path.join(root, "dashboard/src/instrument/evidence.ts"), "utf8");
 assert.match(evidenceSource, /previousMeasuredLoad/);
 assert.match(evidenceSource, /compareReadings/);
 assert.match(evidenceSource, /visible TTFT/);
 assert.match(evidenceSource, /adaptEpisode1Study/);
+assert.match(evidenceSource, /episode-1-public\.v1\.json/);
+assert.doesNotMatch(evidenceSource, /\.configuration\b/);
 assert.doesNotMatch(evidenceSource, /label:\s*["']Server queue[^"']*TTFT/i);
 
 console.log("Inference Instrument evidence contract passed.");

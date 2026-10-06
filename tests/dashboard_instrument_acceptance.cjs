@@ -19,7 +19,7 @@ const base = url.replace(/#.*$/, "");
       page.on("request", request => requests.push(request.url()));
       await page.goto(`${base}#episode-1`, { waitUntil: "networkidle" });
 
-      assert.equal(await page.getByRole("heading", { name: "Which runtime configuration serves this H200 workload better?" }).count(), 1);
+      assert.equal(await page.getByRole("heading", { name: "What breaks first when two inference engines meet the same H200 workload?" }).count(), 1);
       assert.equal(await page.getByText("Recorded · exploratory · capacity not established", { exact: true }).count(), 1);
       const chooser = page.getByRole("button", { name: /Choose episode/i });
       assert.equal(await chooser.count(), 1);
@@ -33,7 +33,7 @@ const base = url.replace(/#.*$/, "");
       assert.equal(await page.getByRole("group", { name: "Compare measured load" }).getByRole("button").count(), 3);
       assert.equal(await page.getByRole("slider", { name: "Tested load" }).getAttribute("aria-valuetext"), "16 simulated users, measured level 2 of 3");
       assert.match(await page.getByLabel("Comparison summary").innerText(), /Compared with 12 users/i);
-      assert.match(await page.getByLabel("Comparison summary").innerText(), /vLLM 0\.31\.0: \+0\.5% output, \+19\.9% visible TTFT/);
+      assert.match(await page.getByLabel("Comparison summary").innerText(), /vLLM: \+0\.5% output, \+19\.9% visible TTFT/);
       assert.match(await page.getByLabel("Runtime comparison answer").innerText(), /27\.5% more output and 26\.8% lower median TTFT/i);
       assert.match(await page.locator(".instrument-readouts").innerText(), /665 \/ 666 completion-valid requests/);
       await page.getByRole("button", { name: "Pin current point" }).click();
@@ -45,6 +45,12 @@ const base = url.replace(/#.*$/, "");
       assert.match(await page.getByLabel("Comparison summary").innerText(), /Compared with 16 users/i);
       assert.equal(await page.locator(".instrument-data-table").count(), 1);
       assert.equal(await page.locator(".instrument-metric-explanation").count() >= 2, true);
+      assert.match(await page.getByLabel("Decode p10 threshold").innerText(), /90% of valid requests decoded at least this fast/i);
+      assert.match(await page.getByLabel("Decode p10 threshold").innerText(), /threshold missed/i);
+      const publicText = (await page.locator("body").innerText()).toLowerCase();
+      for (const forbidden of ["0.31.0", "0.5.21", "run_id", "service_instance", "/users/", "configuration matrix"]) {
+        assert.equal(publicText.includes(forbidden), false, `public Episode 01 text leaked ${forbidden}`);
+      }
       assert.equal(await page.locator('[aria-live="polite"]').count(), 1);
       assert.equal(await page.locator(".selection-ruler").first().evaluate(node => getComputedStyle(node).transitionDuration), "0s");
       await chooser.click();

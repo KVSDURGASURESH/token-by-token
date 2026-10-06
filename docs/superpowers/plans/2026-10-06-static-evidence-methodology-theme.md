@@ -12,12 +12,12 @@
 
 ## Progress overview
 
-**Current:** Task 3 — generating the deterministic public Episode 01 bundle
+**Current:** Task 5 — building the interactive methodology page
 
 - [x] 1. Freeze the public evidence contract and write failing pipeline tests
 - [x] 2. Build and validate the local-only VictoriaMetrics evidence importer
-- [ ] 3. Generate the deterministic, privacy-safe Episode 01 data bundle
-- [ ] 4. Remove internal profile/configuration material from Episode 01
+- [x] 3. Generate the deterministic, privacy-safe Episode 01 data bundle
+- [x] 4. Remove internal profile/configuration material from Episode 01
 - [ ] 5. Build the interactive methodology page
 - [ ] 6. Add persistent Light/Dark themes across every public route
 - [ ] 7. Add compiled-bundle privacy and offline-publication gates
@@ -247,11 +247,11 @@ git commit -m "feat: validate private benchmark metrics locally"
 - Modify: `scripts/build_static_benchmark_evidence.py`
 - Remove after migration: `dashboard/src/data/episode-1-instrument.json`
 
-- [ ] **Step 3.1: Add reconciliation tests against approved source aggregates**
+- [x] **Step 3.1: Add reconciliation tests against approved source aggregates**
 
-The test reads the final private source only when an explicit `AGENTBENCH_EVIDENCE_ROOT` is supplied; otherwise it validates the committed public bundle against a checked-in value-free expectation map. Assert exact values for every public engine/load/metric cell and ensure the 14-user profile is absent.
+The test validates the committed public bundle against a checked-in expectation map. Production generation accepts only explicit private run directories and passed local validation receipts. Assert exact values for every public engine/load/metric cell and ensure the 14-user profile is absent.
 
-- [ ] **Step 3.2: Add public claim-state derivation**
+- [x] **Step 3.2: Add public claim-state derivation**
 
 Derive these states without free-form source copy:
 
@@ -262,15 +262,15 @@ unavailable, not_established
 
 Encode the declared decode threshold as `20 tok/s`, state that TTFT is reported but not gated, and keep capacity as `not_established` wherever source requirements were skipped or unmet.
 
-- [ ] **Step 3.3: Generate synchronized static series**
+- [x] **Step 3.3: Generate synchronized static series**
 
 Emit aligned client, engine-native, and GPU series for the same declared windows. Deterministically downsample only when necessary; preserve first/last points and discontinuities. Never average published percentiles or coerce incompatible runtime-native gauges into one definition.
 
-- [ ] **Step 3.4: Generate and validate the public JSON**
+- [x] **Step 3.4: Generate and validate the public JSON**
 
 Run the generator using the accepted final private source and Task 2 receipt. The committed JSON must contain no source path or private identifier and must be byte-identical on the second run.
 
-- [ ] **Step 3.5: Run reconciliation and schema tests**
+- [x] **Step 3.5: Run reconciliation and schema tests**
 
 ```bash
 python -m unittest tests.test_static_evidence_pipeline tests.test_episode1_public_evidence -v
@@ -279,7 +279,7 @@ python scripts/check_publication_privacy.py --root dashboard/src/data --files-on
 
 Expected: PASS.
 
-- [ ] **Step 3.6: Commit the approved bundle**
+- [x] **Step 3.6: Commit the approved bundle**
 
 ```bash
 git add dashboard/src/data/episode-1-public.v1.json tests/test_episode1_public_evidence.py scripts/build_static_benchmark_evidence.py
@@ -300,7 +300,7 @@ git commit -m "data: publish sanitized episode 01 evidence"
 - Modify: `tests/dashboard_instrument_contract.cjs`
 - Modify: `tests/dashboard_instrument_acceptance.cjs`
 
-- [ ] **Step 4.1: Write failing public-copy and privacy assertions**
+- [x] **Step 4.1: Write failing public-copy and privacy assertions**
 
 Assert that Episode 01 renders:
 
@@ -313,11 +313,11 @@ Assert that Episode 01 renders:
 
 Assert that no configuration matrix, profile, version, flags, run IDs, paths, organization/tool names, or private 14-user result appears in DOM text.
 
-- [ ] **Step 4.2: Replace the evidence adapter input and types**
+- [x] **Step 4.2: Replace the evidence adapter input and types**
 
 Import `episode-1-public.v1.json`. Remove `configuration` from `EvidenceArm`. Add metric definitions for `decode_p10_tps`, `running_requests`, and `waiting_requests`. Preserve metric direction and unavailable reasons from the static document.
 
-- [ ] **Step 4.3: Replace configuration UI with an evidence-boundary panel**
+- [x] **Step 4.3: Replace configuration UI with an evidence-boundary panel**
 
 Remove the public configuration matrix. Render only:
 
@@ -327,11 +327,11 @@ Remove the public configuration matrix. Render only:
 - observed/not-established split;
 - threshold basis and limitations.
 
-- [ ] **Step 4.4: Add decode p10 threshold visualization**
+- [x] **Step 4.4: Add decode p10 threshold visualization**
 
 Render the measured value, threshold line, pass/miss label, and a sentence explaining: “p10 means 90% of valid requests decoded at least this fast.” Use shape/text plus color.
 
-- [ ] **Step 4.5: Run UI contract and build checks**
+- [x] **Step 4.5: Run UI contract and build checks**
 
 ```bash
 node tests/dashboard_instrument_contract.cjs
@@ -341,7 +341,7 @@ npm run build --prefix dashboard
 
 Expected: PASS.
 
-- [ ] **Step 4.6: Commit the Episode 01 migration**
+- [x] **Step 4.6: Commit the Episode 01 migration**
 
 ```bash
 git add dashboard/src/instrument/evidence.ts dashboard/src/Episode1Instrument.tsx dashboard/src/instrument/LinkedMetricInstrument.tsx dashboard/src/instrument/EpisodeShell.tsx dashboard/src/styles.css tests/dashboard_instrument_contract.cjs tests/dashboard_instrument_acceptance.cjs
