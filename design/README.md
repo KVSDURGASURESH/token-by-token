@@ -6,6 +6,13 @@ publication design from another checkout.
 Start with the [continuation guide](CONTINUATION-GUIDE.md). It records the product
 requirements, public-data boundaries, implementation state and resume checklist.
 
+## Page construct (next implementation step)
+
+- [Page construct: the global template for every page](PAGE-CONSTRUCT.md) — the shared
+  shell, the fixed episode chapter order, status variants (recorded, fixture, planned), the
+  rules every page follows, and how Episode 00, Episode 01, Episode 02 and Methodology map
+  onto it. It takes precedence over earlier documents on page structure.
+
 ## Current Episode 01 direction
 
 - [Interactive evidence design brief](../handoffs/2026-10-06-interactive-evidence-design-brief.md)

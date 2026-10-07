@@ -99,6 +99,8 @@ Current working branch: `codex/episode-1-local-prep`.
 ## Resume checklist
 
 1. Pull `codex/episode-1-local-prep` and read this guide plus the detailed design brief.
+   For the page layout redesign, follow [the page construct](PAGE-CONSTRUCT.md); it governs
+   page structure across every episode and global page.
 2. Run `node tests/dashboard_series_acceptance.cjs http://127.0.0.1:5173/` with the
    dashboard dev server running.
 3. Review Episode 01 as a first-time reader at desktop, tablet and narrow in-app sizes.
