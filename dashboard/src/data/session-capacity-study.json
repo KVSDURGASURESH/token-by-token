@@ -4,7 +4,7 @@
   "title": "Session capacity field note",
   "classification": "exploratory recorded deployment study",
   "capacity_qualified": false,
-  "model": "Qwen/Qwen3.6-27B-FP8",
+  "model": "Matched model family",
   "runtime": "vLLM",
   "actual_prompt_min_tokens": 1170,
   "actual_prompt_max_tokens": 6691,
@@ -20,7 +20,7 @@
   },
   "previous_study": [
     {"dimension": "Question", "previous": "How did two serving configurations behave?", "current": "How did two deployments behave as conversational load increased?"},
-    {"dimension": "Model", "previous": "Qwen2.5-32B-Instruct · BF16", "current": "Qwen3.6-27B-FP8"},
+    {"dimension": "Model", "previous": "Qwen2.5-32B-Instruct · BF16", "current": "Matched model family"},
     {"dimension": "Hardware", "previous": "One H100 80GB per run", "current": "One RTX PRO 6000 or one H200"},
     {"dimension": "Runtime", "previous": "vLLM vs SGLang", "current": "vLLM on both deployments"},
     {"dimension": "Traffic", "previous": "Deterministic exact-token prompts", "current": "Synthetic multi-turn session replay"},

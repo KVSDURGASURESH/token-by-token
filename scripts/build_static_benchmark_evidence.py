@@ -500,9 +500,9 @@ def build_private_source_from_runs(
 
     return {
         "study": {
-            "title": "Episode 01 — The queue changes the winner",
-            "model_family": "Qwen3.8 27B",
-            "precision": "FP8 weights and KV cache",
+            "title": "Episode 01 — The throughput lead changes with load",
+            "model_family": "Matched model family",
+            "precision": "Details withheld",
             "hardware": "NVIDIA H200",
             "hardware_count": 1,
         },
@@ -543,6 +543,7 @@ def validate_public_privacy(document: Mapping[str, object]) -> None:
         re.compile(r"/(?:Users|home|srv|var|tmp)/"),
         re.compile(r"\b(?:agentbench|mirastacklabs)\b", re.IGNORECASE),
         re.compile(r"\b(?:flashattention|prefix caching|chunked prefill|triton attention|pytorch sampling)\b", re.IGNORECASE),
+        re.compile(r"\b(?:qwen3\.8|fp8|kv cache)\b", re.IGNORECASE),
         re.compile(r"https?://", re.IGNORECASE),
     )
     if any(pattern.search(payload) for pattern in forbidden):

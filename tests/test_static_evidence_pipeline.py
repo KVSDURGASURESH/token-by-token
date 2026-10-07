@@ -95,6 +95,17 @@ class StaticEvidencePipelineTests(unittest.TestCase):
                 self.module.write_if_valid(document, SCHEMA, destination)
             self.assertEqual(destination.read_bytes(), b"approved\n")
 
+    def test_write_if_valid_rejects_serving_profile_details(self):
+        for private_detail in ("Qwen3.8", "FP8", "KV cache"):
+            document = self.build()
+            document["study"]["precision"] = private_detail
+            with self.subTest(private_detail=private_detail), tempfile.TemporaryDirectory() as directory:
+                destination = Path(directory) / "public.json"
+                destination.write_bytes(b"approved\n")
+                with self.assertRaisesRegex(ValueError, "privacy"):
+                    self.module.write_if_valid(document, SCHEMA, destination)
+                self.assertEqual(destination.read_bytes(), b"approved\n")
+
     def test_rejects_unapproved_engine(self):
         source = copy.deepcopy(self.source)
         source["source_arms"][0]["engine"] = "OtherEngine"

@@ -112,7 +112,7 @@ export function SessionCapacityStudy() {
         <div className="session-hero-copy">
           <p className="session-kicker">Token by Token · recorded field note</p>
           <h1><span>Three percent more output.</span><span>Nineteen times the wait.</span></h1>
-          <p className="session-deck">A conversational-load study of two Qwen3.6-27B-FP8 deployments—and a reminder that the highest token rate can be the wrong operating point.</p>
+          <p className="session-deck">A conversational-load study of two matched inference-engine deployments—and a reminder that the highest token rate can be the wrong operating point.</p>
         </div>
         <aside className="qualification-stamp" aria-label="Qualification status">
           <strong>Capacity not established</strong>

@@ -104,6 +104,12 @@ class Episode1PublicEvidenceTests(unittest.TestCase):
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
         Draft202012Validator(schema).validate(self.bundle)
 
+    def test_public_study_identity_withholds_profile_details(self):
+        rendered = json.dumps(self.bundle["study"]).lower()
+        for forbidden in ("qwen", "fp8", "kv cache", "profile name", "endpoint", "flags"):
+            self.assertNotIn(forbidden, rendered)
+        self.assertIn("details withheld", rendered)
+
     def test_every_approved_aggregate_reconciles_exactly(self):
         points = {
             (arm["engine"], point["users"]): point

@@ -37,6 +37,13 @@ export function EpisodeShell({ study, chapters, children }: { study: EvidenceStu
     </header>
     <div className="instrument-layout">
       <aside className="instrument-rail">
+        <nav className="episode-scroll" aria-label="Episode scroller">
+          <p>Episodes</p>
+          <a className="episode-scroll-home" href="#episodes"><b>↗</b><span>All episode summaries<small>Series landing page</small></span></a>
+          <div>{catalog.episodes.map((episode) => <a key={episode.id} href={episode.status === "available" ? `#${episode.id}` : `#experiment-planner?episode=${episode.number}`} aria-current={episode.id === `episode-${study.number}` ? "page" : undefined}>
+            <b>{String(episode.number).padStart(2, "0")}</b><span>{episode.title}<small>{episode.status === "available" ? "Recorded study" : "Planned"}</small></span>
+          </a>)}</div>
+        </nav>
         <div className="instrument-episode-number">{study.kind === "episode" ? `EP ${String(study.number).padStart(2, "0")}` : "FIELD NOTE"}</div>
         <p className={`instrument-state ${study.state}`}>{study.statusLabel}</p>
         <dl className="instrument-brief">

@@ -1,7 +1,8 @@
 const { chromium } = require("../dashboard/node_modules/playwright");
 
 (async () => {
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: true,
+    executablePath: process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const requests = [];
   page.on("request", request => requests.push(request.url()));

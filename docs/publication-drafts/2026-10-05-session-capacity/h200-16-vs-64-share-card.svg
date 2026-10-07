@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500" role="img" aria-labelledby="title desc">
+  <title id="title">H200 session-replay result: 3.2 percent more output, 19 times the median wait</title>
+  <desc id="desc">At 16 simulated users, aggregate output was 359.81 tokens per second and median visible-text wait was 1.17 seconds. At 64 simulated users, output was 371.32 tokens per second and median wait was 22.23 seconds. This was one synthetic session-replay sweep and did not establish production capacity.</desc>
+  <rect width="1200" height="1500" fill="#080a0b"/>
+  <rect x="42" y="42" width="1116" height="1416" rx="10" fill="none" stroke="#465154" stroke-width="3"/>
+  <text x="88" y="115" fill="#4bdcaf" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" letter-spacing="5">TOKEN BY TOKEN · FIELD NOTE 01</text>
+  <text x="88" y="225" fill="#f2f5ef" font-family="Georgia, 'Times New Roman', serif" font-size="86" font-weight="700">3.2% MORE OUTPUT.</text>
+  <text x="88" y="325" fill="#f2f5ef" font-family="Georgia, 'Times New Roman', serif" font-size="86" font-weight="700">19× THE WAIT.</text>
+  <text x="90" y="385" fill="#9aa4a1" font-family="Arial, Helvetica, sans-serif" font-size="30">One H200 deployment · 16 → 64 simulated users</text>
+  <line x1="88" y1="445" x2="1112" y2="445" stroke="#465154" stroke-width="2"/>
+  <text x="88" y="510" fill="#f2f5ef" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" letter-spacing="3">AGGREGATE OUTPUT · TOKENS / SECOND</text>
+  <text x="88" y="570" fill="#f2f5ef" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">16 users</text>
+  <rect x="250" y="535" width="795" height="48" fill="#283133"/>
+  <rect x="250" y="535" width="770" height="48" fill="#4bdcaf"/>
+  <text x="1072" y="570" fill="#f2f5ef" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">359.81</text>
+  <text x="88" y="650" fill="#f2f5ef" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">64 users</text>
+  <rect x="250" y="615" width="795" height="48" fill="#283133"/>
+  <rect x="250" y="615" width="795" height="48" fill="#4bdcaf"/>
+  <text x="1072" y="650" fill="#f2f5ef" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">371.32</text>
+  <text x="250" y="710" fill="#4bdcaf" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-style="italic">A narrow throughput gain</text>
+  <line x1="88" y1="770" x2="1112" y2="770" stroke="#465154" stroke-width="2"/>
+  <text x="88" y="835" fill="#f2f5ef" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" letter-spacing="3">MEDIAN WAIT FOR VISIBLE TEXT · SECONDS</text>
+  <text x="88" y="895" fill="#f2f5ef" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">16 users</text>
+  <rect x="250" y="860" width="795" height="48" fill="#283133"/>
+  <rect x="250" y="860" width="42" height="48" fill="#f0ba4b"/>
+  <text x="1072" y="895" fill="#f2f5ef" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">1.17</text>
+  <text x="88" y="975" fill="#f2f5ef" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">64 users</text>
+  <rect x="250" y="940" width="795" height="48" fill="#283133"/>
+  <rect x="250" y="940" width="795" height="48" fill="#f0ba4b"/>
+  <text x="1072" y="975" fill="#f2f5ef" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">22.23</text>
+  <text x="250" y="1045" fill="#f0ba4b" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-style="italic">A radically slower response start</text>
+  <rect x="88" y="1110" width="1024" height="168" rx="8" fill="#111617" stroke="#283133"/>
+  <text x="125" y="1170" fill="#4bdcaf" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" letter-spacing="2">THE OPERATING LESSON</text>
+  <text x="125" y="1222" fill="#f2f5ef" font-family="Georgia, 'Times New Roman', serif" font-size="34">Peak throughput is not the same thing</text>
+  <text x="125" y="1262" fill="#f2f5ef" font-family="Georgia, 'Times New Roman', serif" font-size="34">as usable interactive capacity.</text>
+  <text x="88" y="1340" fill="#9aa4a1" font-family="Arial, Helvetica, sans-serif" font-size="23">Qwen3.6-27B-FP8 · synthetic multi-turn session replay · one sweep</text>
+  <text x="88" y="1380" fill="#9aa4a1" font-family="Arial, Helvetica, sans-serif" font-size="23">Client request start → first text-content event · missing timing excluded</text>
+  <text x="88" y="1420" fill="#ff6a38" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700">CAPACITY UNQUALIFIED · READ THE EVIDENCE BOUNDARY</text>
+</svg>

@@ -25,7 +25,7 @@ const base = url.replace(/#.*$/, "");
         fs.mkdirSync(process.env.DASHBOARD_SCREENSHOT_DIR, { recursive: true });
         await page.screenshot({ path: path.join(process.env.DASHBOARD_SCREENSHOT_DIR, `series-${width}.png`), fullPage: true });
       }
-      await page.getByRole("link", { name: "Explore results", exact: true }).click();
+      await page.getByRole("link", { name: "Explore recorded results", exact: true }).first().click();
       await page.getByText("936", { exact: true }).first().waitFor();
       assert.equal(new URL(page.url()).hash, "#episode-0");
       assert(await page.locator(".published-study-table").isVisible());
