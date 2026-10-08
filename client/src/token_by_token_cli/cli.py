@@ -63,6 +63,18 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"Speculative decoding: {speculation}")
                 print("The offline self-test validates client plumbing only; it is not benchmark evidence.")
             return 0
+        if args.command == "evidence" and args.evidence_command == "verify":
+            from pathlib import Path
+            from .verify import verify_bundle
+
+            report = verify_bundle(Path(args.path))
+            if args.format == "json":
+                print(json.dumps({"valid": True, "classification": report.classification, "digest": report.digest, "files": report.files}, sort_keys=True, separators=(",", ":")))
+            else:
+                print(f"VALID · {report.classification} · sha256:{report.digest}")
+                for name in report.files:
+                    print(name)
+            return 0
         raise ClientError("NOT_IMPLEMENTED", f"{args.command} is not implemented yet")
     except ClientError as error:
         print(f"{error.code}: {error.message}", file=sys.stderr)
