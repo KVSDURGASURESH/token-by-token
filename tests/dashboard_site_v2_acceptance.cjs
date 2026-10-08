@@ -167,14 +167,38 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.waitForFunction(() => document.activeElement?.id === 'h-evidence');
     await page.goto(`${base}#episode-1?load=16&depth=lab&mode=loads&base=12&ch=evidence`);
     assert.match(await page.locator('[data-metric="output_tps"] .tbt-plot-states').innerText(), /vLLM.*Within.*SGLang.*3\.4% worse/is);
-    assert.equal(await page.locator('[data-metric="output_tps"] [data-reference="vLLM baseline"]').count(), 1);
-    assert.equal(await page.locator('[data-metric="output_tps"] [data-reference="SGLang baseline"]').count(), 1);
+    assert.equal(await page.locator('[data-metric="output_tps"] [data-reference="Selected baseline load"]').evaluate(el => el.getAttribute('x1') === el.getAttribute('x2') && el.getAttribute('y1') !== el.getAttribute('y2')), true);
+    assert.match(await page.locator('[data-metric="output_tps"] [data-reference="Selected baseline load"]').getAttribute('aria-label'), /12 users.*both engines/);
+    assert.match(await page.locator('#ch-evidence .tbt-operands').innerText(), /vLLM at 16 users versus vLLM at 12 users.*SGLang at 16 users versus SGLang at 12 users/s);
     await page.getByRole('button', { name: /Exact measurement ledger/ }).click();
     assert.match(await page.locator('.tbt-wide-ledger').innerText(), /vLLM.*Within.*SGLang.*3\.4% worse/is);
     await page.goto(`${base}#episode-1?mode=bad&base=bad&ch=bad&metric=bad&depth=lab`);
     await page.getByText('Link adjusted').waitFor();
     assert.match(await page.locator('[role="status"]').allInnerTexts().then(x => x.join(' ')), /Link adjusted/);
     assert.doesNotMatch(page.url(), /mode=bad|base=bad|ch=bad|metric=bad/);
+    await page.goto(`${base}#episode-1?depth=bogus`);
+    await page.getByText('Link adjusted').waitFor();
+    assert.match(await page.locator('.tbt-notice').innerText(), /depth is not available/i);
+    assert.doesNotMatch(page.url(), /depth=bogus/);
+    for (const route of ['episode-0','episode-1','field-notes']) {
+      await page.goto(`${base}#${route}?depth=lab&ch=evidence&metric=${route === 'episode-0' ? 'output_tokens_per_second' : 'output_tps'}`);
+      await page.locator('#lab-toggle').click();
+      assert.equal(await page.locator('#lab').count(), 0, `${route} lab stays collapsed`);
+      assert.doesNotMatch(page.url(), /ch=|metric=/, `${route} clears hidden chapter and metric`);
+      assert.equal(await page.locator('#lab-toggle').evaluate(el => el === document.activeElement), true);
+      await page.goBack();
+      await page.locator('#ch-evidence').waitFor();
+      assert.match(page.url(), /ch=evidence/, `${route} Back restores chapter`);
+      await page.goForward();
+      assert.equal(await page.locator('#lab').count(), 0, `${route} Forward restores collapsed state`);
+    }
+    await page.goto(`${base}#episodes?ch=recorded`);
+    await page.waitForFunction(() => document.activeElement?.id === 'h-recorded');
+    await page.goto(`${base}#methodology?ch=states`);
+    await page.waitForFunction(() => document.activeElement?.id === 'h-states');
+    assert.match(await page.locator('#ch-definitions').innerText(), /Episode 01 alone.*20 tok\/s.*Episode 01 alone.*1%/s);
+    assert.match(await page.locator('#ch-definitions').innerText(), /Field Note has no declared validity limit/);
+    assert.match(await page.locator('#ch-states').innerText(), /Threshold met.*Threshold missed.*Invalid/s);
     assert.equal(await page.locator('#ch-evidence [data-metric][aria-expanded="true"]').count(), 0);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
@@ -214,6 +238,12 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
         await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth), false, `200% text overflows at ${width}px ${theme}`);
         if (width === 390) {
+          for (const chapter of ['method','evidence','boundaries','source']) {
+            await page.goto(`${base}#episode-1?depth=lab&ch=${chapter}&text=200`);
+            await page.waitForFunction(ch => document.activeElement?.id === `h-${ch}`, chapter);
+            const placement = await page.evaluate(ch => ({ heading: document.getElementById(`h-${ch}`).getBoundingClientRect().top, selector: document.querySelector('.tbt-selector').getBoundingClientRect().bottom }), chapter);
+            assert(placement.heading >= placement.selector + 8, `${chapter} heading is obscured at 390px 200%: ${JSON.stringify(placement)}`);
+          }
           for (const route of ['episode-0','episode-1','field-notes']) {
             await page.goto(`${base}#${route}?depth=lab&ch=method&text=200`);
             await page.locator('#ch-evidence [data-metric]').first().click();
