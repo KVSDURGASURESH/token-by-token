@@ -120,7 +120,8 @@ Current working branch: `codex/episode-1-local-prep`.
    update provenance and publication copy together.
 6. Seek a final design review only after the data and interaction contract are stable.
 7. Do not merge or publish externally without owner approval.
-8. Before implementing a public benchmark client or Episode 02 execution path, review
-   and approve [the benchmark service integration proposal](BENCHMARK-SERVICE-PROPOSAL.md).
-   It records the private-service boundary, action-level cost approvals, offline
-   self-test, replay packaging and unresolved branding/policy decision.
+8. The public-client/private-service boundary is approved. Implement the first client
+   slice only from the [public CLI and offline self-test plan](../docs/superpowers/plans/2026-10-08-public-cli-offline-selftest.md).
+   Hosted execution, replay packaging, paid Episode 02 work and public attribution
+   still require their own reviewed plans and the unresolved approvals recorded in
+   [the benchmark service decision](BENCHMARK-SERVICE-PROPOSAL.md).

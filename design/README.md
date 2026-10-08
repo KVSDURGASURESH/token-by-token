@@ -15,10 +15,14 @@ requirements, public-data boundaries, implementation state and resume checklist.
 
 ## Benchmark service proposal
 
-- [Benchmark service integration proposal](BENCHMARK-SERVICE-PROPOSAL.md) — a
-  sanitized, owner-review draft covering the proposed public CLI/hosted-service
-  boundary, Episode 02 protocol, local evidence replay, cost gates and decisions that
-  must be approved before implementation or paid execution.
+- [Benchmark service integration proposal](BENCHMARK-SERVICE-PROPOSAL.md) — the
+  approved public-client/private-service boundary, plus the Episode 02 protocol,
+  local evidence replay, cost gates and remaining decisions that must be approved
+  before production service work or paid execution.
+- [Public CLI and offline self-test implementation plan](../docs/superpowers/plans/2026-10-08-public-cli-offline-selftest.md)
+  — the approved first slice: an isolated public client, strict contracts,
+  deterministic zero-network self-test, hostile-bundle verification and guarded
+  candidate executable. Hosted execution and Grafana replay remain separate phases.
 
 ## Implemented public-site direction
 

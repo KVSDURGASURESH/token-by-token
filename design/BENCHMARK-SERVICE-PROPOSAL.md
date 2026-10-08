@@ -1,7 +1,8 @@
 # Benchmark service integration proposal
 
-Status: **owner review required**. This document is an architecture proposal, not
-an implemented or authorized service. No paid Episode 02 run is authorized by it.
+Status: **public-client/private-service boundary approved on 2026-10-08**. This
+document is an architecture decision, not an implemented or production-authorized
+service. No paid Episode 02 run is authorized by it.
 
 ## Decision summary
 
@@ -299,7 +300,7 @@ and offline UI checks remain mandatory.
 
 ## Decisions required before implementation
 
-1. Approve hosted service as the first-release boundary.
+1. **Approved 2026-10-08:** hosted service is the first-release boundary.
 2. Approve or revise the Episode 02 model, GPU and protocol matrix.
 3. Decide whether the private benchmark service may be named publicly and approve exact attribution.
 4. Approve corpus-derivative and comparative-publication rights.
