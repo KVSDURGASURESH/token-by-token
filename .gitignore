@@ -10,5 +10,9 @@ raw/
 private/
 /context/
 *.jsonl
+client/build/
+client/dist/
+client/*.egg-info/
+client/src/*.egg-info/
 .artifacts/private-evidence/
 .artifacts/victoriametrics-restore/

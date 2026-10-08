@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools==80.9.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "token-by-token-client"
+version = "0.1.0"
+description = "Public, privacy-bounded client for the Token by Token inference lab"
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+dependencies = ["jsonschema==4.25.1"]
+
+[project.scripts]
+token-by-token = "token_by_token_cli.cli:entrypoint"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
