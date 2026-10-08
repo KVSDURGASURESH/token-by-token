@@ -72,7 +72,17 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('#ch-evidence svg[data-plot]').count() >= 4, true, 'evidence uses recorded plots');
     assert.equal(await page.locator('#ch-evidence [data-evidence-group]').count() >= 2, true, 'evidence has metric groups');
     assert.equal(await page.locator('#ch-evidence [data-identity-legend]').count(), 1);
-    assert.equal(await page.locator('#ch-evidence [data-metric] [data-plot-value]').count() >= 4, true, 'plots show exact selected operands');
+    assert.equal(await page.locator('#ch-evidence [data-observed-signals]').count(), 1, 'notable recorded signals are surfaced');
+    assert.match(await page.locator('#ch-evidence [data-observed-signals]').innerText(), /Tail latency.*TTFT p95.*Waiting requests.*context only/is, 'notable recorded signals remain evidence-scoped');
+    const directional = page.locator('#ch-evidence [data-evidence-group]').filter({ hasText: 'Directional comparisons' }).first();
+    assert.equal(await directional.getByRole('tablist', { name: 'Directional metrics' }).count(), 1, 'directional metrics use a stable selector rail');
+    assert.equal(await directional.getByRole('tab').count(), 4);
+    assert.equal(await directional.getByRole('tab', { selected: true }).getAttribute('data-metric-tab'), 'output_tps', 'output is selected by default');
+    assert.equal(await directional.getByRole('tabpanel').count(), 1, 'only one directional metric is rendered at a time');
+    const selectedBand = directional.locator('svg[data-plot] rect').first();
+    assert.equal(await selectedBand.count(), 1, 'selected workload has a chart band');
+    assert.notEqual(await selectedBand.evaluate(el => getComputedStyle(el).stroke), 'none', 'selected workload band has a visible boundary');
+    assert.equal(await page.locator('#ch-evidence [data-plot-value]').count() >= 4, true, 'plots show exact selected operands');
     assert.equal(await page.locator('#ch-evidence [data-metric] .state-better, #ch-evidence [data-metric] .state-worse, #ch-evidence [data-metric] .state-band').count() >= 1, true, 'delta has semantic state');
     assert.equal(await page.locator('[data-metric="error_rate_pct"] [data-reference="Declared 1% limit"]').count(), 1);
     assert.equal(await page.locator('[data-metric="error_rate_pct"] [data-reference="Declared 1% limit"]').evaluate(el => Number(el.getAttribute('y1')) < 88), true, 'threshold contributes to plot scale');
@@ -80,13 +90,17 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.match(await page.locator('#ch-evidence .tbt-validity').innerText(), /vLLM · 665\/666 valid requests.*SGLang · 889\/889 valid requests/s);
     const dataLink = page.locator('#ch-source a[download]');
     assert.equal(await dataLink.count(), 1, 'Source exposes its sanitized static JSON');
-    await page.locator('#ch-evidence [data-metric="output_tps"]').click();
+    const directionalHeight = await directional.evaluate(el => el.getBoundingClientRect().height);
+    await directional.getByRole('tab', { name: /TTFT p50/ }).click();
+    assert.match(await directional.getByRole('tabpanel').getAttribute('aria-label'), /TTFT p50/);
+    assert.equal(Math.abs((await directional.evaluate(el => el.getBoundingClientRect().height)) - directionalHeight) <= 2, true, 'switching metrics does not reflow the section');
+    await directional.getByRole('tab', { name: /Output throughput/ }).click();
     assert.match(page.url(), /metric=output_tps/);
     assert.equal(await page.getByRole('region', { name: 'Explanation: Output throughput' }).count(), 1);
     assert.match(await page.getByRole('region', { name: 'Explanation: Output throughput' }).innerText(), /Directional comparison.*Higher is better/s);
     await page.keyboard.press('Escape');
     assert.doesNotMatch(page.url(), /metric=/);
-    assert.equal(await page.locator('#ch-evidence [data-metric="output_tps"]').evaluate(el => el === document.activeElement), true);
+    assert.equal(await page.locator('#ch-evidence [data-metric-tab="output_tps"]').evaluate(el => el === document.activeElement), true);
     await page.locator('#ch-evidence [data-metric="error_rate_pct"]').click();
     assert.match(await page.getByRole('region', { name: 'Explanation: Error rate' }).innerText(), /Declared threshold for each engine.*1% validity limit/s);
     await page.keyboard.press('Escape');
@@ -124,6 +138,8 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.goto(`${base}#episode-0`);
     assert.equal(await page.locator('[data-strip] [data-seg="wl"]').count(), 6);
     assert.equal(await page.locator('[data-seg="wl"][aria-pressed="true"]').getAttribute('data-val'), '2048-c24');
+    assert.match(await page.locator('[data-workload-guide]').innerText(), /4 of 6 workloads.*Scroll, drag, or use arrows.*Select a workload/is);
+    assert.equal(await page.getByRole('progressbar', { name: 'Selected workload' }).getAttribute('aria-valuenow'), '4');
     await page.getByRole('button', { name: /Open evidence lab/ }).click();
     const telemetry = page.locator('#ch-evidence [data-workload-telemetry]');
     assert.match(await telemetry.innerText(), /Waiting requests peak\s+14\.5 req\s+17\.0 req/);
@@ -132,6 +148,8 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('#ch-source [data-source-row]').count(), 5);
     assert.match(await page.locator('#ch-source').innerText(), /telemetry from approved design handoff/i);
     assert.equal(await page.locator('#ch-source a[download="episode-0-public-telemetry.json"]').count(), 1);
+    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForFunction(() => document.querySelector('.tbt-rail-chapters button:nth-child(5)')?.getAttribute('aria-current') === 'location');
     await page.locator('#ch-evidence [data-metric="work_per_request"]').click();
     assert.match(await page.getByRole('region', { name: 'Explanation: Delivered output per request' }).innerText(), /Delivered work equality gate.*Equal delivered output/s);
     await page.keyboard.press('Escape');
@@ -177,9 +195,9 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.reload();
     await page.waitForFunction(() => document.activeElement?.id === 'h-evidence');
     await page.goto(`${base}#episode-1?load=16&depth=lab&mode=loads&base=12&ch=evidence`);
-    assert.match(await page.locator('[data-metric="output_tps"] .tbt-plot-states').innerText(), /vLLM.*Within.*SGLang.*3\.4% worse/is);
-    assert.equal(await page.locator('[data-metric="output_tps"] [data-reference="Selected baseline load"]').evaluate(el => el.getAttribute('x1') === el.getAttribute('x2') && el.getAttribute('y1') !== el.getAttribute('y2')), true);
-    assert.match(await page.locator('[data-metric="output_tps"] [data-reference="Selected baseline load"]').getAttribute('aria-label'), /12 users.*both engines/);
+    assert.match(await page.locator('[data-selected-metric="output_tps"] .tbt-plot-states').innerText(), /vLLM.*Within.*SGLang.*3\.4% worse/is);
+    assert.equal(await page.locator('[data-selected-metric="output_tps"] [data-reference="Selected baseline load"]').evaluate(el => el.getAttribute('x1') === el.getAttribute('x2') && el.getAttribute('y1') !== el.getAttribute('y2')), true);
+    assert.match(await page.locator('[data-selected-metric="output_tps"] [data-reference="Selected baseline load"]').getAttribute('aria-label'), /12 users.*both engines/);
     assert.match(await page.locator('#ch-evidence .tbt-operands').innerText(), /vLLM at 16 users versus vLLM at 12 users.*SGLang at 16 users versus SGLang at 12 users/s);
     await page.getByRole('button', { name: /Exact measurement ledger/ }).click();
     assert.match(await page.locator('.tbt-wide-ledger').innerText(), /vLLM.*Within.*SGLang.*3\.4% worse/is);
@@ -215,11 +233,12 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const pager = page.getByRole('navigation', { name: 'Episode pager' });
     assert.equal(await pager.locator('a').count(), 2);
     assert.match(await pager.locator('a').first().innerText(), /SERIES\s+ALL EPISODES/i);
-    assert.match(await pager.locator('a').nth(1).innerText(), /NEXT · EPISODE 01\s+MEASURE WHAT MATTERS/i);
+    assert.match(await pager.locator('a').nth(1).innerText(), /NEXT · EPISODE 01(?: →)?\s+MEASURE WHAT MATTERS/i);
     const pagerTitleFont = await pager.locator('a').nth(1).locator('strong').evaluate(el => getComputedStyle(el).fontFamily);
     assert.equal(pagerTitleFont, recordedNumberFont, 'pager episode titles use the episode display typeface');
+    assert.equal(await pager.locator('strong').first().evaluate(el => Number.parseFloat(getComputedStyle(el).fontSize) <= 24), true, 'pager titles stay subordinate to page copy');
     await page.goto(`${base}#episode-1`);
-    assert.match(await page.getByRole('navigation', { name: 'Episode pager' }).locator('a').nth(1).innerText(), /NEXT · EPISODE 02\s+EQUAL-WORK RUNTIME BASELINE/i);
+    assert.match(await page.getByRole('navigation', { name: 'Episode pager' }).locator('a').nth(1).innerText(), /NEXT · EPISODE 02(?: →)?\s+EQUAL-WORK RUNTIME BASELINE/i);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
 
