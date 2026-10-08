@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import struct
 import sys
 import tempfile
 import unittest
@@ -145,6 +146,41 @@ class HostileBundleTests(unittest.TestCase):
         with self.assertRaisesRegex(ClientError, "MIXED_CLASSIFICATION"):
             verify_bundle(self.build(payload=recorded))
 
+    def test_middle_event_payloads_cannot_hide_classification_or_omit_fields(self) -> None:
+        plan = canonical(
+            {
+                "kind": "plan",
+                "monotonic_ms": 0,
+                "payload": {
+                    "classification": "synthetic_mock",
+                    "episode": 2,
+                    "protocol": "episode-02-public-v1",
+                    "seed": 42,
+                    "users": 2,
+                },
+                "sequence": 0,
+            }
+        )
+        terminal = canonical(
+            {
+                "kind": "run_completed",
+                "monotonic_ms": 20,
+                "payload": {"arms": 0, "classification": "synthetic_mock", "requests": 1},
+                "sequence": 2,
+            }
+        )
+        request = {
+            "kind": "request",
+            "monotonic_ms": 10,
+            "payload": {},
+            "sequence": 1,
+        }
+        for payload in ({}, {"classification": "recorded"}):
+            with self.subTest(payload=payload):
+                request["payload"] = payload
+                with self.assertRaisesRegex(ClientError, "INVALID_EVENTS"):
+                    verify_bundle(self.build(payload=plan + canonical(request) + terminal))
+
     def test_malformed_replay_and_corrupt_crc_fail_without_traceback(self) -> None:
         malformed = self.build(replay_override=[])
         with self.assertRaises(ClientError):
@@ -166,6 +202,30 @@ class HostileBundleTests(unittest.TestCase):
         archive.write_bytes(raw)
         with self.assertRaises(ClientError):
             verify_bundle(archive)
+
+    def test_corrupt_deflate_and_oversized_json_integer_fail_closed(self) -> None:
+        archive = self.build()
+        with zipfile.ZipFile(archive, "r") as reader:
+            info = reader.getinfo("events.jsonl")
+        raw = bytearray(archive.read_bytes())
+        header = struct.unpack("<IHHHHHIIIHH", raw[info.header_offset : info.header_offset + 30])
+        data_start = info.header_offset + 30 + header[-2] + header[-1]
+        raw[data_start + max(info.compress_size // 2, 1)] ^= 1
+        archive.write_bytes(raw)
+        with self.assertRaises(ClientError):
+            verify_bundle(archive)
+
+        huge_integer = b"9" * 5_000
+        malicious = (
+            b'{"kind":"plan","monotonic_ms":0,"payload":{"classification":"synthetic_mock",'
+            b'"episode":2,"protocol":"episode-02-public-v1","seed":42,"users":2},"sequence":0}\n'
+            b'{"kind":"run_interrupted","monotonic_ms":10,"payload":{"classification":"synthetic_mock",'
+            b'"completed_events":'
+            + huge_integer
+            + b'},"sequence":1}\n'
+        )
+        with self.assertRaisesRegex(ClientError, "INVALID_EVENTS"):
+            verify_bundle(self.build(payload=malicious))
 
     def test_physical_archive_limit_precedes_zip_metadata_parsing(self) -> None:
         archive = self.root / "metadata-heavy.tbt.zip"

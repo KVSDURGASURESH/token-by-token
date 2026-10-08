@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import unittest
+import zipfile
 
 from client.scripts.audit_binary import REQUIRED_MODULES, REQUIRED_RESOURCES, audit_binary
 from client.scripts.build_binary import clean_build_environment, load_auditor, local_install_command
@@ -43,8 +44,39 @@ class BinaryAuditTests(unittest.TestCase):
         return path
 
     def test_audit_accepts_public_client_inventory_and_content(self) -> None:
+        (self.extracted_root / "0050-jsonschema").write_bytes(b"public dependency")
         (self.extracted_root / "payload.bin").write_bytes(b"token-by-token synthetic_mock")
         audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli", "jsonschema"]), self.extracted_root)
+
+    def test_audit_rejects_analyzed_module_missing_from_extracted_archive(self) -> None:
+        inventory = self.write_inventory(["jsonschema.validators"])
+        with self.assertRaisesRegex(ClientError, "BINARY_AUDIT_INPUT"):
+            audit_binary(self.binary, inventory, self.extracted_root)
+
+    def test_audit_rejects_analyzed_resource_missing_from_extracted_archive(self) -> None:
+        inventory = self.write_inventory(["token_by_token_cli.cli"], ["base_library.zip"])
+        with self.assertRaisesRegex(ClientError, "BINARY_AUDIT_INPUT"):
+            audit_binary(self.binary, inventory, self.extracted_root)
+
+    def test_audit_accounts_for_stdlib_modules_inside_base_library(self) -> None:
+        base_library = self.extracted_root / "0099-base_library.zip"
+        with zipfile.ZipFile(base_library, "w") as archive:
+            archive.writestr("email/__init__.pyc", b"public package")
+            archive.writestr("email/parser.pyc", b"public module")
+        audit_binary(
+            self.binary,
+            self.write_inventory(["email", "email.parser"], ["base_library.zip"]),
+            self.extracted_root,
+        )
+
+    def test_audit_rejects_corrupt_base_library(self) -> None:
+        (self.extracted_root / "0099-base_library.zip").write_bytes(b"not a zip")
+        with self.assertRaisesRegex(ClientError, "BINARY_AUDIT_INPUT"):
+            audit_binary(
+                self.binary,
+                self.write_inventory(["email"], ["base_library.zip"]),
+                self.extracted_root,
+            )
 
     def test_audit_rejects_private_module_inventory(self) -> None:
         inventory = self.write_inventory(["token_by_token_cli.cli", "private_runtime.episode_runner"])
@@ -109,12 +141,13 @@ class BinaryAuditTests(unittest.TestCase):
             bytes.fromhex("6c616e67756167652d6f6e6c79206d6f6465"),
         )
         for index, term in enumerate(private_terms):
-            with self.subTest(index=index):
-                candidate = self.extracted_root / f"private-term-{index}.bin"
-                candidate.write_bytes(term)
-                with self.assertRaisesRegex(ClientError, "FORBIDDEN_BINARY_CONTENT"):
-                    audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli"]), self.extracted_root)
-                candidate.unlink()
+            for cli_form, payload in enumerate((term, b"--" + term + b"=0.8")):
+                with self.subTest(index=index, cli_form=cli_form):
+                    candidate = self.extracted_root / f"private-term-{index}-{cli_form}.bin"
+                    candidate.write_bytes(payload)
+                    with self.assertRaisesRegex(ClientError, "FORBIDDEN_BINARY_CONTENT"):
+                        audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli"]), self.extracted_root)
+                    candidate.unlink()
 
     def test_audit_does_not_echo_sensitive_matched_bytes(self) -> None:
         marker = b"private-benchmark-tool secret-value"

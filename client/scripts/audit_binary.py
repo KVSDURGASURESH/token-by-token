@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import zipfile
 
 from token_by_token_cli.errors import ClientError
 
@@ -91,7 +92,7 @@ def _contains_forbidden_marker(payload: bytes) -> bool:
         pattern.search(payload) for pattern in CREDENTIAL_PATTERNS
     ):
         return True
-    tokens = re.findall(rb"[a-z0-9_-]{3,64}", lowered)
+    tokens = [token.lstrip(b"-") for token in re.findall(rb"[a-z0-9_-]{3,64}", lowered)]
     candidates = [*tokens, *(b" ".join(tokens[index : index + 2]) for index in range(len(tokens) - 1))]
     return any(hashlib.sha256(token).hexdigest() in FORBIDDEN_TOKEN_DIGESTS for token in candidates)
 
@@ -112,6 +113,29 @@ def _approved_resource(resource: str) -> bool:
         or stdlib_extension
         or SYSTEM_LIBRARY_RE.fullmatch(normalized) is not None
     )
+
+
+def _archive_member_name(path: Path) -> str:
+    return re.sub(r"^\d+-", "", path.name, count=1)
+
+
+def _base_library_modules(path: Path) -> set[str]:
+    try:
+        with zipfile.ZipFile(path) as archive:
+            modules: set[str] = set()
+            for info in archive.infolist():
+                if info.is_dir() or not info.filename.endswith((".py", ".pyc")):
+                    continue
+                parts = info.filename.replace("\\", "/").rsplit(".", 1)[0].split("/")
+                if parts[-1] == "__init__":
+                    parts.pop()
+                if parts:
+                    modules.add(".".join(parts))
+            if archive.testzip() is not None:
+                raise ClientError("BINARY_AUDIT_INPUT", "extracted standard-library archive is corrupt")
+            return modules
+    except (OSError, zipfile.BadZipFile, zipfile.LargeZipFile) as error:
+        raise ClientError("BINARY_AUDIT_INPUT", "extracted standard-library archive is invalid") from error
 
 
 def audit_binary(path: Path, analysis_toc: Path, extracted_root: Path) -> None:
@@ -151,10 +175,20 @@ def audit_binary(path: Path, analysis_toc: Path, extracted_root: Path) -> None:
         raise ClientError("FORBIDDEN_BINARY_CONTENT", "candidate executable contains a forbidden private marker")
     extracted_files = [candidate for candidate in extracted_root.rglob("*") if candidate.is_file()]
     extracted_names = [candidate.relative_to(extracted_root).as_posix() for candidate in extracted_files]
-    if any(not any(name.endswith(f"-{module}") for name in extracted_names) for module in REQUIRED_MODULES):
-        raise ClientError("BINARY_AUDIT_INPUT", "extracted archive is missing required public client modules")
-    if any(not any(name.endswith(resource) for name in extracted_names) for resource in REQUIRED_RESOURCES):
-        raise ClientError("BINARY_AUDIT_INPUT", "extracted archive is missing required public resources")
+    extracted_modules = {_archive_member_name(candidate) for candidate in extracted_files}
+    base_libraries = [candidate for candidate in extracted_files if _archive_member_name(candidate) == "base_library.zip"]
+    if len(base_libraries) > 1:
+        raise ClientError("BINARY_AUDIT_INPUT", "extracted archive contains duplicate standard-library archives")
+    if base_libraries:
+        extracted_modules.update(_base_library_modules(base_libraries[0]))
+    missing_modules = sorted(set(modules) - extracted_modules)
+    if missing_modules:
+        raise ClientError("BINARY_AUDIT_INPUT", "extracted archive does not account for every analyzed module")
+    missing_resources = sorted(
+        resource for resource in resources if not any(name.endswith(resource) for name in extracted_names)
+    )
+    if missing_resources:
+        raise ClientError("BINARY_AUDIT_INPUT", "extracted archive does not account for every analyzed resource")
     for candidate in extracted_root.rglob("*"):
         if candidate.is_symlink():
             raise ClientError("FORBIDDEN_BINARY_CONTENT", "candidate archive contains a link")

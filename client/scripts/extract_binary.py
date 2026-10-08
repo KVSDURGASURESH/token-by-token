@@ -27,6 +27,8 @@ def extract_archive(binary: Path, output: Path) -> None:
         try:
             embedded = reader.open_embedded_archive(name)
         except Exception:
+            if name.lower().endswith(".pyz"):
+                raise
             continue
         nested = output / f"{index:04d}-{name}.contents"
         nested.mkdir(parents=True, exist_ok=True)
@@ -52,4 +54,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
