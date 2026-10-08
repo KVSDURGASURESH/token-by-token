@@ -13,19 +13,27 @@ requirements, public-data boundaries, implementation state and resume checklist.
   rules every page follows, and how Episode 00, Episode 01, Episode 02 and Methodology map
   onto it. It takes precedence over earlier documents on page structure.
 
-## Current Episode 01 direction
+## Benchmark service proposal
+
+- [Benchmark service integration proposal](BENCHMARK-SERVICE-PROPOSAL.md) — a
+  sanitized, owner-review draft covering the proposed public CLI/hosted-service
+  boundary, Episode 02 protocol, local evidence replay, cost gates and decisions that
+  must be approved before implementation or paid execution.
+
+## Implemented public-site direction
 
 - [Interactive evidence design brief](../handoffs/2026-10-06-interactive-evidence-design-brief.md)
-- [Episode 01 dashboard implementation](../dashboard/src/Episode1Instrument.tsx)
-- [Shared episode shell](../dashboard/src/instrument/EpisodeShell.tsx)
-- [Interactive metric instrument](../dashboard/src/instrument/LinkedMetricInstrument.tsx)
-- [Design system and responsive behavior](../dashboard/src/styles.css)
-- [Public embedded evidence](../dashboard/src/data/episode-1-public.v1.json)
+- [Shared public site and episode implementation](../dashboard/src/PublicSite.tsx)
+- [Public design system and responsive behavior](../dashboard/src/public-site.css)
+- [Versioned public projections](../dashboard/src/data/site-v2/README.md)
+- [Claude v2 source-of-truth reference](reference/claude-site-v2/README.md)
 
 The default experience is a concise Episode Brief with a persistent episode
 rail. The deeper evidence lab is opened on demand. Metric changes use semantic
-green, red, and orange states, and public views identify inference engines
-without exposing private serving profiles or optimization recipes.
+green, red, and orange states. The owner-approved complementary cyan is confined
+to chapter navigation so it cannot be confused with evidence meaning. Public
+views identify inference engines without exposing private serving profiles or
+optimization recipes.
 
 ## Publication package
 
@@ -40,13 +48,12 @@ without exposing private serving profiles or optimization recipes.
 From the repository root:
 
 ```bash
-cd dashboard
-npm run check
-npm run build
-cd ..
-node tests/dashboard_instrument_acceptance.cjs http://127.0.0.1:5173/
-node tests/dashboard_interactive_evidence_contract.cjs
+npm --prefix dashboard run check
+npm --prefix dashboard run build
+python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
+node tests/dashboard_offline_acceptance.cjs dashboard/dist
+node tests/dashboard_site_v2_acceptance.cjs http://127.0.0.1:5173/
 ```
 
-The browser acceptance check expects the dashboard development server to be
-running at the supplied URL.
+The final browser acceptance check expects the dashboard development server at
+the supplied URL. The offline check starts its own loopback server.

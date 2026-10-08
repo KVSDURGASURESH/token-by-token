@@ -70,10 +70,17 @@ Current working branch: `codex/episode-1-local-prep`.
 
 ## Current implementation
 
-- Episode 01 defaults to the concise Episode Brief.
+- The Claude Design v2 public shell is implemented in `dashboard/src/PublicSite.tsx`;
+  the preserved export under `design/reference/claude-site-v2/` is the fidelity source.
+- Episode 00 and Episode 01 both use the same five-chapter shell and default to a
+  concise Episode Brief.
 - “Open evidence lab” reveals the full interactive chart experience.
 - The episode rail remains visible at the narrow in-app browser width.
 - URL state preserves selected load, comparison mode and view depth.
+- The Evidence chapter uses grouped metric instruments, operands, identity markers,
+  selected-column shading, contextual telemetry, exact-value expansions and ledgers.
+- Metric-aware green/red/orange is reserved for better/worse/neutral evidence. Cyan is
+  reserved for chapter navigation and does not encode benchmark meaning.
 - Public Episode 01 evidence and session-capacity copy remove serving-profile details.
 - Responsive and evidence-contract tests cover the new hierarchy and navigation.
 - Publication drafts, evidence ledger, editorial review and share-card assets are under
@@ -83,30 +90,37 @@ Current working branch: `codex/episode-1-local-prep`.
 
 ## Verification state at handoff
 
-- `npm run check`: passed.
-- `npm run build`: passed; 49 modules transformed.
-- Focused public-evidence/static-pipeline tests: 22 passed.
-- Episode instrument acceptance passed at 1440, 768, 542 and 390 pixels.
-- Interactive evidence design contract passed.
-- Dashboard planner acceptance passed.
-- The final series-navigation test was updated to select the first of two identical
-  episode CTAs. Its rerun was intentionally stopped at the owner's request to push
-  immediately; rerun it first when work resumes.
-- A broader Python suite was previously non-green because this environment blocks
-  loopback/socket tests and uses Python 3.12.15 where some tests expect 3.12.13. Do not
-  treat those environment failures as a production-readiness pass.
+- TypeScript check and production build passed; 26 public modules were transformed.
+- Publication privacy scan passed with no high-confidence findings.
+- Offline acceptance passed using only static local assets.
+- Claude v2 browser acceptance passed at 1440, 768, 542, 390 and 320 pixels in light
+  and dark themes, including keyboard selectors, reduced motion, 200% text and blocked
+  external requests.
+- Independent computed-style checks confirmed cyan chapter navigation, green favorable
+  evidence and red unfavorable evidence in desktop and mobile layouts.
+- The broader Python suite recorded 574 passes and 3 skips. Three existing Episode 01
+  client-environment gates failed because the test runner Python differs from the
+  selected client environment; they are unrelated to the public-site implementation.
+- The latest private benchmark report and revised cost record were reviewed. They were
+  not copied into the public site because formal qualification is still incomplete and
+  publication approval has not been recorded.
 
 ## Resume checklist
 
-1. Pull `codex/episode-1-local-prep` and read this guide plus the detailed design brief.
-   For the page layout redesign, follow [the page construct](PAGE-CONSTRUCT.md); it governs
-   page structure across every episode and global page.
-2. Run `node tests/dashboard_series_acceptance.cjs http://127.0.0.1:5173/` with the
-   dashboard dev server running.
-3. Review Episode 01 as a first-time reader at desktop, tablet and narrow in-app sizes.
+1. Pull `codex/episode-1-local-prep` and read this guide, the
+   [Claude v2 handoff](reference/claude-site-v2/README.md), and the detailed design brief.
+   The Claude prototype governs visual fidelity; [the page construct](PAGE-CONSTRUCT.md)
+   supplies the broader page rules where the prototype is silent.
+2. Run the verification commands in [the design README](README.md).
+3. Review Episode 00 and Episode 01 as a first-time reader at desktop, tablet and narrow
+   in-app sizes.
 4. Keep the brief sparse; move any new chart or table into the evidence lab unless it
    materially changes the main conclusion.
 5. Rebuild static evidence if new benchmark or VictoriaMetrics exports arrive, then
    update provenance and publication copy together.
 6. Seek a final design review only after the data and interaction contract are stable.
 7. Do not merge or publish externally without owner approval.
+8. Before implementing a public benchmark client or Episode 02 execution path, review
+   and approve [the benchmark service integration proposal](BENCHMARK-SERVICE-PROPOSAL.md).
+   It records the private-service boundary, action-level cost approvals, offline
+   self-test, replay packaging and unresolved branding/policy decision.
