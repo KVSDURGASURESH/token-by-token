@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 import unittest
 
 
@@ -40,6 +41,13 @@ class CliSurfaceTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Episode 16", result.stdout)
         self.assertNotIn("Traceback", result.stderr)
+
+    def test_security_relevant_flags_do_not_accept_abbreviations(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "abbreviated.tbt.zip"
+            result = self.run_cli("episode", "2", "selftest", "--off", "--output", str(output))
+        self.assertEqual(result.returncode, 2)
+        self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":

@@ -22,10 +22,48 @@
       "additionalProperties": false,
       "required": ["protocol", "users", "seed", "output"],
       "properties": {
-        "protocol": {"type": "object"},
-        "users": {"type": "object"},
-        "seed": {"type": "object"},
-        "output": {"type": "object"}
+        "protocol": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "const"],
+          "properties": {
+            "type": {"const": "string"},
+            "const": {"type": "string", "pattern": "^episode-[0-9]{2}-public-v1$"}
+          }
+        },
+        "users": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "enum"],
+          "properties": {
+            "type": {"const": "integer"},
+            "enum": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"type": "integer", "minimum": 1}
+            }
+          }
+        },
+        "seed": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "minimum", "maximum"],
+          "properties": {
+            "type": {"const": "integer"},
+            "minimum": {"const": 0},
+            "maximum": {"const": 2147483647}
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "suffix"],
+          "properties": {
+            "type": {"const": "string"},
+            "suffix": {"const": ".tbt.zip"}
+          }
+        }
       }
     },
     "selftest": {

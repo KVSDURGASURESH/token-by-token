@@ -55,7 +55,6 @@ def run_selftest(
         except FileExistsError as error:
             raise ClientError("OUTPUT_EXISTS", f"refusing to overwrite {output_path}") from error
         except OSError as error:
-            output_path.unlink(missing_ok=True)
             raise ClientError("OUTPUT_WRITE_FAILED", "could not atomically publish the verified bundle") from error
     return SelfTestReport(
         bundle=output_path,

@@ -23,6 +23,10 @@ def clean_build_environment(temporary_root: Path, executable_dir: Path) -> dict[
     }
 
 
+def local_install_command(python: Path) -> list[str]:
+    return [str(python), "-m", "pip", "install", "--no-build-isolation", "--no-deps", "."]
+
+
 def load_auditor(root: Path):
     sys.path.insert(0, str(root.parent))
     sys.path.insert(0, str(root / "src"))
@@ -44,11 +48,15 @@ def main() -> int:
         environment = Path(temporary) / "venv"
         run([sys.executable, "-m", "venv", str(environment)], cwd=root)
         python = environment / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
-        run([str(python), "-m", "pip", "install", "--require-hashes", "-r", str(root / "requirements-build.lock")], cwd=root)
-        run([str(python), "-m", "pip", "install", "--no-deps", "."], cwd=root)
         clean_env = clean_build_environment(Path(temporary), python.parent)
         Path(clean_env["HOME"]).mkdir()
         Path(clean_env["TMPDIR"]).mkdir()
+        run(
+            [str(python), "-m", "pip", "install", "--require-hashes", "-r", str(root / "requirements-build.lock")],
+            cwd=root,
+            env=clean_env,
+        )
+        run(local_install_command(python), cwd=root, env=clean_env)
         run([str(python), "-m", "PyInstaller", "--noconfirm", "--clean", "token-by-token.spec"], cwd=root, env=clean_env)
         binary = dist / ("token-by-token.exe" if os.name == "nt" else "token-by-token")
         extracted = Path(temporary) / "extracted"

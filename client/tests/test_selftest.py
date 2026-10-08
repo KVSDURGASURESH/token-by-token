@@ -7,8 +7,11 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 from token_by_token_cli.contracts import episode_manifest
+from token_by_token_cli.errors import ClientError
+from token_by_token_cli.selftest import run_selftest
 from token_by_token_cli.verify import verify_bundle
 
 
@@ -65,6 +68,23 @@ class SelfTestCliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 3)
         self.assertIn("INVALID_USERS", result.stderr)
         self.assertFalse(self.output.exists())
+
+    def test_publish_failure_preserves_concurrent_owner_output(self) -> None:
+        def fail_after_owner_create(source: Path, destination: Path) -> None:
+            Path(destination).write_bytes(b"concurrent owner data")
+            raise OSError("simulated link failure")
+
+        with mock.patch("token_by_token_cli.selftest.os.link", side_effect=fail_after_owner_create):
+            with self.assertRaisesRegex(ClientError, "OUTPUT_WRITE_FAILED"):
+                run_selftest(
+                    self.output,
+                    episode=2,
+                    users=4,
+                    seed=42,
+                    offline=True,
+                    stop_requested=lambda: False,
+                )
+        self.assertEqual(self.output.read_bytes(), b"concurrent owner data")
 
 
 if __name__ == "__main__":

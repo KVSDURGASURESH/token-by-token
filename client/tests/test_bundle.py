@@ -51,6 +51,13 @@ class BundleTests(unittest.TestCase):
             write_synthetic_bundle(self.events, self.output)
         self.assertEqual(self.output.read_bytes(), b"owner data")
 
+    def test_writer_preserves_dangling_output_symlink(self) -> None:
+        dangling = self.root / "dangling.tbt.zip"
+        dangling.symlink_to(self.root / "missing-owner-target")
+        with self.assertRaisesRegex(ClientError, "OUTPUT_EXISTS"):
+            write_synthetic_bundle(self.events, dangling)
+        self.assertTrue(dangling.is_symlink())
+
     def test_cli_verifies_bundle_as_json(self) -> None:
         write_synthetic_bundle(self.events, self.output)
         env = {**os.environ, "PYTHONPATH": str(CLIENT_SRC)}

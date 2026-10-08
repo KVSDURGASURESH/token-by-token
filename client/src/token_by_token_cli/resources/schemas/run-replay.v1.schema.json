@@ -11,6 +11,15 @@
     "protocol": {"type": "string"},
     "status": {"enum": ["complete", "interrupted"]},
     "events_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "summary": {"type": "object", "additionalProperties": {"type": ["integer", "number", "string", "null"]}}
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["events", "requests", "users"],
+      "properties": {
+        "events": {"type": "integer", "minimum": 2},
+        "requests": {"type": "integer", "minimum": 0},
+        "users": {"type": "integer", "minimum": 1}
+      }
+    }
   }
 }

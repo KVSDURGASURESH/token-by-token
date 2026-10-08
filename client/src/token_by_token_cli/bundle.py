@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 from collections.abc import Sequence
 import zipfile
@@ -27,7 +28,7 @@ def write_synthetic_bundle(events: Sequence[SyntheticEvent], output_path: Path) 
     output_path = Path(output_path)
     if not output_path.name.endswith(".tbt.zip"):
         raise ClientError("BUNDLE_PATH", "output must end in .tbt.zip")
-    if output_path.exists():
+    if output_path.exists() or output_path.is_symlink():
         raise ClientError("OUTPUT_EXISTS", f"refusing to overwrite {output_path}")
     if not output_path.parent.is_dir():
         raise ClientError("BUNDLE_PATH", "output parent directory does not exist")
@@ -59,12 +60,23 @@ def write_synthetic_bundle(events: Sequence[SyntheticEvent], output_path: Path) 
     validate_document("inventory.v1", inventory)
     inventory_bytes = canonical_json(inventory)
 
+    owned_identity: tuple[int, int] | None = None
     try:
-        with zipfile.ZipFile(output_path, "x") as archive:
-            for name, body in (("inventory.json", inventory_bytes), ("events.jsonl", event_bytes), ("replay.json", replay_bytes)):
-                archive.writestr(_zip_info(name), body)
+        with output_path.open("xb") as target:
+            opened = os.fstat(target.fileno())
+            owned_identity = (opened.st_dev, opened.st_ino)
+            with zipfile.ZipFile(target, "w") as archive:
+                for name, body in (("inventory.json", inventory_bytes), ("events.jsonl", event_bytes), ("replay.json", replay_bytes)):
+                    archive.writestr(_zip_info(name), body)
+    except FileExistsError as error:
+        raise ClientError("OUTPUT_EXISTS", f"refusing to overwrite {output_path}") from error
     except Exception:
-        output_path.unlink(missing_ok=True)
+        if owned_identity is not None:
+            try:
+                current = output_path.lstat()
+                if (current.st_dev, current.st_ino) == owned_identity:
+                    output_path.unlink()
+            except FileNotFoundError:
+                pass
         raise
     return output_path
-

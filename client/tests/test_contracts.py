@@ -22,6 +22,12 @@ class ContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ClientError, "UNKNOWN_PROPERTY"):
             validate_document("episode-manifest.v1", document)
 
+    def test_manifest_rejects_unknown_nested_control_property(self) -> None:
+        document = copy.deepcopy(episode_manifest(2))
+        document["allowed_parameters"]["users"]["endpoint"] = "https://example.invalid"
+        with self.assertRaisesRegex(ClientError, "UNKNOWN_PROPERTY"):
+            validate_document("episode-manifest.v1", document)
+
     def test_manifest_requires_explicit_mock_classification(self) -> None:
         document = copy.deepcopy(episode_manifest(2))
         del document["selftest"]["classification"]
