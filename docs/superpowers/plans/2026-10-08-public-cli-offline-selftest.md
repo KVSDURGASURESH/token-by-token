@@ -4,7 +4,7 @@
 
 **Goal:** Ship an isolated `token-by-token` public client that can describe Episode 02, validate its public protocol, run a deterministic zero-network synthetic self-test, verify the resulting bundle, and build as a standalone client executable without containing AgentBench or private benchmark material.
 
-**Architecture:** A new `client/` Python distribution is the only public-client build context. It consumes strict public JSON contracts and an approved Episode 02 manifest, but it cannot import repository benchmark modules or execute remote runs. The self-test drives a deterministic fake engine through the same public event and bundle contracts that future hosted results will use; remote authentication, submission, replay observability, and private AgentBench integration are separate plans.
+**Architecture:** A new `client/` Python distribution is the only public-client build context. It consumes strict public JSON contracts and a clearly labelled synthetic draft Episode 02 manifest, but it cannot import repository benchmark modules or execute remote runs. The self-test drives a deterministic fake engine through the same public event and bundle contracts that future hosted results will use; the real Episode 02 protocol, remote authentication, submission, replay observability, and private benchmark-service integration require separate approval and plans.
 
 **Tech Stack:** Python 3.12, standard-library `argparse`, JSON Schema Draft 2020-12, `jsonschema==4.25.1`, PyInstaller one-file builds, `unittest`, GitHub Actions
 
@@ -17,13 +17,13 @@
 - `selftest` requires the literal `--offline` flag and rejects endpoint, token, proxy, provider, image, shell, corpus-path, plugin, and arbitrary configuration inputs.
 - Every synthetic artifact uses `classification: synthetic_mock`; recorded and synthetic artifacts cannot be mixed.
 - JSON contracts reject unknown properties and unsupported schema versions. Missing measurements use `null` plus a reason, never zero.
-- Output directories must be new or empty. Archive extraction rejects absolute paths, traversal, links, duplicate names, oversized entries, excessive compression ratios, and unlisted files.
+- Output archive paths must end in `.tbt.zip` and must not already exist. Their parent directory must exist. The only bundle format is ZIP (`PK` magic). Archive extraction rejects absolute paths, traversal, links, duplicate or non-canonical names, oversized entries, excessive compression ratios, and unlisted files.
 - The client build supports Python 3.12. The PyInstaller output is an internal release candidate until code/data licensing and signing ownership are approved.
 - No paid Episode 02 run, hosted control-plane work, public service attribution, Grafana publication, or GitHub release is authorized by this plan.
 
 ## Review Focus
 
-- A caller sets proxy and service URL environment variables: offline self-test makes zero outbound connections and records no endpoint material.
+- A caller sets proxy and service URL environment variables: source unit tests reject Python socket/DNS attempts, while Linux CI runs both source and packaged-binary self-tests under `strace -e trace=network` inside a network namespace and requires an empty syscall trace.
 - A replay archive contains `../`, an absolute path, a symlink, a duplicate entry, or a decompression bomb: verification fails before writing outside its temporary extraction root.
 - A bundle mixes `synthetic_mock` and recorded classifications: verification fails with a typed classification error.
 - A manifest contains an unknown control such as `speculative_drafts`: strict validation fails and the CLI never forwards it.
@@ -112,7 +112,7 @@ git add client .gitignore
 git commit -m "feat(client): establish isolated public CLI"
 ```
 
-### Task 2: Define strict public contracts and Episode 02 description
+### Task 2: Define strict public contracts and a synthetic Episode 02 draft description
 
 **Files:**
 - Create: `client/src/token_by_token_cli/contracts.py`
@@ -147,7 +147,7 @@ def test_manifest_requires_explicit_mock_classification(self):
         validate_document("episode-manifest.v1", document)
 ```
 
-The literal expected manifest allows only `protocol`, `users`, `seed`, and `output`; its Episode 02 arms are `vLLM` and `SGLang`, and speculation is excluded.
+The literal expected manifest is labelled `synthetic_mock` and `protocol_status: draft_unapproved`. It allows only `protocol`, `users`, `seed`, and `output`; its illustrative Episode 02 arms are `vLLM` and `SGLang`, and speculation is excluded. It must not claim to be the frozen protocol for a recorded run.
 
 - [ ] **Step 2: Run the contract tests and verify they fail**
 
@@ -213,7 +213,7 @@ git commit -m "feat(client): publish strict episode contracts"
 - Produces: immutable `SyntheticRequest(request_id: str, users: int, seed: int, input_tokens: int, output_tokens: int)`
 - Produces: immutable `SyntheticEvent(sequence: int, kind: str, monotonic_ms: int, payload: Mapping[str, object])`
 - Produces: `run_synthetic_episode(manifest, *, stop_requested: Callable[[], bool]) -> Iterator[SyntheticEvent]`
-- Consumes: validated Episode 02 manifest from Task 2
+- Consumes: validated synthetic draft Episode 02 manifest from Task 2
 
 - [ ] **Step 1: Write the failing deterministic-stream tests**
 
@@ -264,10 +264,12 @@ git commit -m "feat(client): add deterministic offline engine"
 - Modify: `client/src/token_by_token_cli/cli.py`
 
 **Interfaces:**
-- Produces: `write_synthetic_bundle(events, output_dir: Path) -> Path`
+- Produces: `write_synthetic_bundle(events, output_path: Path) -> Path`
 - Produces: `verify_bundle(path: Path) -> VerificationReport`
 - Produces: `VerificationReport(classification: str, files: tuple[str, ...], digest: str)`
 - Consumes: `inventory.v1` and `run-replay.v1` schemas from Task 2
+
+All bundle tests define `self.output = self.temp_root / "bundle.tbt.zip"`; no API in this task accepts an output directory.
 
 - [ ] **Step 1: Write failing round-trip and classification tests**
 
@@ -276,7 +278,7 @@ def test_bundle_round_trip_is_complete_and_synthetic(self):
     bundle = write_synthetic_bundle(EVENTS, self.output)
     report = verify_bundle(bundle)
     self.assertEqual(report.classification, "synthetic_mock")
-    self.assertEqual(report.files, ("events.jsonl", "inventory.json", "replay.json"))
+    self.assertEqual(report.files, ("events.jsonl", "replay.json"))
 
 def test_mixed_classification_is_rejected(self):
     bundle = make_bundle(replay_classification="recorded", inventory_classification="synthetic_mock")
@@ -308,7 +310,7 @@ Expected: FAIL because the bundle writer and verifier do not exist.
 
 - [ ] **Step 4: Implement canonical bundle output and safe verification**
 
-Canonical JSON uses UTF-8, sorted keys, compact separators, and a trailing newline. Inventory entries contain `path`, `size`, `media_type`, and lowercase SHA-256. Verification reads at most 32 MiB total, 8 MiB per entry, 64 entries, and a 100:1 compression ratio; it hashes bytes before parsing JSON and rejects every archive member not listed in the inventory.
+The one supported artifact is a ZIP archive with `PK` magic and a `.tbt.zip` extension. Its top-level detached envelope is `inventory.json`; `entries` lists only `events.jsonl` and `replay.json`, so the inventory never attempts to hash itself. Each entry contains a canonical NFC-normalized relative POSIX `path`, `size`, `media_type`, and lowercase SHA-256. Names containing an absolute root, `.` or `..` component, backslash, duplicate normalized spelling, link, or undeclared member fail closed. Canonical JSON uses UTF-8, sorted keys, compact separators, and a trailing newline. `VerificationReport.digest` is the SHA-256 of the canonical `inventory.json` bytes. Verification reads at most 32 MiB total, 8 MiB per entry, 64 entries, and a 100:1 compression ratio; it hashes bytes before parsing JSON and requires the archive member set to equal `{inventory.json} ∪ entries` exactly.
 
 - [ ] **Step 5: Add `evidence verify PATH --format human|json`**
 
@@ -336,9 +338,11 @@ git commit -m "feat(client): verify bounded synthetic bundles"
 - Modify: `client/src/token_by_token_cli/cli.py`
 
 **Interfaces:**
-- Produces: `run_selftest(output: Path, *, offline: bool, stop_requested: Callable[[], bool]) -> SelfTestReport`
+- Produces: `run_selftest(output_path: Path, *, offline: bool, stop_requested: Callable[[], bool]) -> SelfTestReport`
 - Produces: `SelfTestReport(bundle: Path, digest: str, requests: int, classification: Literal['synthetic_mock'])`
 - Consumes: deterministic events from Task 3 and bundle APIs from Task 4
+
+All self-test cases define `self.output = self.temp_root / "selftest.tbt.zip"`.
 
 - [ ] **Step 1: Write failing CLI behavior tests**
 
@@ -349,12 +353,11 @@ def test_selftest_requires_literal_offline_flag(self):
     self.assertIn("--offline is required", result.stderr)
     self.assertFalse(self.output.exists())
 
-def test_selftest_refuses_nonempty_output(self):
-    self.output.mkdir()
-    (self.output / "owner-file").write_text("preserve me")
+def test_selftest_refuses_existing_output_archive(self):
+    self.output.write_bytes(b"preserve me")
     result = run_cli("episode", "2", "selftest", "--offline", "--output", str(self.output))
     self.assertEqual(result.returncode, 3)
-    self.assertEqual((self.output / "owner-file").read_text(), "preserve me")
+    self.assertEqual(self.output.read_bytes(), b"preserve me")
 
 def test_selftest_produces_a_verified_synthetic_bundle(self):
     result = run_cli("episode", "2", "selftest", "--offline", "--output", str(self.output), "--format", "json")
@@ -364,9 +367,9 @@ def test_selftest_produces_a_verified_synthetic_bundle(self):
     self.assertEqual(verify_bundle(self.output).digest, report["digest"])
 ```
 
-- [ ] **Step 2: Write the failing real-network sentinel test**
+- [ ] **Step 2: Write failing socket-attempt and isolated-network tests**
 
-Start a real loopback TCP listener in the test, set `HTTPS_PROXY`, `HTTP_PROXY`, `TOKEN_BY_TOKEN_SERVICE_URL`, and fake credential variables to that listener, then execute the self-test subprocess. Assert the listener accepts zero connections, the command passes, and neither the endpoint nor credential value occurs in any output byte.
+For source-level unit tests, monkeypatch the Python socket surface (`connect`, `connect_ex`, `send`, `sendto`, `sendmsg`, `create_connection`, `getaddrinfo`, `gethostbyname`, and `gethostbyname_ex`) with a guard that records a violation and raises `OfflineViolation`. Set `HTTPS_PROXY`, `HTTP_PROXY`, `TOKEN_BY_TOKEN_SERVICE_URL`, and fake credentials; assert the violation list stays empty and no endpoint or credential value occurs in output. For both the source command and packaged binary in Linux CI, install `strace`, enter an isolated namespace, and run `unshare --user --map-root-user --net strace -f -qq -e trace=network -o TRACE COMMAND`. Require command success and `test ! -s TRACE`. Because `trace=network` records attempted `socket`, `connect`, `sendto`, DNS-related network syscalls and their failures, the check detects attempts rather than merely denying them.
 
 - [ ] **Step 3: Run the self-test modules and verify they fail**
 
@@ -376,13 +379,13 @@ Expected: FAIL because `selftest.py` does not exist and the command has no handl
 
 - [ ] **Step 4: Implement the self-test orchestration**
 
-The command loads only packaged resources, validates the manifest, checks the output directory, runs the fake engine, writes the bundle into a sibling temporary directory, verifies it, and atomically renames it to the requested path. On interruption or failure it removes only the temporary directory it created.
+The command loads only packaged resources, validates the manifest, checks that the requested `.tbt.zip` path does not exist and has an existing parent, runs the fake engine, writes a sibling temporary archive, verifies it, and atomically replaces the temporary name with the requested file path. On interruption or failure it removes only the temporary archive it created.
 
 - [ ] **Step 5: Run all client tests**
 
 Run: `python3 -m unittest discover -s client/tests -p 'test_*.py' -v`
 
-Expected: PASS, including zero accepted network connections.
+Expected: PASS, including zero attempted socket or DNS calls in source and packaged-binary paths.
 
 - [ ] **Step 6: Commit the complete offline flow**
 
@@ -405,7 +408,7 @@ git commit -m "feat(client): complete offline episode self-test"
 **Interfaces:**
 - Produces: `client/dist/token-by-token` on Linux/macOS or `token-by-token.exe` on Windows
 - Produces: `client/dist/SHA256SUMS`
-- Produces: `audit_binary(path: Path, analysis_inventory: Path) -> None`
+- Produces: `audit_binary(path: Path, analysis_toc: Path, extracted_root: Path) -> None`
 - Consumes: only `client/src`, packaged public resources, Python runtime, `jsonschema`, and its locked transitive dependencies
 
 - [ ] **Step 1: Write the failing binary-audit tests**
@@ -414,15 +417,17 @@ git commit -m "feat(client): complete offline episode self-test"
 def test_audit_rejects_private_module_inventory(self):
     inventory = self.write_inventory(["token_by_token_cli.cli", "runpod_benchmark.episode1_runner"])
     with self.assertRaisesRegex(ClientError, "FORBIDDEN_BUILD_INPUT"):
-        audit_binary(self.binary, inventory)
+        audit_binary(self.binary, inventory, self.extracted_root)
 
-def test_audit_rejects_private_markers_in_executable(self):
-    self.binary.write_bytes(b"safe-prefix agentbench --profile private safe-suffix")
+def test_audit_rejects_private_markers_in_extracted_tree(self):
+    (self.extracted_root / "payload.bin").write_bytes(
+        b"safe-prefix private-benchmark-tool --profile private safe-suffix"
+    )
     with self.assertRaisesRegex(ClientError, "FORBIDDEN_BINARY_CONTENT"):
-        audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli"]))
+        audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli"]), self.extracted_root)
 ```
 
-The forbidden inventory prefixes are `runpod_benchmark`, `scripts`, `runtime`, `deploy`, and `data`. Marker scanning uses the repository privacy scanner’s high-confidence rules plus AgentBench and serving-profile terms; it does not print matched secret-like bytes.
+The forbidden inventory prefixes are `runpod_benchmark`, `scripts`, `runtime`, `deploy`, and `data`. Tests cover the PyInstaller analysis TOC, bundled resource names, and an extracted archive tree, not only raw executable bytes. Marker scanning uses the repository privacy scanner’s high-confidence rules plus private benchmark-tool and serving-profile terms; it does not print matched secret-like bytes.
 
 - [ ] **Step 2: Run the audit tests and verify they fail**
 
@@ -432,26 +437,26 @@ Expected: FAIL because build and audit scripts do not exist.
 
 - [ ] **Step 3: Add the pinned build environment and PyInstaller specification**
 
-Write `requirements-build.in` with `pyinstaller==6.16.0` and generate the hashed transitive lock using `pip-compile --generate-hashes --output-file client/requirements-build.lock client/requirements-build.in`. The spec sets `pathex=[client/src]`, explicitly includes the three public schema files and Episode 02 manifest, and errors if the analysis graph contains a forbidden prefix.
+Write `requirements-build.in` with the pinned build backend, wheel/setuptools tooling, `pyinstaller==6.16.0`, all runtime dependencies, and the local package build input; generate a complete hashed transitive lock using `pip-compile --generate-hashes --output-file client/requirements-build.lock client/requirements-build.in`. Build in a fresh temporary virtual environment populated only from that lock. The spec sets `pathex=[client/src]`, explicitly includes the three public schema files and synthetic draft Episode 02 manifest, and errors if the analysis graph contains a forbidden prefix.
 
 - [ ] **Step 4: Implement build and audit scripts**
 
-`build_binary.py` refuses to run unless its resolved working directory is `client/`, deletes only `client/build/` and `client/dist/`, invokes PyInstaller with a clean environment, audits the analysis inventory and executable, runs `token-by-token --version`, runs the offline self-test in a fresh temporary directory, and writes `SHA256SUMS`.
+`build_binary.py` refuses to run unless its resolved working directory is `client/`, deletes only `client/build/` and `client/dist/`, creates the fresh locked build environment, and invokes PyInstaller with a clean environment. The audit parses the PyInstaller analysis TOC and uses the pinned `PyInstaller.archive.readers.CArchiveReader` API to enumerate each archive member, extract its uncompressed bytes into a temporary audit root, and recursively inspect nested PYZ entries. A regression test builds a tiny fixture executable and proves the scripted extractor sees its module and data payloads. Every module/resource path must match the explicit public allowlist and every extracted byte stream must pass privacy scanning. It then runs `token-by-token --version`, runs the offline self-test in a fresh temporary directory, and writes `SHA256SUMS`.
 
 - [ ] **Step 5: Run the client tests and an actual local binary build**
 
 ```bash
 python3 -m unittest discover -s client/tests -p 'test_*.py' -v
-python3 client/scripts/build_binary.py
-client/dist/token-by-token episode 2 selftest --offline --output /tmp/token-by-token-binary-selftest
-client/dist/token-by-token evidence verify /tmp/token-by-token-binary-selftest
+(cd client && python3 scripts/build_binary.py)
+client/dist/token-by-token episode 2 selftest --offline --output /tmp/token-by-token-binary-selftest.tbt.zip
+client/dist/token-by-token evidence verify /tmp/token-by-token-binary-selftest.tbt.zip
 ```
 
 Expected: all commands exit 0; the bundle is `synthetic_mock`; the audit reports no forbidden build inputs.
 
 - [ ] **Step 6: Add a non-publishing CI binary job**
 
-The job runs on `ubuntu-latest` with `contents: read`, builds the executable, audits it, executes the offline self-test with external networking denied after dependency installation, and uploads the candidate artifact for maintainers. It does not create a GitHub release or sign an artifact.
+The job runs on `ubuntu-latest` with `contents: read`, builds the executable, audits the analysis TOC and extracted PyInstaller contents, then executes both source and binary self-tests with `unshare --user --map-root-user --net strace -f -qq -e trace=network -o TRACE COMMAND` and fails unless each trace is empty. Dependency installation occurs before network isolation. It uploads the candidate artifact for maintainers but does not create a GitHub release or sign an artifact.
 
 - [ ] **Step 7: Commit executable packaging**
 
@@ -484,8 +489,8 @@ python3 -m venv .venv
 . .venv/bin/activate
 python3 -m pip install ./client
 token-by-token episode 2 describe
-token-by-token episode 2 selftest --offline --output ./token-by-token-selftest
-token-by-token evidence verify ./token-by-token-selftest
+token-by-token episode 2 selftest --offline --output ./token-by-token-selftest.tbt.zip
+token-by-token evidence verify ./token-by-token-selftest.tbt.zip
 ```
 
 State prominently that the self-test is synthetic, costs $0, makes no provider call, and does not benchmark vLLM or SGLang. State that hosted submission is unavailable in this release and that AgentBench is neither included nor named as an affiliated public product.
@@ -504,8 +509,8 @@ The root README links to `client/README.md` as an unreleased public-client candi
 python3 -m venv /tmp/token-by-token-doc-check
 /tmp/token-by-token-doc-check/bin/python -m pip install ./client
 /tmp/token-by-token-doc-check/bin/token-by-token episode 2 describe
-/tmp/token-by-token-doc-check/bin/token-by-token episode 2 selftest --offline --output /tmp/token-by-token-doc-bundle
-/tmp/token-by-token-doc-check/bin/token-by-token evidence verify /tmp/token-by-token-doc-bundle
+/tmp/token-by-token-doc-check/bin/token-by-token episode 2 selftest --offline --output /tmp/token-by-token-doc-bundle.tbt.zip
+/tmp/token-by-token-doc-check/bin/token-by-token evidence verify /tmp/token-by-token-doc-bundle.tbt.zip
 ```
 
 Expected: all commands exit 0 without provider credentials or external service access.
@@ -533,7 +538,7 @@ git commit -m "docs(client): add offline client onboarding"
 
 ## Out of Scope and Required Follow-On Plans
 
-The following approved architectural components require their own specs or implementation plans before code is written:
+The following proposed components require separate approval plus their own specs or implementation plans before code is written:
 
 1. Authenticated hosted control plane and private AgentBench worker adapter.
 2. Signed recorded replay bundles, key rotation, and tenant artifact authorization.

@@ -197,8 +197,10 @@ be enforced without an unapproved destructive action.
 
 `token-by-token episode 2 selftest --offline` uses a local fake engine and synthetic
 corpus. It has no provider credentials, remote inference, private repository mount or
-provisioning adapter. It exercises planning, fake execution, progress, interruption,
-collection, sanitization, verification, replay and static export.
+provisioning adapter. Phase 1 exercises public-contract validation, deterministic fake
+execution, progress, interruption, bundle creation and verification. Local replay,
+Grafana/VictoriaMetrics import and static export remain Phase 2 work under separate
+plans.
 
 Every artifact is labeled `synthetic_mock`, and schema/build gates reject any attempt
 to mix mock artifacts with recorded evidence.
