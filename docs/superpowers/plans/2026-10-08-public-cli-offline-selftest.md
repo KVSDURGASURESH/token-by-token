@@ -10,6 +10,17 @@
 
 **Spec:** `design/BENCHMARK-SERVICE-PROPOSAL.md`
 
+## Execution status — complete on 2026-10-08
+
+- [x] Tasks 1–7 implemented and committed on `codex/episode-1-local-prep`.
+- [x] The public catalog was expanded safely from the initial Episode 02 slice to Episodes 00–16; every episode uses the same deterministic, zero-network `synthetic_mock` self-test path.
+- [x] Standalone binary built from the isolated `client/` context, inventory-accounted, privacy-scanned (including decompressed nested archive members), checksum-verified, and smoke-tested at Episodes 00, 02, and 16.
+- [x] Client verification: 56/56 tests pass. Static dashboard type-check, build, compiled privacy scan, and offline-browser acceptance pass.
+- [x] Independent adversarial review reports no remaining Critical or Important blockers.
+- [x] Repository-wide result: 630 passed, 3 skipped, 3 pre-existing failures caused by the repository contract selecting Python 3.12.13 while the local environment executes Python 3.12.15. No wrapper test failed.
+
+The unchecked boxes below preserve the original test-driven execution script. This status block is the authoritative completion record.
+
 ## Global Constraints
 
 - The public package and binary must never include `src/runpod_benchmark`, AgentBench, deployment recipes, corpus payloads, credentials, provider adapters, raw operational exports, private labels, or unrestricted engine flags.
