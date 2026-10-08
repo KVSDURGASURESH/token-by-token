@@ -37,8 +37,8 @@ class CliSurfaceTests(unittest.TestCase):
 
     def test_episode_command_accepts_the_catalog_range(self) -> None:
         result = self.run_cli("episode", "16", "describe")
-        self.assertEqual(result.returncode, 3, result.stderr)
-        self.assertIn("NOT_IMPLEMENTED", result.stderr)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Episode 16", result.stdout)
         self.assertNotIn("Traceback", result.stderr)
 
 

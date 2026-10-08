@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "run-replay.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "classification", "episode", "protocol", "status", "events_sha256", "summary"],
+  "properties": {
+    "schema_version": {"const": "run-replay.v1"},
+    "classification": {"const": "synthetic_mock"},
+    "episode": {"type": "integer", "minimum": 0, "maximum": 16},
+    "protocol": {"type": "string"},
+    "status": {"enum": ["complete", "interrupted"]},
+    "events_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "summary": {"type": "object", "additionalProperties": {"type": ["integer", "number", "string", "null"]}}
+  }
+}

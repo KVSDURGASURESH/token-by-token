@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "episode-manifest.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "classification", "episode", "protocol", "protocol_status", "title", "question", "summary", "status", "evidence", "load_levels", "speculative_decoding", "allowed_parameters", "selftest"],
+  "properties": {
+    "schema_version": {"const": "episode-manifest.v1"},
+    "classification": {"const": "synthetic_mock"},
+    "episode": {"type": "integer", "minimum": 0, "maximum": 16},
+    "protocol": {"type": "string", "pattern": "^episode-[0-9]{2}-public-v1$"},
+    "protocol_status": {"enum": ["recorded_reference", "draft_unapproved"]},
+    "title": {"type": "string", "minLength": 1},
+    "question": {"type": "string", "minLength": 1},
+    "summary": {"type": "string", "minLength": 1},
+    "status": {"enum": ["recorded", "planned"]},
+    "evidence": {"type": "string", "minLength": 1},
+    "load_levels": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "integer", "minimum": 1}},
+    "speculative_decoding": {"enum": ["excluded", "study_variable"]},
+    "allowed_parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "users", "seed", "output"],
+      "properties": {
+        "protocol": {"type": "object"},
+        "users": {"type": "object"},
+        "seed": {"type": "object"},
+        "output": {"type": "object"}
+      }
+    },
+    "selftest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "cost_usd", "network", "meaning"],
+      "properties": {
+        "classification": {"const": "synthetic_mock"},
+        "cost_usd": {"const": 0},
+        "network": {"const": "forbidden"},
+        "meaning": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

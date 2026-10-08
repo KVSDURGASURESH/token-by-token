@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Sequence
+import json
 import sys
 
 from . import __version__
@@ -38,6 +39,30 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
+        if args.command == "episodes":
+            from .contracts import load_resource_json
+
+            catalog = load_resource_json("episodes/catalog.v1.json")
+            for item in catalog["episodes"]:
+                print(f"Episode {item['episode']:02d} · {item['title']} · {item['status']}")
+            return 0
+        if args.command == "episode" and args.episode_command == "describe":
+            from .contracts import episode_manifest
+
+            document = episode_manifest(args.number)
+            if args.format == "json":
+                print(json.dumps(document, sort_keys=True, separators=(",", ":")))
+            else:
+                levels = ", ".join(str(value) for value in document["load_levels"])
+                speculation = "study variable" if document["speculative_decoding"] == "study_variable" else "excluded"
+                print(f"Episode {document['episode']:02d} · {document['title']}")
+                print(document["question"])
+                print(document["summary"])
+                print(f"Evidence: {document['evidence']}")
+                print(f"Synthetic self-test loads: {levels}")
+                print(f"Speculative decoding: {speculation}")
+                print("The offline self-test validates client plumbing only; it is not benchmark evidence.")
+            return 0
         raise ClientError("NOT_IMPLEMENTED", f"{args.command} is not implemented yet")
     except ClientError as error:
         print(f"{error.code}: {error.message}", file=sys.stderr)
@@ -46,4 +71,3 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 def entrypoint() -> None:
     raise SystemExit(main())
-
