@@ -80,15 +80,20 @@ class BinaryAuditTests(unittest.TestCase):
 
     def test_audit_scans_uncompressed_base_library_members(self) -> None:
         private_identifier = bytes.fromhex("6167656e7462656e6368")
-        base_library = self.extracted_root / "0099-base_library.zip"
-        with zipfile.ZipFile(base_library, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-            archive.writestr("email/parser.pyc", b"safe-prefix " + private_identifier + b" safe-suffix")
-        with self.assertRaisesRegex(ClientError, "FORBIDDEN_BINARY_CONTENT"):
-            audit_binary(
-                self.binary,
-                self.write_inventory(["email.parser"], ["base_library.zip"]),
-                self.extracted_root,
-            )
+        for member in ("email/parser.pyc", "config.json"):
+            with self.subTest(member=member):
+                base_library = self.extracted_root / "0099-base_library.zip"
+                with zipfile.ZipFile(base_library, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+                    if member != "email/parser.pyc":
+                        archive.writestr("email/parser.pyc", b"public module")
+                    archive.writestr(member, b"safe-prefix " + private_identifier + b" safe-suffix")
+                with self.assertRaisesRegex(ClientError, "FORBIDDEN_BINARY_CONTENT"):
+                    audit_binary(
+                        self.binary,
+                        self.write_inventory(["email.parser"], ["base_library.zip"]),
+                        self.extracted_root,
+                    )
+                base_library.unlink()
 
     def test_audit_rejects_private_module_inventory(self) -> None:
         inventory = self.write_inventory(["token_by_token_cli.cli", "private_runtime.episode_runner"])

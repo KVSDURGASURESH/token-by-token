@@ -125,7 +125,7 @@ def _base_library_modules(path: Path) -> set[str]:
             modules: set[str] = set()
             total_size = 0
             for info in archive.infolist():
-                if info.is_dir() or not info.filename.endswith((".py", ".pyc")):
+                if info.is_dir():
                     continue
                 total_size += info.file_size
                 if info.file_size > 8 * 1024 * 1024 or total_size > 32 * 1024 * 1024:
@@ -135,6 +135,8 @@ def _base_library_modules(path: Path) -> set[str]:
                         "FORBIDDEN_BINARY_CONTENT",
                         "candidate standard-library archive contains a forbidden private marker",
                     )
+                if not info.filename.endswith((".py", ".pyc")):
+                    continue
                 parts = info.filename.replace("\\", "/").rsplit(".", 1)[0].split("/")
                 if parts[-1] == "__init__":
                     parts.pop()
