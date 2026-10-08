@@ -9,6 +9,41 @@ permissions:
   contents: read
 
 jobs:
+  public-client:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install syscall tracer
+        run: sudo apt-get update && sudo apt-get install -y strace
+      - name: Install source client from the isolated package
+        run: python3 -m pip install ./client
+      - name: Run public client tests
+        run: PYTHONPATH=client/src python3 -m unittest discover -s client/tests -p 'test_*.py' -v
+      - name: Build and audit standalone candidate
+        working-directory: client
+        run: python3 scripts/build_binary.py
+      - name: Prove source self-test attempts no network syscall
+        run: |
+          unshare --user --map-root-user --net strace -f -qq -e trace=network -o "$RUNNER_TEMP/source-network.trace" \
+            token-by-token episode 2 selftest --offline --users 4 --output "$RUNNER_TEMP/source.tbt.zip"
+          test ! -s "$RUNNER_TEMP/source-network.trace"
+      - name: Prove binary self-test attempts no network syscall
+        run: |
+          unshare --user --map-root-user --net strace -f -qq -e trace=network -o "$RUNNER_TEMP/binary-network.trace" \
+            client/dist/token-by-token episode 2 selftest --offline --users 4 --output "$RUNNER_TEMP/binary.tbt.zip"
+          test ! -s "$RUNNER_TEMP/binary-network.trace"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: token-by-token-client-${{ runner.os }}
+          path: |
+            client/dist/token-by-token
+            client/dist/SHA256SUMS
+          if-no-files-found: error
+
   fixture-and-dashboard:
     runs-on: ubuntu-latest
     timeout-minutes: 10
