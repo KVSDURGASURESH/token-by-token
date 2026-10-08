@@ -123,9 +123,18 @@ def _base_library_modules(path: Path) -> set[str]:
     try:
         with zipfile.ZipFile(path) as archive:
             modules: set[str] = set()
+            total_size = 0
             for info in archive.infolist():
                 if info.is_dir() or not info.filename.endswith((".py", ".pyc")):
                     continue
+                total_size += info.file_size
+                if info.file_size > 8 * 1024 * 1024 or total_size > 32 * 1024 * 1024:
+                    raise ClientError("BINARY_AUDIT_INPUT", "extracted standard-library archive is oversized")
+                if _contains_forbidden_marker(archive.read(info)):
+                    raise ClientError(
+                        "FORBIDDEN_BINARY_CONTENT",
+                        "candidate standard-library archive contains a forbidden private marker",
+                    )
                 parts = info.filename.replace("\\", "/").rsplit(".", 1)[0].split("/")
                 if parts[-1] == "__init__":
                     parts.pop()

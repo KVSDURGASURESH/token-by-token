@@ -181,6 +181,94 @@ class HostileBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(ClientError, "INVALID_EVENTS"):
                     verify_bundle(self.build(payload=plan + canonical(request) + terminal))
 
+    def test_unhashable_event_arm_fails_without_traceback(self) -> None:
+        plan = canonical(
+            {
+                "kind": "plan",
+                "monotonic_ms": 0,
+                "payload": {
+                    "classification": "synthetic_mock",
+                    "episode": 2,
+                    "protocol": "episode-02-public-v1",
+                    "seed": 42,
+                    "users": 2,
+                },
+                "sequence": 0,
+            }
+        )
+        request = canonical(
+            {
+                "kind": "request",
+                "monotonic_ms": 10,
+                "payload": {
+                    "arm": [],
+                    "input_tokens": 128,
+                    "output_tokens": 128,
+                    "request_id": "mock-001",
+                    "seed": 42,
+                    "users": 2,
+                },
+                "sequence": 1,
+            }
+        )
+        terminal = canonical(
+            {
+                "kind": "run_completed",
+                "monotonic_ms": 20,
+                "payload": {"arms": 0, "classification": "synthetic_mock", "requests": 1},
+                "sequence": 2,
+            }
+        )
+        archive = self.build(payload=plan + request + terminal)
+        with self.assertRaisesRegex(ClientError, "INVALID_EVENTS"):
+            verify_bundle(archive)
+        result = subprocess.run(
+            [sys.executable, "-m", "token_by_token_cli", "evidence", "verify", str(archive)],
+            capture_output=True,
+            text=True,
+            env={**os.environ, "PYTHONPATH": str(Path(__file__).resolve().parents[1] / "src")},
+            check=False,
+        )
+        self.assertEqual(result.returncode, 3)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_invalid_unicode_fails_without_traceback(self) -> None:
+        surrogate_events = (
+            b'{"kind":"plan","monotonic_ms":0,"payload":{"classification":"synthetic_mock",'
+            b'"episode":2,"protocol":"\\ud800","seed":42,"users":2},"sequence":0}\n'
+            b'{"kind":"run_interrupted","monotonic_ms":10,"payload":{"classification":"synthetic_mock",'
+            b'"completed_events":1},"sequence":1}\n'
+        )
+        archives = [self.build(payload=surrogate_events), self.build()]
+        raw = bytearray(archives[1].read_bytes())
+        central = raw.find(b"PK\x01\x02")
+        while central >= 0:
+            name_length = struct.unpack_from("<H", raw, central + 28)[0]
+            name_start = central + 46
+            if bytes(raw[name_start : name_start + name_length]) == b"events.jsonl":
+                flags = struct.unpack_from("<H", raw, central + 8)[0]
+                struct.pack_into("<H", raw, central + 8, flags | 0x800)
+                raw[name_start] = 0xFF
+                break
+            central = raw.find(b"PK\x01\x02", name_start + name_length)
+        else:
+            self.fail("events.jsonl central-directory record not found")
+        archives[1].write_bytes(raw)
+
+        for archive in archives:
+            with self.subTest(archive=archive.name):
+                with self.assertRaises(ClientError):
+                    verify_bundle(archive)
+                result = subprocess.run(
+                    [sys.executable, "-m", "token_by_token_cli", "evidence", "verify", str(archive)],
+                    capture_output=True,
+                    text=True,
+                    env={**os.environ, "PYTHONPATH": str(Path(__file__).resolve().parents[1] / "src")},
+                    check=False,
+                )
+                self.assertEqual(result.returncode, 3)
+                self.assertNotIn("Traceback", result.stderr)
+
     def test_malformed_replay_and_corrupt_crc_fail_without_traceback(self) -> None:
         malformed = self.build(replay_override=[])
         with self.assertRaises(ClientError):

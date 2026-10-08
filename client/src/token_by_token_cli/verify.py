@@ -37,6 +37,7 @@ ARCHIVE_ERRORS = (
     zipfile.LargeZipFile,
     zlib.error,
 )
+MALFORMED_ARCHIVE_ERRORS = ARCHIVE_ERRORS + (TypeError, UnicodeError, ValueError)
 EVENT_KINDS = {
     "plan",
     "arm_started",
@@ -132,7 +133,9 @@ def _parse_events(raw: bytes, classification: str) -> list[dict[str, object]]:
         assert isinstance(kind, str) and isinstance(payload, dict)
         if "classification" in payload and payload["classification"] != classification:
             raise ClientError("MIXED_CLASSIFICATION", "event and inventory classifications do not match")
-        if "arm" in payload and payload["arm"] not in {"synthetic-a", "synthetic-b"}:
+        if "arm" in payload and (
+            not isinstance(payload["arm"], str) or payload["arm"] not in {"synthetic-a", "synthetic-b"}
+        ):
             raise ClientError("INVALID_EVENTS", "event arm is invalid")
         if kind == "request" and (
             payload["seed"] != plan_seed
@@ -264,14 +267,14 @@ def verify_bundle(path: Path) -> VerificationReport:
             source.seek(0)
             try:
                 archive = zipfile.ZipFile(source, "r")
-            except ARCHIVE_ERRORS as error:
+            except MALFORMED_ARCHIVE_ERRORS as error:
                 raise ClientError("INVALID_ARCHIVE", "bundle is not a readable ZIP archive") from error
             try:
                 with archive:
                     return _verify_open_archive(archive)
             except ClientError:
                 raise
-            except ARCHIVE_ERRORS as error:
+            except MALFORMED_ARCHIVE_ERRORS as error:
                 raise ClientError("INVALID_ARCHIVE", "bundle is corrupt or uses an unsupported ZIP feature") from error
     except ClientError:
         raise
