@@ -104,6 +104,11 @@ Current working branch: `codex/episode-1-local-prep`.
 - The latest private benchmark report and revised cost record were reviewed. They were
   not copied into the public site because formal qualification is still incomplete and
   publication approval has not been recorded.
+- The isolated public-client candidate under `client/` now lists and describes Episodes
+  00–16, runs every episode through the same deterministic offline synthetic self-test,
+  writes and verifies bounded `.tbt.zip` bundles, and builds a content-audited standalone
+  executable from a hash-locked environment. It does not submit work, contact a provider,
+  include private serving profiles, or claim new benchmark evidence.
 
 ## Resume checklist
 
@@ -122,6 +127,9 @@ Current working branch: `codex/episode-1-local-prep`.
 7. Do not merge or publish externally without owner approval.
 8. The public-client/private-service boundary is approved. Implement the first client
    slice only from the [public CLI and offline self-test plan](../docs/superpowers/plans/2026-10-08-public-cli-offline-selftest.md).
-   Hosted execution, replay packaging, paid Episode 02 work and public attribution
-   still require their own reviewed plans and the unresolved approvals recorded in
+   That slice is implemented as an unreleased candidate; start with
+   [`client/README.md`](../client/README.md) and the
+   [client release checklist](../docs/client-release-checklist.md). Hosted execution,
+   recorded replay, paid Episode 02 work, public attribution, package publication and a
+   GitHub release still require their own approvals recorded in
    [the benchmark service decision](BENCHMARK-SERVICE-PROPOSAL.md).

@@ -20,6 +20,12 @@ rehearse the measurement workflow, and run the dashboard without renting a
 GPU. A fresh provider measurement is a separate, paid workflow that requires a
 fully bound plan and the owner's exact approval before any resource is created.
 
+An [unreleased public-client candidate](client/README.md) now describes every
+Episode 00–16 contract and runs a deterministic offline self-test that writes a
+locally verifiable evidence bundle. It costs $0 and makes no provider call. The
+self-test validates client plumbing only; it is not benchmark evidence, and
+hosted submission remains unavailable.
+
 ## Episodes
 
 <!-- BEGIN EPISODE INDEX -->
@@ -38,7 +44,7 @@ fully bound plan and the owner's exact approval before any resource is created.
 | 10 | Slurm and Kubernetes orchestration | Planned | Planned platform study — no measurements |
 | 11 | Model internals: weights to optimization | Planned | Planned companion study — no measurements |
 | 12 | LoRA and QLoRA with held-out evaluation | Planned | Planned companion study — no measurements |
-| 13 | Jev and LLMs on labeled decision tasks | Planned | Planned companion study — no measurements |
+| 13 | SYSTEM 1 and LLMs on labeled decision tasks | Planned | Planned companion study — no measurements |
 | 14 | Packaging, accelerator preflight and memory containment | Planned | Planned — no measurements |
 | 15 | Saturation, SLO and cost | Planned | Planned — no measurements |
 | 16 | Release gates, recovery and capstone synthesis | Planned | Planned capstone synthesis — no measurements |
@@ -71,6 +77,11 @@ validator. These commands do not use credentials or contact a provider. The rehe
 be a new or empty directory. It is labeled `fixture_zero_cost`, records zero
 provider attempts and resources, and compiles a deliberately nonapprovable
 plan with zero cost.
+
+To try the isolated client instead, follow its
+[source quick start](client/README.md#quick-start-from-source). The client has
+its own package boundary, tests, threat model, locked standalone build, and
+release checklist. No binary or package-registry release has been published.
 
 Continue with [Episode 0](episodes/00-warm-up/README.md) to inspect the retained
 study, start the [local dashboard](episodes/00-warm-up/README.md#explore-it-locally),

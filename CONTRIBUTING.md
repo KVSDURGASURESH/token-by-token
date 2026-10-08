@@ -58,6 +58,32 @@ npm --prefix dashboard run build
 Do not commit generated `dashboard/dist/`, dependency directories, or local
 rehearsal output.
 
+## Public client changes
+
+The candidate client is isolated under `client/`. Client implementation,
+schemas, manifests, tests, build scripts, and package data must remain there;
+only reviewed public documentation and contracts may be changed elsewhere as
+part of the same proposal. Do not import private runtimes, provider SDKs,
+deployment code, raw evidence, serving profiles, credentials, or internal
+configuration into the client.
+
+Every client change must preserve the synthetic/recorded evidence boundary and
+pass the forbidden-import and extracted-binary content audit. Run:
+
+```bash
+PYTHONPATH=client/src python3 -m unittest discover -s client/tests -p 'test_*.py' -v
+(cd client && python3 scripts/build_binary.py)
+python3 scripts/check_publication_privacy.py --root .
+```
+
+New CLI behavior requires positive and negative tests. Network-capable, hosted,
+authenticated, provider, recorded-replay, or paid execution features require a
+separate approved plan and threat-model update; a pull request alone does not
+authorize them. Keep the exact commands and limitations synchronized in
+[`client/README.md`](client/README.md), and apply the
+[release checklist](docs/client-release-checklist.md) before proposing any
+package or GitHub release.
+
 ## Propose one measurable change
 
 An optimization proposal should state:
