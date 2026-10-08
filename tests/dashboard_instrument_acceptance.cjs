@@ -20,7 +20,7 @@ const base = url.replace(/#.*$/, "");
       page.on("request", request => requests.push(request.url()));
       await page.goto(`${base}#episode-1`, { waitUntil: "networkidle" });
 
-      assert.equal(await page.getByRole("heading", { name: "What breaks first when two inference engines meet the same H200 workload?" }).count(), 1);
+      assert.equal(await page.getByRole("heading", { name: "Can the throughput leader still miss the decode floor?" }).count(), 1);
       assert.equal(await page.getByText("Recorded · exploratory · capacity not established", { exact: true }).count(), 1);
       const chooser = page.getByRole("button", { name: /Choose episode/i });
       assert.equal(await chooser.count(), 1);

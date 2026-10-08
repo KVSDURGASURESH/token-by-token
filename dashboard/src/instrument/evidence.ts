@@ -46,7 +46,7 @@ export function adaptEpisode1Study(): EvidenceStudy {
     kind: "episode",
     number: 1,
     title: "Episode 01 — The throughput lead changes with load",
-    question: "What breaks first when two inference engines meet the same H200 workload?",
+    question: "Can the throughput leader still miss the decode floor?",
     state: "recorded",
     statusLabel: "Recorded · exploratory · capacity not established",
     what: "Compare vLLM and SGLang on one H200 at three matched, recorded user levels.",
