@@ -28,6 +28,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const mark = await (await page.request.get(`${base}token-by-token.svg`)).text();
     assert.doesNotMatch(mark, /c2pa|Anthropic|manifest/i, 'production mark excludes prototype provenance metadata');
     await page.goto(`${base}#episode-1?load=16`);
+    assert.match(await page.locator('.tbt-study-header .tbt-eyebrow').innerText(), /^Episode 01: Measure what matters · Recorded study$/i);
     assert.match(await page.locator('#page-title').innerText(), /Can the throughput leader still miss the decode floor/, 'recorded studies default to the evidence-backed analysis headline');
     assert.match(await page.locator('.tbt-hero-evidence').innerText(), /27\.5% higher output throughput.*Both deployments fell below.*20 tok\/s p10 decode floor/s, 'the hero immediately supplies the recorded evidence behind its question');
     assert.equal(await page.locator('.tbt-rail-episodes a[href="#episode-13"] span').innerText(), 'SYSTEM 1 and LLMs on labeled decision tasks', 'public episode label uses SYSTEM 1');
