@@ -52,7 +52,10 @@
               "value": 0.03333333333333333
             }
           },
-          "users": 12
+          "users": 12,
+          "valid_requests": 641,
+          "total_requests": 642,
+          "level_valid": true
         },
         {
           "active_sessions": 32,
@@ -94,7 +97,10 @@
               "value": 0.03333333333333333
             }
           },
-          "users": 16
+          "users": 16,
+          "valid_requests": 665,
+          "total_requests": 666,
+          "level_valid": true
         },
         {
           "active_sessions": 48,
@@ -136,7 +142,10 @@
               "value": 0.2
             }
           },
-          "users": 24
+          "users": 24,
+          "valid_requests": 662,
+          "total_requests": 662,
+          "level_valid": true
         }
       ]
     },
@@ -183,7 +192,10 @@
               "value": 0.05
             }
           },
-          "users": 12
+          "users": 12,
+          "valid_requests": 747,
+          "total_requests": 747,
+          "level_valid": true
         },
         {
           "active_sessions": 32,
@@ -225,7 +237,10 @@
               "value": 0.5833333333333334
             }
           },
-          "users": 16
+          "users": 16,
+          "valid_requests": 889,
+          "total_requests": 889,
+          "level_valid": true
         },
         {
           "active_sessions": 48,
@@ -267,7 +282,10 @@
               "value": 1.2
             }
           },
-          "users": 24
+          "users": 24,
+          "valid_requests": 601,
+          "total_requests": 601,
+          "level_valid": true
         }
       ]
     }
@@ -322,5 +340,5 @@
       "explanation": "Mean sampled board power in the measured window."
     }
   ],
-  "schema_version": "public-inference-evidence.v1"
+  "schema_version": "token-by-token.public-site-projection.v1"
 }

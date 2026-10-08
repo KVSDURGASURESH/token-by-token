@@ -1,5 +1,15 @@
 const { chromium } = require('../dashboard/node_modules/playwright');
 const assert = require('node:assert/strict');
+const episode1Projection = require('../dashboard/src/data/site-v2/episode-1.json');
+const episode0Telemetry = require('../dashboard/src/data/site-v2/episode-0-telemetry.json');
+
+assert.equal(episode1Projection.schema_version, 'token-by-token.public-site-projection.v1');
+assert.deepEqual(episode1Projection.arms.map(arm => {
+  const point = arm.points.find(point => point.users === 16);
+  return [arm.engine, point.valid_requests, point.total_requests, point.level_valid];
+}), [['vLLM',665,666,true],['SGLang',889,889,true]]);
+assert.deepEqual(episode0Telemetry.workloads.find(workload => workload.id === '2048-c24').engines,
+  { vLLM: { kv_cache_peak: 0.9988, waiting_requests_peak: 14.5, prefill_duration_seconds: 1.1217, decode_duration_seconds: 4.5523 }, SGLang: { kv_cache_peak: 0.99, waiting_requests_peak: 17, prefill_duration_seconds: null, decode_duration_seconds: null } });
 
 const base = process.argv[2];
 if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <url>');
@@ -18,6 +28,10 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const mark = await (await page.request.get(`${base}token-by-token.svg`)).text();
     assert.doesNotMatch(mark, /c2pa|Anthropic|manifest/i, 'production mark excludes prototype provenance metadata');
     await page.goto(`${base}#episode-1?load=16`);
+    await page.getByRole('link', { name: 'Skip to content' }).focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await page.locator('main').evaluate(el => el === document.activeElement), true);
+    assert.match(page.url(), /load=16/, 'skip link preserves route');
     assert.equal(await page.locator('.tbt-rail-chapters button:first-child b').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)');
     await page.goto(`${base}#methodology`);
     assert.equal(await page.locator('.tbt-rail-chapters button:first-child b').evaluate(el => getComputedStyle(el).color), 'rgb(90, 105, 102)');
@@ -49,16 +63,33 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('#ch-evidence [data-identity-legend]').count(), 1);
     assert.equal(await page.locator('#ch-evidence [data-metric] [data-plot-value]').count() >= 4, true, 'plots show exact selected operands');
     assert.equal(await page.locator('#ch-evidence [data-metric] .state-better, #ch-evidence [data-metric] .state-worse, #ch-evidence [data-metric] .state-band').count() >= 1, true, 'delta has semantic state');
+    assert.equal(await page.locator('[data-metric="error_rate_pct"] [data-reference="Declared 1% limit"]').count(), 1);
+    assert.equal(await page.locator('[data-metric="error_rate_pct"] [data-reference="Declared 1% limit"]').evaluate(el => Number(el.getAttribute('y1')) < 88), true, 'threshold contributes to plot scale');
+    assert.equal(await page.locator('[data-metric="decode_p10_tps"] [data-reference="Declared 20 tok/s floor"]').count(), 1);
+    assert.match(await page.locator('#ch-evidence .tbt-validity').innerText(), /vLLM · 665\/666 valid requests.*SGLang · 889\/889 valid requests/s);
     const dataLink = page.locator('#ch-source a[download]');
     assert.equal(await dataLink.count(), 1, 'Source exposes its sanitized static JSON');
     await page.locator('#ch-evidence [data-metric="output_tps"]').click();
     assert.match(page.url(), /metric=output_tps/);
     assert.equal(await page.getByRole('region', { name: 'Explanation: Output throughput' }).count(), 1);
+    assert.match(await page.getByRole('region', { name: 'Explanation: Output throughput' }).innerText(), /Directional comparison.*Higher is better/s);
     await page.keyboard.press('Escape');
     assert.doesNotMatch(page.url(), /metric=/);
     assert.equal(await page.locator('#ch-evidence [data-metric="output_tps"]').evaluate(el => el === document.activeElement), true);
+    await page.locator('#ch-evidence [data-metric="error_rate_pct"]').click();
+    assert.match(await page.getByRole('region', { name: 'Explanation: Error rate' }).innerText(), /Declared threshold for each engine.*1% validity limit/s);
+    await page.keyboard.press('Escape');
+    await page.locator('#ch-evidence [data-metric="waiting_requests_mean"]').click();
+    assert.match(await page.getByRole('region', { name: 'Explanation: Waiting requests' }).innerText(), /Context only — not ranked.*no better direction/s);
+    await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'Loads within each engine' }).click();
     assert.match(page.url(), /mode=loads/);
+    assert.doesNotMatch(page.url(), /base=/, 'mode switch clears old baseline');
+    await page.getByRole('group', { name: 'Comparison' }).getByRole('button', { name: 'Loads within each engine' }).focus();
+    await page.keyboard.press('ArrowLeft');
+    assert.match(page.url(), /mode=engines/);
+    await page.waitForFunction(() => document.activeElement?.getAttribute('data-seg') === 'mode' && document.activeElement?.getAttribute('data-val') === 'engines');
+    await page.getByRole('button', { name: 'Loads within each engine' }).click();
     assert.equal(await page.getByRole('group', { name: 'Baseline load' }).getByRole('button').count(), 3);
     for (const chapter of ['brief', 'method', 'evidence', 'boundaries', 'source']) {
       assert.equal(await page.locator(`#ch-${chapter}`).count(), 1, `missing ${chapter}`);
@@ -82,6 +113,18 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.goto(`${base}#episode-0`);
     assert.equal(await page.locator('[data-strip] [data-seg="wl"]').count(), 6);
     assert.equal(await page.locator('[data-seg="wl"][aria-pressed="true"]').getAttribute('data-val'), '2048-c24');
+    await page.getByRole('button', { name: /Open evidence lab/ }).click();
+    const telemetry = page.locator('#ch-evidence [data-workload-telemetry]');
+    assert.match(await telemetry.innerText(), /Waiting requests peak\s+14\.5 req\s+17\.0 req/);
+    assert.match(await telemetry.innerText(), /Prefill duration \(native\)\s+1\.12 s\s+∅ Not exposed/);
+    assert.match(await telemetry.innerText(), /Decode duration \(native\)\s+4\.55 s\s+∅ Not exposed/);
+    assert.equal(await page.locator('#ch-source [data-source-row]').count(), 5);
+    assert.match(await page.locator('#ch-source').innerText(), /telemetry from approved design handoff/i);
+    assert.equal(await page.locator('#ch-source a[download="episode-0-public-telemetry.json"]').count(), 1);
+    await page.locator('#ch-evidence [data-metric="work_per_request"]').click();
+    assert.match(await page.getByRole('region', { name: 'Explanation: Delivered output per request' }).innerText(), /Delivered work equality gate.*Equal delivered output/s);
+    await page.keyboard.press('Escape');
+    await page.goto(`${base}#episode-0`);
     await page.locator('[data-seg="wl"][data-val="128-c1"]').click();
     assert.equal(await page.getByRole('button', { name: 'Previous workload' }).isDisabled(), true);
     await page.locator('[data-seg="wl"][data-val="8192-c8"]').click();
@@ -103,6 +146,36 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.locator('#ch-evidence [data-seg="users"][data-val="32"]').click();
     assert.match(page.url(), /users=32/);
     assert.match(await page.locator('#ch-evidence [data-metric="error_rate"]').innerText(), /16\.91%/);
+    await page.locator('#ch-evidence [data-metric="output_tps"]').click();
+    assert.equal(await page.getByRole('region', { name: 'Explanation: Output throughput' }).count(), 1);
+    await page.goto(`${base}#field-notes?ch=boundaries`);
+    await page.locator('#ch-boundaries').waitFor();
+    await page.waitForFunction(() => document.activeElement?.id === 'h-boundaries');
+    await page.locator('.tbt-rail-chapters').getByRole('button', { name: /05 Source/ }).click();
+    await page.waitForFunction(() => document.activeElement?.id === 'h-source');
+    assert.equal(await page.locator('#ch-source').count(), 1);
+    await page.goto(`${base}#episode-1?ch=evidence`);
+    await page.locator('#ch-evidence').waitFor();
+    assert.match(page.url(), /depth=lab/);
+    await page.waitForFunction(() => document.activeElement?.id === 'h-evidence');
+    await page.goto(`${base}#episode-1?depth=lab&ch=evidence`);
+    await page.waitForFunction(() => document.activeElement?.id === 'h-evidence');
+    await page.goto(`${base}#episodes`);
+    await page.goBack();
+    await page.waitForFunction(() => document.activeElement?.id === 'h-evidence');
+    await page.reload();
+    await page.waitForFunction(() => document.activeElement?.id === 'h-evidence');
+    await page.goto(`${base}#episode-1?load=16&depth=lab&mode=loads&base=12&ch=evidence`);
+    assert.match(await page.locator('[data-metric="output_tps"] .tbt-plot-states').innerText(), /vLLM.*Within.*SGLang.*3\.4% worse/is);
+    assert.equal(await page.locator('[data-metric="output_tps"] [data-reference="vLLM baseline"]').count(), 1);
+    assert.equal(await page.locator('[data-metric="output_tps"] [data-reference="SGLang baseline"]').count(), 1);
+    await page.getByRole('button', { name: /Exact measurement ledger/ }).click();
+    assert.match(await page.locator('.tbt-wide-ledger').innerText(), /vLLM.*Within.*SGLang.*3\.4% worse/is);
+    await page.goto(`${base}#episode-1?mode=bad&base=bad&ch=bad&metric=bad&depth=lab`);
+    await page.getByText('Link adjusted').waitFor();
+    assert.match(await page.locator('[role="status"]').allInnerTexts().then(x => x.join(' ')), /Link adjusted/);
+    assert.doesNotMatch(page.url(), /mode=bad|base=bad|ch=bad|metric=bad/);
+    assert.equal(await page.locator('#ch-evidence [data-metric][aria-expanded="true"]').count(), 0);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
 
@@ -140,6 +213,16 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
         assert.match(page.url(), /wl=128-c16/);
         await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth), false, `200% text overflows at ${width}px ${theme}`);
+        if (width === 390) {
+          for (const route of ['episode-0','episode-1','field-notes']) {
+            await page.goto(`${base}#${route}?depth=lab&ch=method&text=200`);
+            await page.locator('#ch-evidence [data-metric]').first().click();
+            for (const selector of ['.tbt-method-cards > div','.tbt-protocol > div','.tbt-boundary-grid > div','.tbt-explanation-row > div','.tbt-field-explanation']) {
+              const boxes = await page.locator(selector).evaluateAll(els => els.map(el => ({ right: el.getBoundingClientRect().right, viewport: innerWidth })));
+              assert(boxes.every(box => box.right <= box.viewport + 1), `${route} ${selector} clips at 390px 200%`);
+            }
+          }
+        }
         await page.close();
       }
     }
