@@ -1,5 +1,11 @@
 # Public CLI and Offline Self-Test Implementation Plan
 
+> **Superseded as product direction on 2026-10-08.** This completed plan remains
+> the record for the isolated client, archive verifier, binary audit, and offline
+> diagnostic. The real product path is defined by
+> `../specs/2026-10-08-real-agentbench-wrapper-and-shared-campaign-design.md`;
+> synthetic self-testing is supporting diagnostics, not benchmark execution.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ship an isolated `token-by-token` public client that can describe Episode 02, validate its public protocol, run a deterministic zero-network synthetic self-test, verify the resulting bundle, and build as a standalone client executable without containing AgentBench or private benchmark material.

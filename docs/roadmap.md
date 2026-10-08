@@ -115,6 +115,14 @@ Hold input/output length fixed while sweeping concurrency. Separately hold the r
 
 **Evidence:** predeclared TTFT/TPOT/end-to-end SLOs, warmup policy, request schedule, achieved rate, errors, client CPU/network load, latency distributions and cost per qualifying unit of work.
 
+**Dashboard backlog:** add campaign-level quoted, accrued and reconciled cost with
+coverage and billing basis; phase-level setup, warmup, measurement, retry and collection
+allocation; cost per valid request, per one million delivered output tokens and per
+qualified concurrent-user-hour; and performance-versus-cost views. A comparison may
+select at most three episode views. It must deduplicate shared campaign charges and
+measurements, disclose allocation assumptions, gate ratios on compatible denominators,
+and show **Unavailable** rather than zero when evidence is incomplete.
+
 ### 16. Release gates, recovery and capstone synthesis
 
 Combine promising settings for the declared use case and test interactions against the original baseline. Record regressions and reject configurations that miss the quality, latency or budget gate. Exercise cold/warm behavior, bounded admission, an intentionally bad candidate, rollback and recovery. Build a reproducible release candidate with dependency inventory, image/model digests and verified artifact provenance; record a controlled reliability drill for each selected failure mode. Trace retrieval through generation when the RAG capstone is ready, then produce the portfolio report and public demo from verified evidence.

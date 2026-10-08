@@ -4,6 +4,12 @@ Status: **public-client/private-service boundary approved on 2026-10-08**. This
 document is an architecture decision, not an implemented or production-authorized
 service. No paid Episode 02 run is authorized by it.
 
+**Current delivery design:**
+[`2026-10-08-real-agentbench-wrapper-and-shared-campaign-design.md`](../docs/superpowers/specs/2026-10-08-real-agentbench-wrapper-and-shared-campaign-design.md)
+replaces the synthetic-first delivery sequence, adds constrained model/GPU selection,
+a real private AgentBench worker path, a shared Episode 01/02 H200 campaign, cost
+evidence, and comparison of up to three compatible episode views.
+
 ## Decision summary
 
 Publish a small `token-by-token` client and keep the proprietary benchmark engine
