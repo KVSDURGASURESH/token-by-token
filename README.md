@@ -146,3 +146,40 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing an episode or
 experiment. No `LICENSE` or data license is included yet, so external
 contribution and public redistribution remain pending the owner's licensing
 decision.
+
+## Public site v2 (local preview)
+
+The public dashboard at `dashboard/index.html` is implemented in React in
+`dashboard/src/PublicSite.tsx` with styles in `dashboard/src/public-site.css`.
+Its recorded values come from the allowlisted static JSON under
+`dashboard/src/data/site-v2/`, projected from the existing public evidence
+files. These projections intentionally omit serving profiles, launch settings,
+private endpoints, and engine versions. Update the projections when the
+source evidence changes; review the resulting browser bundle with the
+publication privacy check before release.
+
+The approved design handoff is preserved in
+`design/reference/claude-site-v2/`. Read its README and open the `.dc.html`
+there for the visual and behavior reference. `support.js` is present only to
+run that prototype locally and is not imported into the dashboard build.
+The earlier local operator UI remains available at `dashboard/legacy.html`
+during development; it is not part of the production Vite build.
+
+```sh
+npm --prefix dashboard ci
+npm --prefix dashboard run check
+npm --prefix dashboard run build
+python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
+node tests/dashboard_offline_acceptance.cjs dashboard/dist
+```
+
+For browser checks, start `npm --prefix dashboard run dev -- --port 4173`, then
+run `node tests/dashboard_site_v2_acceptance.cjs http://127.0.0.1:4173/`.
+The public site shows a Live dashboard link only when
+`VITE_PUBLIC_GRAFANA_ENABLED=true` is explicitly set at build time. That
+link points to the public base URL `https://graph.endlesstokens.ai`; it does
+not contain a dashboard UID, credentials, or query parameters. Leave it
+disabled until the owner verifies public, read-only access.
+
+This branch is a local UI preview. Hosted development, staging, and production
+behavior have not been verified or published from this work.

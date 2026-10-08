@@ -35,11 +35,11 @@ const server = http.createServer((request, response) => {
     });
     page.on("requestfailed", request => failed.push(request.url()));
     const routes = [
-      ["episodes", "Episodes"],
-      ["episode-0", "study"],
-      ["episode-1", "90% of valid requests"],
-      ["session-study", "Three percent more output"],
-      ["methodology", "Benchmark the session"],
+      ["episodes", "Every token is a measurement"],
+      ["episode-0", "Warm-up"],
+      ["episode-1", "Measure what matters"],
+      ["field-notes", "Session capacity"],
+      ["methodology", "How the lab measures"],
     ];
     for (const [hash, expected] of routes) {
       await page.goto(`${base}#${hash}`, { waitUntil: "networkidle" });

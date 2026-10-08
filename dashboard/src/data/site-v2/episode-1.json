@@ -1,0 +1,326 @@
+{
+  "levels": [
+    12,
+    16,
+    24
+  ],
+  "methodology": {
+    "warmup_seconds": 120,
+    "measurement_seconds": 300
+  },
+  "arms": [
+    {
+      "engine": "vLLM",
+      "points": [
+        {
+          "active_sessions": 24,
+          "readings": {
+            "cache_context": {
+              "value": null
+            },
+            "decode_p10_tps": {
+              "value": 21.647357597927805
+            },
+            "error_rate_pct": {
+              "value": 0.1557632398753894
+            },
+            "gpu_memory_gib": {
+              "value": 133.58978271484375
+            },
+            "gpu_power_w": {
+              "value": 591.2128666666667
+            },
+            "gpu_utilization_pct": {
+              "value": 100.0
+            },
+            "output_tps": {
+              "value": 374.7588238735019
+            },
+            "running_requests_mean": {
+              "value": 15.533333333333333
+            },
+            "tpot_p50_ms": {
+              "value": 36.749324468085106
+            },
+            "ttft_p50_ms": {
+              "value": 2327.0245
+            },
+            "ttft_p95_ms": {
+              "value": 14548.081291
+            },
+            "waiting_requests_mean": {
+              "value": 0.03333333333333333
+            }
+          },
+          "users": 12
+        },
+        {
+          "active_sessions": 32,
+          "readings": {
+            "cache_context": {
+              "value": null
+            },
+            "decode_p10_tps": {
+              "value": 15.959221959779452
+            },
+            "error_rate_pct": {
+              "value": 0.15015015015015015
+            },
+            "gpu_memory_gib": {
+              "value": 133.58978271484375
+            },
+            "gpu_power_w": {
+              "value": 600.8785833333333
+            },
+            "gpu_utilization_pct": {
+              "value": 99.91666666666667
+            },
+            "output_tps": {
+              "value": 376.7270594950265
+            },
+            "running_requests_mean": {
+              "value": 23.266666666666666
+            },
+            "tpot_p50_ms": {
+              "value": 49.54259679797979
+            },
+            "ttft_p50_ms": {
+              "value": 2789.812041
+            },
+            "ttft_p95_ms": {
+              "value": 17179.270167
+            },
+            "waiting_requests_mean": {
+              "value": 0.03333333333333333
+            }
+          },
+          "users": 16
+        },
+        {
+          "active_sessions": 48,
+          "readings": {
+            "cache_context": {
+              "value": null
+            },
+            "decode_p10_tps": {
+              "value": 9.581166807869453
+            },
+            "error_rate_pct": {
+              "value": 0.0
+            },
+            "gpu_memory_gib": {
+              "value": 133.58978271484375
+            },
+            "gpu_power_w": {
+              "value": 629.8228833333334
+            },
+            "gpu_utilization_pct": {
+              "value": 100.0
+            },
+            "output_tps": {
+              "value": 379.4803156121838
+            },
+            "running_requests_mean": {
+              "value": 36.61666666666667
+            },
+            "tpot_p50_ms": {
+              "value": 74.48276938613861
+            },
+            "ttft_p50_ms": {
+              "value": 5455.011208
+            },
+            "ttft_p95_ms": {
+              "value": 30787.455542
+            },
+            "waiting_requests_mean": {
+              "value": 0.2
+            }
+          },
+          "users": 24
+        }
+      ]
+    },
+    {
+      "engine": "SGLang",
+      "points": [
+        {
+          "active_sessions": 24,
+          "readings": {
+            "cache_context": {
+              "value": null
+            },
+            "decode_p10_tps": {
+              "value": 33.005161580540744
+            },
+            "error_rate_pct": {
+              "value": 0.0
+            },
+            "gpu_memory_gib": {
+              "value": 125.672119140625
+            },
+            "gpu_power_w": {
+              "value": 671.2198666666667
+            },
+            "gpu_utilization_pct": {
+              "value": 98.86666666666666
+            },
+            "output_tps": {
+              "value": 497.36994127360805
+            },
+            "running_requests_mean": {
+              "value": 13.716666666666667
+            },
+            "tpot_p50_ms": {
+              "value": 20.63596386725664
+            },
+            "ttft_p50_ms": {
+              "value": 1667.396959
+            },
+            "ttft_p95_ms": {
+              "value": 8229.3205
+            },
+            "waiting_requests_mean": {
+              "value": 0.05
+            }
+          },
+          "users": 12
+        },
+        {
+          "active_sessions": 32,
+          "readings": {
+            "cache_context": {
+              "value": null
+            },
+            "decode_p10_tps": {
+              "value": 17.482769989167465
+            },
+            "error_rate_pct": {
+              "value": 0.0
+            },
+            "gpu_memory_gib": {
+              "value": 125.672119140625
+            },
+            "gpu_power_w": {
+              "value": 682.3903999999999
+            },
+            "gpu_utilization_pct": {
+              "value": 97.73333333333333
+            },
+            "output_tps": {
+              "value": 480.43621543584874
+            },
+            "running_requests_mean": {
+              "value": 19.05
+            },
+            "tpot_p50_ms": {
+              "value": 27.706553358574613
+            },
+            "ttft_p50_ms": {
+              "value": 2041.941292
+            },
+            "ttft_p95_ms": {
+              "value": 9764.01125
+            },
+            "waiting_requests_mean": {
+              "value": 0.5833333333333334
+            }
+          },
+          "users": 16
+        },
+        {
+          "active_sessions": 48,
+          "readings": {
+            "cache_context": {
+              "value": null
+            },
+            "decode_p10_tps": {
+              "value": 8.162312232411331
+            },
+            "error_rate_pct": {
+              "value": 0.0
+            },
+            "gpu_memory_gib": {
+              "value": 125.676025390625
+            },
+            "gpu_power_w": {
+              "value": 692.1702000000001
+            },
+            "gpu_utilization_pct": {
+              "value": 99.26666666666667
+            },
+            "output_tps": {
+              "value": 365.3459253216277
+            },
+            "running_requests_mean": {
+              "value": 34.516666666666666
+            },
+            "tpot_p50_ms": {
+              "value": 68.29774684126984
+            },
+            "ttft_p50_ms": {
+              "value": 5451.441167
+            },
+            "ttft_p95_ms": {
+              "value": 30014.645167
+            },
+            "waiting_requests_mean": {
+              "value": 1.2
+            }
+          },
+          "users": 24
+        }
+      ]
+    }
+  ],
+  "metric_definitions": [
+    {
+      "id": "output_tps",
+      "explanation": "Successful output tokens per measured second."
+    },
+    {
+      "id": "ttft_p50_ms",
+      "explanation": "Median client-visible time to first token."
+    },
+    {
+      "id": "ttft_p95_ms",
+      "explanation": "95th-percentile client-visible time to first token."
+    },
+    {
+      "id": "tpot_p50_ms",
+      "explanation": "Median time per output token after the first token."
+    },
+    {
+      "id": "decode_p10_tps",
+      "explanation": "Ten-percentile per-request decode speed; 90% of valid requests are at least this fast."
+    },
+    {
+      "id": "error_rate_pct",
+      "explanation": "Share of measured requests that did not satisfy the validity contract."
+    },
+    {
+      "id": "running_requests_mean",
+      "explanation": "Mean runtime-native running-request gauge in the measured window."
+    },
+    {
+      "id": "waiting_requests_mean",
+      "explanation": "Mean runtime-native waiting-request gauge in the measured window."
+    },
+    {
+      "id": "cache_context",
+      "explanation": "Available cache context retained without cross-engine normalization."
+    },
+    {
+      "id": "gpu_utilization_pct",
+      "explanation": "Mean sampled device utilization in the measured window."
+    },
+    {
+      "id": "gpu_memory_gib",
+      "explanation": "Mean sampled device memory use in the measured window."
+    },
+    {
+      "id": "gpu_power_w",
+      "explanation": "Mean sampled board power in the measured window."
+    }
+  ],
+  "schema_version": "public-inference-evidence.v1"
+}

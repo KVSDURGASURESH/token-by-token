@@ -1,0 +1,140 @@
+{
+  "episodes": [
+    {
+      "id": "episode-0",
+      "number": 0,
+      "title": "Warm-up",
+      "summary": "Follow a request through prefill, decode and the KV cache. Explore the recorded vLLM and SGLang runs, their costs and the limits of the comparison.",
+      "status": "available",
+      "roadmapAnchor": null
+    },
+    {
+      "id": "episode-1",
+      "number": 1,
+      "title": "Measure what matters",
+      "summary": "Compare SGLang and vLLM deployments on one H200 across matched recorded load levels, then inspect latency, throughput and telemetry together.",
+      "status": "available",
+      "roadmapAnchor": "measurement-and-quality-contracts"
+    },
+    {
+      "id": "episode-2",
+      "number": 2,
+      "title": "Equal-work runtime baseline",
+      "summary": "Compare HF/PyTorch, vLLM and SGLang under the same model, corpus, template and output contract.",
+      "status": "planned",
+      "roadmapAnchor": "equal-work-runtime-baseline"
+    },
+    {
+      "id": "episode-3",
+      "number": 3,
+      "title": "Prefix reuse",
+      "summary": "Control exact shared-prefix ratios and compare cold and warm cache behavior.",
+      "status": "planned",
+      "roadmapAnchor": "prefix-reuse"
+    },
+    {
+      "id": "episode-4",
+      "number": 4,
+      "title": "Batching, scheduling and mixed traffic",
+      "summary": "Study chunked prefill and scheduler behavior under controlled long/short traffic mixes.",
+      "status": "planned",
+      "roadmapAnchor": "batching-scheduling-and-mixed-traffic"
+    },
+    {
+      "id": "episode-5",
+      "number": 5,
+      "title": "Attention kernels and precision",
+      "summary": "Compare verified attention backends, then separately compare weight and KV precision.",
+      "status": "planned",
+      "roadmapAnchor": "attention-kernels-and-precision"
+    },
+    {
+      "id": "episode-6",
+      "number": 6,
+      "title": "Speculative decoding and structured outputs",
+      "summary": "Evaluate compatible proposal paths and constrained generation without assuming speedup.",
+      "status": "planned",
+      "roadmapAnchor": "speculative-decoding-and-structured-outputs"
+    },
+    {
+      "id": "episode-7",
+      "number": 7,
+      "title": "Parallelism within one node",
+      "summary": "Compare DP, TP and justified PP or EP layouts under one declared GPU budget.",
+      "status": "planned",
+      "roadmapAnchor": "parallelism-within-one-node"
+    },
+    {
+      "id": "episode-8",
+      "number": 8,
+      "title": "Parallelism across nodes",
+      "summary": "Test placement and communication costs on a documented multi-node network topology.",
+      "status": "planned",
+      "roadmapAnchor": "parallelism-across-nodes"
+    },
+    {
+      "id": "episode-9",
+      "number": 9,
+      "title": "Prefill/decode disaggregation and cache-aware routing",
+      "summary": "Compare colocated and supported disaggregated serving with queue- and cache-aware routing.",
+      "status": "planned",
+      "roadmapAnchor": "prefilldecode-disaggregation-and-cache-aware-routing"
+    },
+    {
+      "id": "episode-10",
+      "number": 10,
+      "title": "Slurm and Kubernetes orchestration",
+      "summary": "Compare representative scheduled jobs and long-running services as platform choices, separate from engines.",
+      "status": "planned",
+      "roadmapAnchor": "slurm-and-kubernetes-orchestration"
+    },
+    {
+      "id": "episode-11",
+      "number": 11,
+      "title": "Model internals: weights to optimization",
+      "summary": "Trace weights, attention, gradients and optimizer state with a small inspectable model.",
+      "status": "planned",
+      "roadmapAnchor": "model-internals-weights-to-optimization"
+    },
+    {
+      "id": "episode-12",
+      "number": 12,
+      "title": "LoRA and QLoRA with held-out evaluation",
+      "summary": "Compare adapter training with fixed data, budgets and held-out quality evaluation.",
+      "status": "planned",
+      "roadmapAnchor": "lora-and-qlora-with-held-out-evaluation"
+    },
+    {
+      "id": "episode-13",
+      "number": 13,
+      "title": "Jev and LLMs on labeled decision tasks",
+      "summary": "Compare typed and LLM decision approaches on one versioned labeled task contract.",
+      "status": "planned",
+      "roadmapAnchor": "jev-and-llms-on-labeled-decision-tasks"
+    },
+    {
+      "id": "episode-14",
+      "number": 14,
+      "title": "Packaging, accelerator preflight and memory containment",
+      "summary": "Verify reproducible containers, accelerator visibility, model loading and bounded memory behavior.",
+      "status": "planned",
+      "roadmapAnchor": "packaging-accelerator-preflight-and-memory-containment"
+    },
+    {
+      "id": "episode-15",
+      "number": 15,
+      "title": "Saturation, SLO and cost",
+      "summary": "Sweep concurrency and offered rate to find SLO-qualified goodput and attributable cost.",
+      "status": "planned",
+      "roadmapAnchor": "saturation-slo-and-cost"
+    },
+    {
+      "id": "episode-16",
+      "number": 16,
+      "title": "Release gates, recovery and capstone synthesis",
+      "summary": "Combine promising settings, reject regressions and exercise rollback and recovery against original gates.",
+      "status": "planned",
+      "roadmapAnchor": "release-gates-recovery-and-capstone-synthesis"
+    }
+  ]
+}
