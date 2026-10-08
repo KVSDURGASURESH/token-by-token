@@ -23,7 +23,7 @@ def build_parser() -> argparse.ArgumentParser:
     describe.add_argument("--format", choices=("human", "json"), default="human")
     selftest = episode_commands.add_parser("selftest", help="Run a synthetic, offline client self-test")
     selftest.add_argument("--offline", action="store_true", required=True)
-    selftest.add_argument("--users", type=int, default=4)
+    selftest.add_argument("--users", type=int)
     selftest.add_argument("--seed", type=int, default=42)
     selftest.add_argument("--output", required=True)
     selftest.add_argument("--format", choices=("human", "json"), default="human")
@@ -62,6 +62,31 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"Synthetic self-test loads: {levels}")
                 print(f"Speculative decoding: {speculation}")
                 print("The offline self-test validates client plumbing only; it is not benchmark evidence.")
+            return 0
+        if args.command == "episode" and args.episode_command == "selftest":
+            from pathlib import Path
+            from .contracts import episode_manifest
+            from .selftest import run_selftest
+
+            manifest = episode_manifest(args.number)
+            users = args.users if args.users is not None else manifest["load_levels"][0]
+            report = run_selftest(Path(args.output), episode=args.number, users=users, seed=args.seed, offline=args.offline, stop_requested=lambda: False)
+            document = {
+                "bundle": str(report.bundle),
+                "classification": report.classification,
+                "digest": report.digest,
+                "episode": args.number,
+                "requests": report.requests,
+                "seed": args.seed,
+                "users": users,
+            }
+            if args.format == "json":
+                print(json.dumps(document, sort_keys=True, separators=(",", ":")))
+            else:
+                print(f"PASS · synthetic offline self-test · Episode {args.number:02d} · {users} users")
+                print(f"Bundle: {report.bundle}")
+                print(f"Digest: sha256:{report.digest}")
+                print("This validates client plumbing only; it is not benchmark evidence.")
             return 0
         if args.command == "evidence" and args.evidence_command == "verify":
             from pathlib import Path
