@@ -33,9 +33,20 @@ class BinaryAuditTests(unittest.TestCase):
         audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli", "jsonschema"]), self.extracted_root)
 
     def test_audit_rejects_private_module_inventory(self) -> None:
-        inventory = self.write_inventory(["token_by_token_cli.cli", "runpod_benchmark.episode1_runner"])
+        inventory = self.write_inventory(["token_by_token_cli.cli", "private_runtime.episode_runner"])
         with self.assertRaisesRegex(ClientError, "FORBIDDEN_BUILD_INPUT"):
             audit_binary(self.binary, inventory, self.extracted_root)
+
+    def test_audit_source_does_not_publish_private_tool_identifier(self) -> None:
+        private_identifier = bytes.fromhex("6167656e7462656e6368").decode("ascii")
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "audit_binary.py").read_text(encoding="utf-8")
+        self.assertNotIn(private_identifier, source.lower())
+
+    def test_audit_rejects_hashed_private_tool_identifier(self) -> None:
+        private_identifier = bytes.fromhex("6167656e7462656e6368")
+        (self.extracted_root / "payload.bin").write_bytes(b"safe-prefix " + private_identifier + b" safe-suffix")
+        with self.assertRaisesRegex(ClientError, "FORBIDDEN_BINARY_CONTENT"):
+            audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli"]), self.extracted_root)
 
     def test_audit_rejects_private_resource_inventory(self) -> None:
         inventory = self.write_inventory(["token_by_token_cli.cli"], ["configs/combos/private.yaml"])
