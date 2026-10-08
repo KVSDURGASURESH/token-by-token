@@ -107,7 +107,7 @@
     {
       "id": "episode-13",
       "number": 13,
-      "title": "Jev and LLMs on labeled decision tasks",
+      "title": "SYSTEM 1 and LLMs on labeled decision tasks",
       "summary": "Compare typed and LLM decision approaches on one versioned labeled task contract.",
       "status": "planned",
       "roadmapAnchor": "jev-and-llms-on-labeled-decision-tasks"

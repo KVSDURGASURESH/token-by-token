@@ -28,6 +28,12 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const mark = await (await page.request.get(`${base}token-by-token.svg`)).text();
     assert.doesNotMatch(mark, /c2pa|Anthropic|manifest/i, 'production mark excludes prototype provenance metadata');
     await page.goto(`${base}#episode-1?load=16`);
+    assert.equal(await page.locator('.tbt-rail-episodes a[href="#episode-13"] span').innerText(), 'SYSTEM 1 and LLMs on labeled decision tasks', 'public episode label uses SYSTEM 1');
+    const recordedNumberFont = await page.locator('.tbt-rail-episodes a[href="#episode-0"] b').evaluate(el => getComputedStyle(el).fontFamily);
+    const plannedNumberFont = await page.locator('.tbt-rail-episodes a[href="#episode-2"] b').evaluate(el => getComputedStyle(el).fontFamily);
+    const chapterNumberFont = await page.locator('.tbt-rail-chapters button:first-child b').evaluate(el => getComputedStyle(el).fontFamily);
+    assert.equal(plannedNumberFont, recordedNumberFont, 'planned and recorded episode numbers use one typeface');
+    assert.equal(chapterNumberFont, recordedNumberFont, 'chapter numbers use the episode-number typeface');
     await page.getByRole('link', { name: 'Skip to content' }).focus();
     await page.keyboard.press('Enter');
     assert.equal(await page.locator('main').evaluate(el => el === document.activeElement), true);
@@ -50,6 +56,11 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.match(await page.locator('#ch-brief .tbt-finding').innerText(), /At 16 users, SGLang recorded/i);
     assert.match(await page.locator('#ch-brief .tbt-finding').innerText(), /output.*median TTFT/i);
     await page.getByRole('button', { name: /Open evidence lab/ }).click();
+    await page.locator('#ch-boundaries').scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => document.querySelector('.tbt-rail-chapters button:nth-child(4)')?.getAttribute('aria-current') === 'location');
+    assert.equal(await page.locator('.tbt-rail-chapters button:nth-child(4)').innerText(), '04\nBoundaries', 'scroll spy follows the visible chapter');
+    await page.locator('#ch-brief').scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => document.querySelector('.tbt-rail-chapters button:first-child')?.getAttribute('aria-current') === 'location');
     assert.equal(await page.locator('#ch-method [data-protocol-row]').count(), 6);
     assert.equal(await page.locator('#ch-boundaries [data-boundary-block]').count(), 4);
     assert.equal(await page.locator('#ch-source [data-source-row]').count(), 4);
@@ -200,6 +211,15 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.match(await page.locator('#ch-definitions').innerText(), /Field Note has no declared validity limit/);
     assert.match(await page.locator('#ch-states').innerText(), /Threshold met.*Threshold missed.*Invalid/s);
     assert.equal(await page.locator('#ch-evidence [data-metric][aria-expanded="true"]').count(), 0);
+    await page.goto(`${base}#episode-0`);
+    const pager = page.getByRole('navigation', { name: 'Episode pager' });
+    assert.equal(await pager.locator('a').count(), 2);
+    assert.match(await pager.locator('a').first().innerText(), /SERIES\s+ALL EPISODES/i);
+    assert.match(await pager.locator('a').nth(1).innerText(), /NEXT · EPISODE 01\s+MEASURE WHAT MATTERS/i);
+    const pagerTitleFont = await pager.locator('a').nth(1).locator('strong').evaluate(el => getComputedStyle(el).fontFamily);
+    assert.equal(pagerTitleFont, recordedNumberFont, 'pager episode titles use the episode display typeface');
+    await page.goto(`${base}#episode-1`);
+    assert.match(await page.getByRole('navigation', { name: 'Episode pager' }).locator('a').nth(1).innerText(), /NEXT · EPISODE 02\s+EQUAL-WORK RUNTIME BASELINE/i);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
 
