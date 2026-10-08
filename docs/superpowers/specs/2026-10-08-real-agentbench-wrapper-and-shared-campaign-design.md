@@ -1,6 +1,6 @@
 # Real AgentBench Wrapper and Shared Episode Campaign Design
 
-**Status:** Proposed for owner review  
+**Status:** Revised written specification for owner review
 **Date:** 2026-10-08  
 **Repositories:** public `token-by-token`; private AgentBench  
 **Supersedes:** the synthetic-first delivery order in `2026-10-08-public-cli-offline-selftest.md`  
@@ -22,6 +22,64 @@ token-by-token doctor --offline
 
 It is not a product result and must not appear as recorded benchmark evidence.
 
+## Curriculum decision: fourteen episodes, with Episode 00 unchanged
+
+The public curriculum uses `episode-catalog.v3` and contains fourteen numbered
+episodes, 00 through 13. Episode 00 is not renamed, rewritten, renumbered, or folded
+into another episode. Its current title, visual identity, historical study, evidence
+IDs, URLs, and limitations remain unchanged.
+
+The remaining episodes use short, question-led names that describe a substantial
+experimental subject. Small runtime switches are chapters inside a controlled episode,
+not standalone episodes.
+
+| Episode | Public topic name | Scope |
+|---|---|---|
+| **00** | **Warm-up** | Existing Episode 00, unchanged. |
+| **01** | **Where does the serving ceiling begin?** | Matched service-attested baselines, equal-work comparisons, load curves, saturation, SLO-qualified goodput and cost. |
+| **02** | **When is a model actually ready?** | Artifact acquisition, process start, model loading, compilation or graph capture, health, first valid generation, warmup and sustained readiness. |
+| **03** | **Which serving controls really move the needle?** | Prefix caching, chunked prefill, admission limits, batching and scheduler controls, mixed traffic, selected interactions and a tested combined candidate. |
+| **04** | **Can extra compute make decoding faster?** | Target-only versus supported speculative decoding, acceptance, correctness, memory overhead, load sensitivity and cost. |
+| **05** | **Does constrained output preserve useful answers?** | Prompt-only structure versus constrained generation, schema validity, semantic quality, retries and latency. |
+| **06** | **What fits—and what performs—on this GPU?** | Model and GPU fit, weight and KV precision, verified attention/kernel choices, quality, memory and economics. |
+| **07** | **When does one node need more than one GPU?** | Replicas versus TP, with PP or EP only where model fit or architecture justifies them. |
+| **08** | **When does scaling cross the network?** | Cross-node replicas and supported TP/PP/EP layouts, topology, communication, efficiency, tails, failures and cost. |
+| **09** | **Should prefill and decode live apart?** | Colocated versus disaggregated serving plus queue-, cache- and prompt-length-aware routing. |
+| **10** | **Can the service scale without losing control?** | Slurm and Kubernetes roles, autoscaling, overload containment, scaling incidents and operational cost. |
+| **11** | **What changes when we adapt the model?** | Inspectable model internals followed by LoRA/QLoRA adaptation, held-out quality, memory, lineage and serving cost. |
+| **12** | **Can a typed system make better decisions?** | SYSTEM 1 and selected LLM approaches on the same labeled classification, routing or scoring contracts. |
+| **13** | **Would you trust this configuration in production?** | Reproducible packaging, accelerator preflight, memory containment, release gates, rollback, recovery and capstone synthesis. |
+
+This naming is curiosity-led, not clickbait: recorded pages may use a factual measured
+question as their hero, while planned pages use the topic question above and never imply
+a result that has not been measured.
+
+### Complete `episode-catalog.v2` to `v3` mapping
+
+| Current episode | `v3` destination |
+|---|---|
+| 00 — Warm-up | 00 unchanged |
+| 01 — Measure what matters | 01, retained as a historical study |
+| 02 — Equal-work runtime baseline | 01 |
+| 03 — Prefix reuse | 03 |
+| 04 — Batching, scheduling and mixed traffic | 03 |
+| 05 — Attention kernels and precision | 06 |
+| 06 — Speculative decoding and structured outputs | 04 and 05 |
+| 07 — Parallelism within one node | 07 |
+| 08 — Parallelism across nodes | 08 |
+| 09 — Prefill/decode disaggregation and cache-aware routing | 09 |
+| 10 — Slurm and Kubernetes orchestration | 10 |
+| 11 — Model internals: weights to optimization | 11 |
+| 12 — LoRA and QLoRA with held-out evaluation | 11 |
+| 13 — SYSTEM 1 and LLMs on labeled decision tasks | 12 |
+| 14 — Packaging, accelerator preflight and memory containment | 02 and 13 |
+| 15 — Saturation, SLO and cost | 01 and 10; cost also appears throughout |
+| 16 — Release gates, recovery and capstone synthesis | 13 |
+
+Historical records always retain their original catalog version, episode number, study
+and run IDs, evidence hashes, and URL aliases. The website may associate them with a
+new teaching view but must not rewrite their identity.
+
 ## Evidence review and Episode 01 decision
 
 The retained H200 study is not a clean engine-default comparison. It used
@@ -40,9 +98,12 @@ Therefore:
    baselines**. This wording is deliberate: exact upstream defaults are not comparable
    when minimum model, API, parser, observability, and compatibility settings differ.
 5. Use that one campaign for two predeclared educational analyses:
-   - Episode 01 explains how TTFT, TPOT, end-to-end latency, throughput, queue/cache,
-     errors, and GPU signals change across selected load cells.
-   - Episode 02 presents the complete paired equal-work vLLM/SGLang comparison.
+   - Episode 01 presents the complete paired equal-work comparison and explains how
+     TTFT, TPOT, end-to-end latency, throughput, queue/cache, errors, SLO-qualified
+     goodput and cost change across selected load cells.
+   - Episode 02 presents separately instrumented startup and readiness phases for the
+     same pinned deployments. Repeated startup conditions are additional runs, not
+     inferred from steady-state measurements.
 
 These are two views of overlapping measurements, not independent experiments or a
 replication. Both views retain the same campaign, run, cell, and evidence identities.
@@ -75,16 +136,16 @@ The intended user flow is:
 
 ```text
 token-by-token episodes
-token-by-token episode 2 describe
-token-by-token capabilities --episode 2
+token-by-token episode 1 describe
+token-by-token capabilities --episode 1
 
-token-by-token episode 2 plan \
+token-by-token episode 1 plan \
   --model qwen38-27b-fp8 \
   --gpu h200-141gb \
   --load-profile standard \
   --max-quote-usd 25
 
-token-by-token episode 2 run --plan PLAN_ID
+token-by-token episode 1 run --plan PLAN_ID
 token-by-token runs status RUN_ID
 token-by-token runs stop RUN_ID
 token-by-token runs collect RUN_ID --output RUN.tbt.zip
@@ -173,13 +234,44 @@ Campaign requirements:
 - effective settings and every scientifically material override retained privately;
 - requested and delivered output distributions, stop reasons, errors and coverage
   checked before comparisons;
-- Episode 01 analysis cells/windows and Episode 02 comparison plan frozen before run;
+- Episode 01 baseline/capacity analysis and Episode 02 startup/readiness analysis frozen
+  before execution;
 - any Episode 01-only instrumentation intervention recorded as a separate phase with
   incremental cost.
+
+Episode 02 distinguishes three conditions: fully cold artifacts, cached-artifact
+process restart, and an already warm service. It records allocation, artifact
+availability, process start, model load, compilation or graph capture, health response,
+first valid generation and predeclared sustained readiness as separate timestamps.
+AgentBench's request-level `cold` cache namespace is not a substitute for any of these
+conditions and is not evidence that engine caching was disabled.
+
+The observation that SGLang appeared to become ready sooner is a hypothesis for this
+campaign. Publication must not attribute it to Rust or any implementation language
+without evidence controlling artifact location, downloads, host caches, loading
+strategy, compilation and readiness definitions.
 
 The execution plan must explicitly state that one campaign supplies both episode views.
 Opening or collecting either view reuses the campaign; it must not silently submit a
 second paid run.
+
+## Serving-control and speculation campaigns
+
+Episode 03 uses each engine's frozen Episode 01 baseline as its reference. Every arm
+follows baseline -> one supported control change -> baseline recheck, with
+counterbalanced order at approved load levels. Within-engine effects are interpreted
+before complete configurations are compared across engines. A final combined candidate
+is tested only after individual controls and selected interactions are understood.
+
+Prefix caching, chunked prefill, admission limits and scheduler controls remain chapters
+of one campaign. The product never calls a control equivalent across engines merely
+because a public alias maps to both. In particular, it does not claim "batching off"
+unless the pinned engine exposes a meaningful supported mode.
+
+Episode 04 is a separate target-only versus speculation campaign. Every exact
+engine/model/GPU/proposal combination must pass capability and correctness validation;
+an unsupported arm is unavailable rather than substituted. Episode 05 keeps structured
+generation separate from speculation and applies the common output-quality contract.
 
 ## Evidence, replay and static publication
 
@@ -260,8 +352,9 @@ absence evidence.
    observations, compile cost/guard envelope, and stop for exact owner approval.
 6. **Real shared campaign:** after exact approvals only, execute the H200 paired campaign,
    collect evidence, reconcile cost, sanitize, and verify both episode views.
-7. **Product UI:** replace synthetic-first onboarding, add model/GPU capabilities,
-   dashboard replay, three-episode comparison, cost analysis, and shared-evidence badges.
+7. **Curriculum and product UI:** publish `episode-catalog.v3`, preserve Episode 00 and
+   all historical aliases, add model/GPU capabilities, dashboard replay, three-episode
+   comparison, cost analysis, and shared-evidence badges.
 8. **Release:** complete signing, SBOM, licensing/brand review, public documentation,
    staging/production verification and publication approval.
 
