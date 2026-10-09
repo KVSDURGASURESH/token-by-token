@@ -1,9 +1,9 @@
 # Contributing to Token by Token
 
-This repository is a private publication candidate and is not yet licensed for
-public contribution. The process below documents the intended review contract;
-external contributions should open only after the owner selects explicit terms
-for code, data, and documentation.
+This repository uses the [MIT License](LICENSE). Original contributions are
+supplied under the same license. Retain all existing third-party copyright,
+license, and attribution notices. The following sections describe how to
+prepare a reviewable change.
 
 ## Add or update an episode
 
@@ -46,8 +46,9 @@ python3 scripts/update_episode_index.py --check
 python3 scripts/check_publication_privacy.py
 python3 scripts/check_publication_privacy.py --history
 python3 scripts/verify_bundle.py data/public
-python3 scripts/rehearse_workflow.py --output /tmp/inference-lab-episode-0
-python3 scripts/verify_bundle.py /tmp/inference-lab-episode-0
+REHEARSAL_DIR="$(mktemp -d "${TMPDIR:-/tmp}/inference-lab-episode-0.XXXXXX")"
+python3 scripts/rehearse_workflow.py --output "$REHEARSAL_DIR"
+python3 scripts/verify_bundle.py "$REHEARSAL_DIR"
 python3 -m pip install '.[test]'
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 npm --prefix dashboard ci
@@ -106,7 +107,7 @@ requires a new plan and approval.
 
 Every authorized paid workflow must permanently delete every created resource
 and verify deletion with a fresh provider-side read before claiming completion.
-Publication remains a separate action.
+Publishing new experiment evidence remains a separate, reviewed action.
 
 ## Evidence changes
 

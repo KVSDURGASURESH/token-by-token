@@ -57,26 +57,80 @@ or authorization to spend.
 
 ## Start here
 
-The repository currently exists at
-[`KVSDURGASURESH/token-by-token`](https://github.com/KVSDURGASURESH/token-by-token)
-and remains private while the owner chooses code, data, and documentation
-licenses. If you have access, clone it and run the zero-cost fixture checks:
+The repository is public at
+[`KVSDURGASURESH/token-by-token`](https://github.com/KVSDURGASURESH/token-by-token).
+The commands below take you from a fresh clone to the checked-in results, a
+repeatable zero-cost rehearsal, and the local dashboard. Run them in a POSIX
+shell on macOS, Linux, or WSL.
+
+### 1. Clone and check prerequisites
 
 ```bash
 git clone https://github.com/KVSDURGASURESH/token-by-token.git
 cd token-by-token
+python3 --version
+node --version
+npm --version
+```
+
+Use Python 3.12 or newer and Node.js 22.12 or newer in the Node 22.x line; npm
+comes with Node.js. CI tests Python 3.12 and Node 22.
+
+### 2. Verify the recorded data and rehearse the workflow
+
+```bash
 python3 scripts/verify_bundle.py data/public
-python3 scripts/rehearse_workflow.py --output /tmp/inference-lab-episode-0
-python3 scripts/verify_bundle.py /tmp/inference-lab-episode-0
+REHEARSAL_DIR="$(mktemp -d "${TMPDIR:-/tmp}/inference-lab-episode-0.XXXXXX")"
+printf '%s\n' "$REHEARSAL_DIR"
+python3 scripts/rehearse_workflow.py --output "$REHEARSAL_DIR"
+python3 scripts/verify_bundle.py "$REHEARSAL_DIR"
 python3 -m pip install '.[test]'
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-Requirements: Python 3.12; the test extra installs the pinned JSON Schema
-validator. These commands do not use credentials or contact a provider. The rehearsal output must
-be a new or empty directory. It is labeled `fixture_zero_cost`, records zero
-provider attempts and resources, and compiles a deliberately nonapprovable
-plan with zero cost.
+The two verifier commands should report JSON containing `"ok":true`; the
+rehearsal prints a one-line JSON result containing
+`"classification":"fixture_zero_cost"`,
+`"paid_resources_created":0`, and `"provider_attempts":0`. The tests should
+finish with `OK`. The unique temporary directory makes the block safe to run
+again in the same shell.
+
+`data/public/` is the checksum-bound, sanitized snapshot of the recorded
+historical measurement. `$REHEARSAL_DIR/` is newly generated fixture output: it
+reuses sanitized aggregates to exercise the workflow, makes no provider call,
+creates no paid resource, records no new measurement, and compiles a
+deliberately nonapprovable zero-cost plan.
+
+### 3. Check, build, and start the dashboard
+
+```bash
+npm --prefix dashboard ci
+npm --prefix dashboard run check
+npm --prefix dashboard run build
+npm --prefix dashboard run dev -- --host 127.0.0.1 --port 5173 --strictPort
+```
+
+The check command should exit with no TypeScript errors, the build should end
+with a successful Vite build, and the final command should print a local URL. Open
+[http://127.0.0.1:5173/](http://127.0.0.1:5173/) in the same machine or WSL
+environment. The dashboard reads its bundled snapshot from
+`dashboard/src/data/latest.json`; the production build is written to
+`dashboard/dist/`. Press **Ctrl-C** in the terminal to stop the development
+server.
+
+If port 5173 is already occupied, choose another loopback port and open the
+matching URL:
+
+```bash
+npm --prefix dashboard run dev -- --host 127.0.0.1 --port 5174 --strictPort
+```
+
+Then open [http://127.0.0.1:5174/](http://127.0.0.1:5174/).
+
+If `npm ci` reports a registry or network error, confirm registry reachability
+with `npm ping`, then retry when your network, VPN, proxy, or firewall permits
+access. Do not use `sudo`, disable TLS checks, or change global npm security
+settings to work around a failed install.
 
 To try the isolated client instead, follow its
 [source quick start](client/README.md#quick-start-from-source). The client has
@@ -84,9 +138,11 @@ its own package boundary, tests, threat model, locked standalone build, and
 release checklist. No binary or package-registry release has been published.
 
 Continue with [Episode 0](episodes/00-warm-up/README.md) to inspect the retained
-study, start the [local dashboard](episodes/00-warm-up/README.md#explore-it-locally),
-and understand the experiment's limits. Once the dashboard is running, its
-[episode index](http://127.0.0.1:5173/#episodes) is the default home.
+study and understand the experiment's limits. The Episode 0
+[local-exploration notes](episodes/00-warm-up/README.md#explore-it-locally)
+explain what the fixture and recorded evidence can establish. Once the
+dashboard is running, its [episode index](http://127.0.0.1:5173/#episodes) is
+the default home.
 
 Episode 01 is the recorded H200 deployment comparison. Open
 [`#episode-1`](http://127.0.0.1:5173/#episode-1) to explore the matched 12,
@@ -154,9 +210,9 @@ record is in
 ## Contributing and licensing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing an episode or
-experiment. No `LICENSE` or data license is included yet, so external
-contribution and public redistribution remain pending the owner's licensing
-decision.
+experiment. Original repository materials are available under the
+[MIT License](LICENSE); see [OWNERSHIP.md](OWNERSHIP.md) for its scope and the
+third-party boundaries.
 
 ## Public site v2 (local preview)
 
