@@ -1,326 +1,555 @@
- # Token by Token — Docker and Kubernetes (Helm) deployment plan
+# Deploying Token by Token — what, why, and how (plan)
 
- Status: plan (not implemented). Date: 2026-10-09. Base: `main` @ 050bb77.
- Scope: containerize the website for Kubernetes and package the deployment as a
- Helm chart. This plan reuses the repository's existing Dockerfile and compose
- file; it does not redesign the application.
+Status: plan (not implemented). Date: 2026-10-09. Revised 2026-10-09:
+rewritten as a step-by-step guide — plain what/why/how first, detail
+after. Covers the Docker image, the local compose stack, and the
+planned Kubernetes/Helm tiers.
+This document lives in the public repository by design; it contains no
+credentials, internal URLs, or private data.
 
- ## 1. Goals and non-goals
+---
 
- Goals
+## 1. What, why, and how
 
- - One reproducible image (and a small static image) that runs the public site
-   and the operator console exactly as `compose.yaml` runs them today.
- - A Helm chart that deploys the website to a Kubernetes cluster with sane
-   defaults, optional observability, and no secrets in values.
- - The same security posture as compose (non-root, read-only rootfs,
-   no-new-privileges, dropped capabilities, loopback-only bridge by default).
- - Verification that uses the repository's existing acceptance tests.
+### 1.1 What gets deployed
 
- Non-goals (for this iteration)
+Three things can be deployed, each with its own lifecycle:
 
- - No GPU workloads on the cluster. Engine deployments (vLLM/SGLang) stay on
-   pods/RunPod; this chart serves the website, not the engines. A section is
-   included for the future benchmark-job pattern, but it is out of scope.
- - No migration of the publication pipeline, no changes to the React app.
+| Tier | What it is | Talks to | Cost |
+|---|---|---|---|
+| Static site | the React build (`dashboard/dist`) — reads only committed JSON | nothing (no APIs, no metrics backends) | free |
+| Episode console | local bridge + operator UI on port 8765, loopback only | the OpenAI-compatible endpoints you configure yourself | free (local) |
+| Observability | VictoriaMetrics + Grafana, 30-day retention | the console's `/metrics`, optional DCGM | free (local) |
 
- ## 2. What already exists
+On top of these (all [planned]): a static-site container image, a
+container registry, a Helm chart for the cluster tiers, and GPU
+inference jobs driven by the episode wrapper (the episode-presets
+plan, section 3.2 — this document defines the chart that adapter
+targets).
 
- `Dockerfile` (two stages):
+### 1.2 Why
 
- - Builder: `node:24.9.0-alpine`, `npm ci --ignore-scripts`, `npm run build`
-   (TypeScript check + Vite build of both entry points: `index.html` public
-   site and `legacy.html` operator lab).
- - Runtime: `python:3.12.12-slim`, non-root user `inference-lab` (uid 10001),
-   copies `src/`, `scripts/episode1_playground.py`, the dashboard `dist/`,
-   healthcheck on `GET /healthz`, `EXPOSE 8765`, entrypoint
-   `episode1_playground.py serve --host 0.0.0.0 --port 8765 --profiles
-   /config/profiles.json --dashboard-dir /app/dashboard/dist`.
+- **The public site must be static.** It "does not contact
+  VictoriaMetrics, Grafana, a provider, or the private source
+  repository" (Episode 1 README). Deployment is therefore just: build
+  the site, put the files where a web server serves them.
+- **The console is an operator tool, never a public service.** It is
+  already built loopback-only, read-only root filesystem, all Linux
+  capabilities dropped (section 2.2).
+- **Local compose is the integration test of the cluster design.**
+  Same images, same config files, same ports — minus a cluster. If it
+  works locally, the Helm chart has a reference to match.
+- **The metrics stack is a build tool, not a site dependency.** "Local
+  VictoriaMetrics and Grafana are used to validate the source windows
+  and produce the allowlisted aggregate document; they are not website
+  dependencies" (README).
 
- `compose.yaml` runs three services, all loopback-published:
+### 1.3 How (big picture)
 
- | Service | Image | Port | Notes |
- |---|---|---|---|
- | `episode-console` | built from `Dockerfile` | 8765 | bridge + both UIs; `read_only` rootfs, `tmpfs /tmp`, `cap_drop ALL`, 2 CPU / 1 GiB limits |
- | `victoria-metrics` | `victoriametrics/victoria-metrics:v1.151.0` | 8428 | 30d retention, scrape config from `deploy/victoria-metrics/scrape.yml`, DCGM targets file |
- | `grafana` | `grafana/grafana:12.2.0` | 3000 | anonymous read-only viewer, sign-up disabled, provisioned datasources + dashboards from `deploy/grafana/` |
-
- Environment the image consumes at runtime: `VLLM_API_KEY`, `SGLANG_API_KEY`,
- `/config/profiles.json` (episode run profiles). Build-time variables the site
- honors: `VITE_PUBLIC_GRAFANA_ENABLED` (gates the public "Live dashboard" link
- to `https://graph.endlesstokens.ai`) and `VITE_UMAMI_SCRIPT_URL` /
- `VITE_UMAMI_WEBSITE_ID` / `VITE_UMAMI_DOMAINS` (optional privacy-first
- analytics; disabled when absent, see `docs/analytics.md`).
-
- Key property: the public site is fully static. Every public page is served
- from the Vite bundle with committed JSON; the Python bridge is only needed by
- the operator lab UI (`legacy.html`), the quick-test endpoints, and
-
-## 3. Deployment topology
-
-Three tiers, each independently deployable; the chart installs any subset.
-
-```
-                         Ingress (TLS)
-                          |        \
-                    site svc    console svc (auth)
-                     |              |
-                [static]        [console]
-              nginx:alpine      episode1_playground
-              /usr/share/html   serve + bridge :8765
-
-      [victoria-metrics]  [grafana]   (optional observability tier,
-         :8428                :3000    cluster-internal only)
+```mermaid
+flowchart LR
+    subgraph local["your machine (exists today)"]
+        DF["Dockerfile<br/>console image"]
+        CS["compose.yaml<br/>console + VictoriaMetrics + Grafana<br/>(all loopback-only)"]
+    end
+    subgraph cluster["Kubernetes (planned)"]
+        CH["Helm chart 'token-by-token'"]
+        T1["tier 1: static site (nginx)"]
+        T2["tier 2: console + metrics (operator network)"]
+        T3["tier 3: GPU inference jobs (wrapper-driven)"]
+    end
+    RG["container registry (to choose)"]
+    DF --> CS
+    DF --> RG
+    RG --> CH
+    CH --> T1
+    CH --> T2
+    CH --> T3
 ```
 
- T1 — Public site (required). The Vite build served by nginx:alpine. No
- Python, no secrets, stateless, horizontally scalable. This is the only
- component that should be exposed publicly.
+Who runs what:
 
- T2 — Operator console (optional). The existing `Dockerfile` image running
- `episode1_playground.py serve`. Serves the legacy lab UI plus the bridge API
- (quick test, episode runs, canonical launch endpoints). Must never be
- exposed without authentication: it can start local benchmark traffic.
+| You are | You run | Cost |
+|---|---|---|
+| Student / visitor | static site build + local serve (section 5.1) | free |
+| Operator | local Docker stack (5.2), then cluster tiers 1–2 | free |
+| Cluster operator | `helm install` for tiers 1–2 (5.3, planned) | infra only |
 
- T3 — Observability (optional). VictoriaMetrics + Grafana exactly as in
- `compose.yaml`. Cluster-internal; never public (the public site links to the
- separate public Grafana only when `VITE_PUBLIC_GRAFANA_ENABLED` was set at
- build time).
+---
 
-### Image strategy
+## 2. What is already in the repository (all verified)
 
-1. **Console image** — keep the current `Dockerfile` unchanged except adding
-   an `ARG` for the site build vars so the public build flags can be baked at
-   image build time:
+### 2.1 The console image — `Dockerfile` (exact)
 
-   ```dockerfile
-   FROM node:24.9.0-alpine AS dashboard-builder
-   ARG VITE_PUBLIC_GRAFANA_ENABLED=false
-   ARG VITE_UMAMI_SCRIPT_URL=
-   ARG VITE_UMAMI_WEBSITE_ID=
-   ARG VITE_UMAMI_DOMAINS=
-   ENV VITE_PUBLIC_GRAFANA_ENABLED=$VITE_PUBLIC_GRAFANA_ENABLED \
-       VITE_UMAMI_SCRIPT_URL=$VITE_UMAMI_SCRIPT_URL \
-       VITE_UMAMI_WEBSITE_ID=$VITE_UMAMI_WEBSITE_ID \
-       VITE_UMAMI_DOMAINS=$VITE_UMAMI_DOMAINS
-   ...
-   ```
+```dockerfile
+FROM node:24.9.0-alpine AS dashboard-builder
+WORKDIR /build/dashboard
+COPY dashboard/package.json dashboard/package-lock.json ./
+RUN npm ci --ignore-scripts
+COPY dashboard/ ./
+COPY fixtures/episode1/public-aggregate.fixture.json /build/fixtures/episode1/public-aggregate.fixture.json
+COPY fixtures/episode1/episode1-planning.json /build/fixtures/episode1/episode1-planning.json
+RUN npm run build
 
-   Build two variants from the same source:
-   - `token-by-token/site:<tag>` — the builder stage's `dist/` copied into
-     `nginx:alpine` (static image; a second `Dockerfile.site` multi-stage off
-     the same builder stage).
-   - `token-by-token/console:<tag>` — the existing runtime stage.
-
-   Both must be tagged with an immutable digest and the digest recorded
-   (the repo already treats image digests as evidence-grade provenance).
-
-2. **Observability images** — pin the exact versions compose uses
-   (`victoria-metrics:v1.151.0`, `grafana:12.2.0`); the chart references them
-   via values so the registry can be overridden.
-
-## 4. Helm chart design
-
-Chart name: `token-by-token` (release name e.g. `inference-lab`).
-
-```
-charts/token-by-token/
-  Chart.yaml                     # apiVersion v2, appVersion from git describe
-  values.yaml
-  values.public.yaml             # public deployment: site only, no console
-  templates/
-    _helpers.tpl
-    # T1 site
-    site-deployment.yaml         # nginx:alpine, /usr/share/html read-only
-    site-service.yaml
-    site-ingress.yaml
-    # T2 console (optional)
-    console-deployment.yaml      # single replica, /tmp tmpfs, non-root
-    console-service.yaml
-    console-ingress.yaml         # only if auth enabled
-    console-secret.yaml          # API keys + profiles.json from Secret
-    # T3 observability (optional)
-    vm-statefulset.yaml
-    vm-service.yaml
-    grafana-deployment.yaml
-    grafana-service.yaml
-    dashboards-configmap.yaml    # from deploy/grafana/dashboards
-    scrape-configmap.yaml        # from deploy/victoria-metrics/scrape.yml
-  tests/                         # helm unittest (optional)
+FROM python:3.12.12-slim AS runtime
+WORKDIR /app
+RUN useradd --create-home --uid 10001 inference-lab
+COPY --chown=inference-lab:inference-lab src/ ./src/
+COPY --chown=inference-lab:inference-lab scripts/episode1_playground.py ./scripts/episode1_playground.py
+COPY --chown=inference-lab:inference-lab dashboard/src/data/episode-tests.v1.json ./dashboard/src/data/episode-tests.v1.json
+COPY --from=dashboard-builder --chown=inference-lab:inference-lab /build/dashboard/dist ./dashboard/dist
+USER inference-lab
+ENV PYTHONPATH=/app/src PYTHONUNBUFFERED=1
+EXPOSE 8765
+HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=5 CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/healthz', timeout=2)"]
+ENTRYPOINT ["python", "/app/scripts/episode1_playground.py"]
+CMD ["serve", "--host", "0.0.0.0", "--port", "8765", "--profiles", "/config/profiles.json", "--dashboard-dir", "/app/dashboard/dist"]
 ```
 
-### values.yaml (defaults shown; every secret is empty and injected)
+Line by line, in plain language:
+
+| Part | What it does | Why |
+|---|---|---|
+| stage 1: `node:24.9.0-alpine` | installs the locked npm dependencies and runs `npm run build` (tsc + vite) | the site is a static build; node is only needed to make it |
+| the two `COPY fixtures/...` lines | copy the public Episode 1 fixtures into the build | the dashboard build references them |
+| stage 2: `python:3.12.12-slim` | runtime for the bridge (`episode1_playground.py`) | small base image; only the bridge code + the built site ship |
+| `useradd ... uid 10001` + `USER inference-lab` | the container never runs as root | standard container hardening |
+| `EXPOSE 8765` + `HEALTHCHECK` | the bridge listens on 8765; the health probe hits `/healthz` | orchestrators (Docker, k8s) can tell "up" from "not up" |
+| `ENTRYPOINT` + `CMD` | default command: `serve` with profiles read from `/config/profiles.json` | **profiles are a volume, never baked into the image** — no secrets in the image |
+
+### 2.2 The local stack — `compose.yaml` (exact)
+
+```yaml
+name: inference-lab
+services:
+  episode-console:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: inference-lab-episode-console:local
+    command: ["serve", "--host", "0.0.0.0", "--port", "8765", "--profiles", "/config/profiles.json", "--dashboard-dir", "/app/dashboard/dist"]
+    ports:
+      - "127.0.0.1:8765:8765"
+    volumes:
+      - "${EPISODE_PROFILES_FILE:-./examples/episode-run-profiles.example.json}:/config/profiles.json:ro"
+    environment:
+      VLLM_API_KEY: "${VLLM_API_KEY:-}"
+      SGLANG_API_KEY: "${SGLANG_API_KEY:-}"
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/healthz', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1g
+
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics:v1.151.0
+    command:
+      - -storageDataPath=/victoria-metrics-data
+      - -retentionPeriod=30d
+      - -promscrape.config=/etc/victoria-metrics/scrape.yml
+    ports:
+      - "127.0.0.1:8428:8428"
+    volumes:
+      - victoria-metrics-data:/victoria-metrics-data
+      - ./deploy/victoria-metrics/scrape.yml:/etc/victoria-metrics/scrape.yml:ro
+      - ${DCGM_TARGETS_FILE:-./deploy/victoria-metrics/dcgm-targets.empty.yml}:/etc/victoria-metrics/dcgm-targets.yml:ro
+    depends_on:
+      episode-console:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+
+  grafana:
+    image: grafana/grafana:12.2.0
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_USERS_DEFAULT_THEME: dark
+      GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "true"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_PLUGINS_CHECK_FOR_UPDATES: "false"
+      GF_PLUGINS_PREINSTALL_DISABLED: "true"
+      GF_SERVER_ROOT_URL: http://127.0.0.1:3000
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    read_only: true
+    tmpfs:
+      - /var/lib/grafana:size=128m,uid=472,gid=0,mode=0750
+      - /tmp:size=64m,uid=472,gid=0,mode=1777
+    depends_on:
+      victoria-metrics:
+        condition: service_started
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health | grep -q '\"database\": \"ok\"'"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512m
+
+volumes:
+  victoria-metrics-data:
+```
+
+The hardening knobs, in plain language:
+
+| Knob | Value in compose.yaml | What it means |
+|---|---|---|
+| loopback-only ports | `127.0.0.1:8765`, `127.0.0.1:8428`, `127.0.0.1:3000` | nothing is reachable from the network |
+| profiles volume | `${EPISODE_PROFILES_FILE:-./examples/episode-run-profiles.example.json}` mounted `:ro` | endpoint config comes from a file you control; the example file is the default |
+| `read_only: true` + `tmpfs` | console + grafana | the filesystem cannot be modified at runtime; scratch space is bounded |
+| `cap_drop: ALL` + `no-new-privileges` | all three services | no Linux capabilities, no privilege escalation |
+| resource limits | console 2 CPU / 1 GiB, VM 1 CPU / 1 GiB, grafana 1 CPU / 512 MiB | the local stack cannot eat the machine |
+| healthchecks + `depends_on` | console `/healthz`, grafana `/api/health` | startup order: console healthy → VM started → grafana up |
+| Grafana anonymous **Viewer** | login form disabled, sign-up disabled, initial-admin creation disabled | read-only dashboards, no accounts possible |
+
+Facts: VictoriaMetrics v1.151.0 with 30-day retention and a 5-second
+scrape (section 2.3); Grafana 12.2.0 with the datasource and dashboard
+provisioned from `deploy/grafana/`. Note: `compose.yaml` is committed
+but is not yet part of the README quickstart — section 5.2 documents
+it.
+
+### 2.3 Observability configs (exact)
+
+`deploy/victoria-metrics/scrape.yml` (full file):
 
 ```yaml
 global:
-  imageRegistry: ""            # e.g. ghcr.io/KVSDURGASURESH
-  imagePullSecrets: []
-
-site:
-  enabled: true
-  image: token-by-token/site
-  tag: ""                       # required unless .digest set
-  digest: ""
-  replicas: 2
-  resources: {requests: {cpu: 50m, memory: 64Mi},
-              limits: {cpu: 200m, memory: 128Mi}}
-  security:                     # mirrors compose posture
-    runAsNonRoot: true
-    runAsUser: 101              # nginx
-    readOnlyRootFilesystem: true
-    allowPrivilegeEscalation: false
-    capabilities: {drop: ["ALL"]}
-
-console:
-  enabled: false                # never on by default
-  image: token-by-token/console
-  tag: ""
-  digest: ""
-  # bridge must stay loopback-internal; exposed only via authed ingress
-  replicas: 1                   # keep at 1: bridge state is local
-  profiles: ""                  # JSON, or use profilesSecret
-  profilesSecret: ""            # name of Secret with profiles.json
-  secrets: {secretName: ""}     # Secret with VLLM_API_KEY/SGLANG_API_KEY
-  resources: {requests: {cpu: 500m, memory: 512Mi},
-              limits: {cpu: "2", memory: 1Gi}}
-
-ingress:
-  enabled: true
-  className: ""                 # e.g. ingress-nginx / traefik
-  host: tokenbytoken.example.com
-  tls: {enabled: true, secretName: ""}
-  console:
-    path: /lab
-    auth:
-      enabled: true             # required when console.enabled
-      method: basic             # or external: oauth2-proxy / gateway policy
-      secretName: ""            # htpasswd Secret
-
-observability:
-  enabled: false
-  victoriaMetrics:
-    image: victoriametrics/victoria-metrics
-    tag: v1.151.0
-    retentionDays: 30
-    persistence: {size: 10Gi, storageClass: ""}
-    resources: {requests: {cpu: 250m, memory: 1Gi},
-                limits: {cpu: "1", memory: 2Gi}}
-  grafana:
-    image: grafana/grafana
-    tag: 12.2.0
-    anonymousViewerOnly: true   # same flags as compose.yaml
-    resources: {requests: {cpu: 100m, memory: 256Mi},
-                limits: {cpu: "1", memory: 512Mi}}
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: inference-lab-episode-console
+    static_configs:
+      - targets: ["episode-console:8765"]
+    metrics_path: /metrics
+  - job_name: dcgm-exporter
+    file_sd_configs:
+      - files: ["/etc/victoria-metrics/dcgm-targets.yml"]
 ```
 
-### Template rules
+- `episode-console:8765` — the compose service name; the bridge
+  exposes Prometheus metrics at `/metrics`.
+- DCGM targets use **file-based discovery**: the default is
+  `dcgm-targets.empty.yml` (no GPU targets). When a GPU host's DCGM
+  exporter is available, set
+  `DCGM_TARGETS_FILE=deploy/victoria-metrics/dcgm-targets.example.yml`.
 
-- `site-deployment`: nginx serving `dist/` from the site image; ConfigMap
-  only for nginx.conf (gzip, `Cache-Control` for hashed assets, no
-  `server_tokens`, HSTS behind TLS). `/healthz` -> 200 static page for
-  liveness/readiness probes.
-- `console-deployment`: env from Secret; `emptyDir` (sizeLimit 64Mi) for
-  `/tmp`; single replica; readiness probe `GET /healthz`.
-- `site-ingress` / `console-ingress`: separate Ingress resources; console
-  ingress rendered only when `console.enabled && ingress.console.auth.enabled`.
-- `dashboards-configmap` / `scrape-configmap`: file contents copied from
-  `deploy/grafana/dashboards/` and `deploy/victoria-metrics/` at chart build
-  time (or read from a values block in CI). Keep the repo files as the single
-  source of truth.
-- Labels everywhere: `app.kubernetes.io/name`, `/instance`, `/part-of`,
-  `/managed-by: Helm` (agentbench's `deploy/k8s` uses the same
-  `app.kubernetes.io/part-of` convention — stay compatible).
+Grafana is provisioned from `deploy/grafana/provisioning/` (datasource:
+VictoriaMetrics; dashboard: `inference-lab-execution.json`), so nothing
+is clicked into existence by hand.
 
-## 5. Observability tier on Kubernetes
+### 2.4 Dashboard build scripts (exact, `dashboard/package.json`)
 
-- VictoriaMetrics as a StatefulSet with PVC (compose uses a named volume;
-  30-day retention flag carried over from `compose.yaml`).
-- Grafana Deployment with the exact anonymous-viewer env block from
-  `compose.yaml` (sign-up off, login form disabled, analytics off);
-  provisioning files from the existing `deploy/grafana/provisioning/`.
-- Scrape: point VictoriaMetrics' `promscrape.config` at the console
-  `http://<release>-console:8765/metrics` (and the site pod's nginx
-  metrics endpoint if enabled). DCGM targets stay an empty file unless a
-  GPU exporter is later added to the cluster.
-- No dashboards or metrics ever published publicly; the public site's
-  "Live dashboard" link remains governed by `VITE_PUBLIC_GRAFANA_ENABLED`
-  and points at the public Grafana host, not this cluster.
+```json
+"build": "tsc -b && vite build",
+"check": "tsc -b --pretty false",
+"dev": "vite --host 127.0.0.1"
+```
 
-## 6. Future: GPU benchmark jobs on the cluster (out of scope, pattern only)
+Build-time public flag: the site shows a Live dashboard link **only**
+when `VITE_PUBLIC_GRAFANA_ENABLED=true` is set **at build time**; the
+link then points at the public base URL `https://graph.endlesstokens.ai`
+with no UID, credentials, or query parameters — "Leave it disabled
+until the owner verifies public, read-only access" (README). That
+build flag is exactly what the planned site image (section 3) packages
+as a Docker build arg.
 
-When episodes move to cluster GPUs, the pattern (mirroring agentbench's
-`deploy/k8s/` campaign tooling) is:
+---
 
-- Node pool with the NVIDIA device plugin; DCGM exporter DaemonSet for GPU
-  metrics into VictoriaMetrics; toleration/taint for `nvidia.com/gpu`.
-- Engines as long-running Deployments (one pod per model+engine combo,
-  exposed via Service; ports 8000 engine / 7860 exporter, matching the
-  conventions in agentbench's `tools/deploy_inference.py`).
-- Benchmarks as `Job`s (run-to-completion, `backoffLimit: 0`, TTL after
-  finish), each Job writing results to a PVC or object storage; a "guard"
-  CronJob that force-deletes engine pods after a wall-clock cap. The
-  deletion-with-provider-side-verification requirement from
-  `docs/runpod-setup.md` maps to job TTL + pod deletion + a verification
-  script that proves the resources are gone before a new one is created.
+## 3. Planned: the static-site image
 
- This is deliberately not part of the chart yet. When the operator wrapper's
- container/k8s adapter lands (episode presets plan, §9 Phase 4), the wrapper
- runs its two jobs (deploy/attest, then AgentBench + promotion) against
- these resources instead of ad-hoc Jobs.
+The site is already 100% static — `dashboard/dist/` plus committed
+JSON. The image adds no behavior, only packaging:
 
-## 7. Implementation plan (ordered)
+```dockerfile
+# Dockerfile.site   # PLANNED — builder mirrors stage 1 of Dockerfile
+FROM node:24.9.0-alpine AS builder
+WORKDIR /build/dashboard
+ARG VITE_PUBLIC_GRAFANA_ENABLED=false
+ENV VITE_PUBLIC_GRAFANA_ENABLED=$VITE_PUBLIC_GRAFANA_ENABLED
+COPY dashboard/package.json dashboard/package-lock.json ./
+RUN npm ci --ignore-scripts
+COPY dashboard/ ./
+COPY fixtures/episode1/public-aggregate.fixture.json /build/fixtures/episode1/public-aggregate.fixture.json
+COPY fixtures/episode1/episode1-planning.json /build/fixtures/episode1/episode1-planning.json
+RUN npm run build
 
-1. **Images.** Add the `ARG`s to `Dockerfile`; add `Dockerfile.site`
-   (builder stage + `nginx:alpine`). Build both; tag with the git sha and
-   record the digests. Verify the console image against `compose.yaml`
-   behavior (same command, same healthcheck).
+FROM nginx:1.27-alpine
+COPY --from=builder /build/dashboard/dist /usr/share/nginx/html
+USER nginx
+EXPOSE 80
+```
 
-2. **Chart scaffold.** `helm create` the chart; lay out the templates from
-   §4; `values.public.yaml` = site only. `helm lint` + `helm template` with
-   (a) public values, (b) public + console + observability values; review
-   every rendered resource by hand.
+Build args:
 
-3. **Dev cluster deploy.** Install ingress controller (if absent), TLS cert
-   (cert-manager or static), then `helm install`. Check: site 200s on the
-   public host, console 401/403 without auth and 200 with auth, VM +
-   Grafana cluster-internal only.
+| Arg | Default | Meaning |
+|---|---|---|
+| `VITE_PUBLIC_GRAFANA_ENABLED` | `false` | bakes the Live-dashboard-link decision into the static bundle (README) |
 
-4. **Observability wiring.** Point `scrape-configmap` at the console
-   service; confirm the existing dashboards render (they were built for the
-   compose deployment's metric names).
+Multi-arch build [planned]:
 
-5. **CI job.** Build -> push (digest) -> `helm lint`/`template` -> install to
-   a disposable namespace -> run the acceptance tests against the ingress
-   URL -> uninstall.
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.site \
+  --build-arg VITE_PUBLIC_GRAFANA_ENABLED=false \
+  -t <registry>/token-by-token-site:<tag> --push .
+```
 
-6. **Production values.** Set real host, TLS, registry, Umami variables
-   (production domain allowlist) and `VITE_PUBLIC_GRAFANA_ENABLED` only
-   after the public Grafana is verified read-only (README requirement).
+---
 
-## 8. Verification
+## 4. Planned: Kubernetes and Helm
 
-- Build-time: `npm --prefix dashboard run check && npm --prefix dashboard
-  run build`; `python3 scripts/check_publication_privacy.py --root
-  dashboard/dist --files-only` (same gate as the static publication
-  lifecycle in README §"Static publication lifecycle").
-- Deployed: `node tests/dashboard_offline_acceptance.cjs <dist>` locally;
-  `node tests/dashboard_site_v2_acceptance.cjs http://127.0.0.1:4173/`
-  against the dev server, and the same script pointed at the ingress URL
-  (it takes a base URL argument) after deployment.
-- Console: `curl <console>/healthz` = 200; unauthenticated ingress path
-  returns 401/403; quick-test endpoint refuses to run canonical/paid paths
-  (existing fail-closed behavior, unchanged).
-- Secrets audit: `helm template` output contains no API keys, no Umami
-  website id in values (build-time only), no Grafana credentials.
+### 4.1 Tiers
 
-## 9. Open questions
+| Tier | Workload | Network exposure |
+|---|---|---|
+| 1 | static site (nginx) | public (ingress + TLS) |
+| 2 | console + VictoriaMetrics + Grafana | operator network only (no public ingress) |
+| 3 | GPU inference jobs (vLLM/SGLang pods) | internal; driven by the episode wrapper |
 
-- Image registry: GHCR of this account, or a private registry?
-- Ingress controller and TLS: cert-manager with which issuer?
-- Console auth: basic (htpasswd) is the minimal option; is there an existing
-  IdP (oauth2-proxy / Cloudflare Access) that should be used instead?
-- Public domain for the site, and whether the site and console live on the
-  same host (different paths) or separate hosts.
-- Retention/size: 30-day VM retention and a 10 GiB PVC assumed; confirm the
-  cluster's storage class.
- `/metrics` for the local VictoriaMetrics scrape.
+The two properties that matter: the public site has **no runtime
+dependencies** (tier 1 is just files), and tier 2 is **never public**
+(same loopback-only posture as compose, expressed as network policies
++ no ingress).
+
+### 4.2 Chart layout
+
+```text
+deploy/helm/token-by-token/
+├── Chart.yaml
+├── values.yaml
+├── values.cluster.example.yaml
+└── templates/
+    ├── _helpers.tpl
+    ├── site/            # deployment, service, ingress (tier 1)
+    ├── console/         # deployment, service (tier 2)
+    ├── metrics/         # victoria-metrics, grafana, scrape (tier 2)
+    └── gpu/             # future: job templates for tier 3
+```
+
+### 4.3 `values.yaml` [planned]
+
+```yaml
+# PLANNED
+global:
+  imageRegistry: ""            # e.g. ghcr.io/<owner>
+  imagePullSecrets: []
+  imageTag: ""                 # shared tag unless a section overrides
+
+staticSite:
+  enabled: true
+  image: token-by-token-site
+  replicas: 2
+  service:
+    port: 80
+  ingress:
+    enabled: true
+    host: ""                   # public domain — open question
+    tls: true                  # cert-manager issued
+
+console:
+  enabled: true
+  replicas: 1                  # sticky local state; scale before exposing
+  profiles:
+    secretName: episode-console-profiles   # mounted at /config/profiles.json
+  resources: {cpu: "2", memory: 1Gi}
+
+metrics:
+  enabled: true
+  retention: 30d
+  scrapes: [episode-console]
+  dcgmTargets: ""              # file content, empty by default (mirrors compose)
+  grafana:
+    anonymousViewer: true
+
+domain:
+  public: ""                   # tier 1 host — open question
+```
+
+### 4.4 Static-site workload (tier 1)
+
+Plain: a Deployment (2 replicas, non-root nginx) + a Service (port 80)
++ an Ingress with TLS. The only public surface in the whole deployment.
+
+```yaml
+# PLANNED — condensed
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: site
+          image: <registry>/token-by-token-site:<tag>
+          ports:
+            - containerPort: 80
+          securityContext:
+            runAsNonRoot: true
+          readinessProbe:
+            httpGet: {path: /, port: 80}
+```
+
+(The Ingress + cert-manager TLS block follows the same pattern; the
+host is the open question in section 7.)
+
+### 4.5 Console workload (tier 2)
+
+Same image as local compose. Environment mapping, exact:
+
+| compose.yaml | Helm equivalent |
+|---|---|
+| `--profiles /config/profiles.json` (volume) | Secret `episode-console-profiles`, mounted read-only |
+| `VLLM_API_KEY` / `SGLANG_API_KEY` env | Secret keys (empty unless the operator sets them) |
+| `read_only: true`, `tmpfs`, `cap_drop: ALL`, `no-new-privileges` | `readonlyRootFilesystem: true`, emptyDir tmpfs, `securityContext` |
+| healthcheck `/healthz` | `livenessProbe` / `readinessProbe` on `/healthz` |
+| resource limits | `resources.limits` 2 CPU / 1 GiB |
+
+### 4.6 Metrics workload (tier 2)
+
+Same images and config as compose: VictoriaMetrics v1.151.0, 30-day
+retention, the committed `scrape.yml` job; Grafana 12.2.0, anonymous
+Viewer. The DCGM file-sd target stays empty by default; tier 3 will
+fill it from the GPU pool.
+
+### 4.7 Secrets and TLS [planned]
+
+| Item | Mechanism |
+|---|---|
+| endpoint profiles (console) | k8s Secret, mounted read-only |
+| optional API keys | k8s Secret keys, empty by default |
+| site TLS | cert-manager + cluster issuer (public domain: open question) |
+| image pulls | `imagePullSecrets` per registry (open question) |
+
+### 4.8 Future GPU inference jobs (tier 3)
+
+Not defined here beyond the interface: the episode wrapper
+(`2026-10-09-agentbench-episode-presets-plan.md` section 3.2)
+provisions an ephemeral GPU job/pod per episode, renders the engine
+launch from the preset, attests, benchmarks, and deletes. The
+chart's `gpu/` templates and the DCGM targets file are its landing
+zone.
+
+---
+
+## 5. Running it, step by step
+
+### 5.1 Free, no Docker required (student)
+
+Build and serve the site locally:
+
+```bash
+npm --prefix dashboard ci
+npm --prefix dashboard run check
+npm --prefix dashboard run build
+npm --prefix dashboard run dev -- --host 127.0.0.1 --port 5173 --strictPort
+```
+
+Open `http://127.0.0.1:5173/`. To serve the **production build**
+instead, any static file server works, e.g.:
+
+```bash
+python3 -m http.server 8080 --directory dashboard/dist --bind 127.0.0.1
+```
+
+### 5.2 Local Docker stack (operator)
+
+`compose.yaml` is committed but not yet part of the README quickstart;
+this section documents it. From the repository root:
+
+```bash
+docker compose up --build
+docker compose ps        # wait until episode-console and grafana are "healthy"
+```
+
+Then, from the same machine:
+
+- console: `http://127.0.0.1:8765/` (bridge + dashboard)
+- metrics UI: `http://127.0.0.1:3000/` (anonymous Viewer)
+- VictoriaMetrics API: `http://127.0.0.1:8428/`
+
+To point the console at real endpoints, set
+`EPISODE_PROFILES_FILE=/path/to/profiles.json` before `up` (format:
+`examples/episode-run-profiles.example.json`).
+
+### 5.3 Cluster [planned]
+
+```bash
+# after registry + domain are decided (section 7)
+helm upgrade --install token-by-token deploy/helm/token-by-token \
+  -f deploy/helm/token-by-token/values.cluster.example.yaml
+kubectl -n token-by-token get deploy,svc,ingress
+```
+
+## 6. Verification and operations
+
+Local (exists today, exact — README "Static publication lifecycle"):
+
+```bash
+python3 -m unittest tests.test_static_evidence_pipeline tests.test_episode1_public_evidence tests.test_publication_privacy
+python3 scripts/check_publication_privacy.py --root .
+npm --prefix dashboard run build
+python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
+node tests/dashboard_offline_acceptance.cjs dashboard/dist
+```
+
+Fourteen node acceptance/contract tests exist in `tests/` (e.g.
+`dashboard_offline_acceptance.cjs`, `dashboard_site_v2_acceptance.cjs`);
+the site-v2 one runs against a dev server:
+
+```bash
+npm --prefix dashboard run dev -- --port 4173
+node tests/dashboard_site_v2_acceptance.cjs http://127.0.0.1:4173/
+```
+
+Cluster checks [planned]: `kubectl rollout status` + probe status per
+workload; `helm get values` for the effective config. Rollback:
+`helm rollback token-by-token`. Cost-stop rule: if an unexpected charge
+appears, `helm uninstall token-by-token` + delete the namespace, then
+verify deletion in the registry/provider dashboard (same discipline as
+the paid-episode rule in the README).
+
+## 7. Open questions
+
+- **Registry**: which registry hosts the images (GHCR vs other), and
+  what `imagePullSecrets` does the cluster need?
+- **Public domain(s)**: what public host(s) do the static site (and
+  eventually the public Grafana base URL) use?
+- **Ingress + TLS**: which ingress controller and cert-manager setup?
+- **Console exposure**: loopback only (default), or an operator VPN /
+  authenticated ingress? If exposed, add auth in front.
+- **Storage**: which StorageClass and PVC size for VictoriaMetrics
+  (30-day retention)?
