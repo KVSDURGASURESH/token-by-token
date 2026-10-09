@@ -32,7 +32,7 @@ hosted submission remains unavailable.
 | Episode | Experiment | Status | Evidence |
 |---:|---|---|---|
 | 0 | [Warm-up](episodes/00-warm-up/README.md) | Available | Exploratory recorded study |
-| 1 | [Measure what matters](episodes/01-measure-what-matters/README.md) | Available | Recorded exploratory H200 runtime comparison — capacity not established |
+| 1 | [Measure what matters](episodes/01-measure-what-matters/README.md) | Available | Recorded exploratory H200 runtime comparison at tested loads; maximum sustainable rate not measured |
 | 2 | Equal-work runtime baseline | Planned | Planned — no measurements |
 | 3 | Prefix reuse | Planned | Planned — no measurements |
 | 4 | Batching, scheduling and mixed traffic | Planned | Planned — no measurements |
@@ -191,6 +191,24 @@ The public site shows a Live dashboard link only when
 link points to the public base URL `https://graph.endlesstokens.ai`; it does
 not contain a dashboard UID, credentials, or query parameters. Leave it
 disabled until the owner verifies public, read-only access.
+
+### Privacy-first reader analytics
+
+Analytics is disabled by default. To enable the optional Umami integration,
+copy `dashboard/analytics.env.example` to the deployment environment and set the
+tracker URL, website ID and an explicit production-domain allowlist before
+building. The public bundle records aggregate page/section views, fixed scroll
+depths and named interface actions such as opening the evidence lab. It does
+not assign a distinct user ID, record free-form input, capture exact pointer
+coordinates, replay sessions or load an analytics script when the variables
+are absent.
+
+The integration asks Umami to respect the browser Do Not Track preference and
+uses its cookie-free tracker. Hosting and configuration still need an owner
+privacy review: select the intended data region, sign a DPA when applicable,
+set retention and access controls, and update the public privacy notice before
+production collection. See `docs/analytics.md` for the event contract and
+deployment checklist.
 
 This branch is a local UI preview. Hosted development, staging, and production
 behavior have not been verified or published from this work.

@@ -67,3 +67,20 @@ html,body,#root{margin:0;min-width:320px;min-height:100%;background:#fbfaf5}html
 [data-plot-point]:focus-visible>circle,[data-plot-point]:focus-visible>rect:first-of-type{stroke:var(--chapter-nav);stroke-width:2.5}
 @media(max-width:700px){.tbt-workload-cue{grid-template-columns:auto minmax(0,1fr) auto}.tbt-metric-tabs [data-active-wedge]{left:50%;top:0;transform:translate(-50%,-1px) rotate(90deg)}}
 .tbt-plot-card[data-expanded=true]{border-top-color:var(--ink)}
+
+/* Option B identity: a larger instrument mark, with red confined to the brand hinge. */
+.tbt-sitebar-inner{min-height:72px}
+.tbt-brand{min-height:56px;gap:12px;font:600 clamp(1.125rem,1.8vw,1.5rem)/1 'Oswald Variable',Oswald,sans-serif!important;letter-spacing:.055em}
+.tbt-brand img{width:32px;height:32px}
+.tbt-brand [data-brand-part=by]{color:var(--worse)}
+.tbt-site-nav{min-height:72px}
+.tbt-popup{top:72px}
+
+/* Headlines act as the page signature; evidence-state colors remain untouched. */
+.tbt-study-header h1,.tbt-study-header h1.question{line-height:.98;letter-spacing:.018em;text-transform:uppercase}
+[data-headline-accent]{color:var(--chapter-nav)}
+
+/* Exact point values occupy a stable readout lane instead of obscuring SVG evidence. */
+.tbt-plot-tooltip{display:flex;align-items:center;min-height:38px;margin-top:8px;padding:6px 9px;border:1px solid var(--line-strong);background:var(--paper);color:var(--ink);font-size:.75rem;font-weight:500;line-height:1.3}
+.tbt-plot-tooltip[data-visible=true]{border-color:var(--chapter-nav);box-shadow:inset 3px 0 0 var(--chapter-nav)}
+@media(max-width:519px){.tbt-sitebar-inner{min-height:64px}.tbt-brand{min-height:44px;font-size:1.125rem}.tbt-brand img{width:28px;height:28px}}

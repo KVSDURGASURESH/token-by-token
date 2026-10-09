@@ -28,8 +28,14 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const mark = await (await page.request.get(`${base}token-by-token.svg`)).text();
     assert.doesNotMatch(mark, /c2pa|Anthropic|manifest/i, 'production mark excludes prototype provenance metadata');
     await page.goto(`${base}#episode-1?load=16`);
+    assert.equal(await page.locator('.tbt-brand').innerText(), 'TOKEN BY TOKEN', 'site wordmark removes the inference-lab suffix');
+    assert.equal(await page.locator('.tbt-brand [data-brand-part="by"]').evaluate(el => getComputedStyle(el).color), 'rgb(178, 47, 24)', 'Option B renders BY in the red signal color');
     assert.match(await page.locator('.tbt-study-header .tbt-eyebrow').innerText(), /^Episode 01: Measure what matters · Recorded study$/i);
-    assert.match(await page.locator('#page-title').innerText(), /Can the throughput leader still miss the decode floor/, 'recorded studies default to the evidence-backed analysis headline');
+    assert.match(await page.locator('#page-title').innerText(), /Can the throughput leader still miss the decode floor/i, 'recorded studies default to the evidence-backed analysis headline');
+    assert.equal(await page.locator('#page-title').evaluate(el => getComputedStyle(el).textTransform), 'uppercase', 'analysis headline is uppercase');
+    assert.equal(await page.locator('#page-title [data-headline-accent]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'analytical phrase uses the cyan signature color');
+    assert.doesNotMatch(await page.locator('body').innerText(), /Capacity (?:was )?not established/i, 'reader-facing copy explains the measurement boundary instead of using an ambiguous capacity label');
+    assert.match(await page.locator('.tbt-study-header').innerText(), /Tested loads only.*maximum sustainable rate not measured/i);
     assert.equal(await page.locator('.tbt-hero-evidence').count(), 0, 'the hero does not duplicate the measured Brief result');
     assert.equal(await page.locator('.tbt-rail-episodes a[href="#episode-13"] span').innerText(), 'SYSTEM 1 and LLMs on labeled decision tasks', 'public episode label uses SYSTEM 1');
     const recordedNumberFont = await page.locator('.tbt-rail-episodes a[href="#episode-0"] b').evaluate(el => getComputedStyle(el).fontFamily);
@@ -61,7 +67,9 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.doesNotMatch(await page.locator('#ch-brief').innerText(), /Unavailable/, 'recorded Episode 01 point must show values');
     assert.match(await page.locator('#ch-brief .tbt-finding').innerText(), /At 16 users, SGLang recorded/i);
     assert.match(await page.locator('#ch-brief .tbt-finding').innerText(), /output.*median TTFT/i);
+    await page.evaluate(() => { window.__analyticsEvents = []; window.umami = { track: (name, data) => window.__analyticsEvents.push({ name, data }) }; });
     await page.getByRole('button', { name: /Open evidence lab/ }).click();
+    assert.equal(await page.evaluate(() => window.__analyticsEvents.some(event => event.name === 'evidence-lab-toggle' && event.data.state === 'open')), true, 'evidence expansion records an anonymous interaction event');
     await page.locator('#ch-boundaries').scrollIntoViewIfNeeded();
     await page.waitForFunction(() => document.querySelector('.tbt-rail-chapters button:nth-child(4)')?.getAttribute('aria-current') === 'location');
     assert.equal(await page.locator('.tbt-rail-chapters button:nth-child(4)').innerText(), '04\nBoundaries', 'scroll spy follows the visible chapter');
@@ -142,7 +150,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.match(dragPage.url(), /load=16/, 'one drag must create one navigable history entry');
     await dragPage.close();
     await page.goto(`${base}#episode-0`);
-    assert.match(await page.locator('#page-title').innerText(), /Can 48\.9% more throughput come with 19\.8% higher median TPOT/);
+    assert.match(await page.locator('#page-title').innerText(), /Can 48\.9% more throughput come with 19\.8% higher median TPOT/i);
     assert.equal(await page.locator('.tbt-hero-evidence').count(), 0, 'Episode 00 keeps its result in the Brief only');
     assert.equal(await page.locator('[data-strip] [data-seg="wl"]').count(), 6);
     assert.equal(await page.locator('[data-seg="wl"][aria-pressed="true"]').getAttribute('data-val'), '2048-c24');
@@ -166,6 +174,9 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await firstPlotPoint.focus();
     const focusedTooltip = page.locator('#ch-evidence [data-plot-tooltip][data-visible="true"]');
     assert.match(await focusedTooltip.textContent(), /vLLM.*Delivered output rate.*tok\/s/i, 'focused plot point exposes exact x/y details');
+    assert.equal(await focusedTooltip.evaluate(el => el.closest('svg') === null), true, 'plot detail is rendered outside the SVG instead of covering the graph');
+    const tooltipColors = await focusedTooltip.evaluate(el => ({ color: getComputedStyle(el).color, background: getComputedStyle(el).backgroundColor }));
+    assert.deepEqual(tooltipColors, { color: 'rgb(23, 47, 45)', background: 'rgb(251, 250, 245)' }, 'light tooltip uses dark text on a light surface');
     const telemetry = page.locator('#ch-evidence [data-workload-telemetry]');
     assert.match(await telemetry.innerText(), /Waiting requests peak\s+14\.5 req\s+17\.0 req/);
     assert.match(await telemetry.innerText(), /Prefill duration \(native\)\s+1\.12 s\s+∅ Not exposed/);
@@ -209,7 +220,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const fieldOutput = page.locator('#ch-evidence [data-metric="output_tps"]');
     const fieldPoint = fieldOutput.locator('[data-plot-point]').first();
     assert.equal(await fieldPoint.evaluate(element => element.closest('button') === null), true, 'Field Note plot points are outside the explanation control');
-    assert.match(await fieldPoint.getAttribute('aria-label'), /Deployment A.*32 users.*Output throughput.*tok\/s/i);
+    assert.match(await fieldPoint.getAttribute('aria-label'), /Deployment A.*2 users.*Output throughput.*tok\/s/i, 'the first plotted point reports its own recorded x value');
     const fieldToggle = fieldOutput.getByRole('button', { name: /Open explanation/ });
     assert.equal(await fieldToggle.getAttribute('aria-controls'), 'field-ex-output_tps');
     await fieldToggle.click();

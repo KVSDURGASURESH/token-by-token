@@ -24,7 +24,7 @@ const screenshotDir = process.env.DASHBOARD_SCREENSHOT_DIR;
       await page.goto(`${base}#session-study`, { waitUntil: "networkidle" });
       assert.equal(await page.title(), "Session capacity field note — INFERENCE LAB");
       assert.equal(await page.getByRole("heading", { name: /Three percent more output/i }).count(), 1);
-      assert.equal(await page.getByText("Capacity not established", { exact: true }).count(), 1);
+      assert.equal(await page.getByText("Tested loads only", { exact: true }).count(), 1);
       assert.equal(await page.locator(".session-plot").count(), 3);
       assert.match(await page.getByLabel("Deployment comparison boundary").innerText(), /Serving profiles, launch flags and internal optimization recipes/i);
       assert.equal(await page.locator('[aria-label="Previous study comparison table"] tbody tr').count() > 4, true);

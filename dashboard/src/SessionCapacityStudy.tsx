@@ -115,8 +115,8 @@ export function SessionCapacityStudy() {
           <p className="session-deck">A conversational-load study of two matched inference-engine deployments—and a reminder that the highest token rate can be the wrong operating point.</p>
         </div>
         <aside className="qualification-stamp" aria-label="Qualification status">
-          <strong>Capacity not established</strong>
-          <span>Every formal capacity verdict remains unqualified.</span>
+          <strong>Tested loads only</strong>
+          <span>Maximum sustainable request rate was not measured under a declared latency-and-error SLO.</span>
         </aside>
       </header>
 
