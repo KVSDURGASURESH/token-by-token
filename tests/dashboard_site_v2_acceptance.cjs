@@ -30,7 +30,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.goto(`${base}#episode-1?load=16`);
     assert.match(await page.locator('.tbt-study-header .tbt-eyebrow').innerText(), /^Episode 01: Measure what matters · Recorded study$/i);
     assert.match(await page.locator('#page-title').innerText(), /Can the throughput leader still miss the decode floor/, 'recorded studies default to the evidence-backed analysis headline');
-    assert.match(await page.locator('.tbt-hero-evidence').innerText(), /27\.5% higher output throughput.*Both deployments fell below.*20 tok\/s p10 decode floor/s, 'the hero immediately supplies the recorded evidence behind its question');
+    assert.equal(await page.locator('.tbt-hero-evidence').count(), 0, 'the hero does not duplicate the measured Brief result');
     assert.equal(await page.locator('.tbt-rail-episodes a[href="#episode-13"] span').innerText(), 'SYSTEM 1 and LLMs on labeled decision tasks', 'public episode label uses SYSTEM 1');
     const recordedNumberFont = await page.locator('.tbt-rail-episodes a[href="#episode-0"] b').evaluate(el => getComputedStyle(el).fontFamily);
     const plannedNumberFont = await page.locator('.tbt-rail-episodes a[href="#episode-2"] b').evaluate(el => getComputedStyle(el).fontFamily);
@@ -143,7 +143,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await dragPage.close();
     await page.goto(`${base}#episode-0`);
     assert.match(await page.locator('#page-title').innerText(), /Can 48\.9% more throughput come with 19\.8% higher median TPOT/);
-    assert.match(await page.locator('.tbt-hero-evidence').innerText(), /2,048 input tokens and 24 concurrent requests.*263\.0.*176\.7 tok\/s.*35\.6.*29\.7 ms\/token/s);
+    assert.equal(await page.locator('.tbt-hero-evidence').count(), 0, 'Episode 00 keeps its result in the Brief only');
     assert.equal(await page.locator('[data-strip] [data-seg="wl"]').count(), 6);
     assert.equal(await page.locator('[data-seg="wl"][aria-pressed="true"]').getAttribute('data-val'), '2048-c24');
     assert.match(await page.locator('[data-workload-guide]').innerText(), /4 of 6 workloads.*Scroll or drag.*use arrows.*Select a workload/is);
