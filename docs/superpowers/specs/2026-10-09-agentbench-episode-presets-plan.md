@@ -1,6 +1,8 @@
  # Token by Token episodes as AgentBench presets — assessment and design
 
- Status: plan (not implemented). Date: 2026-10-09.
+ Status: plan (not implemented). Date: 2026-10-09. Revised 2026-10-09:
+ orchestration lives in the Token by Token operator wrapper; AgentBench is
+ the private measurement engine.
  This document lives in the public repository by design; it references the
  private AgentBench codebase only at the capability/CLI level and contains no
  credentials, internal URLs, or private data.
@@ -8,9 +10,21 @@
  ## 1. Purpose
 
  Assess every Token by Token episode (00–16, `episode-catalog.v2`) against
- what AgentBench can already do, and design a "preset" mechanism in the
- AgentBench codebase so each episode can be invoked as a single command that
- produces the evidence that episode's contract asks for.
+ what AgentBench can already do, and define how the Token by Token operator
+ wrapper drives each episode end-to-end. The wrapper performs exactly two
+ jobs:
+
+ 1. **Deploy and configure** any GPU-based VM, bare-metal host, or
+    container: provision the machine, install and launch vLLM and/or SGLang
+    with the episode's specific parameters, and attest that the running
+    engine is exactly what the episode declared.
+ 2. **Benchmark and publish** with AgentBench: point the AgentBench tool at
+    the configured engine, run the episode's benchmark contract, and publish
+    only the sanitized result through the existing publication pipeline.
+
+ AgentBench is deliberately not the orchestrator: it stays the private
+ measurement engine (phases, gates, corpora, telemetry). Everything the
+ wrapper does in this plan is public code in the Token by Token repository.
 
  ## 2. AgentBench capability summary (what a preset can use)
 
@@ -127,9 +141,11 @@ needs new AgentBench code (listed under §9 phases).
 
 ### 4.1 Preset sketches (one per episode)
 
-Each preset is a YAML run config under a new `configs/episodes/` directory in
-AgentBench, referencing existing combos/workloads plus an `episode:` block
-(schema in §5). Sketches show the discriminating fields only.
+ Each preset is a YAML file under the episode's public directory in Token by
+ Token (`episodes/NN-<slug>/preset.yaml`), referencing AgentBench
+ combos/workloads plus an `episode:` block (schema in §5). The wrapper
+ renders it into a concrete AgentBench run config at execution time.
+ Sketches show the discriminating fields only.
 
 **episode-00-warmup** — replay/verify the warm-up.
  `mode: sweep`, small level set (1, 2, 4, 8), short warmup/measure,
@@ -233,14 +249,15 @@ AgentBench, referencing existing combos/workloads plus an `episode:` block
  drill, and an immutable release manifest (model revision + engine version
  + image digest + harness commit + flags). Quality gate throughout.
 
-## 5. Preset schema
+ ## 5. Episode preset schema (public)
 
-New directory in AgentBench: `configs/episodes/episode-NN-<slug>.yaml`.
- It is a run config (everything `agentbench run --run-config` already
- understands) plus an `episode:` block:
+ Host: `episodes/NN-<slug>/preset.yaml` in Token by Token — public,
+ committed, reviewed in the same PR as the episode content. It is a run
+ config (everything `agentbench run --run-config` already understands) plus
+ an `episode:` block:
 
  ```yaml
- # configs/episodes/episode-01-capacity.yaml
+ # episodes/01-measure-what-matters/preset.yaml
  episode:
    id: 01
    slug: measure-what-matters
@@ -286,8 +303,9 @@ New directory in AgentBench: `configs/episodes/episode-NN-<slug>.yaml`.
    run_per_combo: full                # or: calibrate-only, pptg-only
  ```
 
- Validation rules (enforced by a small schema check in `agentbench/config.py`
- or a dedicated `episodes.py`):
+ Validation rules (enforced by the wrapper's preset validator — public code,
+ run before any resource is created; AgentBench re-validates the rendered
+ run config):
 
 - `episode.id` 0–16, `slug` matches the catalog entry.
 - `publication: token-by-token` requires `evidence_contract.performance`
@@ -295,21 +313,89 @@ New directory in AgentBench: `configs/episodes/episode-NN-<slug>.yaml`.
 - `combos:` + `matrix.counterbalance` require `seed` to be set.
 - `duration` is required for E15/E16 presets.
 
-## 6. CLI design
+ ## 6. The wrapper: the two jobs
 
-```
-agentbench episode list                          # presets in configs/episodes/
-agentbench episode show episode-01               # rendered plan: combos, levels, gates, est. time
-agentbench episode run episode-01 --combo ...    # resolve preset -> run config -> bench
-agentbench episode run episode-02                # matrix: runs each combo, counterbalanced
-agentbench episode report episode-01 <run-a> <run-b>   # compare + publication projection
-```
+ The repository already contains a hardened operator toolchain
+ (`src/runpod_benchmark/`, ~30 modules, built for Episode 1). The episode
+ series wrapper is a parameterization of that toolchain, not a new one.
 
- `episode run` is a thin resolver: preset -> concrete run config(s) -> the
- existing `bench`/`run` code paths. No benchmarking logic is duplicated;
- the preset only *declares* the run. `episode show` prints the exact
- commands that would run (dry-run by default), which doubles as the
- approval artifact before any paid resource is created.
+ ### 6.1 What the wrapper already has
+
+ | Capability | Module(s) | Status for the series |
+ |---|---|---|
+ | RunPod provisioning, ownership journal, deletion authority, cleanup observation | `runpod_v2.py`, `episode1_runpod_adapter.py`, `bounded_runpod_transport.py` | reusable; allocation facts generalized per episode |
+ | Bounded SSH executor (argv vectors, POSIX quoting, strict file modes, no resource creation) | `episode1_remote.py` | reusable as-is for bare metal and RunPod |
+ | Remote runtime control: fixed helper, closed JSON schemas, GPU attestation (uuid/driver/boot_id/CUDA/memory), clock sync, GPU process ownership | `episode1_runtime_control.py`, `gpu_process_ownership.py` | reusable; **launch argv is frozen to two runtimes — parameterize** |
+ | Lifecycle orchestration, guard, supervisor, watchdogs | `episode1_orchestrator.py`, `episode1_guard.py`, `pod_supervisor.py`, `scripts/*watchdog*.py` | reusable with per-episode budgets |
+ | Private evidence capture (billing, ownership tokens) | `episode1_capture.py`, `episode1_provider_failure_capture.py` | reusable |
+ | Promotion gate (pure, fail-closed, recomputes hashes/chain, `seal()`) | `episode1_promotion.py` | Episode-1-schema-specific; **new sibling gate for AgentBench runs** |
+ | Publication privacy + acceptance | `scripts/check_publication_privacy.py`, dashboard acceptance tests | reusable unchanged |
+
+ ### 6.2 Job 1 — deploy and configure
+
+ For each episode preset, the wrapper:
+
+ 1. **Provisions** the environment through one of three adapters, all
+    behind the same allocation interface:
+    - **RunPod VM** — existing adapter; today's digest-pinned prebuilt
+      image (Episode 1 model) or a base CUDA image with in-place install
+      for parameterized episodes.
+    - **Bare-metal** — the SSH executor is already host-agnostic; the
+      operator preflight (`docs/episode-1-preparation/operator-preflight.md`)
+      applies unchanged.
+    - **Container / k8s** — new adapter; the deployment plan
+      (`2026-10-09-docker-k8s-helm-deployment-plan.md`) defines the chart;
+      the wrapper drives `helm`/`kubectl`, or runs inside the pod.
+ 2. **Installs and configures the engine** with the episode's parameters by
+    delegating to AgentBench's `tools/deploy_inference.py` — a
+    self-contained stdlib file copied to the host (private tooling; it is
+    never committed to this repository). The wrapper renders the preset
+    into the deploy tool's non-interactive `answers.json` (model +
+    revision, engine + version, GPU class, TP size, KV dtype, memory
+    fraction, launch flags) and runs `serve --answers <file> --yes`. The
+    deploy tool handles the hard parts: `uv` venvs, torch/CUDA repair with
+    a compiled probe, version-agnostic flag resolution against the
+    engine's own `--help`, model-aware planning, launch, `/health` wait, a
+    real 512-token generation check, the GPU exporter — and writing the
+    AgentBench **combo YAML** that Job 2 consumes.
+    - Prebuilt-image episodes (e.g. 14, packaging) skip the in-place
+      install and launch from the digest-pinned image; the launch argv is
+      still rendered from the preset.
+ 3. **Attests** the running engine: the existing attestation layer, with
+    the frozen `_expected_argv` replaced by the preset-rendered argv
+    (same closed JSON schemas, same GPU-process-ownership and watchdog
+    hardening). A mismatch between preset-declared parameters and the
+    observed process fails the run before any benchmarking.
+
+ ### 6.3 Job 2 — benchmark and publish
+
+ 1. The wrapper renders the preset into an AgentBench **run config** (mode,
+    combo, workload, profile, levels, targets, gates, seed) and invokes the
+    private AgentBench CLI from the operator workstation (or the host),
+    pointed at the attested endpoint through the existing tunnel code.
+ 2. AgentBench produces the run directory (raw, private): verdict,
+    levels.csv, PP/TG, agent sessions, soak, metrics export.
+ 3. A new **pure promotion gate** (sibling of `episode1_promotion.py`, same
+    style: no I/O, recomputes digests, trusts no producer booleans) consumes
+    the run directory and emits the sanitized site-v2 aggregate.
+ 4. The existing publication pipeline takes over unchanged:
+    `check_publication_privacy.py` over the output, dashboard build, v2
+    browser acceptance, commit.
+
+ ### 6.4 Invocation
+
+ ```
+ python scripts/run_episode.py --preset episodes/01-.../preset.yaml plan
+ python scripts/run_episode.py --preset ... --env runpod deploy   # job 1
+ python scripts/run_episode.py --preset ... bench                 # job 2
+ python scripts/run_episode.py --preset ... all                   # both
+ ```
+
+ `plan` (dry-run, the default) prints the exact answers.json, launch argv,
+ and AgentBench run config that would be used — the approval artifact
+ before any paid resource is created. The entry point follows the existing
+ `scripts/` operator convention; library code lands in
+ `src/runpod_benchmark/`.
 
 ## 7. Mapping results back to Token by Token
 
@@ -323,8 +409,8 @@ agentbench episode report episode-01 <run-a> <run-b>   # compare + publication p
  boundary — the shape of `dashboard/src/data/site-v2/episode-1*.json` and
  `data/public/episode-1-public.v1.json`.
 
- The projection is a new small script in the Token by Token repo
- (`scripts/project_agentbench_results.py`, planned) that:
+ The projection is the new pure promotion gate from §6.3 (sibling of
+ `episode1_promotion.py`: no I/O, fail-closed, recomputes digests) that:
 
  1. Takes one or more AgentBench run directories as input (private machine).
  2. Selects only allowlisted aggregate fields (no request payloads, no
@@ -353,32 +439,32 @@ agentbench episode report episode-01 <run-a> <run-b>   # compare + publication p
 
 ## 9. Implementation phases
 
- **Phase 1 — Presets without new code (week-scale).**
- Author `configs/episodes/episode-00..01,11,14,15.yaml` as plain run
- configs with the `episode:` block (ignored by the current loader, enforced
- later). Verify each with `agentbench episode show`-equivalent dry runs
- (manually: `agentbench run --run-config ... --dry-run` if available, else
- `agentbench bench ... --help` cross-check). No GPU spend beyond
- re-verification runs the owner approves.
+ **Phase 1 — Public presets + validator (Token by Token).**
+ Author `episodes/NN-<slug>/preset.yaml` for E00/E01 (E11/E14/E15 next),
+ plus the wrapper preset validator and `plan` dry-run renderer
+ (answers.json + launch argv + run config). No GPU spend; full pytest
+ coverage of the renderers (deterministic, fail-closed).
 
- **Phase 2 — Resolver + schema (AgentBench code change).**
- Add `agentbench/episodes.py` (load/validate/render presets), wire
- `agentbench episode list|show|run|report` in `cli.py`, add the
- `episode:` schema to `schemas.py`, extend `config.py` loading. Cover with
- pytest (preset validation, counterbalanced order determinism, gate
- rendering) — the repo's 370+ test suite is the bar.
+ **Phase 2 — Parameterized deploy (Job 1, Token by Token).**
+ Replace the frozen `_expected_argv` with preset-rendered argv in the
+ runtime-control layer (closed schemas unchanged); wire the bare-metal
+ adapter (SSH preflight path); delegate engine install to
+ `deploy_inference.py` via rendered `answers.json`. Verify on a local GPU
+ or one short approved RunPod run for E00.
 
- **Phase 3 — Matrix + campaign.**
- `combos:` matrix execution with recorded counterbalance order; campaign
+ **Phase 3 — Benchmark + promotion (Job 2).**
+ AgentBench invocation against the attested endpoint through the tunnel;
+ the new pure promotion gate for AgentBench run directories; integration
+ with `check_publication_privacy.py` + acceptance tests; one full E01
+ run-to-publication as the integration test.
+
+ **Phase 4 — Container/k8s adapter + matrix.**
+ The third environment adapter behind the deployment plan's chart;
+ counterbalanced `combos:` matrix execution with recorded order; campaign
  cost accounting per episode; guard/hold for long soaks (reusing
- `deploy/k8s/` scripts where the campaign runs on k8s).
+ AgentBench `deploy/k8s/` scripts where the campaign runs on k8s).
 
- **Phase 4 — Publication projection (Token by Token code change).**
- `scripts/project_agentbench_results.py` + privacy-check integration +
- acceptance test that a projected bundle passes
- `check_publication_privacy.py`.
-
- **Phase 5 — Gap episodes.**
+ **Phase 5 — Gap episodes (AgentBench code changes).**
  E08 (multi-node launch helper), E09 (PD-disagg flags + router in combo),
  E12 (adapter/LoRA combos), E16 (release manifest + reliability drill
  automation). Each is a standalone PR in AgentBench with its own tests.
@@ -393,8 +479,5 @@ agentbench episode report episode-01 <run-a> <run-b>   # compare + publication p
   calibrate cross-check is engine-specific.)
 - Where do episode result directories live long-term (AgentBench `results/`
   per today, or object storage with lifecycle rules)?
-- Should the `episode:` block instead live in the Token by Token repo as
-  the source of truth, with AgentBench only consuming run configs? (Keeps
-  the public catalog authoritative; costs a sync step.)
-- E13 decision-task set: who labels, and what is the acceptance threshold
+ - E13 decision-task set: who labels, and what is the acceptance threshold
   before it is frozen as a workload?

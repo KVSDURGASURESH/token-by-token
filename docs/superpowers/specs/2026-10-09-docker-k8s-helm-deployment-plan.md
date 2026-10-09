@@ -263,7 +263,10 @@ When episodes move to cluster GPUs, the pattern (mirroring agentbench's
   `docs/runpod-setup.md` maps to job TTL + pod deletion + a verification
   script that proves the resources are gone before a new one is created.
 
-This is deliberately not part of the chart yet.
+ This is deliberately not part of the chart yet. When the operator wrapper's
+ container/k8s adapter lands (episode presets plan, §9 Phase 4), the wrapper
+ runs its two jobs (deploy/attest, then AgentBench + promotion) against
+ these resources instead of ad-hoc Jobs.
 
 ## 7. Implementation plan (ordered)
 
