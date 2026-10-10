@@ -153,6 +153,9 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const returnedEpisodeTwo = page.locator('[data-episode-index-row="episode-2"]');
     assert.equal(await returnedEpisodeTwo.getAttribute('data-expanded'), 'true', 'matching landing-page section opens automatically');
     assert.match(await returnedEpisodeTwo.innerText(), /Equal-work runtime baseline.*Evidence:.*selected images and kernels/is, 'returned section exposes the complete matching roadmap content');
+    await page.locator('.tbt-rail-episodes a[href="#episode-1"]').click();
+    await page.locator('#page-title').waitFor();
+    assert.equal(await page.evaluate(() => scrollY <= 1), true, 'switching episodes resets the reader to the new introduction');
     await page.goto(`${base}#episode-1?load=16&theme=dark&text=200&head=question`);
     assert.equal(await page.locator('[data-tbt]').getAttribute('data-theme'), 'dark');
     assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).fontSize), '32px');

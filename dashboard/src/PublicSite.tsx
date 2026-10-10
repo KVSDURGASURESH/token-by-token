@@ -471,7 +471,14 @@ export function PublicSite() {
   const chapters = page === 'episodes' ? ['recorded','planned'] : page === 'methodology' ? ['definitions','states','identity','rules','protocols'] : isStudy ? [...CHAPTERS] : [];
   const chapterKey = chapters.join('|');
   const [activeChapter, setActiveChapter] = useState(chapters[0] ?? '');
+  const previousPage = useRef(page);
   useEffect(() => { const update = () => { setRoute(readRoute()); setEpMenu(false); setSiteMenu(false); setLabMenu(false); }; window.addEventListener('hashchange',update); window.addEventListener('popstate',update); return () => { window.removeEventListener('hashchange',update); window.removeEventListener('popstate',update); }; }, []);
+  useLayoutEffect(() => {
+    if (previousPage.current === page) return;
+    previousPage.current = page;
+    if (page === 'episodes' && route.params.get('open')) return;
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [page, route.params]);
   useEffect(() => { document.title = `${page === 'episodes' ? 'Token by Token' : page === 'methodology' ? 'Methodology' : episodeNumber !== null ? `Episode ${String(episodeNumber).padStart(2,'0')}` : 'Not found'} — INFERENCE LAB`; }, [page, episodeNumber]);
   useEffect(() => { const normalized = url(page, route.params); if (location.hash !== normalized) history.replaceState(null,'',normalized); }, [page, route.params]);
   useEffect(() => { document.documentElement.dataset.theme = shownTheme; document.documentElement.style.colorScheme = shownTheme; }, [shownTheme]);
