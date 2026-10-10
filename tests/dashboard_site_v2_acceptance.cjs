@@ -96,6 +96,8 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.goto(`${base}#methodology`);
     assert.equal(await page.locator('.tbt-rail-chapters button:first-child b').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'all page rails use the shared cyan navigation accent');
     assert.equal(await page.locator('.tbt-rail-chapters button:first-child').evaluate(el => getComputedStyle(el, '::after').content), '"▶"', 'the active chapter exposes the shared cyan position marker');
+    assert.equal(await page.locator('.tbt-rail-chapters button:first-child span').evaluate(el => getComputedStyle(el).color), 'rgb(23, 47, 45)', 'the active chapter label remains legible');
+    assert.equal(await page.locator('.tbt-rail-chapters button:nth-child(2) span').evaluate(el => getComputedStyle(el).color), 'rgb(69, 90, 86)', 'inactive chapter labels match the quieter upper-rail text hierarchy');
     await page.goto(`${base}#episode-1?load=16`);
     assert.equal(await page.locator('#ch-brief .tbt-finding .state-better').count() >= 1, true);
     assert.equal(await page.locator('#ch-brief .tbt-finding .state-better').first().evaluate(el => getComputedStyle(el).color), 'rgb(0, 109, 69)');
