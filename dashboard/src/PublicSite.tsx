@@ -410,7 +410,7 @@ function EpisodeOneContract() {
   </section>;
 }
 function RunCost() {
-  return <section data-run-cost className="tbt-run-cost" aria-labelledby="run-cost-title"><div className="tbt-cost-head"><div><p className="tbt-contract-label">Cost basis · planning assumption</p><h3 id="run-cost-title">Estimated cost of the comparable windows</h3><p>Using a $4.59 per GPU-hour planning assumption for a <span data-cost-provider>RUNPOD</span> Secure Cloud H200, this attributes cost to the declared Episode 01 warm-up and measurement windows. The retained public evidence does not include a provider rate or invoice for this study.</p></div><div className="tbt-cost-total"><small>Estimated protocol time</small><strong>$3.21</strong><span>42 GPU-minutes · both arms</span></div></div><div className="tbt-cost-cards"><div><small>Planning rate assumption</small><strong>$4.59 / h</strong><span>One H200 · not provider-bill evidence</span></div><div><small>Measured work</small><strong>$2.30</strong><span>6 windows × 300 s</span></div><div><small>Required warm-up</small><strong>$0.92</strong><span>6 windows × 120 s</span></div><div><small>Per engine arm</small><strong>$1.61</strong><span>3 loads · 21 GPU-minutes</span></div></div><div className="tbt-cost-bar" aria-label="Cost split: 71.4 percent measurement and 28.6 percent warm-up"><i /><i /></div><p className="tbt-cost-legend"><span><b>71.4%</b> measurement</span><span><b>28.6%</b> warm-up</span></p><p className="tbt-cost-boundary"><strong>Boundary:</strong> $3.21 is assumption × declared-time arithmetic, not the provider invoice for the campaign. Deployment, model loading, validation, failed attempts, idle time, storage, network and taxes require reconciled billing evidence and remain unavailable.</p></section>;
+  return <section data-run-cost className="tbt-run-cost" aria-labelledby="run-cost-title"><div className="tbt-cost-head"><div><p className="tbt-contract-label">Cost basis · planning assumption</p><h3 id="run-cost-title">Estimated cost of the comparable windows</h3><p>Using a $4.59 per GPU-hour planning assumption for a <span data-cost-provider>RUNPOD</span> Secure Cloud H200, this attributes cost to the declared Episode 01 warm-up and measurement windows. The retained public evidence does not include a provider rate or invoice for this study.</p></div><div className="tbt-cost-total"><small>Estimated protocol time</small><strong>$3.21</strong><span>42 GPU-minutes · both arms</span></div></div><div className="tbt-cost-cards"><div><small>Planning rate assumption</small><strong>$4.59 / hr</strong><span>One H200 · not provider-bill evidence</span></div><div><small>Measured work</small><strong>$2.30</strong><span>6 windows × 300 s</span></div><div><small>Required warm-up</small><strong>$0.92</strong><span>6 windows × 120 s</span></div><div><small>Per engine arm</small><strong>$1.61</strong><span>3 loads · 21 GPU-minutes</span></div></div><div className="tbt-cost-bar" aria-label="Cost split: 71.4 percent measurement and 28.6 percent warm-up"><i /><i /></div><p className="tbt-cost-legend"><span><b>71.4%</b> measurement</span><span><b>28.6%</b> warm-up</span></p><p className="tbt-cost-boundary"><strong>Boundary:</strong> $3.21 is assumption × declared-time arithmetic, not the provider invoice for the campaign. Deployment, model loading, validation, failed attempts, idle time, storage, network and taxes require reconciled billing evidence and remain unavailable.</p></section>;
 }
 
 function Study({ episode, route, setParam }: { episode: 0 | 1; route: Route; setParam(key: string, value: string, replace?: boolean): void }) {
@@ -581,6 +581,7 @@ export function PublicSite() {
     return () => document.removeEventListener('keydown',esc);
   }, [epMenu, siteMenu, labMenu, route]);
   const lastChapter = useRef('');
+  const smoothChapter = useRef(false);
   useEffect(() => {
     const ch = route.params.get('ch');
     const targetKey = `${page}:${ch ?? ''}`;
@@ -591,11 +592,12 @@ export function PublicSite() {
     requestAnimationFrame(() => requestAnimationFrame(() => {
       const target = document.getElementById(id);
       if (!target) return;
-      target.scrollIntoView({ block: 'start' });
       const selector = document.querySelector<HTMLElement>('.tbt-selector');
-      const clearance = selector && selector.getBoundingClientRect().top <= 0 ? selector.getBoundingClientRect().bottom + 12 : 16;
-      const offset = target.getBoundingClientRect().top - clearance;
-      if (offset < 0) window.scrollBy(0, offset);
+      const clearance = selector ? selector.getBoundingClientRect().height + 12 : 16;
+      const top = Math.max(0, scrollY + target.getBoundingClientRect().top - clearance);
+      const smooth = smoothChapter.current && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      smoothChapter.current = false;
+      window.scrollTo({ top, left: 0, behavior: smooth ? 'smooth' : 'instant' });
       target.focus({ preventScroll: true });
     }));
   }, [page, route.params]);
@@ -605,6 +607,7 @@ export function PublicSite() {
     if (isStudy && ch !== 'brief') next.set('depth','lab');
     history.replaceState(null,'',url(page,next));
     lastChapter.current = '';
+    smoothChapter.current = true;
     setRoute({page,params:next,notices:[]});
     setEpMenu(false);
   }

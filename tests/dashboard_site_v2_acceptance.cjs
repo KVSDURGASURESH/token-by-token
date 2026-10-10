@@ -36,12 +36,25 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
   const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    await page.addInitScript(() => {
+      const nativeScrollTo = window.scrollTo.bind(window);
+      window.__tbtScrollBehaviors = [];
+      window.scrollTo = (...args) => {
+        const options = args[0];
+        if (options && typeof options === 'object') window.__tbtScrollBehaviors.push(options.behavior);
+        return nativeScrollTo(...args);
+      };
+    });
     await page.goto(`${base}#episodes`);
     assert.equal(await page.locator('[data-screen-label="Landing"] h1').textContent(), 'Every token is a measurement.');
     assert.equal(await page.locator('[data-screen-label="Landing"] [data-landing-token-accent]').innerText(), 'TOKEN');
     assert.equal(await page.locator('[data-screen-label="Landing"] [data-landing-token-accent]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'TOKEN alone uses the cyan signature color');
     assert.equal(await page.locator('[data-token]').count(), 10);
     assert.equal(await page.locator('.tbt-rail-chapters button').count(), 2, 'landing has only Recorded and Planned subchapters');
+    await page.evaluate(() => { window.__tbtScrollBehaviors.length = 0; });
+    await page.getByRole('button', { name: '02 Planned' }).click();
+    await page.waitForFunction(() => document.activeElement?.id === 'h-planned');
+    assert.equal(await page.evaluate(() => window.__tbtScrollBehaviors.includes('smooth')), true, 'chapter clicks use one smooth transition');
     assert.equal(await page.getByText('Field notes', { exact: true }).count(), 0, 'Field Notes is removed from public navigation');
     const episodeTwoRow = page.locator('[data-episode-index-row="episode-2"]');
     assert.equal(await episodeTwoRow.getByRole('button', { name: /Show context for Episode 02/ }).getAttribute('aria-expanded'), 'false');
@@ -93,11 +106,19 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('main').evaluate(el => el === document.activeElement), true);
     assert.match(page.url(), /load=16/, 'skip link preserves route');
     assert.equal(await page.locator('.tbt-rail-chapters button:first-child b').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)');
+    assert.equal(await page.locator('.tbt-rail-episodes a[aria-current="page"]').evaluate(el => getComputedStyle(el, '::after').content), '"▶"', 'the active episode uses the neutral upper-rail marker');
     await page.goto(`${base}#methodology`);
     assert.equal(await page.locator('.tbt-rail-chapters button:first-child b').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'all page rails use the shared cyan navigation accent');
     assert.equal(await page.locator('.tbt-rail-chapters button:first-child').evaluate(el => getComputedStyle(el, '::after').content), '"▶"', 'the active chapter exposes the shared cyan position marker');
-    assert.equal(await page.locator('.tbt-rail-chapters button:first-child span').evaluate(el => getComputedStyle(el).color), 'rgb(23, 47, 45)', 'the active chapter label remains legible');
+    assert.equal(await page.locator('.tbt-rail-chapters button:first-child span').evaluate(el => getComputedStyle(el).color), 'rgb(69, 90, 86)', 'selected and unselected chapter labels share the upper-rail brightness');
     assert.equal(await page.locator('.tbt-rail-chapters button:nth-child(2) span').evaluate(el => getComputedStyle(el).color), 'rgb(69, 90, 86)', 'inactive chapter labels match the quieter upper-rail text hierarchy');
+    for (const episode of [0, 1]) {
+      await page.goto(`${base}#episode-${episode}?ch=brief`);
+      await page.getByRole('button', { name: '04 Boundaries' }).click();
+      await page.waitForFunction(() => document.activeElement?.id === 'h-boundaries');
+      assert.match(page.url(), new RegExp(`#episode-${episode}\\?.*ch=boundaries.*depth=lab|#episode-${episode}\\?.*depth=lab.*ch=boundaries`), `Episode ${episode} Boundaries opens from the rail`);
+      assert.equal(await page.locator('#ch-boundaries').count(), 1);
+    }
     await page.goto(`${base}#episode-1?load=16`);
     assert.equal(await page.locator('#ch-brief .tbt-finding .state-better').count() >= 1, true);
     assert.equal(await page.locator('#ch-brief .tbt-finding .state-better').first().evaluate(el => getComputedStyle(el).color), 'rgb(0, 109, 69)');
@@ -148,7 +169,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('[data-run-cost]').count(), 1, 'Episode 01 explains the bounded cost model');
     const runCostText = await page.locator('[data-run-cost]').innerText();
     assert.match(runCostText, /\$3\.21.*42 GPU-minutes/is);
-    assert.match(runCostText, /\$4\.59\s*\/\s*h.*not the provider invoice/is);
+    assert.match(runCostText, /\$4\.59\s*\/\s*hr.*not the provider invoice/is);
     assert.equal(await page.locator('[data-cost-provider]').innerText(), 'RUNPOD');
     assert.equal(await page.locator('[data-cost-provider]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'the recorded cost provider uses the cyan identity accent');
     await page.goto(`${base}#episode-2`);
