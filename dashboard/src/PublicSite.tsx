@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import catalog from './data/site-v2/catalog.json';
 import roadmapContext from './data/site-v2/roadmap-context.json';
+import roadmapEvidence from './data/site-v2/roadmap-evidence.json';
 import episode0 from './data/site-v2/episode-0.json';
 import episode1 from './data/site-v2/episode-1.json';
 import episode0DataUrl from './data/site-v2/episode-0.json?url';
@@ -69,11 +70,17 @@ function TokenStrip() {
   const tokens = ['Time', '·to', '·first', '·token', '·is', '·the', '·wait', '·a', '·user', '·feels.'];
   return <figure className="tbt-tokens"><div aria-hidden="true" className="tbt-token-row">{tokens.map((token, i) => <span data-token key={i}><b>{token}</b><small>t{String(i).padStart(2, '0')}</small></span>)}</div><figcaption><span><i className="first" />First token — TTFT</span><span><i className="later" />Every token after — TPOT</span></figcaption></figure>;
 }
-function EpisodeIndexRow({ episode }: { episode: (typeof episodes)[number] }) {
-  const [open, setOpen] = useState(false);
+function EpisodeIndexRow({ episode, revealed = false }: { episode: (typeof episodes)[number]; revealed?: boolean }) {
+  const [open, setOpen] = useState(revealed);
+  const rowRef = useRef<HTMLDivElement>(null);
   const number = String(episode.number).padStart(2, '0');
   const contextId = `episode-context-${episode.id}`;
-  return <div className="tbt-index-row" data-episode-index-row={episode.id} data-expanded={open || undefined}>
+  useEffect(() => {
+    if (!revealed) return;
+    setOpen(true);
+    requestAnimationFrame(() => rowRef.current?.scrollIntoView({ block: 'center' }));
+  }, [revealed]);
+  return <div ref={rowRef} className="tbt-index-row" data-episode-index-row={episode.id} data-expanded={open || undefined}>
     <div className="tbt-index-row-main">
       <b className="tbt-index-number">{number}</b>
       <span className="tbt-index-copy"><strong>{episode.title}</strong><small className="tbt-index-summary">{episode.summary}</small></span>
@@ -82,14 +89,15 @@ function EpisodeIndexRow({ episode }: { episode: (typeof episodes)[number] }) {
     {open && <div id={contextId} className="tbt-index-context">
       <p className="tbt-eyebrow">The experiment map</p>
       <p>{episode.status === 'planned' ? roadmapContext[episode.id as keyof typeof roadmapContext] : episode.summary}</p>
+      {episode.status === 'planned' && <p className="tbt-index-evidence"><strong>Evidence:</strong> {roadmapEvidence[episode.id as keyof typeof roadmapEvidence]}</p>}
       {episode.status === 'available' ? <a href={`#${episode.id}`}>Open the recorded study →</a> : <a href={`${GITHUB_URL}/blob/main/docs/roadmap.md#${episode.roadmapAnchor}`} target="_blank" rel="noopener noreferrer">Read the experiment roadmap →</a>}
     </div>}
   </div>;
 }
-function Landing() {
+function Landing({ openEpisode }: { openEpisode?: string | null }) {
   const recorded = episodes.filter(e => e.status === 'available');
   const planned = episodes.filter(e => e.status === 'planned');
-  return <article className="tbt-landing"><header data-screen-label="Landing" className="tbt-hero"><p className="tbt-eyebrow">Token by Token · an open inference lab</p><h1 id="page-title">Every <span data-landing-token-accent>token</span> is a measurement.</h1><p className="tbt-deck">We run open model-serving engines under recorded load and read the results one claim at a time — what a user waits for, what the hardware does, and where the evidence stops.</p><TokenStrip /><div className="tbt-cta"><a className="primary" href="#episode-0">Start with Episode 00 →</a><a className="secondary" href="#episode-1">Episode 01 · Measure what matters</a><a className="tertiary" href="#methodology">How the lab measures</a></div><p className="tbt-counts"><span>{recorded.length} recorded episodes</span><span>{planned.length} planned</span></p></header><section id="ch-recorded" className="tbt-index-group"><h2 id="h-recorded" tabIndex={-1}>01 Recorded</h2>{recorded.map(episode => <EpisodeIndexRow key={episode.id} episode={episode} />)}</section><section id="ch-planned" className="tbt-index-group"><h2 id="h-planned" tabIndex={-1}>02 Planned</h2>{planned.map(episode => <EpisodeIndexRow key={episode.id} episode={episode} />)}</section></article>;
+  return <article className="tbt-landing"><header data-screen-label="Landing" className="tbt-hero"><p className="tbt-eyebrow">Token by Token · an open inference lab</p><h1 id="page-title">Every <span data-landing-token-accent>token</span> is a measurement.</h1><p className="tbt-deck">We run open model-serving engines under recorded load and read the results one claim at a time — what a user waits for, what the hardware does, and where the evidence stops.</p><TokenStrip /><div className="tbt-cta"><a className="primary" href="#episode-0">Start with Episode 00 →</a><a className="secondary" href="#episode-1">Episode 01 · Measure what matters</a><a className="tertiary" href="#methodology">How the lab measures</a></div><p className="tbt-counts"><span>{recorded.length} recorded episodes</span><span>{planned.length} planned</span></p></header><section id="ch-recorded" className="tbt-index-group"><h2 id="h-recorded" tabIndex={-1}>01 Recorded</h2>{recorded.map(episode => <EpisodeIndexRow key={episode.id} episode={episode} revealed={openEpisode === episode.id} />)}</section><section id="ch-planned" className="tbt-index-group"><h2 id="h-planned" tabIndex={-1}>02 Planned</h2>{planned.map(episode => <EpisodeIndexRow key={episode.id} episode={episode} revealed={openEpisode === episode.id} />)}</section></article>;
 }
 function Selector({ episode, value, select }: { episode: 0 | 1; value: string; select(v: string, replace?: boolean): void }) {
   const stripRef = useRef<HTMLDivElement>(null);
@@ -422,7 +430,7 @@ function Study({ episode, route, setParam }: { episode: 0 | 1; route: Route; set
   const showAnalysisHeadline = route.params.get('head') !== 'title';
   return <article className="tbt-study">{route.notices.length>0&&<div className="tbt-notice" role="status"><b>Link adjusted</b> {route.notices.join(' ')}</div>}{invalid && <div className="tbt-notice" role="status"><b>Link adjusted</b> {route.params.get(key)} is not recorded. Showing {value}.</div>}<header data-screen-label="Episode header" className="tbt-study-header">{showAnalysisHeadline ? <><p className="tbt-eyebrow">Episode {String(episode).padStart(2,'0')}: <strong>{title}</strong> · Recorded study</p><h1 id="page-title" className="question">{question}</h1></> : <><p className="tbt-eyebrow">Episode {String(episode).padStart(2,'0')} · Recorded study</p><h1 id="page-title">{title}</h1></>}<p className="tbt-deck">{deck}</p><p className="tbt-quals"><span>Recorded exploratory comparison</span><span>{episode === 1 ? 'One H200 per arm' : 'One H100 per run'}</span><span>Tested loads only · maximum sustainable rate not measured</span></p></header><Selector episode={episode} value={value} select={(v, replace) => setParam(key, v, replace)} /><BriefChapter episode={episode} value={value} rows={rows} equalWork={equalWork} lab={lab} toggleLab={toggleLab} toggleRef={toggleRef} />{episode === 1 && <><EpisodeOneContract /><div className="tbt-lab-toggle-row"><button id="lab-toggle" ref={toggleRef} type="button" aria-expanded={lab} aria-controls="lab" onClick={toggleLab} className="tbt-lab-toggle">{lab ? 'Collapse lab ↑' : 'Open evidence lab ↓'}</button></div></>}{lab && <div id="lab"><MethodChapter episode={episode} /><EvidenceChapter episode={episode} value={value} route={route} setParam={setParam} /><BoundariesChapter episode={episode} /><SourceChapter episode={episode} route={route} /></div>}{episode === 1 && <RunCost />}<EpisodePager number={episode} /></article>;
 }
-function Planned({ number }: { number: number }) { const e = episodes.find(e => e.number === number)!; return <article className="tbt-study tbt-planned-page"><p className="tbt-eyebrow">Episode {String(number).padStart(2,'0')} · Planned</p><section className="tbt-planned-outline"><span data-planned-watermark aria-hidden="true">Planned</span><div className="tbt-planned-copy"><span className="tbt-planned-state">Planned</span><h1 id="page-title">{e.title}</h1><p>{e.summary}</p><p><strong>What is being tested:</strong> {number === 2 ? 'whether deployment behavior changes when the useful work contract, workload and measurement rules are fixed across every arm.' : 'whether the declared change alters serving behavior under a fixed work contract and reviewed measurement rules.'}</p><a href={`${GITHUB_URL}/blob/main/docs/roadmap.md#${e.roadmapAnchor}`} target="_blank" rel="noopener noreferrer">Read the experiment roadmap →</a></div></section><EpisodePager number={number} /></article>; }
+function Planned({ number }: { number: number }) { const e = episodes.find(e => e.number === number)!; return <article className="tbt-study tbt-planned-page"><p className="tbt-eyebrow">Episode {String(number).padStart(2,'0')} · Planned</p><section className="tbt-planned-outline"><span data-planned-watermark aria-hidden="true">Planned</span><div className="tbt-planned-copy"><span className="tbt-planned-state">Planned</span><h1 id="page-title">{e.title}</h1><p>{e.summary}</p><p><strong>What is being tested:</strong> {number === 2 ? 'whether deployment behavior changes when the useful work contract, workload and measurement rules are fixed across every arm.' : 'whether the declared change alters serving behavior under a fixed work contract and reviewed measurement rules.'}</p><a href={`#episodes?open=${e.id}`}>Read the experiment roadmap →</a></div></section><EpisodePager number={number} /></article>; }
 function Methodology() {
   const glossary = [
     ['Output throughput', 'Successful output tokens divided by measured seconds. Higher is better only when delivered work is comparable.'],
@@ -577,6 +585,6 @@ export function PublicSite() {
       {siteMenu && <nav id="site-menu" className="tbt-mobile-panel" aria-label="Site"><a href="#episodes">Home</a><a href="#methodology">Methodology</a><ExternalLinks /><p>About the harness</p><small>Benchmarking harness powered by AgentBench from <span data-mirastack-labs>Mirastack Labs</span>. Contact hello@mirastacklabs.ai.</small></nav>}
       {epMenu && <nav id="ep-menu" className={`tbt-mobile-panel ${isStudy || isPlanned ? 'tbt-five-chapter' : ''}`} aria-label="Episodes and chapters">{chapters.length>0 && <><p>On this page</p>{chapterLinks}</>}<p>Episodes</p>{epLinks}</nav>}
     </header>
-    <div className="tbt-layout"><nav data-screen-label="Episode rail" className="tbt-rail" aria-label="Episodes and chapters"><p>Episodes</p><div className="tbt-rail-episodes">{epLinks}</div>{chapters.length>0 && <><p>On this page</p><div className={`tbt-rail-chapters ${isStudy || isPlanned ? 'tbt-five-chapter' : ''}`}>{chapterLinks}</div></>}</nav><main id="main" tabIndex={-1}>{page==='episodes'?<Landing/>:page==='methodology'?<Methodology/>:isStudy?<Study episode={episodeNumber as 0|1} route={route} setParam={setParam}/>:isPlanned?<Planned number={episodeNumber!}/>:<article><h1 id="page-title">Not in the catalog</h1><p>Nothing is published at this address.</p><a href="#episodes">All episodes</a></article>}</main></div>
+    <div className="tbt-layout"><nav data-screen-label="Episode rail" className="tbt-rail" aria-label="Episodes and chapters"><p>Episodes</p><div className="tbt-rail-episodes">{epLinks}</div>{chapters.length>0 && <><p>On this page</p><div className={`tbt-rail-chapters ${isStudy || isPlanned ? 'tbt-five-chapter' : ''}`}>{chapterLinks}</div></>}</nav><main id="main" tabIndex={-1}>{page==='episodes'?<Landing openEpisode={route.params.get('open')}/>:page==='methodology'?<Methodology/>:isStudy?<Study episode={episodeNumber as 0|1} route={route} setParam={setParam}/>:isPlanned?<Planned number={episodeNumber!}/>:<article><h1 id="page-title">Not in the catalog</h1><p>Nothing is published at this address.</p><a href="#episodes">All episodes</a></article>}</main></div>
   </div>;
 }
