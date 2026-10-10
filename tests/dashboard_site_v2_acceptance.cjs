@@ -46,6 +46,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.match(await episodeTwoRow.innerText(), /The experiment map.*Randomize or counterbalance execution order.*Evidence:.*selected images and kernels/is, 'planned disclosure uses the matching roadmap section and evidence contract');
     assert.match(await episodeTwoRow.getByRole('link', { name: /Read the experiment roadmap/ }).getAttribute('href'), /docs\/roadmap\.md#2-equal-work-runtime-baseline$/);
     assert.equal(await episodeTwoRow.locator('.tbt-index-context > p:not(.tbt-eyebrow)').evaluateAll(elements => elements.every(el => Number(getComputedStyle(el).fontWeight) <= 300)), true, 'roadmap context and evidence use the approved lighter reading weight');
+    assert.equal(await episodeTwoRow.locator('.tbt-index-context').evaluate(el => parseFloat(getComputedStyle(el).rowGap) >= 12), true, 'experiment text, Evidence, and roadmap link have readable vertical separation');
     const episodeZeroRow = page.locator('[data-episode-index-row="episode-0"]');
     await episodeZeroRow.getByRole('button', { name: /Show context for Episode 00/ }).click();
     assert.equal(await episodeZeroRow.getByRole('link', { name: /Open the recorded study/ }).getAttribute('href'), '#episode-0', 'recorded disclosures contain the study link');
