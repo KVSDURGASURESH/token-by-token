@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "currency": "USD",
+  "bucket_timezone": "UTC",
+  "source": "RunPod billing API read on 2026-10-10",
+  "episodes": {
+    "episode-00": {
+      "campaign_window": ["2026-09-19", "2026-09-20"],
+      "gpu_amount": 11.687036822084338,
+      "disk_amount": 0.1440972206182778,
+      "total_amount": 11.831134042702616,
+      "buckets": [
+        {"date": "2026-09-19", "purpose": "earlier RTX PRO 6000 trial", "gpu_amount": 4.138400860130787, "disk_amount": 0.07118055340833962, "total_amount": 4.2095814135391265},
+        {"date": "2026-09-20", "purpose": "H100 baseline and stress campaign day, including preflight and failed attempts", "gpu_amount": 7.548635961953551, "disk_amount": 0.07291666720993817, "total_amount": 7.621552629163489}
+      ],
+      "boundary": "The billing API attributes spend by UTC day and pod, not by successful benchmark phase. September 18 spend is excluded because the retained episode record does not establish its relationship to Episode 00."
+    },
+    "episode-01": {
+      "campaign_window": ["2026-10-04", "2026-10-05"],
+      "gpu_amount": 18.86960467416793,
+      "disk_amount": 0.19675926072523097,
+      "total_amount": 19.06636393489316,
+      "buckets": [
+        {"date": "2026-10-04", "purpose": "RTX PRO 6000 AgentBench campaign work", "gpu_amount": 11.612096880562603, "disk_amount": 0.15277777891606092, "total_amount": 11.764874659478664},
+        {"date": "2026-10-05", "purpose": "H200 AgentBench campaign work", "gpu_amount": 7.257507793605328, "disk_amount": 0.043981481809169054, "total_amount": 7.301489275414497}
+      ],
+      "boundary": "These are whole campaign-day billing buckets. They include setup, retries, validation and idle time as well as successful measurements; the billing API does not allocate spend to individual benchmark phases."
+    }
+  }
+}

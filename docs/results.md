@@ -34,7 +34,7 @@ Every runtime/run arm recorded a 100% GPU-utilization peak. Observed peak memory
 
 ## Cost and provenance
 
-The retained study records approximately **$2.19 combined conservative CLI debit**. It is not an invoice, an allocation of cost by runtime, or a cost-per-million-token result. Historical resource deletion was verified after each run. The local fixture dry run costs **$0 in provider charges**. A separate earlier RTX PRO 6000 trial cost **$4.1280**, including setup and troubleshooting; it is not part of the H100 experiment total. The [cost evidence ledger](cost-evidence.md) distinguishes observed debits, estimates and unavailable per-retry allocations. This editorial revision created no paid resources.
+The RunPod billing API records **$11.8311 total** for the September 19–20 Episode 00 campaign window: $11.6870 GPU and $0.1441 disk. This includes the earlier RTX PRO 6000 trial and the H100/A100 campaign day, including setup, troubleshooting and unsuccessful work; it is not an allocation by runtime or successful measurement. The older approximately $2.19 CLI-debit note is superseded by the billing read. Historical resource deletion was verified after each run, and the local fixture dry run costs **$0 in provider charges**. The [cost evidence ledger](cost-evidence.md) records the observed buckets and unavailable per-phase allocations. This editorial revision created no paid resources.
 
 The exact historical container image digests and harness commit are not retained. An exact environment replay cannot be claimed. The companion project's recommended launch recipe is a new configuration that must be pinned and checked before a fresh paid run.
 

@@ -98,6 +98,17 @@ APPROVED_PUBLIC_ATTRIBUTION_RE = re.compile(
     r"Benchmarking\s+harness\s+powered\s+by\s+AgentBench\s+from.{0,200}?Mirastack\s+Labs",
     re.IGNORECASE,
 )
+APPROVED_PUBLIC_TOOL_CONTEXT_RE = re.compile(
+    r"\b(?:"
+    r"Bundled\s+AgentBench\s+corpus\s+inputs|"
+    r"default\s+AgentBench\s+corpus|"
+    r"AgentBench\s+itself|"
+    r"AgentBench\s+(?:takes|converts|keeps|stores|records|samples|invokes|wraps|implements|pins|turns)\b|"
+    r"How\s+AgentBench\s+turns\b|"
+    r"AgentBench\s+is\s+a\s+private\s+Mirastack\s+Labs\s+benchmarking\s+harness"
+    r")",
+    re.IGNORECASE,
+)
 ENGINE_VERSION_RE = re.compile(r"\b(?:vllm|sglang)\s*:?\s*v?\d+(?:\.\d+){1,3}\b", re.IGNORECASE)
 PRIVATE_OPTIMIZATION_RE = re.compile(
     r"\b(?:extra_buffer_lazy|mamba-full-memory-ratio|triton\s+gdn|language-only\s+mode)\b",
@@ -273,6 +284,7 @@ def _scan_line(
         add("private-key")
     if public_policy:
         policy_line = APPROVED_PUBLIC_ATTRIBUTION_RE.sub("", line)
+        policy_line = APPROVED_PUBLIC_TOOL_CONTEXT_RE.sub("", policy_line)
         for address in APPROVED_PUBLIC_EMAILS:
             policy_line = re.sub(re.escape(address), "", policy_line, flags=re.IGNORECASE)
         if PUBLIC_TOOL_NAME_RE.search(policy_line):

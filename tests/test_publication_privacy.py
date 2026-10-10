@@ -137,6 +137,22 @@ class PublicationPrivacyTests(unittest.TestCase):
             {item.category for item in findings}, {"private-benchmark-name"}
         )
 
+    def test_public_policy_allows_reviewed_methodology_credits_but_not_profiles(self):
+        methodology = (
+            "Bundled AgentBench corpus inputs. AgentBench pins dataset revisions. "
+            "How AgentBench turns declared workloads into reviewed evidence. "
+            "AgentBench is a private Mirastack Labs benchmarking harness."
+        )
+        self.assertEqual(
+            MODULE.scan_text("assets/public.js", methodology, public_policy=True), set()
+        )
+        findings = MODULE.scan_text(
+            "assets/public.js", methodology + " AgentBench profile", public_policy=True
+        )
+        self.assertEqual(
+            {item.category for item in findings}, {"private-benchmark-name"}
+        )
+
     def test_public_evidence_rejects_private_metadata_keys(self):
         key = "config" + "uration"
         findings = MODULE.scan_text(

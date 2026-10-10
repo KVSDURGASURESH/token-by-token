@@ -126,24 +126,25 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('#ch-brief table tbody tr').count(), 4);
     assert.equal(await page.locator('#ch-brief .tbt-caveat li').count() >= 3, true);
     assert.equal(await page.locator('[data-experiment-contract]').count(), 1, 'Episode 01 publishes a bounded experiment contract');
-    assert.equal(await page.locator('[data-config-state="enabled"]').count(), 4);
-    assert.equal(await page.locator('[data-config-state="withheld"]').count(), 2);
-    assert.match(await page.locator('[data-experiment-contract]').innerText(), /One H200 per arm.*Matched model family.*Runtime optimization flags.*withheld/is);
-    assert.doesNotMatch(await page.locator('[data-experiment-contract]').innerText(), /Qwen|max_concurrent|prefix_caching|kv_cache_dtype/i, 'the public contract does not compile serving settings into the site');
+    assert.equal(await page.locator('[data-config-state="enabled"]').count(), 2);
+    assert.equal(await page.locator('[data-config-state="inherited"]').count(), 4);
+    assert.equal(await page.locator('[data-config-state="disabled"]').count(), 2);
+    assert.match(await page.locator('[data-experiment-contract]').innerText(), /Prefix caching.*Enabled in both recorded arms.*FP8 KV cache.*vLLM FP8.*SGLang FP8 E4M3.*Continuous batching.*not isolated.*Prefill scheduling.*not isolated.*KV-cache paging.*not isolated.*Attention backend.*vLLM runtime-selected.*SGLang FA3 recorded.*Speculative decoding.*Off in the published baseline arms.*Tensor parallelism.*TP = 1/is);
+    assert.doesNotMatch(await page.locator('[data-experiment-contract]').innerText(), /engine default|unavailable/i, 'the public contract avoids unsupported default claims and empty details');
     const configColors = await page.locator('[data-experiment-contract]').evaluate(root => {
       const css = (selector) => getComputedStyle(root.querySelector(selector));
       return {
         ink: getComputedStyle(document.querySelector('[data-tbt]')).color,
         enabledLabel: css('[data-config-state="enabled"] b').color,
         enabledIcon: css('[data-config-state="enabled"] i').color,
-        inheritedLabel: css('[data-config-state="withheld"] b').color,
-        inheritedDetail: css('[data-config-state="withheld"] small').color,
+        inheritedDetail: css('[data-config-state="inherited"] small').color,
+        disabledDetail: css('[data-config-state="disabled"] small').color,
       };
     });
     assert.equal(configColors.enabledLabel, configColors.ink, 'configuration labels remain neutral');
-    assert.equal(configColors.inheritedLabel, configColors.ink, 'inherited labels remain neutral');
     assert.notEqual(configColors.enabledIcon, configColors.ink, 'only the enabled status mark carries evidence color');
-    assert.notEqual(configColors.inheritedDetail, configColors.ink, 'only inherited detail carries the amber state color');
+    assert.notEqual(configColors.inheritedDetail, 'rgba(0, 0, 0, 0)', 'not-isolated engine behavior remains readable');
+    assert.notEqual(configColors.disabledDetail, 'rgba(0, 0, 0, 0)', 'recorded disabled states remain readable');
     assert.equal(await page.locator('.tbt-config-grid').evaluate(el => Number.parseFloat(getComputedStyle(el).paddingBottom) >= 18), true, 'the experiment-contract divider leaves breathing room below its option details');
     const contractBox = await page.locator('[data-experiment-contract]').boundingBox();
     const labToggleBox = await page.locator('#lab-toggle').boundingBox();
@@ -163,15 +164,30 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.waitForTimeout(850);
     assert.equal(await page.locator('.tbt-paper-stage').evaluate(el => el.getBoundingClientRect().height >= 580), true, 'configuration paper unfolds with the approved transition');
     assert.equal(await page.locator('.tbt-paper').evaluate(el => el.scrollHeight <= el.clientHeight + 1), true, 'the unfolded paper never clips the JSON or privacy boundary');
-    assert.match(await page.locator('[data-configuration-note]').innerText(), /"user_levels".*"measurement_seconds".*"decode_p10_floor_tps"/is);
-    assert.doesNotMatch(await page.locator('[data-configuration-note]').innerText(), /Qwen|max_concurrent|prefix_caching|kv_cache_dtype/i);
-    assert.match(await page.locator('[data-configuration-note]').innerText(), /public measurement contract.*not a runnable serving profile/is);
+    assert.match(await page.locator('[data-configuration-note]').innerText(), /"prefix_caching": true.*"kv_cache_dtype".*"vllm": "fp8".*"sglang": "fp8_e4m3".*"paged_kv_management": "built_in_not_isolated".*"attention_backend".*"sglang": "fa3".*"admission_cap_per_arm": 1024.*"warmup_seconds": 120.*"measurement_seconds": 300/is);
+    assert.match(await page.locator('[data-configuration-note]').innerText(), /reviewed public configuration extract.*not a runnable serving profile/is);
     assert.equal(await page.locator('[data-run-cost]').count(), 1, 'Episode 01 explains the bounded cost model');
     const runCostText = await page.locator('[data-run-cost]').innerText();
-    assert.match(runCostText, /\$3\.21.*42 GPU-minutes/is);
-    assert.match(runCostText, /\$4\.59\s*\/\s*hr.*not the provider invoice/is);
+    assert.match(runCostText, /\$19\.07.*\$18\.87 GPU.*\$0\.20 storage.*Published-study GPU class.*\$7\.26.*Trial and setup.*\$11\.61.*Attached storage.*\$0\.20/is);
+    assert.match(runCostText, /\$7\.26 \+ \$11\.61 \+ \$0\.20 = \$19\.07.*\$3\.21 comparable-window figure/is);
     assert.equal(await page.locator('[data-cost-provider]').innerText(), 'RUNPOD');
     assert.equal(await page.locator('[data-cost-provider]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'the recorded cost provider uses the cyan identity accent');
+    assert.equal(await page.locator('[data-headline-count-accent]').innerText(), 'one');
+    assert.equal(await page.locator('[data-headline-count-accent]').evaluate(el => getComputedStyle(el).color), 'rgb(178, 47, 24)', 'the single-GPU count uses the red evidence accent');
+    assert.equal(await page.locator('[data-headline-hardware-accent]').innerText(), 'H200');
+    assert.equal(await page.locator('[data-headline-hardware-accent]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'the GPU class uses the cyan identity accent');
+    assert.equal(await page.locator('.tbt-config-grid small').first().evaluate(el => getComputedStyle(el).fontWeight), '300', 'contract supporting text uses a lighter weight');
+    await page.goto(`${base}#episode-0`);
+    assert.equal(await page.locator('[data-experiment-contract]').count(), 1, 'Episode 00 uses the same recorded-contract pattern');
+    assert.match(await page.locator('[data-experiment-contract]').innerText(), /Prefix caching.*Chunked prefill.*Warm-up gate.*Required before measurement/is);
+    assert.doesNotMatch(await page.locator('[data-experiment-contract]').innerText(), /unavailable|null|not retained/i, 'Episode 00 shows supported contract details only');
+    assert.equal(await page.locator('[data-run-cost]').getAttribute('data-cost-kind'), 'observed');
+    assert.match(await page.locator('[data-run-cost]').innerText(), /\$11\.83.*\$11\.69 GPU.*\$0\.14 storage.*Published-study GPU class.*\$6\.43.*Trial and setup.*\$5\.26.*Attached storage.*\$0\.14/is);
+    assert.match(await page.locator('[data-run-cost]').innerText(), /\$6\.43 \+ \$5\.26 \+ \$0\.14 = \$11\.83.*separate RTX PRO 4500 bill is excluded/is);
+    assert.doesNotMatch(await page.locator('[data-run-cost]').innerText(), /\b(?:Sep(?:tember)?|Oct(?:ober)?)\b/i);
+    assert.equal(await page.locator('[data-cost-provider]').innerText(), 'RUNPOD');
+    assert.equal(await page.locator('[data-headline-count-accent]').innerText(), 'one');
+    assert.equal(await page.locator('[data-headline-hardware-accent]').innerText(), 'H100');
     await page.goto(`${base}#episode-2`);
     assert.equal(await page.locator('.tbt-planned-state').innerText(), 'PLANNED');
     assert.equal(await page.locator('.tbt-planned-state').evaluate(el => getComputedStyle(el).color), 'rgb(90, 105, 102)', 'planned state stays neutral in the navigation system');
@@ -205,7 +221,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('.tbt-rail-chapters button:nth-child(4)').innerText(), '04\nBoundaries', 'scroll spy follows the visible chapter');
     await page.locator('#ch-brief').scrollIntoViewIfNeeded();
     await page.waitForFunction(() => document.querySelector('.tbt-rail-chapters button:first-child')?.getAttribute('aria-current') === 'location');
-    assert.equal(await page.locator('#ch-method [data-protocol-row]').count(), 6);
+    assert.equal(await page.locator('#ch-method [data-protocol-row]').count(), 5);
     assert.equal(await page.locator('#ch-boundaries [data-boundary-block]').count(), 4);
     assert.equal(await page.locator('#ch-source [data-source-row]').count(), 4);
     assert.match(await page.locator('#ch-source').innerText(), /offline evidence client.*real benchmark submission is not released/i);
@@ -380,8 +396,8 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.deepEqual(tooltipColors, { color: 'rgb(23, 47, 45)', background: 'rgb(251, 250, 245)' }, 'light tooltip uses dark text on a light surface');
     const telemetry = page.locator('#ch-evidence [data-workload-telemetry]');
     assert.match(await telemetry.innerText(), /Waiting requests peak\s+14\.5 req\s+17\.0 req/);
-    assert.match(await telemetry.innerText(), /Prefill duration \(native\)\s+1\.12 s\s+∅ Not exposed/);
-    assert.match(await telemetry.innerText(), /Decode duration \(native\)\s+4\.55 s\s+∅ Not exposed/);
+    assert.match(await telemetry.innerText(), /vLLM-native phase timing.*Prefill 1\.12 s.*Decode 4\.55 s/is);
+    assert.doesNotMatch(await telemetry.innerText(), /Not exposed|Unavailable/i, 'native telemetry omits empty comparison cells');
     assert.equal(await page.locator('#ch-source [data-source-row]').count(), 5);
     assert.match(await page.locator('#ch-source').innerText(), /rounded from retained public runtime and GPU records/i);
     assert.equal(await page.locator('#ch-source a[download="episode-0-public-telemetry.json"]').count(), 1);
@@ -404,7 +420,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('#ch-brief .tbt-finding .state-band').count(), 1);
     assert.equal(await page.locator('#ch-brief .tbt-finding .state-band').evaluate(el => getComputedStyle(el).color), 'rgb(138, 91, 0)');
     await page.getByRole('button', { name: /Open evidence lab/ }).click();
-    assert.equal(await page.locator('#ch-method [data-protocol-row]').count(), 6);
+    assert.equal(await page.locator('#ch-method [data-protocol-row]').count(), 5);
     assert.equal(await page.locator('#ch-method [data-request-anatomy]').count(), 0);
     assert.match(await page.locator('#ch-evidence h2').innerText(), /8,192-token input · 8 concurrent/is);
     assert.equal(await page.locator('#ch-evidence [data-evidence-group]').count() >= 2, true);
