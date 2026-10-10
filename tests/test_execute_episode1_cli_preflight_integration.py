@@ -75,6 +75,15 @@ class Fixture:
         for name in ("pyproject.toml", "uv.lock"):
             shutil.copy2(FROZEN / name, self.root / name)
 
+        # This synthetic repository is compiled and executed by the current
+        # supported Python 3.12 patch. Bind its selected environment before the
+        # fixture commit and material closure are created; production continues
+        # to require an exact match to the selected environment contract.
+        client_environment_path = self.root / "runtime/episode1/client-environment.json"
+        client_environment = json.loads(client_environment_path.read_text())
+        client_environment["python_version"] = ".".join(str(item) for item in sys.version_info[:3])
+        client_environment_path.write_bytes(canonical_bytes(client_environment))
+
         # This exact fixed-path adapter is material, but preflight must parse it
         # only as source. Executing it creates a marker and then raises.
         self.marker = parent / "adapter-imported"

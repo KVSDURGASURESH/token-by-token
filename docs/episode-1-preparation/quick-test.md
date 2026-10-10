@@ -12,21 +12,17 @@ for comparable Episode 1 claims.
 ## Zero-GPU demo
 
 From the repository root, use the combined launcher. On a fresh checkout it
-installs the pinned dashboard dependencies and builds the UI before starting
-the loopback bridge; later launches reuse the existing build:
+installs the pinned dashboard dependencies and builds the public site before
+starting the loopback bridge; later launches reuse the existing build:
 
 ```bash
 scripts/quick-test demo
 ```
 
-Open <http://127.0.0.1:8765/#quick-test>. Choose a single request or two-lane
-comparison, then press **Start**. The two built-in profiles are deterministic
-local streaming fixtures; they create no provider resource and need no secret.
-**Stop** aborts the browser request and signals the runner cancellation event,
-which prevents later repetition waves from being dispatched.
-
-Leave that process running. In another terminal, the matching CLI uses the
-same bridge and configuration schema:
+The current public dashboard is informational and does not expose request
+controls. Leave the bridge process running and use the CLI from another
+terminal. The two built-in profiles are deterministic local streaming
+fixtures; they create no provider resource and need no secret:
 
 ```bash
 scripts/quick-test request \
@@ -38,7 +34,8 @@ scripts/quick-test compare \
   --prompt 'Explain TTFT in one sentence.' --repetitions 3
 ```
 
-Use **Save config** in the UI and replay it without translating fields:
+You can also provide a reviewed configuration file instead of individual CLI
+flags:
 
 ```bash
 scripts/quick-test compare \
@@ -90,13 +87,12 @@ repetitions, and at most four concurrent repetition waves.
 - Repetitions improve a quick diagnostic but do not turn it into the formal
   ShareGPT serving benchmark or GSM8K evaluation.
 
-## Episode 1–16 console
+## Episode 1–16 endpoint rehearsal CLI
 
-The `#episode-runner` dashboard contains runnable endpoint rehearsal packs for
-all 16 planned episodes. It exposes the same closed configuration through the
-form, CLI flags, and JSON. `suite_repetitions` repeats the complete ordered pack
-from the first cell to the last; `repetitions` controls requests inside each
-cell.
+The `episode` command contains bounded endpoint rehearsal packs for all 16
+planned episodes. It accepts a closed configuration through CLI flags or JSON.
+`suite_repetitions` repeats the complete ordered pack from the first cell to
+the last; `repetitions` controls requests inside each cell.
 
 ```bash
 scripts/quick-test episode \
@@ -108,13 +104,14 @@ scripts/quick-test episode \
 scripts/quick-test episode --config examples/episode-run.example.json
 ```
 
-The UI reports TTFT, TPOT, end-to-end p95/p99, client inter-chunk p95, request
-success, and runner throughput summaries. Client inter-chunk cadence is not
-claimed as exact token ITL. GPU utilization and memory are shown only when the
-bridge runs on the GPU host and the endpoint profile opts into
-`local_nvidia_smi`; a remote OpenAI-compatible endpoint does not expose those
-values. Runtime, GPU, cache/prefill/batching, and DP/TP/PP/EP fields describe an
-already-running endpoint and are not mutations made by the test client.
+The aggregate JSON reports TTFT, TPOT, end-to-end p95/p99, client inter-chunk
+p95, request success, and runner throughput summaries. Client inter-chunk
+cadence is not claimed as exact token ITL. GPU utilization and memory are
+included only when the bridge runs on the GPU host and the endpoint profile
+opts into `local_nvidia_smi`; a remote OpenAI-compatible endpoint does not
+expose those values. Runtime, GPU, cache/prefill/batching, and DP/TP/PP/EP
+fields describe an already-running endpoint and are not mutations made by the
+test client.
 
 ## Local Docker deployment with VictoriaMetrics
 
@@ -130,16 +127,16 @@ docker compose up --build -d
 docker compose ps
 ```
 
-- Console: <http://127.0.0.1:8765/#episode-runner>
+- Public dashboard (informational only): <http://127.0.0.1:8765/>
 - Health: <http://127.0.0.1:8765/healthz>
 - Prometheus exposition: <http://127.0.0.1:8765/metrics>
 - VictoriaMetrics VMUI: <http://127.0.0.1:8428/vmui/>
 
 VictoriaMetrics scrapes every five seconds and retains data in the named
-`victoria-metrics-data` volume for 30 days. The application has a Grafana-style
-live summary; VMUI provides stored time-series queries. Stop the containers
-without deleting history using `docker compose down`. To remove metrics too,
-explicitly run `docker compose down -v`.
+`victoria-metrics-data` volume for 30 days. VMUI provides stored time-series
+queries; the public dashboard does not render these live metrics. Stop the
+containers without deleting history using `docker compose down`. To remove
+metrics too, explicitly run `docker compose down -v`.
 
 Rollback is `docker compose down`, followed by checkout of the prior commit and
 `docker compose up --build -d`. No compose service creates, changes, or deletes

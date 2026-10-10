@@ -17,9 +17,9 @@ The three capstones have distinct outcomes: a serving configuration, an evidence
 | Planned phase | What we will explore |
 |---|---|
 | **Establish a comparable baseline** | Measurement and quality contracts; compare runtimes performing the same declared work. [Stages 1–2](roadmap.md#1-measurement-and-quality-contracts). |
-| **Bound capacity and test optimizations** | Memory limits, saturation, prefix reuse, continuous batching, chunked prefill, attention kernels, precision and speculative decoding. [Stages 6–11](roadmap.md#6-packaging-accelerator-preflight-and-memory-containment). |
-| **Scale within and across nodes** | Data (DP), tensor (TP), pipeline (PP) and expert (EP, for MoE) parallelism; split prefill/decode; test cache-aware and request-length-aware routing. [Stages 12–14](roadmap.md#12-parallelism-within-one-node). |
-| **Operate and validate** | Slurm/Kubernetes, KServe/Ray Serve, observability, quality gates, autoscaling and recovery; combine and retest settings for the use case. [Stages 15–16](roadmap.md#15-slurm-and-kubernetes-orchestration). |
+| **Bound capacity and test optimizations** | Prefix reuse, batching, attention kernels and precision, speculative decoding, memory containment, saturation and SLO-qualified cost. [Stages 3–6](roadmap.md#3-prefix-reuse) and [14–15](roadmap.md#14-packaging-accelerator-preflight-and-memory-containment). |
+| **Scale within and across nodes** | Data (DP), tensor (TP), pipeline (PP) and expert (EP, for MoE) parallelism; split prefill/decode; test cache-aware and request-length-aware routing. [Stages 7–9](roadmap.md#7-parallelism-within-one-node). |
+| **Operate and validate** | Slurm/Kubernetes, KServe/Ray Serve, observability, quality gates, autoscaling and recovery; combine and retest settings for the use case. [Stage 10](roadmap.md#10-slurm-and-kubernetes-orchestration) and [Stage 16](roadmap.md#16-release-gates-recovery-and-capstone-synthesis). |
 
 ## Project 1 — Serving Reliability Lab
 
@@ -66,10 +66,10 @@ These are shared learning tracks for **Serving Reliability Lab**, **Evidence-Gro
 
 | Shared learning track | What it helps us understand |
 |---|---|
-| **Model internals** | Weights, attention, forward/backward passes, gradients and optimizer state; connect them to memory and compute. [Stage 3](roadmap.md#3-model-internals-weights-to-optimization). |
-| **LoRA and QLoRA** | Trainable adapters, frozen base weights, precision and memory; evaluate changes on held-out tasks. [Stage 4](roadmap.md#4-lora-and-qlora-with-held-out-evaluation). |
+| **Model internals** | Weights, attention, forward/backward passes, gradients and optimizer state; connect them to memory and compute. [Stage 11](roadmap.md#11-model-internals-weights-to-optimization). |
+| **LoRA and QLoRA** | Trainable adapters, frozen base weights, precision and memory; evaluate changes on held-out tasks. [Stage 12](roadmap.md#12-lora-and-qlora-with-held-out-evaluation). |
 | **Benchmarking and quality evaluation** | Measure speed, resources and cost alongside correctness and usefulness. Every experiment carries both contracts. |
-| **Jev vs LLMs** | Compare TypeSafe AI's Jev with LLMs on matched, labeled classification, routing or scoring tasks. [Stage 5](roadmap.md#5-jev-and-llms-on-labeled-decision-tasks). |
-| **Slurm vs Kubernetes** | Choose how to schedule queued jobs, coordinated experiments and continuously operated services; study when a combination fits. [Stage 15](roadmap.md#15-slurm-and-kubernetes-orchestration). |
+| **Jev vs LLMs** | Compare TypeSafe AI's Jev with LLMs on matched, labeled classification, routing or scoring tasks. [Stage 13](roadmap.md#13-jev-and-llms-on-labeled-decision-tasks). |
+| **Slurm vs Kubernetes** | Choose how to schedule queued jobs, coordinated experiments and continuously operated services; study when a combination fits. [Stage 10](roadmap.md#10-slurm-and-kubernetes-orchestration). |
 
 A concept post, optimization experiment, incident drill or dashboard is a supporting artifact. The roadmap owns its procedure and evidence requirements. **All future work is planned.** Paid experiments require an approved execution plan and budget.

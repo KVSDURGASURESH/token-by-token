@@ -354,7 +354,9 @@ def serve(args: argparse.Namespace) -> int:
     )
     server = ThreadingHTTPServer((args.host, args.port), Handler)
     server.state = State(profiles, dashboard, canonical)  # type: ignore[attr-defined]
-    print(f"Episode test console: http://127.0.0.1:{args.port}/#episode-runner", flush=True)
+    print(f"Loopback bridge: http://127.0.0.1:{args.port}/", flush=True)
+    print("Run `scripts/quick-test request`, `compare`, or `episode` from another terminal.", flush=True)
+    print("The public dashboard is informational; request controls are CLI-only.", flush=True)
     print("Local diagnostic only; not benchmark evidence.", flush=True)
     try:
         server.serve_forever()

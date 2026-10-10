@@ -46,10 +46,11 @@ PYTHONPATH=src .venv/bin/python scripts/compile_episode1_execution.py --help
 PYTHONPATH=src .venv/bin/python scripts/execute_episode1.py --help
 ```
 
-The browser dashboard remains optional for the formal RunPod handoff. To launch
-the dashboard and demo bridge together, run `scripts/quick-test demo`; the
-launcher bootstraps the pinned frontend dependencies and build when absent.
-Its `request` and `compare` commands are the matching CLI clients. See
+The browser dashboard remains informational and optional for the formal RunPod
+handoff. Run `scripts/quick-test demo` to launch the loopback bridge with its
+deterministic demo endpoints; the launcher bootstraps the pinned frontend
+dependencies and build when absent. Use the `request`, `compare`, or `episode`
+CLI commands from another terminal. See
 `docs/episode-1-preparation/quick-test.md` for live endpoint profiles.
 
 ## 3. Complete the machine-specific gates

@@ -16,7 +16,7 @@ assert(fs.existsSync(dataPath), "normalized Episode 01 evidence must exist");
 const study = JSON.parse(fs.readFileSync(dataPath, "utf8"));
 
 assert.equal(study.schema_version, "public-inference-evidence.v1");
-assert.equal(study.study.model_family, "Qwen3.8 27B");
+assert.equal(study.study.model_family, "Matched model family");
 assert.equal(study.study.hardware, "NVIDIA H200");
 assert.equal(study.methodology.capacity_state, "not_established");
 assert.equal(study.methodology.decode_threshold_tps, 20);

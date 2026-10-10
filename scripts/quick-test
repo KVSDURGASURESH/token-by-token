@@ -10,8 +10,8 @@ usage() {
 Usage: scripts/quick-test <command> [options]
 
 Commands:
-  demo       Build when needed, then launch the dashboard with local demo lanes
-  serve      Build when needed, then launch the dashboard for configured endpoints
+  demo       Launch the loopback bridge with deterministic local demo lanes
+  serve      Launch the loopback bridge for configured endpoints
   request    Run one CLI request through an already-running bridge
   compare    Run a CLI comparison through an already-running bridge
   episode    Run one Episode 1-16 endpoint rehearsal through the bridge

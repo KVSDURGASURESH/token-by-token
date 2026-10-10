@@ -37,7 +37,7 @@ METRICS: tuple[dict[str, str], ...] = (
     {"id": "waiting_requests_mean", "label": "Waiting requests", "unit": "requests", "direction": "contextual", "explanation": "Mean runtime-native waiting-request gauge in the measured window."},
     {"id": "cache_context", "label": "Cache context", "unit": "%", "direction": "contextual", "explanation": "Available cache context retained without cross-engine normalization."},
     {"id": "gpu_utilization_pct", "label": "GPU utilization", "unit": "%", "direction": "contextual", "explanation": "Mean sampled device utilization in the measured window."},
-    {"id": "gpu_memory_gib", "label": "GPU memory", "unit": "GiB", "direction": "contextual", "explanation": "Mean sampled device memory use in the measured window."},
+    {"id": "gpu_memory_gib", "label": "Maximum sampled GPU memory", "unit": "GiB", "direction": "contextual", "explanation": "Maximum sampled device memory use in the measured window."},
     {"id": "gpu_power_w", "label": "GPU power", "unit": "W", "direction": "contextual", "explanation": "Mean sampled board power in the measured window."},
 )
 METRIC_BY_ID = {metric["id"]: metric for metric in METRICS}
@@ -363,15 +363,35 @@ def _counter_rate_samples(
             continue
         identity = json.dumps(labels, sort_keys=True, separators=(",", ":"))
         identities[identity].append((timestamp, value))
-    buckets: dict[int, float] = defaultdict(float)
-    for values in identities.values():
+    intervals: dict[str, list[tuple[float, float, float]]] = defaultdict(list)
+    for identity, values in identities.items():
         previous: tuple[float, float] | None = None
         for timestamp, value in sorted(values):
             if previous is not None and timestamp > previous[0] and value >= previous[1]:
-                offset = max(0, min(300, round(timestamp - start)))
-                buckets[offset] += (value - previous[1]) / (timestamp - previous[0])
+                intervals[identity].append(
+                    (previous[0], timestamp, (value - previous[1]) / (timestamp - previous[0]))
+                )
             previous = (timestamp, value)
-    samples = [[offset, round(value, 6)] for offset, value in sorted(buckets.items())]
+    boundaries = sorted({edge for series in intervals.values() for interval in series for edge in interval[:2]})
+    buckets: dict[int, list[tuple[float, float]]] = defaultdict(list)
+    for left, right in zip(boundaries, boundaries[1:]):
+        if right <= left:
+            continue
+        rates: list[float] = []
+        for series in intervals.values():
+            covering = next((rate for interval_start, interval_end, rate in series
+                             if interval_start <= left and interval_end >= right), None)
+            if covering is None:
+                break
+            rates.append(covering)
+        else:
+            offset = max(0, min(300, round(right - start)))
+            buckets[offset].append((sum(rates), right - left))
+    samples = [
+        [offset, round(sum(value * duration for value, duration in values) /
+                       sum(duration for _value, duration in values), 6)]
+        for offset, values in sorted(buckets.items())
+    ]
     return _downsample(samples)
 
 

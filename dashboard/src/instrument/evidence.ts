@@ -21,7 +21,7 @@ export const METRICS: Record<string, MetricDefinition> = {
   waiting_requests_mean: { id: "waiting_requests_mean", label: "Waiting requests", shortLabel: "Waiting", explanation: "Mean runtime-native waiting-request gauge; compare the trend, not the engine-native definition.", unit: "requests", direction: "contextual", tolerancePercent: null },
   cache_context: { id: "cache_context", label: "Cache context", shortLabel: "Cache", explanation: "Unavailable for cross-engine ranking because the native definitions differ.", unit: "%", direction: "contextual", tolerancePercent: null },
   gpu_utilization_pct: { id: "gpu_utilization_pct", label: "GPU utilization", shortLabel: "GPU util.", explanation: "Mean sampled device utilization during the aligned five-minute measurement window.", unit: "%", direction: "contextual", tolerancePercent: null },
-  gpu_memory_gib: { id: "gpu_memory_gib", label: "GPU memory used", shortLabel: "GPU memory", explanation: "Maximum reported device memory use in the measurement window.", unit: "GiB", direction: "contextual", tolerancePercent: null },
+  gpu_memory_gib: { id: "gpu_memory_gib", label: "Maximum sampled GPU memory", shortLabel: "GPU memory", explanation: "Maximum sampled device memory use in the measured window.", unit: "GiB", direction: "contextual", tolerancePercent: null },
   gpu_power_w: { id: "gpu_power_w", label: "GPU board power", shortLabel: "Power", explanation: "Mean sampled board power during the aligned measurement window.", unit: "W", direction: "contextual", tolerancePercent: null }
 };
 
