@@ -333,7 +333,7 @@
     },
     {
       "id": "gpu_memory_gib",
-      "explanation": "Mean sampled device memory use in the measured window."
+      "explanation": "Maximum sampled device memory use in the measured window."
     },
     {
       "id": "gpu_power_w",

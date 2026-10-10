@@ -1,5 +1,5 @@
 {
-  "source": "Approved v2 design prototype; workload telemetry retained as public aggregate reference",
+  "source": "Rounded projection of data/public/telemetry-summary.csv and data/public/gpu-summary.json",
   "workloads": [
     {
       "id": "128-c1",

@@ -17,6 +17,11 @@ for (const episode of catalog.episodes.filter(episode => episode.status === 'pla
 }
 
 assert.equal(episode1Projection.schema_version, 'token-by-token.public-site-projection.v1');
+assert.deepEqual(
+  episode1Projection.metric_definitions.find(metric => metric.id === 'gpu_memory_gib'),
+  { id: 'gpu_memory_gib', explanation: 'Maximum sampled device memory use in the measured window.' },
+  'the public projection defines GPU memory as the maximum sampled value'
+);
 assert.deepEqual(episode1Projection.arms.map(arm => {
   const point = arm.points.find(point => point.users === 16);
   return [arm.engine, point.valid_requests, point.total_requests, point.level_valid];
@@ -273,6 +278,25 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const compactExplanation = await compactPage.getByRole('region', { name: 'Explanation: Output throughput' }).boundingBox();
     assert(compactPlot && compactExplanation && compactExplanation.y >= compactPlot.y + compactPlot.height - 1, 'compact desktop evidence stacks explanations instead of clipping the right column');
     await compactPage.close();
+    for (const width of [1181, 1200]) {
+      const boundaryPage = await browser.newPage({ viewport: { width, height: 900 } });
+      await boundaryPage.goto(`${base}#episode-1?load=16&depth=lab&metric=output_tps`);
+      const layout = await boundaryPage.locator('#ch-evidence [data-metric-workbench]').evaluate(workbench => {
+        const panel = workbench.querySelector('.tbt-metric-panel');
+        const plot = workbench.querySelector('.tbt-selected-plot');
+        const explanation = workbench.querySelector('.tbt-explanation-row');
+        return {
+          panelOverflow: getComputedStyle(panel).overflow,
+          explanationOverflow: getComputedStyle(explanation).overflow,
+          explanationTop: explanation.getBoundingClientRect().top,
+          plotBottom: plot.getBoundingClientRect().bottom,
+        };
+      });
+      assert.equal(layout.panelOverflow, 'visible', `evidence panel must not clip content at ${width}px`);
+      assert.equal(layout.explanationOverflow, 'visible', `evidence explanation must not become an internal scroller at ${width}px`);
+      assert(layout.explanationTop >= layout.plotBottom - 1, `evidence explanation must stack below the plot at ${width}px`);
+      await boundaryPage.close();
+    }
     const dragPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     await dragPage.goto(`${base}#episode-1?load=16`);
     const track = await dragPage.locator('[data-track]').boundingBox();
@@ -288,11 +312,16 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const wheelPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     await wheelPage.goto(`${base}#episode-1?load=16`);
     assert.match(await wheelPage.locator('.tbt-selector-note').innerText(), /Scroll over the rail.*next recorded load/i, 'the measured-load rail advertises normal wheel interaction');
-    await wheelPage.locator('[data-track]').hover();
-    await wheelPage.mouse.wheel(0, 220);
+    const wheelResult = await wheelPage.locator('[data-track]').evaluate(track => {
+      const event = new WheelEvent('wheel', { deltaY: 220, bubbles: true, cancelable: true });
+      const dispatched = track.dispatchEvent(event);
+      return { defaultPrevented: event.defaultPrevented, dispatched };
+    });
+    assert.deepEqual(wheelResult, { defaultPrevented: true, dispatched: false }, 'the measured-load rail cancels wheel scrolling before snapping');
     await wheelPage.waitForURL(/load=24/);
     assert.equal(await wheelPage.locator('[data-seg="load"][aria-pressed="true"]').getAttribute('data-val'), '24', 'normal wheel scrolling snaps the measured-load selector to the next recorded point');
-    await wheelPage.mouse.wheel(0, -220);
+    await wheelPage.waitForTimeout(200);
+    await wheelPage.locator('[data-track]').evaluate(track => track.dispatchEvent(new WheelEvent('wheel', { deltaY: -220, bubbles: true, cancelable: true })));
     await wheelPage.waitForURL(/load=16/);
     await wheelPage.close();
     await page.goto(`${base}#episode-0`);
@@ -310,6 +339,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await workloadCue.locator('[data-cue-pointer]').count(), 1, 'workload interaction cue points at the selectable cards');
     assert.equal(await page.getByRole('progressbar', { name: 'Selected workload' }).getAttribute('aria-valuenow'), '4');
     await page.getByRole('button', { name: /Open evidence lab/ }).click();
+    await page.waitForFunction(() => document.activeElement?.id === 'h-method');
     const activeMetric = page.getByRole('tab', { selected: true });
     assert.match(await activeMetric.innerText(), /showing/i, 'the active evidence metric is explicitly marked');
     assert.equal(await activeMetric.locator('[data-active-wedge]').count(), 1, 'the active evidence metric has a solid directional marker');
@@ -319,6 +349,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await firstPlotPoint.evaluate(element => element.closest('button') === null), true, 'focusable plot points are never nested inside buttons');
     await firstPlotPoint.focus();
     const focusedTooltip = page.locator('#ch-evidence [data-plot-tooltip][data-visible="true"]');
+    await focusedTooltip.waitFor();
     assert.match(await focusedTooltip.textContent(), /vLLM.*Delivered output rate.*tok\/s/i, 'focused plot point exposes exact x/y details');
     assert.equal(await focusedTooltip.evaluate(el => el.closest('svg') === null), true, 'plot detail is rendered outside the SVG instead of covering the graph');
     const tooltipColors = await focusedTooltip.evaluate(el => ({ color: getComputedStyle(el).color, background: getComputedStyle(el).backgroundColor }));
@@ -328,7 +359,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.match(await telemetry.innerText(), /Prefill duration \(native\)\s+1\.12 s\s+∅ Not exposed/);
     assert.match(await telemetry.innerText(), /Decode duration \(native\)\s+4\.55 s\s+∅ Not exposed/);
     assert.equal(await page.locator('#ch-source [data-source-row]').count(), 5);
-    assert.match(await page.locator('#ch-source').innerText(), /telemetry from approved design handoff/i);
+    assert.match(await page.locator('#ch-source').innerText(), /rounded from retained public runtime and GPU records/i);
     assert.equal(await page.locator('#ch-source a[download="episode-0-public-telemetry.json"]').count(), 1);
     await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
     await page.waitForFunction(() => document.querySelector('.tbt-rail-chapters button:nth-child(5)')?.getAttribute('aria-current') === 'location');
@@ -398,7 +429,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.waitForFunction(() => document.activeElement?.id === 'h-recorded');
     await page.goto(`${base}#methodology?ch=states`);
     await page.waitForFunction(() => document.activeElement?.id === 'h-states');
-    assert.match(await page.locator('#ch-definitions').innerText(), /Episode 01 alone.*20 tok\/s.*Episode 01 alone.*1%/s);
+    assert.match(await page.locator('#ch-definitions').innerText(), /Episode 01 alone.*20 tok\/s.*Episode 01 declares.*1%/s);
     assert.doesNotMatch(await page.locator('.tbt-methodology').innerText(), /Field Note/i);
     assert.match(await page.locator('#ch-states').innerText(), /Threshold met.*Threshold missed.*Invalid/s);
     assert.equal(await page.locator('#ch-evidence [data-metric][aria-expanded="true"]').count(), 0);

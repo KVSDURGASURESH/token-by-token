@@ -76,9 +76,19 @@ CREDENTIAL_PATTERNS = (
     re.compile(rb"\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b"),
     re.compile(rb"\brp_[A-Za-z0-9_-]{16,}\b", re.IGNORECASE),
 )
+PYTHON_FRAMEWORK_VERSION = f"{sys.version_info.major}.{sys.version_info.minor}"
+PYTHON_FRAMEWORK_RESOURCE_NAMES = {
+    "Python",
+    "Python.framework/Python",
+    "Python.framework/Resources",
+    f"Python.framework/Versions/{PYTHON_FRAMEWORK_VERSION}/Python",
+    f"Python.framework/Versions/{PYTHON_FRAMEWORK_VERSION}/Resources/Info.plist",
+    "Python.framework/Versions/Current",
+}
 LIBPYTHON_RE = re.compile(r"^libpython3\.\d+(?:\.so(?:\.\d+)*)?(?:\.dylib)?$")
 PYTHON_DLL_RE = re.compile(r"^python3\d{2}\.dll$")
 RPDS_LIBRARY_RE = re.compile(r"^rpds/rpds\.[A-Za-z0-9_.-]+\.(?:so|pyd|dylib)$")
+DARWIN_RUNTIME_LIBRARY_RE = re.compile(r"^lib(?:crypto|lzma|mpdec|ssl)\.\d+(?:\.\d+)*\.dylib$")
 SYSTEM_LIBRARY_RE = re.compile(
     r"^(?:lib(?:bz2|crypto|expat|ffi|lzma|ncurses|readline|ssl|tinfo|uuid|z)"
     r"[A-Za-z0-9_.-]*\.so(?:\.\d+)*|python3\.dll|VCRUNTIME140(?:_1)?\.dll)$",
@@ -100,6 +110,8 @@ def _contains_forbidden_marker(payload: bytes) -> bool:
 def _approved_resource(resource: str) -> bool:
     normalized = resource.replace("\\", "/")
     filename = normalized.rsplit("/", 1)[-1]
+    darwin_framework = sys.platform == "darwin" and normalized in PYTHON_FRAMEWORK_RESOURCE_NAMES
+    darwin_library = sys.platform == "darwin" and DARWIN_RUNTIME_LIBRARY_RE.fullmatch(normalized) is not None
     stdlib_extension = (
         filename.endswith((".so", ".pyd", ".dylib"))
         and filename.split(".", 1)[0] in sys.stdlib_module_names
@@ -107,9 +119,11 @@ def _approved_resource(resource: str) -> bool:
     return (
         normalized in APPROVED_RESOURCE_NAMES
         or normalized.startswith(APPROVED_RESOURCE_PREFIXES)
+        or darwin_framework
         or LIBPYTHON_RE.fullmatch(normalized) is not None
         or PYTHON_DLL_RE.fullmatch(normalized) is not None
         or RPDS_LIBRARY_RE.fullmatch(normalized) is not None
+        or darwin_library
         or stdlib_extension
         or SYSTEM_LIBRARY_RE.fullmatch(normalized) is not None
     )

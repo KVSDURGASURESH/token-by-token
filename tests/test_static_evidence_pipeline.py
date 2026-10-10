@@ -75,6 +75,34 @@ class StaticEvidencePipelineTests(unittest.TestCase):
         self.assertTrue(first.endswith(b"\n"))
         self.assertEqual(first.count(b"\n"), 1)
 
+    def test_gpu_memory_definition_matches_maximum_source_aggregate(self):
+        document = self.build()
+        definition = next(
+            metric
+            for metric in document["metric_definitions"]
+            if metric["id"] == "gpu_memory_gib"
+        )
+        self.assertEqual(definition["label"], "Maximum sampled GPU memory")
+        self.assertEqual(
+            definition["explanation"],
+            "Maximum sampled device memory use in the measured window.",
+        )
+
+    def test_counter_rate_sums_staggered_label_series_over_shared_intervals(self):
+        rows = [
+            ("agentbench_requests_total", 0.0, 0.0, {"level": "12", "status": "ok"}),
+            ("agentbench_requests_total", 10.0, 10.0, {"level": "12", "status": "ok"}),
+            ("agentbench_requests_total", 20.0, 20.0, {"level": "12", "status": "ok"}),
+            ("agentbench_requests_total", 2.0, 0.0, {"level": "12", "status": "failed"}),
+            ("agentbench_requests_total", 12.0, 20.0, {"level": "12", "status": "failed"}),
+            ("agentbench_requests_total", 22.0, 40.0, {"level": "12", "status": "failed"}),
+        ]
+
+        self.assertEqual(
+            self.module._counter_rate_samples(rows, 12, 0.0, 30.0),
+            [[10, 3.0], [12, 3.0], [20, 3.0]],
+        )
+
     def test_write_if_valid_does_not_replace_destination_on_failure(self):
         invalid = self.build()
         invalid["arms"][0]["points"][0]["users"] = 14

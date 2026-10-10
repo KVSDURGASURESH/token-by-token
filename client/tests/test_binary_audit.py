@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import shutil
+import sys
 import tempfile
 import unittest
 import zipfile
@@ -47,6 +48,50 @@ class BinaryAuditTests(unittest.TestCase):
         (self.extracted_root / "0050-jsonschema").write_bytes(b"public dependency")
         (self.extracted_root / "payload.bin").write_bytes(b"token-by-token synthetic_mock")
         audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli", "jsonschema"]), self.extracted_root)
+
+    @unittest.skipUnless(sys.platform == "darwin", "Homebrew framework resources are macOS-specific")
+    def test_audit_accepts_homebrew_python_framework_runtime(self) -> None:
+        python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+        resources = [
+            "Python",
+            "Python.framework/Python",
+            "Python.framework/Resources",
+            f"Python.framework/Versions/{python_version}/Python",
+            f"Python.framework/Versions/{python_version}/Resources/Info.plist",
+            "Python.framework/Versions/Current",
+            "libcrypto.3.dylib",
+            "liblzma.5.dylib",
+            "libmpdec.4.dylib",
+            "libssl.3.dylib",
+        ]
+        for index, resource in enumerate(resources):
+            path = self.extracted_root / f"{index + 200:04d}-{resource}"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"public platform runtime")
+
+        audit_binary(
+            self.binary,
+            self.write_inventory(["token_by_token_cli.cli"], resources),
+            self.extracted_root,
+        )
+
+    def test_audit_rejects_homebrew_runtime_lookalike_paths(self) -> None:
+        python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+        other_python_version = f"{sys.version_info.major}.{sys.version_info.minor + 1}"
+        resources = (
+            f"Python.framework/Versions/{python_version}/private.json",
+            f"Python.framework/Versions/{other_python_version}/Python",
+            "vendor/libssl.3.dylib",
+            "libcustom.3.dylib",
+        )
+        for resource in resources:
+            with self.subTest(resource=resource):
+                with self.assertRaisesRegex(ClientError, "FORBIDDEN_BUILD_INPUT"):
+                    audit_binary(
+                        self.binary,
+                        self.write_inventory(["token_by_token_cli.cli"], [resource]),
+                        self.extracted_root,
+                    )
 
     def test_audit_rejects_analyzed_module_missing_from_extracted_archive(self) -> None:
         inventory = self.write_inventory(["jsonschema.validators"])

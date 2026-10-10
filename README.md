@@ -115,10 +115,11 @@ npm --prefix dashboard run dev -- --host 127.0.0.1 --port 5173 --strictPort
 The check command should exit with no TypeScript errors, the build should end
 with a successful Vite build, and the final command should print a local URL. Open
 [http://127.0.0.1:5173/](http://127.0.0.1:5173/) in the same machine or WSL
-environment. The dashboard reads its bundled snapshot from
-`dashboard/src/data/latest.json`; the production build is written to
-`dashboard/dist/`. Press **Ctrl-C** in the terminal to stop the development
-server.
+environment. The public dashboard reads its bundled, allowlisted projections
+from `dashboard/src/data/site-v2/`; the production build is written to
+`dashboard/dist/`. The older `dashboard/src/data/latest.json` snapshot remains
+an input to the legacy local view, not the current public-site source. Press
+**Ctrl-C** in the terminal to stop the development server.
 
 If port 5173 is already occupied, choose another loopback port and open the
 matching URL:
