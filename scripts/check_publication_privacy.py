@@ -48,6 +48,7 @@ LOCKFILE_NAMES = {
     "vllm.lock",
 }
 RESERVED_EMAIL_DOMAINS = {"example.com", "example.net", "example.org", "test.invalid"}
+APPROVED_PUBLIC_EMAILS = {"hello@mirastacklabs.ai"}
 PRIVATE_HOST_SUFFIXES = (
     ".corp",
     ".internal",
@@ -93,6 +94,10 @@ LOCKED_DEPENDENCY_VERSION_LINE_RE = re.compile(
 )
 PUBLIC_TOOL_NAME_RE = re.compile(r"\bagentbench\b", re.IGNORECASE)
 PUBLIC_ORGANIZATION_RE = re.compile(r"\bmirastacklabs\b", re.IGNORECASE)
+APPROVED_PUBLIC_ATTRIBUTION_RE = re.compile(
+    r"Benchmarking\s+harness\s+powered\s+by\s+AgentBench\s+from.{0,200}?Mirastack\s+Labs",
+    re.IGNORECASE,
+)
 ENGINE_VERSION_RE = re.compile(r"\b(?:vllm|sglang)\s*:?\s*v?\d+(?:\.\d+){1,3}\b", re.IGNORECASE)
 PRIVATE_OPTIMIZATION_RE = re.compile(
     r"\b(?:extra_buffer_lazy|mamba-full-memory-ratio|triton\s+gdn|language-only\s+mode)\b",
@@ -267,13 +272,16 @@ def _scan_line(
     if PRIVATE_KEY_RE.search(line):
         add("private-key")
     if public_policy:
-        if PUBLIC_TOOL_NAME_RE.search(line):
+        policy_line = APPROVED_PUBLIC_ATTRIBUTION_RE.sub("", line)
+        for address in APPROVED_PUBLIC_EMAILS:
+            policy_line = re.sub(re.escape(address), "", policy_line, flags=re.IGNORECASE)
+        if PUBLIC_TOOL_NAME_RE.search(policy_line):
             add("private-benchmark-name")
-        if PUBLIC_ORGANIZATION_RE.search(line):
+        if PUBLIC_ORGANIZATION_RE.search(policy_line):
             add("private-organization-name")
-        if ENGINE_VERSION_RE.search(line):
+        if ENGINE_VERSION_RE.search(policy_line):
             add("engine-version")
-        if PRIVATE_OPTIMIZATION_RE.search(line):
+        if PRIVATE_OPTIMIZATION_RE.search(policy_line):
             add("private-optimization-term")
     if PurePosixPath(location.split(":", 1)[-1]).name == "episode-1-public.v1.json" and EVIDENCE_PRIVATE_KEY_RE.search(line):
         add("private-evidence-key")
@@ -296,9 +304,11 @@ def _scan_line(
         except ValueError:
             continue
     for match in EMAIL_RE.finditer(line):
+        address = match.group(0).lower()
         domain = match.group(1).lower().rstrip(".")
         if (
-            domain.endswith("users.noreply.github.com")
+            address in APPROVED_PUBLIC_EMAILS
+            or domain.endswith("users.noreply.github.com")
             or domain.endswith(".invalid")
             or domain in RESERVED_EMAIL_DOMAINS
         ):

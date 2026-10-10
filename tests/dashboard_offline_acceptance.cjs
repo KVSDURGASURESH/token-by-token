@@ -38,7 +38,6 @@ const server = http.createServer((request, response) => {
       ["episodes", "Every token is a measurement"],
       ["episode-0", "Warm-up"],
       ["episode-1", "Measure what matters"],
-      ["field-notes", "Session capacity"],
       ["methodology", "How the lab measures"],
     ];
     for (const [hash, expected] of routes) {

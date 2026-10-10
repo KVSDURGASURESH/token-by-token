@@ -8,6 +8,7 @@ dashboard/dist/
 dist/
 raw/
 private/
+.private/
 /context/
 *.jsonl
 client/build/

@@ -111,8 +111,8 @@ oversized entries, excessive aggregate size, and suspicious compression ratios.
 Treat a valid bundle as integrity-checked input, not as proof that a real
 benchmark ran. The current writer emits only `synthetic_mock` bundles.
 
-A successful archive contains a public episode manifest, deterministic event
-stream, replay summary and an inventory binding every member to its size and
+A successful archive contains a deterministic event stream, replay summary and
+an inventory binding every member to its size and
 SHA-256 digest. `evidence verify` validates the archive before reporting its
 classification and digest. Do not upload a `synthetic_mock` archive as recorded
 evidence or compare its timing-like values with Episode 00 or Episode 01.

@@ -24,7 +24,7 @@ def test_catalog_is_exact_canonical_zero_through_sixteen():
     }
     assert [episode["previousNumber"] for episode in catalog["episodes"]] == [0, 1, 2, 8, 9, 10, 11, 12, 13, 14, 15, 3, 4, 5, 6, 7, 16]
     assert catalog["episodes"][0]["evidence"] == "Exploratory recorded study"
-    assert catalog["episodes"][1]["evidence"] == "Recorded exploratory H200 runtime comparison — capacity not established"
+    assert catalog["episodes"][1]["evidence"] == "Recorded exploratory H200 runtime comparison at tested loads; maximum sustainable rate not measured"
     assert all(episode["evidence"].startswith("Planned") for episode in catalog["episodes"][2:])
     assert set(TEMPLATES) == {episode["templateId"] for episode in catalog["episodes"][1:]}
     assert {TEMPLATES[f"episode-{n}-" + {11:"model-internals",12:"lora-qlora",13:"jev-decisions"}[n]]["track"] for n in (11,12,13)} == {"model","training","decision"}
