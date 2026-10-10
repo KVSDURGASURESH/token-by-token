@@ -158,6 +158,8 @@ html,body,#root{margin:0;min-width:320px;min-height:100%;background:#fbfaf5}html
 .tbt-index-disclosure[aria-expanded=true]{background:var(--ink);color:var(--paper)}
 .tbt-index-context{display:grid;gap:8px;margin:0 4rem 18px 4.25rem;padding:14px 0 2px;border-top:1px solid var(--line)}
 .tbt-index-context>p:not(.tbt-eyebrow){max-width:68ch;color:var(--copy);font-weight:300}
+.tbt-index-context .tbt-index-evidence{padding-left:12px;border-left:2px solid var(--chapter-nav)}
+.tbt-index-context .tbt-index-evidence strong{font-weight:500;color:var(--ink)}
 .tbt-index-context>a{width:max-content;max-width:100%;font-size:.6875rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase}
 @media(max-width:620px){.tbt-index-row-main{grid-template-columns:2.25rem minmax(0,1fr) 2rem;gap:4px 8px}.tbt-index-copy strong{font-size:1.15rem}.tbt-index-summary{min-height:0}.tbt-index-context{margin-left:2.75rem;margin-right:0}}
 

@@ -5,11 +5,14 @@ const episode1Projection = require('../dashboard/src/data/site-v2/episode-1.json
 const episode0Telemetry = require('../dashboard/src/data/site-v2/episode-0-telemetry.json');
 const catalog = require('../dashboard/src/data/site-v2/catalog.json');
 const roadmapContext = require('../dashboard/src/data/site-v2/roadmap-context.json');
+const roadmapEvidence = require('../dashboard/src/data/site-v2/roadmap-evidence.json');
 
 const roadmap = fs.readFileSync(require.resolve('../docs/roadmap.md'), 'utf8');
 const roadmapSections = Object.fromEntries([...roadmap.matchAll(/^### (\d+)\. ([^\n]+)\n\n([^\n]+)/gm)].map(match => [Number(match[1]), match[3].replaceAll('**', '')]));
+const roadmapEvidenceSections = Object.fromEntries([...roadmap.matchAll(/^### (\d+)\.[\s\S]*?^\*\*Evidence:\*\* ([^\n]+)/gm)].map(match => [Number(match[1]), match[2].replaceAll('**', '')]));
 for (const episode of catalog.episodes.filter(episode => episode.status === 'planned')) {
   assert.equal(roadmapContext[episode.id], roadmapSections[episode.number], `${episode.id} landing context must match its roadmap section`);
+  assert.equal(roadmapEvidence[episode.id], roadmapEvidenceSections[episode.number], `${episode.id} landing evidence must match its roadmap section`);
   assert.match(episode.roadmapAnchor, new RegExp(`^${episode.number}-`), `${episode.id} must use GitHub's numbered roadmap anchor`);
 }
 
@@ -40,9 +43,9 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('.tbt-index-open').count(), 0, 'episode rows expose only the context disclosure until expanded');
     await episodeTwoRow.getByRole('button', { name: /Show context for Episode 02/ }).click();
     assert.equal(await episodeTwoRow.getByRole('button', { name: /Hide context for Episode 02/ }).getAttribute('aria-expanded'), 'true');
-    assert.match(await episodeTwoRow.innerText(), /The experiment map.*Randomize or counterbalance execution order/is, 'planned disclosure uses the matching roadmap section');
+    assert.match(await episodeTwoRow.innerText(), /The experiment map.*Randomize or counterbalance execution order.*Evidence:.*selected images and kernels/is, 'planned disclosure uses the matching roadmap section and evidence contract');
     assert.match(await episodeTwoRow.getByRole('link', { name: /Read the experiment roadmap/ }).getAttribute('href'), /docs\/roadmap\.md#2-equal-work-runtime-baseline$/);
-    assert.equal(await episodeTwoRow.locator('.tbt-index-context > p:not(.tbt-eyebrow)').evaluate(el => Number(getComputedStyle(el).fontWeight) <= 300), true, 'roadmap context uses the approved lighter reading weight');
+    assert.equal(await episodeTwoRow.locator('.tbt-index-context > p:not(.tbt-eyebrow)').evaluateAll(elements => elements.every(el => Number(getComputedStyle(el).fontWeight) <= 300)), true, 'roadmap context and evidence use the approved lighter reading weight');
     const episodeZeroRow = page.locator('[data-episode-index-row="episode-0"]');
     await episodeZeroRow.getByRole('button', { name: /Show context for Episode 00/ }).click();
     assert.equal(await episodeZeroRow.getByRole('link', { name: /Open the recorded study/ }).getAttribute('href'), '#episode-0', 'recorded disclosures contain the study link');
@@ -145,6 +148,11 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('[data-planned-watermark]').innerText(), 'PLANNED');
     assert.equal(await page.locator('.tbt-planned-outline').count(), 1, 'planned pages use one concise experiment outline');
     assert.equal(await page.locator('.tbt-study > .tbt-chapter').count(), 0, 'planned pages do not render empty evidence chapters');
+    await page.getByRole('link', { name: /Read the experiment roadmap/ }).click();
+    assert.match(page.url(), /#episodes\?open=episode-2$/, 'planned roadmap link returns to the matching landing-page section');
+    const returnedEpisodeTwo = page.locator('[data-episode-index-row="episode-2"]');
+    assert.equal(await returnedEpisodeTwo.getAttribute('data-expanded'), 'true', 'matching landing-page section opens automatically');
+    assert.match(await returnedEpisodeTwo.innerText(), /Equal-work runtime baseline.*Evidence:.*selected images and kernels/is, 'returned section exposes the complete matching roadmap content');
     await page.goto(`${base}#episode-1?load=16&theme=dark&text=200&head=question`);
     assert.equal(await page.locator('[data-tbt]').getAttribute('data-theme'), 'dark');
     assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).fontSize), '32px');
