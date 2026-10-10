@@ -4,6 +4,7 @@ import argparse
 from collections.abc import Sequence
 import json
 import sys
+import tempfile
 
 from . import __version__
 from .errors import ClientError
@@ -19,6 +20,18 @@ def build_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
 
     commands.add_parser("episodes", help="List the public episode catalog", allow_abbrev=False)
+
+    capabilities = commands.add_parser(
+        "capabilities", help="Report the bounded public execution surface", allow_abbrev=False
+    )
+    capabilities.add_argument("--episode", type=int, choices=range(17), required=True)
+    capabilities.add_argument("--format", choices=("human", "json"), default="human")
+
+    doctor = commands.add_parser(
+        "doctor", help="Check the client installation without provider access", allow_abbrev=False
+    )
+    doctor.add_argument("--offline", action="store_true", required=True)
+    doctor.add_argument("--format", choices=("human", "json"), default="human")
 
     episode = commands.add_parser("episode", help="Describe or self-test an episode", allow_abbrev=False)
     episode.add_argument("number", type=int, choices=range(17), metavar="EPISODE")
@@ -57,6 +70,44 @@ def main(argv: Sequence[str] | None = None) -> int:
             catalog = load_resource_json("episodes/catalog.v1.json")
             for item in catalog["episodes"]:
                 print(f"Episode {item['episode']:02d} · {item['title']} · {item['status']}")
+            return 0
+        if args.command == "capabilities":
+            from .contracts import public_capabilities
+
+            document = public_capabilities(args.episode)
+            if args.format == "json":
+                print(json.dumps(document, sort_keys=True, separators=(",", ":")))
+            else:
+                print(f"Episode {args.episode:02d} · real execution unavailable")
+                print(document["reason"])
+                print("No model, GPU, endpoint, or execution profile is accepted by this client.")
+            return 0
+        if args.command == "doctor":
+            from pathlib import Path
+            from .selftest import run_selftest
+
+            with tempfile.TemporaryDirectory(prefix="token-by-token-doctor-") as temporary:
+                report = run_selftest(
+                    Path(temporary) / "doctor.tbt.zip",
+                    episode=0,
+                    users=1,
+                    seed=42,
+                    offline=args.offline,
+                    stop_requested=lambda: False,
+                )
+                document = {
+                    "status": "pass",
+                    "network": "forbidden",
+                    "classification": report.classification,
+                    "meaning": "client_installation_diagnostic_only",
+                    "requests": report.requests,
+                }
+            if args.format == "json":
+                print(json.dumps(document, sort_keys=True, separators=(",", ":")))
+            else:
+                print("PASS · offline client installation diagnostic")
+                print("Network was forbidden; the temporary synthetic bundle verified and was removed.")
+                print("This is not benchmark evidence from the private harness.")
             return 0
         if args.command == "episode" and args.episode_command == "describe":
             from .contracts import episode_manifest

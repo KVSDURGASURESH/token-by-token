@@ -67,3 +67,24 @@ def episode_manifest(episode: int, protocol: str | None = None) -> dict[str, obj
     validate_document("episode-manifest.v1", document)
     return document
 
+
+def public_capabilities(episode: int) -> dict[str, object]:
+    """Return the deliberately closed public execution surface.
+
+    Real model, GPU, and load aliases must eventually come from an authenticated,
+    signed service manifest.  Until that service exists, an empty allowlist is safer
+    than mirroring private harness configuration into the public client.
+    """
+    manifest = episode_manifest(episode)
+    return {
+        "schema_version": "public-capabilities.v1",
+        "episode": episode,
+        "episode_status": manifest["status"],
+        "execution_status": "unavailable",
+        "real_submission": False,
+        "models": [],
+        "gpus": [],
+        "load_profiles": [],
+        "offline_diagnostic": True,
+        "reason": "The authenticated benchmark worker service is not implemented.",
+    }

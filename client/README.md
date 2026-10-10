@@ -15,6 +15,8 @@ benchmark service, deployment recipes, and serving profiles are not included.
 | --- | --- | --- |
 | List the curriculum | `token-by-token episodes` | Available |
 | Inspect an episode and its allowed loads | `token-by-token episode N describe` | Available |
+| Inspect the real-execution boundary | `token-by-token capabilities --episode N` | Available; reports unavailable until the service exists |
+| Check the local installation offline | `token-by-token doctor --offline` | Available; diagnostic only |
 | Exercise the client and bundle pipeline without a GPU | `token-by-token episode N selftest --offline …` | Available |
 | Verify an emitted bundle and its classification | `token-by-token evidence verify FILE` | Available |
 | Select a real model or GPU | — | Not yet available |
@@ -39,6 +41,8 @@ python3 -m pip install ./client
 token-by-token --version
 token-by-token episodes
 token-by-token episode 2 describe
+token-by-token capabilities --episode 2
+token-by-token doctor --offline
 token-by-token episode 2 selftest --offline --output ./token-by-token-selftest.tbt.zip
 token-by-token evidence verify ./token-by-token-selftest.tbt.zip
 ```
@@ -74,6 +78,8 @@ claims that the capability exists today.
 
 ```text
 token-by-token episodes
+token-by-token capabilities --episode EPISODE [--format human|json]
+token-by-token doctor --offline [--format human|json]
 token-by-token episode EPISODE describe [--format human|json]
 token-by-token episode EPISODE selftest --offline
     [--users USERS] [--seed SEED]
@@ -82,6 +88,10 @@ token-by-token evidence verify FILE.tbt.zip [--format human|json]
 ```
 
 - `EPISODE` is an integer from 0 through 16.
+- `capabilities` fails closed: until an authenticated service supplies a signed
+  allowlist, it reports no real models, GPUs, load profiles, or submission path.
+- `doctor --offline` creates, verifies, and removes a temporary synthetic bundle.
+  It checks installation plumbing only and is not the hands-on AgentBench run path.
 - `--users` must be one of the values printed by `episode EPISODE describe`.
 - Omitting `--users` selects that episode's first declared diagnostic load.
 - `--seed` accepts 0 through 2,147,483,647 and makes the offline event stream

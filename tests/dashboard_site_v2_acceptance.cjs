@@ -167,9 +167,11 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.match(await page.locator('[data-configuration-note]').innerText(), /"prefix_caching": true.*"kv_cache_dtype".*"vllm": "fp8".*"sglang": "fp8_e4m3".*"paged_kv_management": "built_in_not_isolated".*"attention_backend".*"sglang": "fa3".*"admission_cap_per_arm": 1024.*"warmup_seconds": 120.*"measurement_seconds": 300/is);
     assert.match(await page.locator('[data-configuration-note]').innerText(), /reviewed public configuration extract.*not a runnable serving profile/is);
     assert.equal(await page.locator('[data-run-cost]').count(), 1, 'Episode 01 explains the bounded cost model');
+    assert.equal(await page.locator('[data-run-cost]').getAttribute('data-cost-kind'), 'estimated');
     const runCostText = await page.locator('[data-run-cost]').innerText();
-    assert.match(runCostText, /\$19\.07.*\$18\.87 GPU.*\$0\.20 storage.*Published-study GPU class.*\$7\.26.*Trial and setup.*\$11\.61.*Attached storage.*\$0\.20/is);
-    assert.match(runCostText, /\$7\.26 \+ \$11\.61 \+ \$0\.20 = \$19\.07.*\$3\.21 comparable-window figure/is);
+    assert.match(runCostText, /protocol-time estimate.*\$3\.21.*\$4\.59 \/ hr.*0\.70 GPU-hr.*2 arms × 3 loads × 420 s/is);
+    assert.match(runCostText, /not a provider bill or a full campaign total.*billing buckets are not attributed.*time windows have not been reconciled/is);
+    assert.doesNotMatch(runCostText, /\$19\.07|\$18\.87|\$7\.26|\$11\.61/);
     assert.equal(await page.locator('[data-cost-provider]').innerText(), 'RUNPOD');
     assert.equal(await page.locator('[data-cost-provider]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'the recorded cost provider uses the cyan identity accent');
     assert.equal(await page.locator('[data-headline-count-accent]').innerText(), 'one');

@@ -15,7 +15,7 @@
       ],
       "boundary": "The billing API attributes spend by UTC day and pod, not by successful benchmark phase. September 18 spend is excluded because the retained episode record does not establish its relationship to Episode 00."
     },
-    "episode-01": {
+    "unattributed-agentbench-campaign": {
       "campaign_window": ["2026-10-04", "2026-10-05"],
       "gpu_amount": 18.86960467416793,
       "disk_amount": 0.19675926072523097,
@@ -24,7 +24,7 @@
         {"date": "2026-10-04", "purpose": "RTX PRO 6000 AgentBench campaign work", "gpu_amount": 11.612096880562603, "disk_amount": 0.15277777891606092, "total_amount": 11.764874659478664},
         {"date": "2026-10-05", "purpose": "H200 AgentBench campaign work", "gpu_amount": 7.257507793605328, "disk_amount": 0.043981481809169054, "total_amount": 7.301489275414497}
       ],
-      "boundary": "These are whole campaign-day billing buckets. They include setup, retries, validation and idle time as well as successful measurements; the billing API does not allocate spend to individual benchmark phases."
+      "boundary": "These are whole campaign-day billing buckets. Their dates do not align with the retained timestamps for the six matched Episode 01 cells, so they are not attributed to that episode. They include setup, retries, validation and idle time; the billing API does not allocate spend to individual benchmark phases."
     }
   }
 }

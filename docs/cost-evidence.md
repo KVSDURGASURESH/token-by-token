@@ -18,7 +18,7 @@ The Episode 00 campaign roll-up is **$11.8311** from the provider billing read. 
 
 The September 20 billing bucket is 7.6216 total (7.5486 GPU + 0.0729 disk). Billing Explorer rounds the GPU split to 6.425 H100 + 1.124 A100. Separate successful-run, per-runtime, warm-up, setup and retry costs are not available; do not divide the daily bucket equally or allocate it by request count. The older 2.19 CLI-debit note conflicts with the billing API and is superseded for publication.
 
-Episode 01 is a separate October 4–5 AgentBench campaign: **19.0664 total** (18.8696 GPU + 0.1968 disk). Its 3.21 comparable-window value is only rate × declared protocol-time arithmetic, not a billing allocation.
+The retained October AgentBench billing buckets total **19.0664** (18.8696 GPU + 0.1968 disk), but their bucket dates do not align with the retained timestamps for the six matched Episode 01 cells. They are therefore not attributed to Episode 01 on the public page. Episode 01 shows only a **3.21 protocol-time estimate**: two engine arms × three loads × (120 seconds warm-up + 300 seconds measured) = 0.70 GPU-hours, multiplied by the recorded RunPod H200 rate of 4.59 per hour. This is not an invoice allocation and excludes setup, loading, validation, retries, idle time, storage, network and taxes.
 
 ## Cleanup
 
