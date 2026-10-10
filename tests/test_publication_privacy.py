@@ -84,6 +84,15 @@ class PublicationPrivacyTests(unittest.TestCase):
         )
         self.assertEqual(MODULE.scan_text("package-lock.json", text), set())
 
+    def test_allows_only_the_approved_public_support_address(self):
+        self.assertEqual(
+            MODULE.scan_text("dashboard/public-contact.txt", "hello@mirastacklabs.ai"),
+            set(),
+        )
+        unapproved = "private" + "@" + "mirastacklabs.ai"
+        findings = MODULE.scan_text("dashboard/unapproved-contact.txt", unapproved)
+        self.assertEqual({item.category for item in findings}, {"email-address"})
+
     def test_public_policy_rejects_private_names_versions_and_optimization_terms(self):
         private_tool = "Agent" + "Bench"
         private_org = "MIRA" + "STACKLABS"
@@ -103,6 +112,30 @@ class PublicationPrivacyTests(unittest.TestCase):
         rendered = "\n".join(item.render() for item in findings)
         for value in (private_tool, private_org, engine_version, optimization):
             self.assertNotIn(value, rendered)
+
+    def test_public_policy_allows_only_the_approved_attribution_phrase(self):
+        attribution = (
+            "Benchmarking harness powered by AgentBench from Mirastack Labs"
+        )
+        self.assertEqual(
+            MODULE.scan_text("assets/public.js", attribution, public_policy=True), set()
+        )
+        bundled_attribution = (
+            "Benchmarking harness powered by AgentBench from "
+            "+jsx(span,{children:'Mirastack Labs'})"
+        )
+        self.assertEqual(
+            MODULE.scan_text(
+                "assets/public.js", bundled_attribution, public_policy=True
+            ),
+            set(),
+        )
+        findings = MODULE.scan_text(
+            "assets/public.js", attribution + "; AgentBench profile", public_policy=True
+        )
+        self.assertEqual(
+            {item.category for item in findings}, {"private-benchmark-name"}
+        )
 
     def test_public_evidence_rejects_private_metadata_keys(self):
         key = "config" + "uration"

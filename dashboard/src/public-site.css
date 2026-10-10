@@ -53,6 +53,7 @@ html,body,#root{margin:0;min-width:320px;min-height:100%;background:#fbfaf5}html
 @media(max-width:900px){.tbt-workload-guide{grid-template-columns:1fr}.tbt-metric-workbench{height:auto;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;gap:10px}.tbt-observed-signals{grid-template-columns:1fr}.tbt-metric-tabs{display:flex;max-width:100%;overflow-x:auto;scroll-snap-type:x mandatory}.tbt-metric-tabs button{flex:0 0 11rem;scroll-snap-align:start;border-left:0;border-top:2px solid transparent}.tbt-metric-tabs button[aria-selected=true]{border-top-color:var(--chapter-nav)}.tbt-metric-panel{min-width:0;overflow:visible;padding-right:0}.tbt-metric-panel .tbt-explanation-row{grid-template-columns:minmax(0,1fr)}.tbt-plot-row{grid-template-columns:minmax(0,1fr)!important}}
 
 @media(min-width:901px){.tbt-metric-panel{display:grid;grid-template-columns:minmax(18rem,.9fr) minmax(22rem,1.1fr);gap:24px;overflow:hidden;padding-right:0}.tbt-selected-plot,.tbt-metric-panel .tbt-explanation-row{min-width:0;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:6px}.tbt-metric-panel .tbt-explanation-row{grid-template-columns:minmax(0,1fr);align-content:start;margin:0;padding-top:0;background:none;border-top:0}}
+@media(min-width:901px) and (max-width:1180px){.tbt-metric-workbench{height:auto}.tbt-metric-panel{grid-template-columns:minmax(0,1fr);overflow:visible}.tbt-selected-plot,.tbt-metric-panel .tbt-explanation-row{overflow:visible;padding-right:0}}
 
 /* Interaction affordances stay cyan so they read as navigation, never metric judgment. */
 .tbt-workload-cue{position:relative;min-height:32px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:9px;padding:4px 0;background:transparent;color:var(--copy);font-size:.6875rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase}.tbt-workload-cue>span:nth-child(2){display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}.tbt-workload-cue b{color:var(--ink)}.tbt-workload-cue em{color:var(--muted);font-style:italic;font-weight:400;letter-spacing:0;text-transform:none}
@@ -96,14 +97,14 @@ html,body,#root{margin:0;min-width:320px;min-height:100%;background:#fbfaf5}html
 .tbt-contract-head p:last-child{margin:4px 0 0;color:var(--muted);font-size:14px}
 .tbt-contract-label{color:var(--chapter);font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin:0 0 4px}
 .tbt-unfold{border:1px solid var(--ink);background:var(--ink);color:var(--paper)!important;padding:6px 12px;text-transform:uppercase;letter-spacing:.09em;cursor:pointer;white-space:nowrap;margin:0;min-height:34px}.tbt-contract .tbt-unfold{font-size:.6875rem}
-.tbt-config-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;border:0}
+.tbt-config-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;padding-bottom:22px;border:0}
 .tbt-config-grid>div{border-top:1px solid var(--line);border-bottom:0;padding:12px 0 0;display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:start}
 .tbt-config-grid>div>i{width:20px;height:20px;border:1px solid var(--better);color:var(--better);border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px}
 .tbt-config-grid>div>span{display:block;width:auto;height:auto;border:0;border-radius:0;color:inherit}
 .tbt-config-grid b{font-size:13px;text-transform:uppercase;color:var(--ink)}
 .tbt-config-grid small{display:block;color:var(--muted);font-size:11px}
-.tbt-config-grid [data-config-state=inherited]>i{border-color:var(--neutral);color:var(--neutral)}
-.tbt-config-grid [data-config-state=inherited] small{color:var(--neutral)}
+.tbt-config-grid [data-config-state=inherited]>i,.tbt-config-grid [data-config-state=withheld]>i{border-color:var(--neutral);color:var(--neutral)}
+.tbt-config-grid [data-config-state=inherited] small,.tbt-config-grid [data-config-state=withheld] small{color:var(--neutral)}
 .tbt-config-grid [data-config-state=disabled]{opacity:.48;color:inherit}
 .tbt-config-grid [data-config-state=disabled]>i{border-color:var(--muted);color:transparent}
 .tbt-config-grid [data-config-state=disabled] b,.tbt-config-grid [data-config-state=disabled] small{color:inherit}
@@ -123,6 +124,7 @@ html,body,#root{margin:0;min-width:320px;min-height:100%;background:#fbfaf5}html
 .tbt-cost-head{display:grid;grid-template-columns:1fr 360px;gap:40px;align-items:end}
 .tbt-cost-head h3{font-size:34px;text-transform:uppercase;margin:8px 0;line-height:1.1}
 .tbt-cost-head p:last-child{color:var(--muted);font-size:14px;margin:0;max-width:670px}
+[data-cost-provider]{color:var(--chapter-nav);font-weight:500;letter-spacing:.04em}
 .tbt-cost-total{text-align:right}.tbt-cost-total small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.14em}.tbt-cost-total strong{display:block;font-size:48px;color:var(--chapter-nav);line-height:1.05}.tbt-cost-total span{display:block}
 .tbt-cost-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:26px;border-block:1px solid var(--line)}
 .tbt-cost-cards>div{display:block;min-height:0;padding:18px;border:0;border-right:1px solid var(--line);background:none}.tbt-cost-cards>div:last-child{border-right:0}.tbt-cost-cards small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-size:10px}.tbt-cost-cards strong{display:block;font-size:23px;margin-top:8px}.tbt-cost-cards span{font-size:12px;color:var(--copy)}
@@ -140,3 +142,35 @@ html,body,#root{margin:0;min-width:320px;min-height:100%;background:#fbfaf5}html
 .tbt-rail-episodes a>span,.tbt-mobile-panel a>span{display:grid;gap:2px}.tbt-rail-episodes a>span>small,.tbt-mobile-panel a>span>small{color:var(--muted);font-size:.625rem;letter-spacing:.07em;text-transform:uppercase}
 @media(max-width:900px){.tbt-contract-head,.tbt-cost-head{grid-template-columns:1fr}.tbt-config-grid{grid-template-columns:1fr 1fr}.tbt-paper-grid{grid-template-columns:1fr}.tbt-cost-total{text-align:left}.tbt-cost-cards{grid-template-columns:1fr 1fr}.tbt-planned-copy h1{font-size:53px}}
 @media(max-width:520px){.tbt-contract-head{align-items:start}.tbt-unfold{white-space:normal}.tbt-config-grid,.tbt-cost-cards{grid-template-columns:1fr}.tbt-paper{padding-inline:28px}.tbt-planned-page [data-planned-watermark]{font-size:110px}.tbt-planned-copy p{font-size:18px}}
+
+/* Typography direction A: headings keep their authority; supporting copy breathes. */
+.tbt-deck,.tbt-index-summary,.tbt-index-context>p:not(.tbt-eyebrow),.tbt-chapter>p,.tbt-caveat p,.tbt-selector-note,.tbt-popup p,.tbt-mobile-panel small{font-weight:300}
+.tbt-brief-table td,.tbt-brief-table th,.tbt-ledger td,.tbt-ledger th,.tbt-protocol dd{font-weight:350}
+
+/* Episode catalog rows separate context disclosure from navigation. */
+.tbt-index-row{border-bottom:1px solid var(--line)}
+.tbt-index-row-main{display:grid;grid-template-columns:3.25rem minmax(0,1fr) 2rem;gap:4px 16px;align-items:start;padding:15px 0}
+.tbt-index-number{font:500 1.5rem/1 'Oswald Variable',sans-serif}
+.tbt-index-copy{display:grid;gap:4px;min-width:0}
+.tbt-index-copy strong{font:500 1.5rem/1.1 'Oswald Variable',sans-serif;text-transform:uppercase}
+.tbt-index-summary{display:block;width:min(100%,68ch);max-width:68ch;min-height:2.6em;font-size:.875rem;line-height:1.3;color:var(--copy);text-wrap:pretty}
+.tbt-index-disclosure{display:grid;place-items:center;width:2rem;height:2rem;padding:0;border:1px solid var(--line-strong);background:none;text-decoration:none;font:400 1rem/1 'Oswald Variable',sans-serif}
+.tbt-index-disclosure[aria-expanded=true]{background:var(--ink);color:var(--paper)}
+.tbt-index-context{display:grid;gap:8px;margin:0 4rem 18px 4.25rem;padding:14px 0 2px;border-top:1px solid var(--line)}
+.tbt-index-context>p:not(.tbt-eyebrow){max-width:68ch;color:var(--copy);font-weight:300}
+.tbt-index-context>a{width:max-content;max-width:100%;font-size:.6875rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase}
+@media(max-width:620px){.tbt-index-row-main{grid-template-columns:2.25rem minmax(0,1fr) 2rem;gap:4px 8px}.tbt-index-copy strong{font-size:1.15rem}.tbt-index-summary{min-height:0}.tbt-index-context{margin-left:2.75rem;margin-right:0}}
+
+/* Header utilities: Home sits directly beside Lab Tools; ownership is cyan. */
+.tbt-site-nav [data-home-link]{padding-inline:7px}
+[data-mirastack-labs]{color:var(--chapter-nav)}
+
+/* The measured rail uses the full available lane and snaps horizontal wheel intent. */
+.tbt-track{max-width:none;margin-inline:32px}
+.tbt-track-rail{left:0;right:0}
+.tbt-selector:has(.tbt-track) .tbt-selector-note{flex:0 1 24rem}
+.tbt-compare-controls button:disabled{cursor:not-allowed;opacity:.52;background:var(--panel);color:var(--muted)}
+.tbt-compare-controls button>small{display:block;margin-top:2px;font-size:.5rem;letter-spacing:.08em;text-transform:uppercase}
+
+/* Paired study actions stay the same physical size regardless of their label. */
+.tbt-contract .tbt-unfold,.tbt-lab-toggle-row .tbt-lab-toggle{width:184px;height:34px;min-height:34px;padding:0 10px;display:inline-grid;place-items:center}

@@ -84,6 +84,8 @@ REHEARSAL_DIR="$(mktemp -d "${TMPDIR:-/tmp}/inference-lab-episode-0.XXXXXX")"
 printf '%s\n' "$REHEARSAL_DIR"
 python3 scripts/rehearse_workflow.py --output "$REHEARSAL_DIR"
 python3 scripts/verify_bundle.py "$REHEARSAL_DIR"
+python3 -m venv .venv
+. .venv/bin/activate
 python3 -m pip install '.[test]'
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
@@ -152,12 +154,11 @@ engine, and GPU measurements become a public result. Both pages are static and
 work in Light or Dark mode.
 
 For a zero-GPU streamed request race, use the Episode 1
-[Quick test](docs/episode-1-preparation/quick-test.md). Its browser and CLI use
-the same versioned configuration and runner. Quick test results are interactive
-diagnostics, not the ShareGPT/GSM8K benchmark evidence defined for Episode 1.
-Run `scripts/quick-test demo` to bootstrap and launch the dashboard, then use
-`scripts/quick-test request` or `scripts/quick-test compare` from another
-terminal against the same loopback bridge.
+[Quick test](docs/episode-1-preparation/quick-test.md). The supported path is the
+operator CLI; it is separate from this static public dashboard. Quick-test
+results are interactive diagnostics, not the ShareGPT/GSM8K benchmark evidence
+defined for Episode 1. Use `scripts/quick-test request` or
+`scripts/quick-test compare` against the loopback bridge described there.
 For a second-machine checkout, follow the concise
 [Episode 1 remote handoff](docs/episode-1-preparation/remote-handoff.md). Agents
 resuming work across machines should start with the repository's timestamped

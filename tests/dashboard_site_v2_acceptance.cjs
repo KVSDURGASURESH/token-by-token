@@ -1,7 +1,17 @@
 const { chromium } = require('../dashboard/node_modules/playwright');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 const episode1Projection = require('../dashboard/src/data/site-v2/episode-1.json');
 const episode0Telemetry = require('../dashboard/src/data/site-v2/episode-0-telemetry.json');
+const catalog = require('../dashboard/src/data/site-v2/catalog.json');
+const roadmapContext = require('../dashboard/src/data/site-v2/roadmap-context.json');
+
+const roadmap = fs.readFileSync(require.resolve('../docs/roadmap.md'), 'utf8');
+const roadmapSections = Object.fromEntries([...roadmap.matchAll(/^### (\d+)\. ([^\n]+)\n\n([^\n]+)/gm)].map(match => [Number(match[1]), match[3].replaceAll('**', '')]));
+for (const episode of catalog.episodes.filter(episode => episode.status === 'planned')) {
+  assert.equal(roadmapContext[episode.id], roadmapSections[episode.number], `${episode.id} landing context must match its roadmap section`);
+  assert.match(episode.roadmapAnchor, new RegExp(`^${episode.number}-`), `${episode.id} must use GitHub's numbered roadmap anchor`);
+}
 
 assert.equal(episode1Projection.schema_version, 'token-by-token.public-site-projection.v1');
 assert.deepEqual(episode1Projection.arms.map(arm => {
@@ -23,14 +33,34 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('[data-screen-label="Landing"] [data-landing-token-accent]').innerText(), 'TOKEN');
     assert.equal(await page.locator('[data-screen-label="Landing"] [data-landing-token-accent]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'TOKEN alone uses the cyan signature color');
     assert.equal(await page.locator('[data-token]').count(), 10);
-    assert.equal(await page.locator('.tbt-rail-chapters button').count(), 3, 'landing has Recorded, Field notes, Planned subchapters');
+    assert.equal(await page.locator('.tbt-rail-chapters button').count(), 2, 'landing has only Recorded and Planned subchapters');
+    assert.equal(await page.getByText('Field notes', { exact: true }).count(), 0, 'Field Notes is removed from public navigation');
+    const episodeTwoRow = page.locator('[data-episode-index-row="episode-2"]');
+    assert.equal(await episodeTwoRow.getByRole('button', { name: /Show context for Episode 02/ }).getAttribute('aria-expanded'), 'false');
+    assert.equal(await page.locator('.tbt-index-open').count(), 0, 'episode rows expose only the context disclosure until expanded');
+    await episodeTwoRow.getByRole('button', { name: /Show context for Episode 02/ }).click();
+    assert.equal(await episodeTwoRow.getByRole('button', { name: /Hide context for Episode 02/ }).getAttribute('aria-expanded'), 'true');
+    assert.match(await episodeTwoRow.innerText(), /The experiment map.*Randomize or counterbalance execution order/is, 'planned disclosure uses the matching roadmap section');
+    assert.match(await episodeTwoRow.getByRole('link', { name: /Read the experiment roadmap/ }).getAttribute('href'), /docs\/roadmap\.md#2-equal-work-runtime-baseline$/);
+    assert.equal(await episodeTwoRow.locator('.tbt-index-context > p:not(.tbt-eyebrow)').evaluate(el => Number(getComputedStyle(el).fontWeight) <= 300), true, 'roadmap context uses the approved lighter reading weight');
+    const episodeZeroRow = page.locator('[data-episode-index-row="episode-0"]');
+    await episodeZeroRow.getByRole('button', { name: /Show context for Episode 00/ }).click();
+    assert.equal(await episodeZeroRow.getByRole('link', { name: /Open the recorded study/ }).getAttribute('href'), '#episode-0', 'recorded disclosures contain the study link');
+    const landingSummaries = page.locator('.tbt-index-summary');
+    assert.equal(await landingSummaries.evaluateAll(nodes => new Set(nodes.map(node => getComputedStyle(node).maxWidth)).size), 1, 'episode taglines share one readable line length');
+    assert.equal(await page.locator('.tbt-deck').evaluate(el => getComputedStyle(el).fontWeight), '300', 'typography option A gives supporting copy a lighter reading weight');
     assert.equal(await page.locator('.tbt-externals a[aria-label^="Source on GitHub"] svg').count(), 1);
     await page.getByRole('button', { name: /Lab tools/ }).click();
     assert.equal(await page.locator('#lab-tools [data-local-tool]').count(), 0, 'public Lab Tools no longer lists internal operator rows');
     assert.match(await page.locator('#lab-tools').innerText(), /Benchmarking harness powered by AgentBench from Mirastack Labs/i);
+    assert.equal(await page.locator('#lab-tools [data-mirastack-labs]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'Mirastack Labs uses the cyan signature color');
     assert.match(await page.locator('#lab-tools').innerText(), /hello@mirastacklabs\.ai/i);
+    assert.equal(await page.locator('.tbt-site-nav a[href="#methodology"] + #lab-tools-btn').count(), 1, 'Lab Tools is immediately beside Methodology');
+    assert.equal(await page.locator('.tbt-site-nav #lab-tools-btn + [data-home-link]').count(), 1, 'Home follows Lab Tools');
     const mark = await (await page.request.get(`${base}token-by-token.svg`)).text();
     assert.doesNotMatch(mark, /c2pa|Anthropic|manifest/i, 'production mark excludes prototype provenance metadata');
+    await page.goto(`${base}#field-notes`);
+    assert.equal(await page.locator('[data-screen-label="Landing"]').count(), 1, 'retired Field Notes links resolve to the episode catalog');
     await page.goto(`${base}#episode-1?load=16`);
     assert.equal(await page.locator('.tbt-brand').innerText(), 'TOKEN BY TOKEN', 'site wordmark removes the inference-lab suffix');
     assert.equal(await page.locator('.tbt-brand [data-brand-part="by"]').evaluate(el => getComputedStyle(el).color), 'rgb(178, 47, 24)', 'Option B renders BY in the red signal color');
@@ -63,24 +93,25 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('#ch-brief table tbody tr').count(), 4);
     assert.equal(await page.locator('#ch-brief .tbt-caveat li').count() >= 3, true);
     assert.equal(await page.locator('[data-experiment-contract]').count(), 1, 'Episode 01 publishes a bounded experiment contract');
-    assert.equal(await page.locator('[data-config-state="enabled"]').count(), 2);
-    assert.equal(await page.locator('[data-config-state="inherited"]').count(), 3);
-    assert.equal(await page.locator('[data-config-state="disabled"]').count(), 3);
-    assert.match(await page.locator('[data-experiment-contract]').innerText(), /Prefix caching.*FP8 KV cache.*Speculative decoding/is);
+    assert.equal(await page.locator('[data-config-state="enabled"]').count(), 4);
+    assert.equal(await page.locator('[data-config-state="withheld"]').count(), 2);
+    assert.match(await page.locator('[data-experiment-contract]').innerText(), /One H200 per arm.*Matched model family.*Runtime optimization flags.*withheld/is);
+    assert.doesNotMatch(await page.locator('[data-experiment-contract]').innerText(), /Qwen|max_concurrent|prefix_caching|kv_cache_dtype/i, 'the public contract does not compile serving settings into the site');
     const configColors = await page.locator('[data-experiment-contract]').evaluate(root => {
       const css = (selector) => getComputedStyle(root.querySelector(selector));
       return {
         ink: getComputedStyle(document.querySelector('[data-tbt]')).color,
         enabledLabel: css('[data-config-state="enabled"] b').color,
         enabledIcon: css('[data-config-state="enabled"] i').color,
-        inheritedLabel: css('[data-config-state="inherited"] b').color,
-        inheritedDetail: css('[data-config-state="inherited"] small').color,
+        inheritedLabel: css('[data-config-state="withheld"] b').color,
+        inheritedDetail: css('[data-config-state="withheld"] small').color,
       };
     });
     assert.equal(configColors.enabledLabel, configColors.ink, 'configuration labels remain neutral');
     assert.equal(configColors.inheritedLabel, configColors.ink, 'inherited labels remain neutral');
     assert.notEqual(configColors.enabledIcon, configColors.ink, 'only the enabled status mark carries evidence color');
     assert.notEqual(configColors.inheritedDetail, configColors.ink, 'only inherited detail carries the amber state color');
+    assert.equal(await page.locator('.tbt-config-grid').evaluate(el => Number.parseFloat(getComputedStyle(el).paddingBottom) >= 18), true, 'the experiment-contract divider leaves breathing room below its option details');
     const contractBox = await page.locator('[data-experiment-contract]').boundingBox();
     const labToggleBox = await page.locator('#lab-toggle').boundingBox();
     assert(contractBox && labToggleBox && labToggleBox.y >= contractBox.y + contractBox.height, 'Evidence Lab control follows the experiment contract');
@@ -88,18 +119,26 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert(unfoldSize.height <= 38 && unfoldSize.font <= 11, 'configuration control stays visually subordinate');
     const labToggleSize = await page.locator('#lab-toggle').evaluate(el => ({ height: el.getBoundingClientRect().height, font: Number.parseFloat(getComputedStyle(el).fontSize) }));
     assert(labToggleSize.height <= 38 && labToggleSize.font <= 11, 'Evidence Lab control stays visually subordinate');
+    assert.deepEqual(
+      await page.locator('.tbt-unfold, #lab-toggle').evaluateAll(elements => elements.map(el => ({ width: el.getBoundingClientRect().width, height: el.getBoundingClientRect().height }))),
+      [{ width: 184, height: 34 }, { width: 184, height: 34 }],
+      'recorded JSON and Evidence Lab actions use one stable control size'
+    );
     await page.getByRole('button', { name: /Unfold recorded JSON/i }).click();
     assert.equal(await page.locator('[data-configuration-note]').count(), 1);
     assert.match(await page.locator('.tbt-unfold').innerText(), /Fold configuration note/i);
     await page.waitForTimeout(850);
     assert.equal(await page.locator('.tbt-paper-stage').evaluate(el => el.getBoundingClientRect().height >= 580), true, 'configuration paper unfolds with the approved transition');
     assert.equal(await page.locator('.tbt-paper').evaluate(el => el.scrollHeight <= el.clientHeight + 1), true, 'the unfolded paper never clips the JSON or privacy boundary');
-    assert.match(await page.locator('[data-configuration-note]').innerText(), /"prefix_caching": true.*"speculative_decoding": false/is);
-    assert.match(await page.locator('[data-configuration-note]').innerText(), /public allowlist.*not a runnable serving profile/is);
+    assert.match(await page.locator('[data-configuration-note]').innerText(), /"user_levels".*"measurement_seconds".*"decode_p10_floor_tps"/is);
+    assert.doesNotMatch(await page.locator('[data-configuration-note]').innerText(), /Qwen|max_concurrent|prefix_caching|kv_cache_dtype/i);
+    assert.match(await page.locator('[data-configuration-note]').innerText(), /public measurement contract.*not a runnable serving profile/is);
     assert.equal(await page.locator('[data-run-cost]').count(), 1, 'Episode 01 explains the bounded cost model');
     const runCostText = await page.locator('[data-run-cost]').innerText();
     assert.match(runCostText, /\$3\.21.*42 GPU-minutes/is);
     assert.match(runCostText, /\$4\.59\s*\/\s*h.*not the provider invoice/is);
+    assert.equal(await page.locator('[data-cost-provider]').innerText(), 'RUNPOD');
+    assert.equal(await page.locator('[data-cost-provider]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'the recorded cost provider uses the cyan identity accent');
     await page.goto(`${base}#episode-2`);
     assert.equal(await page.locator('.tbt-planned-state').innerText(), 'PLANNED');
     assert.equal(await page.locator('.tbt-planned-state').evaluate(el => getComputedStyle(el).color), 'rgb(90, 105, 102)', 'planned state stays neutral in the navigation system');
@@ -128,7 +167,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('#ch-method [data-protocol-row]').count(), 6);
     assert.equal(await page.locator('#ch-boundaries [data-boundary-block]').count(), 4);
     assert.equal(await page.locator('#ch-source [data-source-row]').count(), 4);
-    assert.match(await page.locator('#ch-source').innerText(), /proposed, not released/i);
+    assert.match(await page.locator('#ch-source').innerText(), /offline evidence client.*real benchmark submission is not released/i);
     assert.equal(await page.locator('#ch-method [data-request-anatomy]').count(), 1);
     await page.locator('#ch-method [data-request-anatomy]').getByRole('button', { name: 'TPOT' }).click();
     assert.match(await page.locator('#ch-method [data-request-anatomy]').innerText(), /decode duration divided/i);
@@ -138,6 +177,9 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('#ch-evidence [data-identity-legend]').count(), 1);
     assert.equal(await page.locator('#ch-evidence [data-observed-signals]').count(), 1, 'notable recorded signals are surfaced');
     assert.match(await page.locator('#ch-evidence [data-observed-signals]').innerText(), /Tail latency.*TTFT p95.*Waiting requests.*context only/is, 'notable recorded signals remain evidence-scoped');
+    await page.getByRole('group', { name: 'Baseline engine' }).getByRole('button', { name: 'SGLang' }).click();
+    assert.match(await page.locator('#ch-evidence [data-observed-signals]').innerText(), /TTFT p95.*75\.9% worse/is, 'the highlighted tail signal follows the active baseline direction');
+    await page.getByRole('group', { name: 'Baseline engine' }).getByRole('button', { name: 'vLLM' }).click();
     const directional = page.locator('#ch-evidence [data-evidence-group]').filter({ hasText: 'Directional comparisons' }).first();
     assert.equal(await directional.getByRole('tablist', { name: 'Directional metrics' }).count(), 1, 'directional metrics use a stable selector rail');
     assert.equal(await directional.getByRole('tab').count(), 4);
@@ -191,14 +233,21 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.match(page.url(), /mode=engines/);
     await page.waitForFunction(() => document.activeElement?.getAttribute('data-seg') === 'mode' && document.activeElement?.getAttribute('data-val') === 'engines');
     await page.getByRole('button', { name: 'Loads within each engine' }).click();
-    assert.equal(await page.getByRole('group', { name: 'Baseline load' }).getByRole('button').count(), 3);
+    const referenceLoad = page.getByRole('group', { name: 'Reference load' });
+    assert.equal(await referenceLoad.getByRole('button').count(), 3, 'all recorded loads remain visible in the reference control');
+    assert.equal(await referenceLoad.locator('[data-val="16"]').isDisabled(), true, 'the selected load remains visible but cannot reference itself');
+    assert.match(await referenceLoad.locator('[data-val="16"]').innerText(), /16.*selected/is, 'the disabled reference explains why it is unavailable');
+    await page.goto(`${base}#episode-1?load=24&mode=loads&base=24&depth=lab`);
+    assert.match(await page.locator('#ch-evidence h2').innerText(), /Loads compared with 12 users/i, 'a self-reference deep link falls back to another recorded load');
+    assert.equal(await page.getByRole('group', { name: 'Reference load' }).locator('[data-val="24"]').isDisabled(), true, '24 users remains visible and disabled when selected');
+    assert.match(await page.locator('#ch-evidence .tbt-compare-controls').innerText(), /Selected load: 24 users.*Reference load: 12 users/is);
     for (const chapter of ['brief', 'method', 'evidence', 'boundaries', 'source']) {
       assert.equal(await page.locator(`#ch-${chapter}`).count(), 1, `missing ${chapter}`);
     }
     assert.equal(await page.locator('[data-track] [data-seg="load"]').count(), 3);
-    await page.locator('[data-seg="load"][data-val="24"]').click();
-    assert.match(page.url(), /load=24/);
-    assert.match(await page.locator('[data-tbt] [role="status"]').first().textContent(), /24 users selected.*output/i);
+    await page.locator('[data-seg="load"][data-val="16"]').click();
+    assert.match(page.url(), /load=16/);
+    assert.match(await page.locator('[data-tbt] [role="status"]').first().textContent(), /16 users selected.*output/i);
     const portraitPage = await browser.newPage({ viewport: { width: 810, height: 1180 } });
     await portraitPage.goto(`${base}#episode-1?load=16&depth=lab&metric=error_rate_pct`);
     await portraitPage.waitForSelector('#ch-evidence[data-explanation-open="error_rate_pct"]');
@@ -206,11 +255,17 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     const portraitBoxes = await portraitPage.locator('#ch-evidence .tbt-plot-card, #ch-evidence .tbt-explanation-row > div').evaluateAll(els => els.map(el => ({ left: el.getBoundingClientRect().left, right: el.getBoundingClientRect().right, viewport: innerWidth })));
     assert.equal(portraitBoxes.every(box => box.left >= -1 && box.right <= box.viewport + 1), true, 'portrait evidence charts and explanation stay inside the viewport');
     await portraitPage.close();
+    const compactPage = await browser.newPage({ viewport: { width: 1024, height: 900 } });
+    await compactPage.goto(`${base}#episode-1?load=16&depth=lab&metric=output_tps`);
+    const compactPlot = await compactPage.locator('#ch-evidence [data-selected-metric="output_tps"]').boundingBox();
+    const compactExplanation = await compactPage.getByRole('region', { name: 'Explanation: Output throughput' }).boundingBox();
+    assert(compactPlot && compactExplanation && compactExplanation.y >= compactPlot.y + compactPlot.height - 1, 'compact desktop evidence stacks explanations instead of clipping the right column');
+    await compactPage.close();
     const dragPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     await dragPage.goto(`${base}#episode-1?load=16`);
     const track = await dragPage.locator('[data-track]').boundingBox();
     assert(track);
-    await dragPage.mouse.move(track.x + track.width * .45, track.y + 15);
+    await dragPage.mouse.move(track.x + track.width * .3, track.y + 15);
     await dragPage.mouse.down();
     await dragPage.mouse.move(track.x + track.width * .875, track.y + 15, { steps: 4 });
     await dragPage.mouse.up();
@@ -218,6 +273,16 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await dragPage.goBack();
     assert.match(dragPage.url(), /load=16/, 'one drag must create one navigable history entry');
     await dragPage.close();
+    const wheelPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    await wheelPage.goto(`${base}#episode-1?load=16`);
+    assert.match(await wheelPage.locator('.tbt-selector-note').innerText(), /Scroll over the rail.*next recorded load/i, 'the measured-load rail advertises normal wheel interaction');
+    await wheelPage.locator('[data-track]').hover();
+    await wheelPage.mouse.wheel(0, 220);
+    await wheelPage.waitForURL(/load=24/);
+    assert.equal(await wheelPage.locator('[data-seg="load"][aria-pressed="true"]').getAttribute('data-val'), '24', 'normal wheel scrolling snaps the measured-load selector to the next recorded point');
+    await wheelPage.mouse.wheel(0, -220);
+    await wheelPage.waitForURL(/load=16/);
+    await wheelPage.close();
     await page.goto(`${base}#episode-0`);
     assert.match(await page.locator('#page-title').innerText(), /Can 48\.9% more throughput come with 19\.8% higher median TPOT/i);
     assert.equal(await page.locator('.tbt-hero-evidence').count(), 0, 'Episode 00 keeps its result in the Brief only');
@@ -279,28 +344,6 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.getByText('Workload-level telemetry').count(), 1);
     assert.equal(await page.locator('[data-run-telemetry]').count(), 2);
     assert.match(await page.locator('[data-run-telemetry]').first().innerText(), /power.*samples/is);
-    await page.goto(`${base}#field-notes`);
-    assert.equal(await page.locator('[data-screen-label="Selector"]').count(), 0, 'field note has no page selector');
-    await page.getByRole('button', { name: /Open evidence lab/ }).click();
-    assert.equal(await page.locator('#ch-evidence [data-seg="users"]').count(), 7);
-    await page.locator('#ch-evidence [data-seg="users"][data-val="32"]').click();
-    assert.match(page.url(), /users=32/);
-    assert.match(await page.locator('#ch-evidence [data-metric="error_rate"]').innerText(), /16\.91%/);
-    const fieldOutput = page.locator('#ch-evidence [data-metric="output_tps"]');
-    const fieldPoint = fieldOutput.locator('[data-plot-point]').first();
-    assert.equal(await fieldPoint.evaluate(element => element.closest('button') === null), true, 'Field Note plot points are outside the explanation control');
-    assert.match(await fieldPoint.getAttribute('aria-label'), /Deployment A.*2 users.*Output throughput.*tok\/s/i, 'the first plotted point reports its own recorded x value');
-    const fieldToggle = fieldOutput.locator('[data-metric-toggle="output_tps"]');
-    assert.equal(await fieldToggle.getAttribute('aria-controls'), 'field-ex-output_tps');
-    await fieldToggle.click();
-    assert.match(await fieldToggle.innerText(), /Close explanation\s*[−-]/i);
-    assert.equal(await page.getByRole('region', { name: 'Explanation: Output throughput' }).count(), 1);
-    await page.goto(`${base}#field-notes?ch=boundaries`);
-    await page.locator('#ch-boundaries').waitFor();
-    await page.waitForFunction(() => document.activeElement?.id === 'h-boundaries');
-    await page.locator('.tbt-rail-chapters').getByRole('button', { name: /05 Source/ }).click();
-    await page.waitForFunction(() => document.activeElement?.id === 'h-source');
-    assert.equal(await page.locator('#ch-source').count(), 1);
     await page.goto(`${base}#episode-1?ch=evidence`);
     await page.locator('#ch-evidence').waitFor();
     assert.match(page.url(), /depth=lab/);
@@ -327,7 +370,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.getByText('Link adjusted').waitFor();
     assert.match(await page.locator('.tbt-notice').innerText(), /depth is not available/i);
     assert.doesNotMatch(page.url(), /depth=bogus/);
-    for (const route of ['episode-0','episode-1','field-notes']) {
+    for (const route of ['episode-0','episode-1']) {
       await page.goto(`${base}#${route}?depth=lab&ch=evidence&metric=${route === 'episode-0' ? 'output_tokens_per_second' : 'output_tps'}`);
       await page.locator('#lab-toggle').click();
       assert.equal(await page.locator('#lab').count(), 0, `${route} lab stays collapsed`);
@@ -344,7 +387,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.goto(`${base}#methodology?ch=states`);
     await page.waitForFunction(() => document.activeElement?.id === 'h-states');
     assert.match(await page.locator('#ch-definitions').innerText(), /Episode 01 alone.*20 tok\/s.*Episode 01 alone.*1%/s);
-    assert.match(await page.locator('#ch-definitions').innerText(), /Field Note has no declared validity limit/);
+    assert.doesNotMatch(await page.locator('.tbt-methodology').innerText(), /Field Note/i);
     assert.match(await page.locator('#ch-states').innerText(), /Threshold met.*Threshold missed.*Invalid/s);
     assert.equal(await page.locator('#ch-evidence [data-metric][aria-expanded="true"]').count(), 0);
     await page.goto(`${base}#episode-0`);
@@ -368,7 +411,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
         const page = await browser.newPage({ viewport: { width, height: 900 }, colorScheme: theme, reducedMotion: 'reduce' });
         const external = [];
         await page.route('**/*', route => { if (new URL(route.request().url()).origin !== new URL(base).origin) { external.push(route.request().url()); route.abort(); } else route.continue(); });
-        for (const route of ['episodes','episode-0','episode-1','episode-2','field-notes','methodology']) {
+        for (const route of ['episodes','episode-0','episode-1','episode-2','methodology']) {
           await page.goto(`${base}#${route}`);
           const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
           assert.equal(overflow, false, `${route} overflows at ${width}px ${theme}`);
@@ -401,7 +444,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
             const placement = await page.evaluate(ch => ({ heading: document.getElementById(`h-${ch}`).getBoundingClientRect().top, selector: document.querySelector('.tbt-selector').getBoundingClientRect().bottom }), chapter);
             assert(placement.heading >= placement.selector + 8, `${chapter} heading is obscured at 390px 200%: ${JSON.stringify(placement)}`);
           }
-          for (const route of ['episode-0','episode-1','field-notes']) {
+          for (const route of ['episode-0','episode-1']) {
             await page.goto(`${base}#${route}?depth=lab&ch=method&text=200`);
             await page.locator('#ch-evidence [data-metric]').first().click();
             for (const selector of ['.tbt-method-cards > div','.tbt-protocol > div','.tbt-boundary-grid > div','.tbt-explanation-row > div','.tbt-field-explanation']) {
