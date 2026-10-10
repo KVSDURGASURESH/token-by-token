@@ -166,6 +166,36 @@ html,body,#root{margin:0;min-width:320px;min-height:100%;background:#fbfaf5}html
 /* Header utilities: Home sits directly beside Lab Tools; ownership is cyan. */
 .tbt-site-nav [data-home-link]{padding-inline:7px}
 [data-mirastack-labs]{color:var(--chapter-nav)}
+[data-methodology-accent]{color:var(--chapter-nav)}
+
+/* Methodology is an audit trail: numbered process, comparison rules and source ledger. */
+.tbt-method-steps{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--ink)}
+.tbt-method-steps li{display:grid;grid-template-columns:2.75rem minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.tbt-method-steps li>b{font:500 1.5rem/1 'Oswald Variable',sans-serif;color:var(--chapter-nav)}
+.tbt-method-steps h3{font:500 1.125rem/1.15 'Oswald Variable',sans-serif;text-transform:uppercase}
+.tbt-method-steps p{max-width:68ch;margin-top:5px;color:var(--copy);font-weight:300}
+.tbt-method-reference,.tbt-compliance-note{max-width:50rem;margin-top:24px;padding:16px 0 16px 18px;border-left:2px solid var(--chapter-nav)}
+.tbt-method-reference>strong,.tbt-compliance-note>strong,.tbt-source-boundary>strong{font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase}
+.tbt-method-reference p,.tbt-compliance-note p,.tbt-source-boundary p{margin-top:6px;color:var(--copy);font-size:.875rem;font-weight:300}
+.tbt-rule-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;margin-top:22px;border-top:1px solid var(--ink)}
+.tbt-rule-grid p{padding:14px 0;border-bottom:1px solid var(--line);color:var(--copy);font-weight:300}
+.tbt-rule-grid strong{color:var(--ink);font-weight:500}
+.tbt-source-boundary{max-width:50rem;margin-top:22px;padding:16px;border:1px solid var(--line-strong)}
+.tbt-source-scope{max-width:50rem!important;padding-left:18px;border-left:2px solid var(--chapter);font-size:.875rem}
+.tbt-source-scope strong{color:var(--ink);font-weight:500}
+.tbt-source-group{margin-top:34px}
+.tbt-source-group>h3{padding-bottom:8px;border-bottom:1px solid var(--ink);font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase}
+.tbt-source-ledger article{padding:18px 0;border-bottom:1px solid var(--line)}
+.tbt-source-ledger article>header{display:grid;grid-template-columns:minmax(0,1fr) minmax(10rem,auto);gap:12px 24px;align-items:start}
+.tbt-source-ledger article>header a{font:500 1.25rem/1.2 'Oswald Variable',sans-serif;text-transform:uppercase}
+.tbt-source-ledger article>header p{margin-top:3px;font-size:.8125rem;color:var(--muted);font-weight:300}
+.tbt-source-ledger article>header>span{justify-self:end;max-width:18rem;font-size:.6875rem;line-height:1.4;color:var(--chapter-nav);text-align:right;text-transform:uppercase;letter-spacing:.08em}
+.tbt-source-ledger dl{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin:16px 0 0}
+.tbt-source-ledger dl>div{display:grid;grid-template-columns:7rem minmax(0,1fr);gap:10px}
+.tbt-source-ledger dt{font-size:.6875rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tbt-source-ledger dd{margin:0;font-size:.8125rem;font-weight:300;color:var(--copy);overflow-wrap:anywhere}
+.tbt-source-ledger code{font:inherit;font-family:ui-monospace,monospace}
+@media(max-width:700px){.tbt-rule-grid,.tbt-source-ledger dl{grid-template-columns:1fr}.tbt-source-ledger article>header{grid-template-columns:1fr}.tbt-source-ledger article>header>span{justify-self:start;text-align:left}.tbt-source-ledger dl>div{grid-template-columns:1fr;gap:2px}}
 
 /* The measured rail uses the full available lane and snaps horizontal wheel intent. */
 .tbt-track{max-width:none;margin-inline:32px}

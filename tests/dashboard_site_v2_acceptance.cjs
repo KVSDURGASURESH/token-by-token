@@ -429,6 +429,15 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     await page.waitForFunction(() => document.activeElement?.id === 'h-recorded');
     await page.goto(`${base}#methodology?ch=states`);
     await page.waitForFunction(() => document.activeElement?.id === 'h-states');
+    assert.equal(await page.locator('#page-title').innerText(), 'HOW THE LAB MEASURES');
+    assert.equal(await page.locator('#page-title').evaluate(el => getComputedStyle(el).textTransform), 'uppercase');
+    assert.equal(await page.locator('[data-methodology-accent]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'only LAB uses the cyan methodology-title accent');
+    assert.equal(await page.locator('#page-title [data-methodology-accent]').count(), 1);
+    assert.equal(await page.locator('.tbt-rail-chapters button').count(), 7, 'methodology navigation exposes the complete audit trail');
+    assert.match(await page.locator('#ch-process').innerText(), /Freeze the contract.*Resolve the workload.*Check the endpoint.*Separate warm-up.*Replay recorded load.*Measure both sides.*Validate, then report/is);
+    assert.match(await page.locator('#ch-sources').innerText(), /Nebius.*Novita.*WildChat.*Trace Commons.*Thoughtworks.*SWE-bench Pro.*Kilo Code.*tau-bench.*llama-benchy/is);
+    assert.match(await page.locator('#ch-sources').innerText(), /AgentBench is a private Mirastack Labs benchmarking harness/i);
+    assert.match(await page.locator('#ch-sources').innerText(), /Attribution is not permission/i);
     assert.match(await page.locator('#ch-definitions').innerText(), /Episode 01 alone.*20 tok\/s.*Episode 01 declares.*1%/s);
     assert.doesNotMatch(await page.locator('.tbt-methodology').innerText(), /Field Note/i);
     assert.match(await page.locator('#ch-states').innerText(), /Threshold met.*Threshold missed.*Invalid/s);

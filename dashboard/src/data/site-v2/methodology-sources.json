@@ -1,0 +1,101 @@
+[
+  {
+    "group": "Bundled AgentBench corpus inputs",
+    "name": "Nebius SWE-rebench OpenHands trajectories",
+    "contributor": "Nebius and the OpenHands ecosystem",
+    "url": "https://huggingface.co/datasets/nebius/SWE-rebench-openhands-trajectories",
+    "license": "CC BY 4.0",
+    "revision": "35455389ab51bf5e2306bfd436ef72d0f98bf882",
+    "use": "Agentic coding request histories: system prompts, function tools and tool output.",
+    "handling": "AgentBench takes a seeded sample, trims messages to client-sent fields and retains source record identifiers in private corpus metadata.",
+    "status": "Bundled in the default AgentBench corpus"
+  },
+  {
+    "group": "Bundled AgentBench corpus inputs",
+    "name": "Novita Agentic Code Dataset 22",
+    "contributor": "Novita AI",
+    "url": "https://huggingface.co/datasets/novita/agentic_code_dataset_22",
+    "license": "Apache 2.0",
+    "revision": "8eae8cbf491b4b44fc7c6b3b9a1bf28e381b9bd9",
+    "use": "Recorded Claude Code API requests, including main and side-agent calls, timestamps and output sizes.",
+    "handling": "AgentBench converts the OpenAI-format export, skips failed recorded requests and records repeated sessions in the mixture metadata.",
+    "status": "Bundled in the default AgentBench corpus"
+  },
+  {
+    "group": "Bundled AgentBench corpus inputs",
+    "name": "Allen AI WildChat-1M",
+    "contributor": "Allen Institute for AI and the WildChat authors",
+    "url": "https://huggingface.co/datasets/allenai/WildChat-1M",
+    "license": "ODC-BY 1.0",
+    "revision": "7d6490e462285cf85d91eabea0f9a954fbddcd1f",
+    "use": "Real chat conversations without tools, representing the chat slice of a mixed population.",
+    "handling": "AgentBench keeps message role and content, drops location, hashed IP and browser headers, and excludes conversations marked toxic by default.",
+    "status": "Bundled in the default AgentBench corpus"
+  },
+  {
+    "group": "Bundled AgentBench corpus inputs",
+    "name": "Trace Commons Agent Traces",
+    "contributor": "Trace Commons contributors",
+    "url": "https://huggingface.co/datasets/trace-commons/agent-traces",
+    "license": "CC BY 4.0 compilation; embedded material may retain separate terms",
+    "revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+    "use": "Timing only: tool-execution gaps and human think-time distributions for sources without timestamps.",
+    "handling": "AgentBench stores derived gap quantiles, not Trace Commons session content. The upstream warns that anonymization is best-effort and that embedded code or content may have separate licenses.",
+    "status": "Bundled timing model"
+  },
+  {
+    "group": "Optional and reference paths",
+    "name": "Thoughtworks Agentic Coding Trajectories",
+    "contributor": "Thoughtworks and its three upstream dataset communities",
+    "url": "https://huggingface.co/datasets/thoughtworks/agentic-coding-trajectories",
+    "license": "Per-row upstream terms; no blanket dataset license",
+    "revision": "Resolved and pinned when imported",
+    "use": "Optional text-tool-protocol trajectories from SWE-agent and Klear sources.",
+    "handling": "AgentBench records each row's source dataset and terms. Consumers must select a compatible subset and follow every applicable upstream policy.",
+    "status": "Supported importer; not in the bundled default mix"
+  },
+  {
+    "group": "Optional and reference paths",
+    "name": "SWE-bench Pro",
+    "contributor": "Scale AI and the upstream open-source repositories",
+    "url": "https://huggingface.co/datasets/ScaleAI/SWE-bench_Pro",
+    "license": "MIT harness; task content retains upstream repository licenses",
+    "revision": "External dataset revision must be pinned for a reproducible run",
+    "use": "Optional issue-fix task generation and patch grading in isolated repository containers.",
+    "handling": "AgentBench samples tasks deterministically and invokes an external grading harness. This path is separate from replay-only serving measurements.",
+    "status": "Optional generator and quality path"
+  },
+  {
+    "group": "Optional and reference paths",
+    "name": "Kilo Code",
+    "contributor": "Kilo Code and OpenCode contributors",
+    "url": "https://github.com/Kilo-Org/kilocode",
+    "license": "MIT",
+    "revision": "Prompt-pack client version is recorded; an exact upstream source revision is not established",
+    "use": "A captured Kilo-like prompt pack and client-behavior profile for synthetic agent replay.",
+    "handling": "The bundled prompt pack is a benchmarking fixture, not a claim of current Kilo behavior. Public studies must identify when this fixture is used.",
+    "status": "Optional synthetic replay fixture; provenance review required before redistribution"
+  },
+  {
+    "group": "Optional and reference paths",
+    "name": "tau-bench",
+    "contributor": "Sierra Research and tau-bench contributors",
+    "url": "https://github.com/sierra-research/tau2-bench",
+    "license": "MIT",
+    "revision": "External tool version must be pinned by the run",
+    "use": "Optional external generator for tool-agent-user evaluation sessions.",
+    "handling": "AgentBench wraps the external CLI; tau-bench tasks, policies and generated outputs are not part of the default serving corpus.",
+    "status": "Optional integration"
+  },
+  {
+    "group": "Optional and reference paths",
+    "name": "llama-benchy",
+    "contributor": "Eugene Gryaznov and contributors",
+    "url": "https://github.com/eugr/llama-benchy",
+    "license": "MIT",
+    "revision": "Conceptual reference; no source code is vendored",
+    "use": "Methodological reference for prompt-processing and token-generation probes at multiple context depths.",
+    "handling": "AgentBench implements its own measurement and coherence paths; this credit identifies the documented methodological influence.",
+    "status": "Methodological reference"
+  }
+]
