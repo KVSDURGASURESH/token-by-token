@@ -12,8 +12,10 @@ import re
 import selectors
 import signal
 import subprocess
+import sys
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable, Iterable, Protocol, Sequence
 
 SCHEMA = "episode1.gpu-process-ownership.v1"
@@ -45,11 +47,31 @@ class CommandResult:
 def _group_exists(pgid: int) -> bool:
     try:
         os.killpg(pgid, 0)
-        return True
     except ProcessLookupError:
         return False
     except PermissionError:
         return True
+    if sys.platform.startswith("linux"):
+        try:
+            seen = False
+            for entry in Path("/proc").iterdir():
+                if not entry.name.isdecimal():
+                    continue
+                try:
+                    fields = (entry / "stat").read_text().rsplit(")", 1)[1].split()
+                except FileNotFoundError:
+                    continue
+                if len(fields) < 3:
+                    return True
+                if int(fields[2]) == pgid:
+                    seen = True
+                    if fields[0] not in {"Z", "X"}:
+                        return True
+            if seen:
+                return False
+        except (OSError, ValueError, IndexError):
+            pass  # Fail closed if procfs cannot prove zombie-only membership.
+    return True
 
 
 def _cleanup_group(process: subprocess.Popen[bytes], deadline_ns: int,
