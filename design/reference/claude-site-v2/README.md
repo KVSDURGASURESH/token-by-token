@@ -68,7 +68,7 @@ This replaces the old index header (eyebrow "Token by Token · Inference lab", H
 `<header data-screen-label="Landing">`:
 - **Container:** `display:grid; gap:24px; padding: clamp(8px,2vw,28px) 0 clamp(32px,5vw,60px); border-bottom:1px solid var(--ink)`.
 - **Contents, in order:**
-  1. **Eyebrow:** "Token by Token · an open inference lab". `600 .6875rem/1.3 Avenir`, `.16em`, uppercase, `--muted`.
+  1. **Eyebrow:** "Token by Token · an inference lab". `600 .6875rem/1.3 Avenir`, `.16em`, uppercase, `--muted`.
   2. **H1** (`id="page-title"`): "Every token is a measurement." `600 clamp(3rem,9.5vw,7.75rem)/.86 Oswald`, `letter-spacing:-.01em`, uppercase, `text-wrap:balance`.
   3. **Deck:** "We run open model-serving engines under recorded load and read the results one claim at a time — what a user waits for, what the hardware does, and where the evidence stops."
      - `clamp(1.125rem,1.9vw,1.4375rem)/1.4`, `--copy`, `max-width:34em`.
