@@ -489,6 +489,14 @@ class Tests(unittest.TestCase):
         with self.assertRaisesRegex(WatchdogError,"exited"):
             launcher(binding,self.root/"state",now+1)
         descendant=int(pidfile.read_text())
-        with self.assertRaises(ProcessLookupError): os.kill(descendant,0)
+        try:
+            os.kill(descendant, 0)
+        except ProcessLookupError:
+            pass
+        else:
+            # Unreaped zombies are visible to kill(0) in some Linux CI containers.
+            self.assertTrue(sys.platform.startswith("linux"))
+            fields = Path(f"/proc/{descendant}/stat").read_text().rsplit(")", 1)[1].split()
+            self.assertEqual(fields[0], "Z")
 
 if __name__ == "__main__": unittest.main()

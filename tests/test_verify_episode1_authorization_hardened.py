@@ -51,7 +51,7 @@ class HardenedAuthorizationVerifierTests(unittest.TestCase):
         return repository, head
 
     def test_git_head_ignores_ambient_git_environment(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             parent = Path(temporary)
             target, target_head = self._repository(parent, "target", b"target")
             foreign, foreign_head = self._repository(parent, "foreign", b"foreign")
@@ -71,7 +71,7 @@ class HardenedAuthorizationVerifierTests(unittest.TestCase):
                 verifier._observed_head(target_link)
 
     def test_regular_reader_rejects_symlink_fifo_and_oversize(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             root = Path(temporary)
             regular = root / "regular.json"
             regular.write_bytes(b"{}")
@@ -91,7 +91,7 @@ class HardenedAuthorizationVerifierTests(unittest.TestCase):
                 verifier._read_regular(oversized, limit=verifier.MAX_DOCUMENT_BYTES)
 
     def test_material_paths_are_canonical_unique_bounded_and_nofollow(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             root = Path(temporary)
             (root / "safe").mkdir()
             (root / "safe" / "one.bin").write_bytes(b"one")
@@ -128,7 +128,7 @@ class HardenedAuthorizationVerifierTests(unittest.TestCase):
                 verifier._strict_json(raw, "fixture")
 
     def test_successful_cli_uses_actual_git_head_and_preserves_output(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             root = Path(temporary)
             repository, head = self._repository(root, "repository", b"bound material")
             material_bytes = b"bound material"
@@ -209,7 +209,7 @@ class HardenedAuthorizationVerifierTests(unittest.TestCase):
             self.assertEqual(after, before)
 
     def test_help_has_no_filesystem_side_effect(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             root = Path(temporary)
             before = list(root.iterdir())
             completed = subprocess.run(

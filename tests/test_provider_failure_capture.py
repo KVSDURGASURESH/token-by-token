@@ -47,7 +47,7 @@ def fixture(responses):
     for block,_ in blocks: counts[f"{block}|cell|1"]=12; counts[f"{block}|cell|0"]=88
     contract=capmod.RunContract("run-1","attempt-1","a"*64,"b"*64,"c"*64,blocks,counts,
         ("native",),t0,1_900_000_000_000_000_000,hard,hard-1_000_000_000,"clock-1","boot-1")
-    directory=Path(tempfile.mkdtemp(dir="/private/tmp",prefix="pfail-test-"))/"capture"
+    directory=Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()).resolve(),prefix="pfail-test-"))/"capture"
     clock=Clock(t0); capture=capmod.EvidenceCaptureV2(directory,contract,
         monotonic_ns=clock.mono,utc_ns=clock.utc,observation_validator=lambda value:value)
     authority=Authority("pod-1","episode1-run","t"*64,billing); plan={"plan_sha256":"a"*64}
@@ -330,7 +330,7 @@ class FailureCaptureTests(unittest.TestCase):
             p.bind_failure_observation_sink(CaptureFailureSink(capture))
 
     def test_authority_reader_rejects_fifo_symlink_and_same_size_mutation(self):
-        root=Path(tempfile.mkdtemp(dir="/private/tmp",prefix="pfail-reader-"))
+        root=Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()).resolve(),prefix="pfail-reader-"))
         fifo=root/"cleanup-authority.json"; os.mkfifo(fifo,0o600)
         started=time.monotonic()
         with self.assertRaisesRegex(capmod.IntegrityError,"regular file"):
@@ -363,7 +363,7 @@ class FailureCaptureTests(unittest.TestCase):
         contract=capmod.RunContract("run-1","attempt-1","a"*64,"b"*64,"c"*64,
             blocks,counts,("native",),int((now-1)*1e9),1_900_000_000_000_000_000,
             hard,hard-1_000_000_000,"clock-1","boot-1")
-        directory=Path(tempfile.mkdtemp(dir="/private/tmp",prefix="pfail-unowned-"))/"capture"
+        directory=Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()).resolve(),prefix="pfail-unowned-"))/"capture"
         clock=Clock(contract.original_t0_monotonic_ns)
         capture=capmod.EvidenceCaptureV2(directory,contract,monotonic_ns=clock.mono,
             utc_ns=clock.utc,observation_validator=lambda value:value)

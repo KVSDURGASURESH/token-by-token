@@ -204,7 +204,7 @@ class PromotionIntegration(unittest.TestCase):
                     'b'*64,plan['material_sha256'],blocks,counts,('native-queue','system-rss'),START,
                     1_800_000_000_000_000_000,hard,hard-60_000_000_000,
                     'integration-clock','integration-boot')
-                clock=Clock(); directory=Path(tempfile.mkdtemp(dir='/private/tmp',prefix='capture-image-'))/'run'
+                clock=Clock(); directory=Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()).resolve(),prefix='capture-image-'))/'run'
                 cap=ch.EvidenceCaptureV2(directory,contract,monotonic_ns=clock.mono,
                     utc_ns=clock.utc,observation_validator=validate_observation)
                 authority=Authority(requested_image_reference=requested,
@@ -226,7 +226,7 @@ class PromotionIntegration(unittest.TestCase):
             'b'*64,plan['material_sha256'],blocks,counts,('native-queue',),START,
             1_800_000_000_000_000_000,hard,hard-60_000_000_000,
             'integration-clock','integration-boot')
-        clock=Clock(); directory=Path(tempfile.mkdtemp(dir='/private/tmp',prefix='capture-early-'))/'run'
+        clock=Clock(); directory=Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()).resolve(),prefix='capture-early-'))/'run'
         cap=ch.EvidenceCaptureV2(directory,contract,monotonic_ns=clock.mono,
             utc_ns=clock.utc,observation_validator=validate_observation)
         authority=Authority()
@@ -308,7 +308,7 @@ class PromotionIntegration(unittest.TestCase):
             ('native-prefill','native-decode','system-rss'),START,
             1_800_000_000_000_000_000,hard,hard-60_000_000_000,
             'integration-clock','integration-boot')
-        clock=Clock(); directory=Path(tempfile.mkdtemp(dir='/private/tmp',prefix='capture-real-'))/'run'
+        clock=Clock(); directory=Path(tempfile.mkdtemp(dir=Path(tempfile.gettempdir()).resolve(),prefix='capture-real-'))/'run'
         cap=ch.EvidenceCaptureV2(directory,contract,monotonic_ns=clock.mono,
             utc_ns=clock.utc,observation_validator=validate_observation)
         approved_ref='example.invalid/episode1@'+plan['runtime_builds'][0]['derived_image_digest']

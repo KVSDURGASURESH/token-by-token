@@ -59,7 +59,7 @@ class DurableSystemSourceTests(unittest.TestCase):
         return {'record':record,'source_sha256':hashlib.sha256(encoded).hexdigest()},encoded
 
     def test_successful_sample_is_durable_and_normal_source_bytes_unchanged(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td)); block=self.make_block(cap); value,encoded=self.sample()
             block.system_sample(value)
             self.assertEqual(bytes(block._system),encoded)
@@ -69,7 +69,7 @@ class DurableSystemSourceTests(unittest.TestCase):
             self.assertEqual(reopened[0]['source_sha256'],value['source_sha256'])
 
     def test_failed_native_abort_leaves_reopenable_record_after_object_discard(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td)); block=self.make_block(cap); value,_=self.sample()
             block.system_sample(value)
             with self.assertRaises(TimeoutError): block.abort(deadline_monotonic=1.0)
@@ -80,7 +80,7 @@ class DurableSystemSourceTests(unittest.TestCase):
             self.assertEqual((directory/'telemetry.jsonl').read_bytes(),b'')
 
     def test_append_failure_fails_closed_before_memory_acceptance(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,_=capture_at(Path(td)); block=self.make_block(cap); value,_=self.sample()
             with patch('runpod_benchmark.episode1_capture._append',side_effect=OSError('disk')):
                 with self.assertRaises(OSError): block.system_sample(value)
@@ -88,7 +88,7 @@ class DurableSystemSourceTests(unittest.TestCase):
             self.assertEqual((cap.directory/'system-source.jsonl').read_bytes(),b'')
 
     def test_binding_hash_and_bound_rejections_leave_stream_empty(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td)); value,encoded=self.sample()
             payload={'schema_version':'episode1.system-source-evidence.v1',
                 'plan_sha256':PLAN_SHA,'block_id':'block-1','runtime':'vllm',
@@ -109,7 +109,7 @@ class DurableSystemSourceTests(unittest.TestCase):
             self.assertEqual(load_retained_system_sources(cap.directory,con),[])
 
     def test_reopen_enforces_stream_file_bound_before_read(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td))
             path=cap.directory/'system-source.jsonl'
             path.write_bytes(b'x')
@@ -118,7 +118,7 @@ class DurableSystemSourceTests(unittest.TestCase):
                     load_retained_system_sources(cap.directory,con)
 
     def test_bounded_reader_does_not_call_unbounded_stream_reader(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td)); block=self.make_block(cap); value,_=self.sample()
             block.system_sample(value)
             with patch.object(capture_module, '_read_stream',
@@ -128,19 +128,19 @@ class DurableSystemSourceTests(unittest.TestCase):
             self.assertEqual(head,cap._stream['system-source'][1])
 
     def test_bounded_reader_rejects_symlink_and_fifo_without_blocking(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             root=Path(td); cap,con=capture_at(root)
             original=cap.directory/'system-source.jsonl'
             target=root/'target'; target.write_bytes(original.read_bytes())
             original.unlink(); original.symlink_to(target)
             with self.assertRaises(IntegrityError): load_retained_system_sources(cap.directory,con)
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td)); path=cap.directory/'system-source.jsonl'
             path.unlink(); os.mkfifo(path,mode=0o600)
             with self.assertRaises(IntegrityError): load_retained_system_sources(cap.directory,con)
 
     def test_bounded_reader_rejects_changed_open_file_identity(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td)); block=self.make_block(cap); value,_=self.sample()
             block.system_sample(value)
             actual=os.stat(cap.directory/'system-source.jsonl')
@@ -152,7 +152,7 @@ class DurableSystemSourceTests(unittest.TestCase):
                     load_retained_system_sources(cap.directory,con)
 
     def test_reopen_detects_payload_tampering(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td)); block=self.make_block(cap); value,_=self.sample()
             block.system_sample(value)
             path=cap.directory/'system-source.jsonl'
@@ -162,7 +162,7 @@ class DurableSystemSourceTests(unittest.TestCase):
             with self.assertRaises(IntegrityError): load_retained_system_sources(cap.directory,con)
 
     def test_reopen_rejects_boolean_block_attempt_as_integrity_failure(self):
-        with tempfile.TemporaryDirectory(dir='/private/tmp') as td:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as td:
             cap,con=capture_at(Path(td)); value,_=self.sample()
             payload={'schema_version':'episode1.system-source-evidence.v1',
                 'plan_sha256':PLAN_SHA,'block_id':'block-1','runtime':'vllm',

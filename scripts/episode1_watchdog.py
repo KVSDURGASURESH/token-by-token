@@ -650,11 +650,33 @@ def build_guard_commands(*, python: Path, entrypoint: Path, state_directory: Pat
 def _group_exists(process_group: int) -> bool:
     try:
         os.killpg(process_group, 0)
-        return True
     except ProcessLookupError:
         return False
     except PermissionError:
         return True
+    # Linux containers can retain orphaned zombies when PID 1 does not reap
+    # them. killpg(0) still sees that group, although no member can run.
+    if sys.platform.startswith("linux"):
+        try:
+            seen = False
+            for entry in Path("/proc").iterdir():
+                if not entry.name.isdecimal():
+                    continue
+                try:
+                    fields = (entry / "stat").read_text().rsplit(")", 1)[1].split()
+                except FileNotFoundError:
+                    continue
+                if len(fields) < 3:
+                    return True
+                if int(fields[2]) == process_group:
+                    seen = True
+                    if fields[0] not in {"Z", "X"}:
+                        return True
+            if seen:
+                return False
+        except (OSError, ValueError, IndexError):
+            pass  # Fail closed when procfs cannot prove zombie-only membership.
+    return True
 
 
 def _terminate_owned_groups(children: Sequence[subprocess.Popen[bytes]], *, deadline: float,

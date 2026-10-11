@@ -16,6 +16,7 @@ import signal
 import socket
 import stat
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -43,6 +44,38 @@ class RemoteExecutionError(RuntimeError):
 _SSH_CLEANUP_RESERVE_SECONDS = 2.0
 _SSH_TERM_GRACE_SECONDS = 0.2
 _SSH_POLL_SECONDS = 0.01
+
+
+def _group_exists(process_group: int) -> bool:
+    try:
+        os.killpg(process_group, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    # A Linux container without a reaping PID 1 can retain orphaned zombies.
+    # They keep the process-group ID present but cannot execute any work.
+    if sys.platform.startswith("linux"):
+        try:
+            seen = False
+            for entry in Path("/proc").iterdir():
+                if not entry.name.isdecimal():
+                    continue
+                try:
+                    fields = (entry / "stat").read_text().rsplit(")", 1)[1].split()
+                except FileNotFoundError:
+                    continue
+                if len(fields) < 3:
+                    return True
+                if int(fields[2]) == process_group:
+                    seen = True
+                    if fields[0] not in {"Z", "X"}:
+                        return True
+            if seen:
+                return False
+        except (OSError, ValueError, IndexError):
+            pass  # Fail closed if procfs cannot prove zombie-only membership.
+    return True
 
 
 def quote_remote_argv(argv: Sequence[str]) -> str:
@@ -158,16 +191,9 @@ class SshRemoteExecutor:
             raise RemoteExecutionError("SSH process could not be reaped within its deadline") from exc
         # Reaping the leader is insufficient: a child can close all inherited
         # pipes yet remain alive in the session's process group. Do not return
-        # until killpg(0) proves that the owned group no longer exists.
+        # until the owned group has no runnable members.
         while True:
-            try:
-                os.killpg(process.pid, 0)
-                group_present = True
-            except ProcessLookupError:
-                group_present = False
-            except PermissionError:
-                group_present = True
-            if not group_present:
+            if not _group_exists(process.pid):
                 break
             remaining = cleanup_deadline - monotonic()
             if remaining <= 0:

@@ -375,7 +375,7 @@ class RealOrchestrationCapturePromotionTest(unittest.TestCase):
             )
 
         evidence_root = Path(tempfile.mkdtemp(
-            dir="/private/tmp", prefix="episode1-real-orchestration-evidence-"
+            dir=Path(tempfile.gettempdir()).resolve(), prefix="episode1-real-orchestration-evidence-"
         ))
         self.addCleanup(shutil.rmtree, evidence_root, ignore_errors=True)
         directory = evidence_root / "capture"

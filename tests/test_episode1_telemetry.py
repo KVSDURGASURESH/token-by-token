@@ -68,14 +68,14 @@ class NativeSamplerSourceTests(unittest.TestCase):
         self.assertEqual((sampler.start_calls, sampler.stop_calls), (1, 1))
 
     def test_source_rejects_cap_plus_one(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             root = Path(temporary) / "evidence"
             root.mkdir(mode=0o700)
             with self.assertRaisesRegex(Exception, "retention bound"):
                 self._source(root, b"12345", 4)._source(deadline_monotonic=1.0)
 
     def test_source_rejects_symlink_root(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             base = Path(temporary)
             actual = base / "actual"
             actual.mkdir(mode=0o700)
@@ -97,7 +97,7 @@ class NativeSamplerSourceTests(unittest.TestCase):
                 source._source(deadline_monotonic=1.0)
 
     def test_source_checks_deadline_after_hash(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             root = Path(temporary) / "evidence"
             root.mkdir(mode=0o700)
             clock = [100]

@@ -118,7 +118,7 @@ def sample(row, *, marker=None, client=(0, 0)):
 
 class DualAttemptBindingTests(unittest.TestCase):
     def test_failed_prestart_then_success_keeps_startups_distinct_and_raw_run_bound(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             contract = make_contract(); clock = Clock()
             capture = EvidenceCaptureV2(Path(temporary) / "evidence", contract,
                 monotonic_ns=clock.mono, utc_ns=clock.utc,
@@ -169,7 +169,7 @@ class DualAttemptBindingTests(unittest.TestCase):
             _verify_system_source_startup_attempts(values, ledger)
 
     def test_constructor_rejects_noncanonical_or_boolean_block_attempt(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as temporary:
             contract = make_contract(); clock = Clock()
             capture = EvidenceCaptureV2(Path(temporary) / "evidence", contract,
                 monotonic_ns=clock.mono, utc_ns=clock.utc,

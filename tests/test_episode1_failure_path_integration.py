@@ -117,7 +117,7 @@ def _records(directory: Path) -> list[dict]:
 class FailurePathIntegrationTest(unittest.TestCase):
     def setUp(self) -> None:
         self.root = Path(tempfile.mkdtemp(
-            dir="/private/tmp", prefix="episode1-failure-path-evidence-"
+            dir=Path(tempfile.gettempdir()).resolve(), prefix="episode1-failure-path-evidence-"
         ))
         self.addCleanup(shutil.rmtree, self.root, ignore_errors=True)
 

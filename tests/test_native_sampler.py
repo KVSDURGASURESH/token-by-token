@@ -212,7 +212,7 @@ class NativeSamplerTests(unittest.TestCase):
                 raise value
             return value
 
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             root = Path(parent) / "private"
             sampler = NativeSampler(
                 binding=binding(), metrics=specs(), scrape=scrape,
@@ -247,7 +247,7 @@ class NativeSamplerTests(unittest.TestCase):
             value = next(values)
             return f"# HELP c Native counter\n# TYPE c counter\nc {value}\n".encode()
 
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             sampler = NativeSampler(
                 binding=binding(), metrics=(MetricSpec("counter", "c", {}, "1"),),
                 scrape=scrape, identity_probe=lambda _deadline: ("pid:123", "linux:123:456"),
@@ -268,7 +268,7 @@ class NativeSamplerTests(unittest.TestCase):
             self.assertEqual(result["unavailable_reason"], "counter_decreased")
 
     def test_explicit_start_stop_joins_and_captures_exact_drain(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             now = time.monotonic_ns()
             sampler = NativeSampler(
                 binding=binding(), metrics=(MetricSpec("gauge", "g", {}, "1"),),
@@ -295,7 +295,7 @@ class NativeSamplerTests(unittest.TestCase):
             clock.mono += 1_000
             return VALID
 
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             sampler = NativeSampler(
                 binding=binding(), metrics=specs(), scrape=late,
                 identity_probe=lambda _deadline: ("pid:123", "linux:123:456"),
@@ -317,7 +317,7 @@ class NativeSamplerTests(unittest.TestCase):
             clock.mono += 1_000
             return parsed
 
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             sampler = NativeSampler(
                 binding=binding(), metrics=specs(), scrape=lambda _deadline: VALID,
                 identity_probe=lambda _deadline: ("pid:123", "linux:123:456"),
@@ -340,7 +340,7 @@ class NativeSamplerTests(unittest.TestCase):
             time.sleep(0.03)
             return b"# TYPE g gauge\ng 1\n"
 
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             now = time.monotonic_ns()
             sampler = NativeSampler(
                 binding=binding(), metrics=(MetricSpec("gauge", "g"),), scrape=slow_scrape,
@@ -362,7 +362,7 @@ class NativeSamplerTests(unittest.TestCase):
             self.assertEqual(persisted[-1]["scheduled_monotonic_ns"], drain)
 
     def test_identity_is_checked_each_scrape_and_mismatch_is_unsupported(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             sampler = NativeSampler(
                 binding=binding(), metrics=(MetricSpec("gauge", "g"),),
                 scrape=lambda _deadline: b"# TYPE g gauge\ng 1\n",
@@ -377,7 +377,7 @@ class NativeSamplerTests(unittest.TestCase):
 
     def test_clocks_reject_bool_float_and_backward_values(self):
         for invalid in (lambda: True, lambda: 1.5):
-            with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+            with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
                 sampler = NativeSampler(
                     binding=binding(), metrics=(MetricSpec("gauge", "g"),), scrape=lambda _d: b"g 1\n",
                     identity_probe=lambda _deadline: ("pid:123", "linux:123:456"),
@@ -386,7 +386,7 @@ class NativeSamplerTests(unittest.TestCase):
                 )
                 with self.assertRaises(SamplerError):
                     sampler._monotonic()
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             values = iter((10, 9))
             sampler = NativeSampler(
                 binding=binding(), metrics=(MetricSpec("gauge", "g"),), scrape=lambda _d: b"g 1\n",
@@ -399,7 +399,7 @@ class NativeSamplerTests(unittest.TestCase):
                 sampler._monotonic()
 
     def test_store_rejects_reuse_and_symlink_parent_and_handles_partial_write(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             existing = Path(parent) / "existing"
             existing.mkdir()
             with self.assertRaises(ValueError):
@@ -422,7 +422,7 @@ class NativeSamplerTests(unittest.TestCase):
             self.assertEqual(json.loads(path.read_bytes()), {"raw": "abcdef"})
 
     def test_total_raw_bound_commits_error_receipt_then_fails_closed(self):
-        with tempfile.TemporaryDirectory(dir="/private/tmp") as parent:
+        with tempfile.TemporaryDirectory(dir=Path(tempfile.gettempdir()).resolve()) as parent:
             sampler = NativeSampler(
                 binding=binding(), metrics=(MetricSpec("gauge", "g"),),
                 scrape=lambda _deadline: b"# TYPE g gauge\ng 1\n",
