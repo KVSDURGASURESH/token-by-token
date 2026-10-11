@@ -6,8 +6,10 @@ own machine. Its self-test is deterministic synthetic plumbing: it costs $0,
 makes no provider call, starts no inference engine, and does not reproduce or
 extend the recorded benchmark results.
 
-Hosted benchmark submission is not available in this release. The private
-benchmark service, deployment recipes, and serving profiles are not included.
+The optional local AgentBench worker binary has one synthetic Episode 01
+loopback diagnostic. It runs the real AgentBench coordinator and worker against
+a local mock streaming server. It does not run a GPU episode or contact a
+provider. Real model/GPU/load capabilities remain unavailable.
 
 ## What works today
 
@@ -15,20 +17,19 @@ benchmark service, deployment recipes, and serving profiles are not included.
 | --- | --- | --- |
 | List the curriculum | `token-by-token episodes` | Available |
 | Inspect an episode and its allowed loads | `token-by-token episode N describe` | Available |
-| Inspect the real-execution boundary | `token-by-token capabilities --episode N` | Available; reports unavailable until the service exists |
+| Inspect the real-execution boundary | `token-by-token capabilities --episode N` | Available; real execution remains unavailable |
 | Check the local installation offline | `token-by-token doctor --offline` | Available; diagnostic only |
 | Exercise the client and bundle pipeline without a GPU | `token-by-token episode N selftest --offline …` | Available |
 | Verify an emitted bundle and its classification | `token-by-token evidence verify FILE` | Available |
+| Exercise the local AgentBench wrapper | `token-by-token episode 1 run-local --worker FILE --output NEW_FILE.tbt.json` | Available as a synthetic loopback diagnostic |
 | Select a real model or GPU | — | Not yet available |
-| Submit a real AgentBench run | — | Not yet available |
-| Import a personal run into the hosted dashboard | — | Not yet available |
+| Run a real GPU episode | — | Not yet available |
+| Import a personal run into the dashboard | — | Not yet available |
 
-The current executable is therefore an installation and evidence-pipeline
-diagnostic. It is not the AgentBench wrapper promised by the hosted-service
-design. The planned real path keeps AgentBench private behind an authenticated
-service, validates a small allowlist of episode/model/GPU/load aliases, returns
-a quote for explicit approval, and emits a sanitized `.tbt.zip` result. See the
-[real wrapper specification](../docs/superpowers/specs/2026-10-08-real-agentbench-wrapper-and-shared-campaign-design.md).
+The local worker path is opt-in. The public client invokes only the explicitly
+selected executable, with a closed request, a minimal environment, and no shell.
+The worker's temporary raw records are not copied into the public result. See
+the [local wrapper status](../docs/agentbench-wrapper-implementation.md).
 
 ## Quick start from source
 
@@ -48,7 +49,9 @@ token-by-token evidence verify ./token-by-token-selftest.tbt.zip
 ```
 
 The output archive must not already exist. A successful self-test reports the
-`synthetic_mock` classification and a SHA-256 digest. It proves that the public
+`synthetic_mock` classification and the SHA-256 digest of its canonical
+`inventory.json`. This content identity is not the checksum of the `.tbt.zip`
+archive itself. The self-test proves that the public
 contract, deterministic fake engine, bundle writer, and verifier work together;
 it is not latency, throughput, quality, capacity, cost, vLLM, or SGLang evidence.
 
@@ -84,12 +87,14 @@ token-by-token episode EPISODE describe [--format human|json]
 token-by-token episode EPISODE selftest --offline
     [--users USERS] [--seed SEED]
     --output NEW_FILE.tbt.zip [--format human|json]
+token-by-token episode 1 run-local --worker AGENTBENCH_WORKER
+    --output NEW_FILE.tbt.json [--format human|json]
 token-by-token evidence verify FILE.tbt.zip [--format human|json]
 ```
 
 - `EPISODE` is an integer from 0 through 16.
-- `capabilities` fails closed: until an authenticated service supplies a signed
-  allowlist, it reports no real models, GPUs, load profiles, or submission path.
+- `capabilities` reports no real models, GPUs, load profiles, or run path. The
+  local binary's separate capability document contains only the loopback mock.
 - `doctor --offline` creates, verifies, and removes a temporary synthetic bundle.
   It checks installation plumbing only and is not the hands-on AgentBench run path.
 - `--users` must be one of the values printed by `episode EPISODE describe`.
@@ -99,11 +104,30 @@ token-by-token evidence verify FILE.tbt.zip [--format human|json]
 - `--output` must name a new `.tbt.zip` file inside an existing directory. The
   client refuses to overwrite it.
 - `--format json` is intended for scripts and CI.
-- Endpoint, provider, token, model, GPU, engine flags and arbitrary profile
-  inputs are intentionally rejected because no real execution service exists.
+- `run-local` requires an executable built from the reviewed private AgentBench
+  source. Verify its checksum before use. Its current aliases are fixed to the
+  synthetic mock; no endpoint, provider token, engine flag, or profile path is
+  accepted. The `.tbt.json` result is not a signed recorded-evidence bundle.
 
 For machine-readable output, add `--format json` to `describe`, `selftest`, or
 `evidence verify`.
+
+## Run the local AgentBench diagnostic
+
+Build or obtain a reviewed `agentbench-worker` candidate for your platform,
+verify its checksum, and run:
+
+```bash
+token-by-token episode 1 run-local \
+  --worker /absolute/path/to/agentbench-worker \
+  --output ./episode-01-loopback.tbt.json
+```
+
+The worker runs the real AgentBench coordinator and a worker process against
+its own loopback HTTP streaming server. The output is a sanitized
+`synthetic_mock` diagnostic with request counts and aggregate timing. It is
+not a GPU measurement or a `.tbt.zip` recorded-evidence archive. The current
+`evidence verify` command accepts the offline self-test archive format only.
 
 ## Verify an evidence bundle
 
@@ -124,7 +148,9 @@ benchmark ran. The current writer emits only `synthetic_mock` bundles.
 A successful archive contains a deterministic event stream, replay summary and
 an inventory binding every member to its size and
 SHA-256 digest. `evidence verify` validates the archive before reporting its
-classification and digest. Do not upload a `synthetic_mock` archive as recorded
+classification and canonical `inventory.json` digest. Use `shasum -a 256` (or
+`sha256sum`) separately when you need the checksum of the archive file itself.
+Do not upload a `synthetic_mock` archive as recorded
 evidence or compare its timing-like values with Episode 00 or Episode 01.
 
 ## Website and dashboard
@@ -139,9 +165,9 @@ npm --prefix dashboard run dev -- --port 5173
 ```
 
 Then open `http://127.0.0.1:5173/#episodes`. Recorded Episode 00 and Episode 01
-data is embedded in the static bundle. A future authenticated collection path
-will sanitize real AgentBench output before a personal dashboard can load it;
-that path is specified but not implemented.
+data is embedded in the static bundle. The local loopback result is not yet a
+dashboard input. A real local result would require reviewed sanitization and
+recorded-evidence verification before dashboard import.
 
 ## Candidate standalone executable
 
@@ -182,10 +208,11 @@ profiles, credentials, and provider SDKs. See [SECURITY.md](SECURITY.md),
 
 - Source state: unreleased candidate in the repository.
 - Offline self-test: implemented for Episodes 00–16.
-- Real benchmark submission: unavailable.
+- Real GPU benchmark runs: unavailable.
 - Package registry and GitHub release: unpublished.
 - Public support and security-reporting contacts: pending owner approval.
 
 Repository licensing and contribution terms are defined at the repository
-root. A source license does not make the private AgentBench service, deployment
-profiles or benchmark corpus public.
+root. A source license does not make private AgentBench profiles or benchmark
+corpora public. A distributable binary can be inspected; it must be audited
+before release for embedded private content.

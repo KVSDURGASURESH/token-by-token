@@ -1,0 +1,1 @@
+27.5% more output throughput — still below the decode target. Token by Token's Episodes 00 and 01 on what serving measurements do and don't let us conclude: tested loads, separate experiments, no capacity claim. https://github.com/KVSDURGASURESH/token-by-token

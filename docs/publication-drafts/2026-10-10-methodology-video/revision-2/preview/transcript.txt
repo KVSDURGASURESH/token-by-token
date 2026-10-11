@@ -1,0 +1,9 @@
+# Token by Token — an introduction to the lab and its methodology — narration transcript (Kokoro af_heart)
+
+[  0.30s –   4.72s] s01-what: Token by Token is an open inference lab, where every token is a measurement.
+[  5.30s –  12.28s] s02-why: Numbers mean little until the system, workload, scenario, metric rules, validity gates and evidence boundary are declared.
+[ 12.80s –  24.66s] s03-workloads: What enters the lab? Real chat conversations. Agentic coding with tools. Tool gaps and human think time. Optional issue-fix tasks, synthetic agent replay and tool-agent-user sessions.
+[ 25.30s –  33.62s] s04-load: Each run replays an exact-token or versioned corpus in order, with recorded or modeled gaps, declared context depth and output policy.
+[ 34.30s –  42.77s] s05-measure: Measurement follows the user: visible waiting, token timing, output and validity, plus engine and GPU context where definitions match.
+[ 43.30s –  49.42s] s06-evidence: Work before speed. Validity before capacity. Observed, not inferred. Unequal work blocks ranking.
+[ 50.30s –  53.12s] s07-close: Token by Token. Every token is a measurement.

@@ -68,6 +68,8 @@ class BundleTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         document = json.loads(result.stdout)
         self.assertEqual(document["classification"], "synthetic_mock")
+        self.assertIn("digest_scope", document)
+        self.assertEqual(document["digest_scope"], "inventory.json")
         self.assertTrue(document["valid"])
 
     def test_mixed_classification_is_rejected(self) -> None:

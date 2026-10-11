@@ -1,0 +1,10 @@
+# Token by Token — how the lab measures — narration transcript (Kokoro af_heart)
+
+[  0.30s –   4.80s] s01-brand: Token by Token. Same GPU. Two engines. One declared bar.
+[  5.30s –  13.75s] s02-episodes: We run open serving engines under recorded load, reading results one claim at a time. Two episodes are recorded; the rest are planned.
+[ 15.30s –  20.29s] s03-freeze: Before any result is read, the contract is frozen: workload, hardware, thresholds.
+[ 21.30s –  25.86s] s04-resolve: The workload is resolved. The endpoint is checked before any measurement begins.
+[ 27.30s –  33.70s] s05-measure: Warm-up traffic is excluded. Then the client is measured, with engine and GPU telemetry alongside.
+[ 34.30s –  38.40s] s06-states: Every result carries an evidence state, and unequal work is never ranked.
+[ 40.30s –  44.38s] s07-boundaries: Tested loads are not capacity, and separate experiments are never pooled.
+[ 46.30s –  50.84s] s08-end-card: Every token is a measurement. Evidence, methods and limits are on GitHub.

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "local-capabilities.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode", "execution_status", "combinations"],
+  "properties": {
+    "schema_version": {"const": "local-capabilities.v1"},
+    "episode": {"const": 1},
+    "execution_status": {"const": "synthetic_diagnostic"},
+    "combinations": {
+      "type": "array", "minItems": 1, "maxItems": 1,
+      "items": {"type": "object", "additionalProperties": false,
+        "required": ["model", "gpu", "load_profile"],
+        "properties": {
+          "model": {"const": "loopback-model"},
+          "gpu": {"const": "none"},
+          "load_profile": {"const": "single"}
+        }
+      }
+    }
+  }
+}

@@ -139,7 +139,7 @@ class BinaryAuditTests(unittest.TestCase):
             )
 
     def test_audit_scans_uncompressed_base_library_members(self) -> None:
-        private_identifier = bytes.fromhex("6167656e7462656e6368")
+        private_identifier = b"private-benchmark-tool"
         for member in ("email/parser.pyc", "config.json"):
             with self.subTest(member=member):
                 base_library = self.extracted_root / "0099-base_library.zip"
@@ -160,16 +160,11 @@ class BinaryAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ClientError, "FORBIDDEN_BUILD_INPUT"):
             audit_binary(self.binary, inventory, self.extracted_root)
 
-    def test_audit_source_does_not_publish_private_tool_identifier(self) -> None:
-        private_identifier = bytes.fromhex("6167656e7462656e6368").decode("ascii")
-        source = (Path(__file__).resolve().parents[1] / "scripts" / "audit_binary.py").read_text(encoding="utf-8")
-        self.assertNotIn(private_identifier, source.lower())
-
-    def test_audit_rejects_hashed_private_tool_identifier(self) -> None:
-        private_identifier = bytes.fromhex("6167656e7462656e6368")
-        (self.extracted_root / "payload.bin").write_bytes(b"safe-prefix " + private_identifier + b" safe-suffix")
-        with self.assertRaisesRegex(ClientError, "FORBIDDEN_BINARY_CONTENT"):
-            audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli"]), self.extracted_root)
+    def test_audit_allows_public_worker_name_but_rejects_private_module(self) -> None:
+        (self.extracted_root / "payload.bin").write_bytes(b"agentbench-worker")
+        audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli"]), self.extracted_root)
+        with self.assertRaisesRegex(ClientError, "FORBIDDEN_BUILD_INPUT"):
+            audit_binary(self.binary, self.write_inventory(["agentbench.cli"]), self.extracted_root)
 
     def test_audit_rejects_private_resource_inventory(self) -> None:
         inventory = self.write_inventory(["token_by_token_cli.cli"], ["configs/combos/private.yaml"])

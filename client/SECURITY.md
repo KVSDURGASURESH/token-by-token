@@ -34,7 +34,7 @@ infrastructure details. Do not attach a live credential or private evidence.
 ## Security boundary
 
 The client describes public episode contracts, runs a deterministic local fake
-engine, creates a bounded synthetic archive, and verifies that archive. It does
-not contain the private benchmark service, provider credentials, serving
-profiles, hosted submission, an updater, or a trust root for signed recorded
+engine, creates and verifies a bounded synthetic archive, and can invoke an
+explicitly selected local AgentBench loopback worker. It contains no provider
+credentials, serving profiles, updater, or trust root for signed recorded
 evidence. See [THREAT-MODEL.md](THREAT-MODEL.md) for the detailed boundary.

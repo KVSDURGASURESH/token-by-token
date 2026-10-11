@@ -88,6 +88,14 @@ authorize them. Keep the exact commands and limitations synchronized in
 [release checklist](docs/client-release-checklist.md) before proposing any
 package or GitHub release.
 
+For local worker changes, update the closed schemas in
+`client/src/token_by_token_cli/resources/schemas/` and the matching private
+AgentBench parser and integration tests together. Keep profile paths, provider
+identifiers, endpoints, credentials, prompts, and raw evidence out of the
+distributable binary and public result. The
+[implementation status](docs/agentbench-wrapper-implementation.md) lists the
+remaining real-run gates.
+
 ## Propose one measurable change
 
 An optimization proposal should state:

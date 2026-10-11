@@ -48,6 +48,22 @@ def build_parser() -> argparse.ArgumentParser:
     selftest.add_argument("--seed", type=int, default=42)
     selftest.add_argument("--output", required=True)
     selftest.add_argument("--format", choices=("human", "json"), default="human")
+    local_run = episode_commands.add_parser(
+        "run-local", help="Run the constrained local AgentBench loopback diagnostic", allow_abbrev=False
+    )
+    local_run.add_argument(
+        "--worker",
+        required=True,
+        metavar="AGENTBENCH_WORKER",
+        help="Path to a reviewed agentbench-worker executable",
+    )
+    local_run.add_argument(
+        "--output",
+        required=True,
+        metavar="NEW_FILE.tbt.json",
+        help="New file for the validated synthetic diagnostic result",
+    )
+    local_run.add_argument("--format", choices=("human", "json"), default="human")
 
     evidence = commands.add_parser(
         "evidence", help="Verify a synthetic evidence bundle", allow_abbrev=False
@@ -80,7 +96,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             else:
                 print(f"Episode {args.episode:02d} · real execution unavailable")
                 print(document["reason"])
-                print("No model, GPU, endpoint, or execution profile is accepted by this client.")
+                print("No real model, GPU, endpoint, or execution profile is accepted by this client.")
             return 0
         if args.command == "doctor":
             from pathlib import Path
@@ -138,6 +154,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "bundle": str(report.bundle),
                 "classification": report.classification,
                 "digest": report.digest,
+                "digest_scope": "inventory.json",
                 "episode": args.number,
                 "requests": report.requests,
                 "seed": args.seed,
@@ -148,8 +165,22 @@ def main(argv: Sequence[str] | None = None) -> int:
             else:
                 print(f"PASS · synthetic offline self-test · Episode {args.number:02d} · {users} users")
                 print(f"Bundle: {report.bundle}")
-                print(f"Digest: sha256:{report.digest}")
+                print(f"Inventory digest: sha256:{report.digest}")
+                print("Digest scope: canonical inventory.json; this is not the archive-file checksum.")
                 print("This validates client plumbing only; it is not benchmark evidence.")
+            return 0
+        if args.command == "episode" and args.episode_command == "run-local":
+            from pathlib import Path
+            from .local_worker import run_local
+
+            report = run_local(Path(args.worker), Path(args.output), episode=args.number)
+            if args.format == "json":
+                print(json.dumps(report, sort_keys=True, separators=(",", ":")))
+            else:
+                print(f"PASS · AgentBench loopback diagnostic · Episode {args.number:02d}")
+                print(f"Output: {args.output}")
+                print(f"Valid streamed requests: {report['result']['valid_requests']}")
+                print("Classification: synthetic_mock; this is not a GPU benchmark result.")
             return 0
         if args.command == "evidence" and args.evidence_command == "verify":
             from pathlib import Path
@@ -157,9 +188,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
             report = verify_bundle(Path(args.path))
             if args.format == "json":
-                print(json.dumps({"valid": True, "classification": report.classification, "digest": report.digest, "files": report.files}, sort_keys=True, separators=(",", ":")))
+                print(json.dumps({"valid": True, "classification": report.classification, "digest": report.digest, "digest_scope": "inventory.json", "files": report.files}, sort_keys=True, separators=(",", ":")))
             else:
-                print(f"VALID · {report.classification} · sha256:{report.digest}")
+                print(f"VALID · {report.classification} · inventory sha256:{report.digest}")
+                print("Digest scope: canonical inventory.json; this is not the archive-file checksum.")
                 for name in report.files:
                     print(name)
             return 0

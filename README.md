@@ -24,7 +24,9 @@ An [unreleased public-client candidate](client/README.md) now describes every
 Episode 00–16 contract and runs a deterministic offline self-test that writes a
 locally verifiable evidence bundle. It costs $0 and makes no provider call. The
 self-test validates client plumbing only; it is not benchmark evidence, and
-hosted submission remains unavailable.
+real GPU runs remain unavailable. An optional local AgentBench binary now
+exercises the actual coordinator against a loopback mock. Its boundary and
+limits are tracked in the [local wrapper implementation status](docs/agentbench-wrapper-implementation.md).
 
 ## Episodes
 

@@ -71,9 +71,8 @@ def episode_manifest(episode: int, protocol: str | None = None) -> dict[str, obj
 def public_capabilities(episode: int) -> dict[str, object]:
     """Return the deliberately closed public execution surface.
 
-    Real model, GPU, and load aliases must eventually come from an authenticated,
-    signed service manifest.  Until that service exists, an empty allowlist is safer
-    than mirroring private harness configuration into the public client.
+    Real model, GPU, and load aliases require approved local worker protocols.
+    The separate loopback diagnostic has no real GPU capability.
     """
     manifest = episode_manifest(episode)
     return {
@@ -86,5 +85,5 @@ def public_capabilities(episode: int) -> dict[str, object]:
         "gpus": [],
         "load_profiles": [],
         "offline_diagnostic": True,
-        "reason": "The authenticated benchmark worker service is not implemented.",
+        "reason": "Real local AgentBench protocols are not approved; only the synthetic loopback diagnostic is available via run-local.",
     }

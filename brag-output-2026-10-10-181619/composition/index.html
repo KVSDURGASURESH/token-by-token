@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Token by Token — Inference Lab</title>
+<style>
+@font-face{font-family:"Oswald";font-weight:700;src:url("assets/fonts/oswald-latin-700-normal.woff2") format("woff2");}
+@font-face{font-family:"Oswald";font-weight:500;src:url("assets/fonts/oswald-latin-500-normal.woff2") format("woff2");}
+@font-face{font-family:"JetBrains Mono";font-weight:500;src:url("assets/fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2");}
+@font-face{font-family:"Inter";font-weight:500;src:url("assets/fonts/inter-latin-500-normal.woff2") format("woff2");}
+@font-face{font-family:"Inter";font-weight:600;src:url("assets/fonts/inter-latin-600-normal.woff2") format("woff2");}
+:root{--bg:#0a0c0d;--panel:#101415;--line:#273033;--text:#f2f0ea;--muted:#a3adaa;--mint:#45d8b4;--orange:#ff7043;--amber:#f5b942;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
+#root{position:relative;width:1080px;height:1920px;background:var(--bg);color:var(--text);font-family:"Inter",sans-serif;overflow:hidden}
+.clip{position:absolute;left:0;top:0;width:1080px;height:1920px}
+.disp{font-family:"Oswald",sans-serif;font-weight:700;text-transform:uppercase;line-height:.95;letter-spacing:.005em}
+.mono{font-family:"JetBrains Mono",monospace;font-weight:500;text-transform:uppercase;letter-spacing:.12em}
+.abs{position:absolute}
+.nw{white-space:nowrap}
+.muted{color:var(--muted)}
+#glow{position:absolute;left:-200px;top:300px;width:1480px;height:1100px;background:radial-gradient(closest-side,rgba(69,216,180,.22),rgba(69,216,180,0));opacity:.3}
+#glow2{position:absolute;left:300px;top:1100px;width:1100px;height:900px;background:radial-gradient(closest-side,rgba(255,112,67,.12),rgba(255,112,67,0));opacity:.3}
+.hud{font-size:22px;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line)}
+.shot{border:1px solid var(--line);background:#0a0c0d;overflow:hidden}
+.shot img{display:block}
+/* tiles */
+.tile{position:absolute;top:520px;width:300px;height:170px;border:1px solid var(--line);background:var(--panel)}
+.tile .lbl{position:absolute;left:22px;bottom:18px;font-size:22px}
+.tile .num{position:absolute;right:22px;top:12px;font-size:120px}
+.tile .off{position:absolute;inset:0}
+.tile .on{position:absolute;inset:0;background:var(--mint);color:#06130f;opacity:0}
+.tile .on .lbl,.tile .on .num{color:#06130f}
+.chip{position:absolute;width:470px;height:230px;border:1px solid var(--line);background:var(--panel)}
+.chip .nm{position:absolute;left:26px;top:22px;font-size:28px}
+.chip .val{position:absolute;left:26px;bottom:20px;font-size:112px}
+.chip .u{position:absolute;right:24px;bottom:30px;font-size:24px;color:var(--muted)}
+.bar{position:absolute;left:0;top:0;width:8px;height:100%}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-width="1080" data-height="1920" data-start="0" data-duration="45">
+
+  <div id="glow"></div><div id="glow2"></div>
+
+  <!-- persistent HUD -->
+  <div class="abs mono hud nw" style="left:60px;top:64px">Token by Token · Inference Lab</div>
+  <div class="abs mono hud nw" style="right:60px;top:64px">Recorded · Exploratory</div>
+  <div class="abs" style="left:60px;right:60px;top:108px;height:1px;background:var(--line)"></div>
+  <div class="abs mono hud nw" style="left:60px;bottom:64px;font-size:20px">Tested loads. Not a capacity result.</div>
+
+  <!-- ================= SCENE 1: HOOK ================= -->
+  <div id="s1" class="clip" data-start="0" data-duration="5.9" data-track-index="1">
+    <div class="abs disp nw" id="s1-big" style="left:56px;top:260px;font-size:340px;color:var(--mint)">27.5%</div>
+    <div class="abs disp" id="s1-a" style="left:60px;top:610px;width:960px;font-size:104px">more output<br>throughput.</div>
+    <div class="abs disp" id="s1-b" style="left:60px;top:900px;width:960px;font-size:104px;color:var(--amber)">Still below<br>the decode target.</div>
+    <div class="abs shot" id="s1-shot" style="left:40px;top:1290px;width:1000px;height:215px"><img src="assets/img/ep1-direct-answer.png" style="width:1000px;height:215px" alt="Episode 01 dashboard: direct answer at 16 users"></div>
+    <div class="abs mono nw muted" id="s1-cap" style="left:60px;top:1535px;font-size:22px">Episode 01 dashboard · 16 users · recorded</div>
+  </div>
+
+  <!-- ================= SCENE 2: EPISODE 00 ================= -->
+  <div id="s2" class="clip" data-start="5.6" data-duration="11.1" data-track-index="2">
+    <div class="abs mono nw" id="s2-lab" style="left:60px;top:170px;font-size:26px;color:var(--amber)">Episode 00 · H100 · exploratory</div>
+    <div class="abs disp" id="s2-h" data-layout-allow-occlusion style="left:60px;top:225px;width:960px;font-size:124px">Same cap.<br>Different work.</div>
+    <div class="abs shot" id="s2-frame" style="left:60px;top:560px;width:960px;height:520px">
+      <img id="s2-img" data-layout-allow-overflow data-layout-allow-occlusion src="assets/img/02-delivered-work-1440.png" style="position:absolute;left:0;top:0;width:1324px;height:697px;transform-origin:0 0" alt="Mean delivered output versus request cap">
+      <div id="s2-box" class="abs" style="left:636px;top:8px;width:150px;height:506px;border:3px solid var(--amber);opacity:0"></div>
+    </div>
+    <div class="abs mono nw muted" id="s2-hdr" style="left:60px;top:1112px;font-size:22px">8,192 input tok · concurrency 32 · mean output / request</div>
+    <div class="chip" id="s2-c1" style="left:60px;top:1160px;height:210px"><div class="bar" style="background:var(--mint)"></div>
+      <div class="nm mono" style="left:30px;top:18px;font-size:26px">vLLM</div><div class="val disp" style="left:30px;bottom:14px;color:var(--mint)">99.9</div><div class="u mono">tokens</div></div>
+    <div class="chip" id="s2-c2" style="left:550px;top:1160px;height:210px"><div class="bar" style="background:var(--orange)"></div>
+      <div class="nm mono" style="left:30px;top:18px;font-size:26px">SGLang</div><div class="val disp" style="left:30px;bottom:14px;color:var(--orange)">128</div><div class="u mono">tokens</div></div>
+    <div class="abs disp" id="s2-end" style="left:60px;top:1450px;width:960px;font-size:80px">Same configured cap: 128.<br><span style="color:var(--amber)">No equal-work claim.</span></div>
+  </div>
+
+  <!-- ================= SCENE 3: SEPARATE ================= -->
+  <div id="s3" class="clip" data-start="16.4" data-duration="3.5" data-track-index="3">
+    <div class="abs card" id="s3-r1" style="left:60px;top:430px;width:960px;height:230px"><div class="bar" style="background:var(--orange)"></div>
+      <div class="abs mono" style="left:44px;top:84px;font-size:36px">Episode 00</div><div class="abs disp" style="right:44px;top:42px;font-size:150px">H100</div></div>
+    <div class="abs card" id="s3-r2" style="left:60px;top:720px;width:960px;height:230px"><div class="bar" style="background:var(--mint)"></div>
+      <div class="abs mono" style="left:44px;top:84px;font-size:36px">Episode 01</div><div class="abs disp" style="right:44px;top:42px;font-size:150px">H200</div></div>
+    <div class="abs disp" id="s3-t" style="left:60px;top:1060px;width:960px;font-size:112px">Separate experiments.<br><span class="muted">Not a hardware<br>comparison.</span></div>
+  </div>
+
+  <!-- ================= SCENE 4: EPISODE 01 AT 16 USERS ================= -->
+  <div id="s4" class="clip" data-start="19.6" data-duration="13.1" data-track-index="4">
+    <div class="abs mono nw" id="s4-lab" style="left:60px;top:150px;font-size:26px;color:var(--mint)">Episode 01 · recorded · one H200</div>
+    <div class="abs disp" id="s4-h" style="left:60px;top:200px;width:960px;font-size:88px">One GPU.<br>Two inference engines.</div>
+
+    <div class="tile" id="t12" style="left:60px"><div class="off" id="t12off"><div class="mono lbl muted">Users</div><div class="disp num">12</div></div>
+      <div class="on" id="t12on"><div class="mono lbl">Users</div><div class="disp num">12</div></div></div>
+    <div class="tile" id="t16" style="left:390px"><div class="off" id="t16off"><div class="mono lbl muted">Users</div><div class="disp num">16</div></div>
+      <div class="on" id="t16on"><div class="mono lbl">Users</div><div class="disp num">16</div></div></div>
+    <div class="tile" id="t24" style="left:720px"><div class="mono lbl muted">Users</div><div class="disp num">24</div></div>
+
+    <div id="s4-out">
+      <div class="abs mono nw muted" id="s4-oh" style="left:60px;top:722px;font-size:22px">Output throughput · 16 users</div>
+      <div class="chip" id="s4-o1" style="left:60px;top:770px;height:210px"><div class="bar" style="background:var(--mint)"></div>
+        <div class="nm mono" style="left:30px;top:18px;font-size:26px">SGLang</div><div class="val disp" style="left:30px;bottom:14px;font-size:92px;color:var(--mint)">480.44</div><div class="u mono">tok/s</div></div>
+      <div class="chip" id="s4-o2" style="left:550px;top:770px;height:210px"><div class="bar" style="background:var(--orange)"></div>
+        <div class="nm mono" style="left:30px;top:18px;font-size:26px">vLLM</div><div class="val disp" style="left:30px;bottom:14px;font-size:92px;color:var(--orange)">376.73</div><div class="u mono">tok/s</div></div>
+      <div class="abs mono nw" id="s4-pill" style="left:60px;top:1000px;font-size:26px;color:var(--mint)">SGLang +27.5% vs vLLM · recorded</div>
+    </div>
+
+    <div class="abs shot" id="s4-shot" style="left:40px;top:1040px;width:1000px;height:317px"><img src="assets/img/ep1-decode-floor.png" style="width:1000px;height:317px" alt="Episode 01 dashboard: experience floor panel"></div>
+    <div class="chip" id="s4-d1" style="left:60px;top:1395px;height:190px"><div class="bar" style="background:var(--mint)"></div>
+      <div class="nm mono" style="left:30px;top:16px;font-size:24px">SGLang · decode p10</div><div class="val disp" style="left:30px;bottom:12px;font-size:96px;color:var(--mint)">17.48</div><div class="u mono" style="font-size:22px">tok/s</div></div>
+    <div class="chip" id="s4-d2" style="left:550px;top:1395px;height:190px"><div class="bar" style="background:var(--orange)"></div>
+      <div class="nm mono" style="left:30px;top:16px;font-size:24px">vLLM · decode p10</div><div class="val disp" style="left:30px;bottom:12px;font-size:96px;color:var(--orange)">15.96</div><div class="u mono" style="font-size:22px">tok/s</div></div>
+    <div class="abs disp nw" id="s4-miss" style="left:60px;top:1615px;font-size:64px;color:var(--amber)">Floor: p10 ≥ 20 tok/s · missed</div>
+  </div>
+
+  <!-- ================= SCENE 5: BOUNDARY ================= -->
+  <div id="s5" class="clip" data-start="32.4" data-duration="6.9" data-track-index="5">
+    <div class="abs mono nw" id="s5-lab" style="left:60px;top:190px;font-size:26px;color:var(--amber)">Declared decode floor · p10 ≥ 20 tok/s</div>
+    <div class="abs card" id="s5-r1" style="left:60px;top:300px;width:960px;height:230px"><div class="bar" style="background:var(--mint)"></div>
+      <div class="abs disp" style="left:44px;top:44px;font-size:120px">12 users</div><div class="abs mono" style="left:44px;top:170px;font-size:24px;color:var(--mint)">Both deployments · floor met</div></div>
+    <div class="abs card" id="s5-r2" style="left:60px;top:570px;width:960px;height:230px"><div class="bar" style="background:var(--orange)"></div>
+      <div class="abs disp" style="left:44px;top:44px;font-size:120px">16 users</div><div class="abs mono" style="left:44px;top:170px;font-size:24px;color:var(--orange)">Both deployments · floor missed</div></div>
+    <div class="abs card" id="s5-r3" style="left:60px;top:840px;width:960px;height:230px"><div class="bar" style="background:var(--orange)"></div>
+      <div class="abs disp" style="left:44px;top:44px;font-size:120px">24 users</div><div class="abs mono" style="left:44px;top:170px;font-size:24px;color:var(--orange)">Both deployments · floor missed</div></div>
+    <div class="abs disp" id="s5-t" style="left:60px;top:1200px;width:960px;font-size:90px">Tested closed-loop<br>loads. <span style="color:var(--amber)">Not capacity.</span></div>
+  </div>
+
+  <!-- ================= SCENE 6: CTA ================= -->
+  <div id="s6" class="clip" data-start="39.2" data-duration="5.8" data-track-index="6">
+    <div class="abs disp nw" id="s6-w" style="left:60px;top:720px;font-size:136px">Token by Token</div>
+    <div class="abs mono nw" id="s6-l" style="left:64px;top:930px;font-size:36px;color:var(--mint)">Inference Lab</div>
+    <div class="abs" id="s6-q" style="left:60px;top:1060px;width:960px;font-family:'Oswald',sans-serif;font-weight:500;font-size:62px;line-height:1.15">“More tokens” and “meets the target” are different findings.</div>
+    <div class="abs mono nw" id="s6-u" style="left:60px;top:1390px;font-size:30px;letter-spacing:.02em;text-transform:none;color:var(--text)">github.com/KVSDURGASURESH/token-by-token</div>
+  </div>
+
+  <!-- ================= AUDIO ================= -->
+  <audio id="music" data-start="0" data-duration="45" data-track-index="10" data-volume="0.22" data-fade-in="1.5" data-fade-out="2.5" src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"></audio>
+  <audio id="vo1" data-start="0.3"  data-duration="5.02"  data-track-index="1" data-volume="1.8" src="assets/vo/s1.wav"></audio>
+  <audio id="vo2" data-start="5.9"  data-duration="10.56" data-track-index="2" data-volume="1.8" src="assets/vo/s2.wav"></audio>
+  <audio id="vo3" data-start="16.8" data-duration="2.24"  data-track-index="3" data-volume="1.8" src="assets/vo/s3.wav"></audio>
+  <audio id="vo4" data-start="19.9" data-duration="12.44" data-track-index="4" data-volume="1.8" src="assets/vo/s4.wav"></audio>
+  <audio id="vo5" data-start="32.5" data-duration="6.49"  data-track-index="5" data-volume="1.8" src="assets/vo/s5.wav"></audio>
+  <audio id="vo6" data-start="39.5" data-duration="3.33"  data-track-index="6" data-volume="1.8" src="assets/vo/s6.wav"></audio>
+  <audio id="sfx1" data-start="0.5"  data-duration="0.12" data-track-index="11" data-volume="0.5" src="assets/sfx/impactSoft_medium_000.ogg"></audio>
+  <audio id="sfx2" data-start="21.1" data-duration="0.10" data-track-index="12" data-volume="0.45" src="assets/sfx/click_001.ogg"></audio>
+  <audio id="sfx3" data-start="28.4" data-duration="0.11" data-track-index="13" data-volume="0.5" src="assets/sfx/drop_001.ogg"></audio>
+  <audio id="sfx4" data-start="41.9" data-duration="0.12" data-track-index="14" data-volume="0.45" src="assets/sfx/bong_001.ogg"></audio>
+
+  <!-- fake cursor for the simulated load selection -->
+  <svg id="cursor" class="abs" style="left:0;top:0;width:44px;height:44px;opacity:0;z-index:20" viewBox="0 0 24 24"><path d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.6 L11 13.2 L18 13 Z" fill="#f2f0ea" stroke="#0a0c0d" stroke-width="1.2"/></svg>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+  (function(){
+    var tl = gsap.timeline({ paused: true });
+    var E = "power3.out", S = "power2.inOut";
+    function up(sel, t, d, y){ tl.fromTo(sel, {opacity:0, y:(y==null?36:y)}, {opacity:1, y:0, duration:(d||0.55), ease:E}, t); }
+    function out(sel, t){ tl.to(sel, {opacity:0, duration:0.4, ease:"power1.in"}, t); }
+
+    /* ---- audio-reactive glow: music RMS sampled at 10 Hz, subtle ---- */
+    var rms = [0.76, 0.73, 0.6, 0.47, 0.57, 0.65, 0.55, 0.06, 0.49, 0.57, 0.56, 0.19, 0.63, 0.5, 0.19, 0.66, 0.7, 0.6, 0.49, 0.61, 0.49, 0.51, 0.56, 0.63, 0.6, 0.53, 0.55, 0.68, 0.49, 0.11, 0.76, 0.65, 0.5, 0.0, 0.64, 0.48, 0.47, 0.63, 0.67, 0.58, 0.49, 0.67, 0.45, 0.59, 0.77, 0.69, 0.56, 0.51, 0.4, 0.72, 0.55, 0.32, 0.45, 0.63, 0.47, 0.22, 0.64, 0.37, 0.55, 0.65, 0.67, 0.58, 0.51, 0.6, 0.38, 0.59, 0.57, 0.62, 0.62, 0.57, 0.53, 0.68, 0.32, 0.61, 0.72, 0.64, 0.38, 0.45, 0.61, 0.35, 0.62, 0.64, 0.62, 0.59, 0.59, 0.58, 0.39, 0.94, 0.77, 0.75, 0.67, 0.7, 0.83, 0.87, 0.61, 0.65, 0.64, 0.69, 0.94, 0.73, 0.74, 0.63, 0.71, 0.85, 0.86, 0.65, 0.71, 0.77, 0.72, 0.96, 0.72, 0.72, 0.68, 0.7, 0.86, 0.82, 0.56, 0.77, 0.77, 0.73, 0.95, 0.72, 0.7, 0.66, 0.73, 0.89, 0.81, 0.68, 0.71, 0.68, 0.73, 0.94, 0.74, 0.72, 0.65, 0.69, 0.91, 0.75, 0.6, 0.64, 0.67, 0.81, 0.9, 0.68, 0.63, 0.59, 0.73, 0.92, 0.75, 0.66, 0.75, 0.76, 0.89, 0.89, 0.76, 0.73, 0.69, 0.68, 0.93, 0.72, 0.63, 0.87, 0.79, 0.89, 0.85, 0.78, 0.76, 0.73, 0.72, 0.87, 0.79, 0.63, 0.68, 0.63, 0.9, 0.95, 0.88, 0.45, 0.57, 0.48, 0.98, 0.62, 0.4, 0.42, 0.73, 0.93, 0.77, 0.61, 0.79, 0.81, 0.85, 0.96, 0.66, 0.8, 0.88, 0.85, 0.96, 0.83, 0.82, 0.73, 0.53, 0.84, 0.96, 0.64, 0.74, 0.88, 0.88, 0.98, 0.81, 0.58, 0.88, 0.84, 0.91, 0.89, 0.81, 0.85, 0.86, 0.86, 0.97, 0.83, 0.83, 0.58, 0.56, 0.87, 0.86, 0.49, 0.45, 0.56, 0.66, 0.96, 0.63, 0.64, 0.85, 0.81, 0.93, 0.79, 0.7, 0.85, 0.87, 0.83, 0.97, 0.79, 0.82, 0.66, 0.56, 0.94, 0.78, 0.58, 0.82, 0.86, 0.85, 0.96, 0.78, 0.74, 0.86, 0.85, 0.96, 0.86, 0.86, 0.84, 0.86, 0.89, 0.94, 0.79, 0.72, 0.43, 0.55, 0.97, 0.69, 0.39, 0.42, 0.62, 0.85, 0.9, 0.56, 0.79, 0.88, 0.87, 0.96, 0.72, 0.72, 0.86, 0.85, 0.93, 0.9, 0.82, 0.79, 0.55, 0.51, 0.97, 0.72, 0.54, 0.83, 0.84, 0.94, 0.84, 0.8, 0.86, 0.88, 0.83, 0.96, 0.81, 0.89, 0.9, 0.86, 0.97, 0.89, 0.88, 0.76, 0.6, 0.66, 0.96, 0.68, 0.59, 0.47, 0.71, 0.95, 0.72, 0.55, 0.9, 0.93, 0.93, 0.91, 0.5, 0.7, 0.9, 0.87, 0.98, 0.8, 0.81, 0.78, 0.6, 0.83, 0.91, 0.65, 0.74, 0.87, 0.89, 0.98, 0.79, 0.65, 0.92, 0.88, 0.92, 0.9, 0.88, 0.89, 0.87, 0.89, 0.99, 0.73, 0.62, 0.57, 0.54, 0.9, 0.83, 0.23, 0.46, 0.53, 0.57, 0.99, 0.59, 0.5, 0.24, 0.64, 0.93, 0.81, 0.59, 0.59, 0.57, 0.54, 0.98, 0.67, 0.64, 0.48, 0.63, 0.93, 0.74, 0.25, 0.71, 0.66, 0.81, 0.94, 0.64, 0.54, 0.42, 0.57, 0.96, 0.71, 0.54, 0.65, 0.58, 0.82, 0.93, 0.65, 0.61, 0.57, 0.54, 0.96, 0.62, 0.08, 0.6, 0.61, 0.87, 0.88, 0.59, 0.49, 0.49, 0.65, 0.97, 0.68, 0.54, 0.65, 0.5, 0.9, 0.84, 0.65, 0.6, 0.52, 0.56, 0.98, 0.5, 0.54, 0.78, 0.66, 0.94, 0.79, 0.6, 0.51, 0.9, 0.86, 0.77, 0.6, 0.59, 0.61, 0.69, 0.95, 0.84, 0.86, 0.71, 0.55, 0.78, 0.94, 0.34, 0.44, 0.43, 0.56, 1.0, 0.65, 0.31];
+    for (var i = 0; i < rms.length; i++) {
+      tl.to("#glow",  {opacity: 0.24 + 0.34 * rms[i], duration: 0.1, ease: "none"}, i * 0.1);
+      tl.to("#glow2", {opacity: 0.18 + 0.22 * rms[i], duration: 0.1, ease: "none"}, i * 0.1);
+    }
+
+    /* ---- S1 hook (0–5.6) ---- */
+    // beat-grid: 27.5% at 0.56s
+    tl.fromTo("#s1-big", {opacity:0, y:50, scale:0.96}, {opacity:1, y:0, scale:1, duration:0.7, ease:E}, 0.56);
+    up("#s1-a", 1.0, 0.6);
+    up("#s1-b", 2.7, 0.7);
+    up("#s1-shot", 3.7, 0.7, 40);
+    up("#s1-cap", 4.0, 0.5, 10);
+    out("#s1", 5.5);
+
+    /* ---- S2 Episode 00 (5.6–16.4) ---- */
+    tl.fromTo("#s2", {opacity:0}, {opacity:1, duration:0.4}, 5.6);
+    tl.set("#s2-img", {scale:0.725, x:0, y:0}, 0);
+    up("#s2-lab", 5.9, 0.5, 14);
+    up("#s2-h", 6.1, 0.7);
+    up("#s2-frame", 6.9, 0.7, 40);
+    // beat-locked: zoom on strong cue 8.74s
+    tl.to("#s2-img", {scale:1.38, x:-911, y:-138, duration:1.2, ease:S}, 8.74);
+    tl.to("#s2-box", {opacity:1, duration:0.5}, 10.2);
+    up("#s2-hdr", 11.2, 0.4, 10);
+    up("#s2-c1", 11.9, 0.55, 30);
+    up("#s2-c2", 13.9, 0.55, 30);
+    up("#s2-end", 14.5, 0.6, 30);
+    out("#s2", 16.1);
+
+    /* ---- S3 separate (16.4–19.6) ---- */
+    tl.fromTo("#s3", {opacity:0}, {opacity:1, duration:0.4}, 16.4);
+    up("#s3-r1", 16.6, 0.5, 40);
+    up("#s3-r2", 17.1, 0.5, 40);
+    up("#s3-t", 17.6, 0.6, 30);
+    out("#s3", 19.35);
+
+    /* ---- S4 Episode 01 (19.6–32.4) ---- */
+    tl.fromTo("#s4", {opacity:0}, {opacity:1, duration:0.4}, 19.6);
+    up("#s4-lab", 19.9, 0.5, 14);
+    up("#s4-h", 20.0, 0.6);
+    tl.fromTo(["#t12","#t16","#t24"], {opacity:0, y:30}, {opacity:1, y:0, duration:0.5, ease:E, stagger:0.08}, 20.3);
+    tl.set("#t12on", {opacity:1}, 0);
+    // simulated interaction: cursor moves to 16 users and clicks at 21.1s
+    tl.set("#cursor", {x:160, y:760, opacity:0}, 0);
+    tl.to("#cursor", {opacity:1, duration:0.2}, 20.5);
+    tl.to("#cursor", {x:560, y:630, duration:0.6, ease:S}, 20.5);
+    tl.to("#cursor", {scale:0.86, duration:0.08, transformOrigin:"0 0"}, 21.1);
+    tl.to("#cursor", {scale:1, duration:0.12}, 21.18);
+    tl.set("#t12off", {opacity:0}, 0);
+    tl.to("#t12on", {opacity:0, duration:0.05}, 21.15);
+    tl.to("#t12off", {opacity:1, duration:0.05}, 21.15);
+    tl.to("#t16off", {opacity:0, duration:0.05}, 21.15);
+    tl.to("#t16on", {opacity:1, duration:0.05}, 21.15);
+    tl.to("#cursor", {opacity:0, duration:0.3}, 21.6);
+    // beat-locked: output chips on strong cue 22.37s
+    up("#s4-oh", 22.37, 0.4, 10);
+    up("#s4-o1", 22.37, 0.55, 30);
+    up("#s4-o2", 22.75, 0.55, 30);
+    up("#s4-pill", 23.6, 0.5, 10);
+    // swap to the decode floor evidence
+    tl.to("#s4-out", {opacity:0.55, duration:0.45, ease:"power1.in"}, 24.8);
+    tl.fromTo("#s4-shot", {opacity:0, y:40}, {opacity:1, y:0, duration:0.7, ease:E}, 25.0);
+    up("#s4-d1", 26.0, 0.5, 30);
+    up("#s4-d2", 26.5, 0.5, 30);
+    up("#s4-miss", 28.4, 0.5, 20);
+    out("#s4", 32.1);
+
+    /* ---- S5 boundary (32.4–39.2) ---- */
+    tl.fromTo("#s5", {opacity:0}, {opacity:1, duration:0.4}, 32.4);
+    up("#s5-lab", 32.6, 0.5, 14);
+    up("#s5-r1", 33.0, 0.5, 40);
+    up("#s5-r2", 35.0, 0.5, 40);
+    up("#s5-r3", 35.5, 0.5, 40);
+    up("#s5-t", 37.2, 0.6, 30);
+    out("#s5", 38.9);
+
+    /* ---- S6 CTA (39.2–45) ---- */
+    tl.fromTo("#s6", {opacity:0}, {opacity:1, duration:0.4}, 39.2);
+    up("#s6-w", 39.5, 0.7, 40);
+    up("#s6-l", 40.3, 0.5, 10);
+    up("#s6-q", 40.8, 0.6, 20);
+    up("#s6-u", 42.0, 0.6, 20);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines["root"] = tl;
+  })();
+  </script>
+</div>
+</body>
+</html>

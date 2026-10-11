@@ -8,6 +8,9 @@ const roadmapContext = require('../dashboard/src/data/site-v2/roadmap-context.js
 const roadmapEvidence = require('../dashboard/src/data/site-v2/roadmap-evidence.json');
 
 const roadmap = fs.readFileSync(require.resolve('../docs/roadmap.md'), 'utf8');
+const publicSiteSource = fs.readFileSync(require.resolve('../dashboard/src/PublicSite.tsx'), 'utf8');
+assert.match(publicSiteSource, /data-next-investigation[\s\S]*The widening tail[\s\S]*5\.45 s[\s\S]*p95 approached 30 s[\s\S]*without assuming the cause/, 'Episode 01 source includes the approved bounded tail teaser');
+assert.doesNotMatch(publicSiteSource, /an open inference lab/i, 'public dashboard identity omits the open qualifier');
 const roadmapSections = Object.fromEntries([...roadmap.matchAll(/^### (\d+)\. ([^\n]+)\n\n([^\n]+)/gm)].map(match => [Number(match[1]), match[3].replaceAll('**', '')]));
 const roadmapEvidenceSections = Object.fromEntries([...roadmap.matchAll(/^### (\d+)\.[\s\S]*?^\*\*Evidence:\*\* ([^\n]+)/gm)].map(match => [Number(match[1]), match[2].replaceAll('**', '')]));
 for (const episode of catalog.episodes.filter(episode => episode.status === 'planned')) {
@@ -46,6 +49,7 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
       };
     });
     await page.goto(`${base}#episodes`);
+    assert.equal(await page.locator('[data-screen-label="Landing"] .tbt-eyebrow').innerText(), 'TOKEN BY TOKEN · INFERENCE LAB', 'landing identity omits the open qualifier');
     assert.equal(await page.locator('[data-screen-label="Landing"] h1').textContent(), 'Every token is a measurement.');
     assert.equal(await page.locator('[data-screen-label="Landing"] [data-landing-token-accent]').innerText(), 'TOKEN');
     assert.equal(await page.locator('[data-screen-label="Landing"] [data-landing-token-accent]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'TOKEN alone uses the cyan signature color');
@@ -179,7 +183,13 @@ if (!base) throw new Error('usage: node tests/dashboard_site_v2_acceptance.cjs <
     assert.equal(await page.locator('[data-headline-hardware-accent]').innerText(), 'H200');
     assert.equal(await page.locator('[data-headline-hardware-accent]').evaluate(el => getComputedStyle(el).color), 'rgb(0, 124, 134)', 'the GPU class uses the cyan identity accent');
     assert.equal(await page.locator('.tbt-config-grid small').first().evaluate(el => getComputedStyle(el).fontWeight), '300', 'contract supporting text uses a lighter weight');
+    const nextInvestigation = page.locator('[data-next-investigation]');
+    assert.equal(await nextInvestigation.count(), 1, 'Episode 01 closes with one bounded next-investigation teaser');
+    assert.match(await nextInvestigation.innerText(), /Next investigation.*The widening tail.*At 24 users, median TTFT was about 5\.45 s for both deployments, while p95 approached 30 s\..*Episode 02 will investigate where that gap opens without assuming the cause\./is);
+    assert.equal(await nextInvestigation.getByRole('link', { name: /Episode 02 · Equal-work runtime baseline/ }).getAttribute('href'), '#episode-2');
+    assert.equal(await nextInvestigation.evaluate(el => el.previousElementSibling?.hasAttribute('data-run-cost') && el.nextElementSibling?.classList.contains('tbt-pager')), true, 'the teaser sits between the cost boundary and episode navigation');
     await page.goto(`${base}#episode-0`);
+    assert.equal(await page.locator('[data-next-investigation]').count(), 0, 'Episode 00 is not given the Episode 01 tail teaser');
     assert.equal(await page.locator('[data-experiment-contract]').count(), 1, 'Episode 00 uses the same recorded-contract pattern');
     assert.match(await page.locator('[data-experiment-contract]').innerText(), /Prefix caching.*Chunked prefill.*Warm-up gate.*Required before measurement/is);
     assert.doesNotMatch(await page.locator('[data-experiment-contract]').innerText(), /unavailable|null|not retained/i, 'Episode 00 shows supported contract details only');

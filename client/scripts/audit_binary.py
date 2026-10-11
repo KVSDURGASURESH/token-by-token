@@ -19,7 +19,8 @@ FORBIDDEN_MARKERS = (
 # Digests let the public guard reject known private package/tool identifiers
 # without publishing those identifiers in the client source or binary.
 FORBIDDEN_TOKEN_DIGESTS = {
-    "012c41d3eb9b3a6c53088bf06b61e51b9bb7d08273a4ea8b09e9f8ecf5265e7d",
+    # The public CLI now names the opt-in local AgentBench worker. Its module
+    # root remains excluded by APPROVED_MODULE_ROOTS; only the name is public.
     "1cc188ed89503634c8d8859d3a7fcb7cc1b6714fd19f9ca173135f1e5d79b05f",
     "3a9abd26311b995a3a709191811ab9a392f01ac30bd7ab2b6bc82d552922b5f1",
     "5f9a04a312f1f7938bcd1bc1dba645b36ffcc16418ca674b3b5cfb70272224e0",
@@ -48,6 +49,10 @@ APPROVED_RESOURCE_NAMES = {
     "token_by_token_cli/resources/schemas/episode-manifest.v1.schema.json",
     "token_by_token_cli/resources/schemas/inventory.v1.schema.json",
     "token_by_token_cli/resources/schemas/run-replay.v1.schema.json",
+    "token_by_token_cli/resources/schemas/local-run-request.v1.schema.json",
+    "token_by_token_cli/resources/schemas/local-capabilities.v1.schema.json",
+    "token_by_token_cli/resources/schemas/local-result.v1.schema.json",
+    "token_by_token_cli/resources/schemas/public-result.v1.schema.json",
 }
 REQUIRED_MODULES = {
     "run_client",
@@ -57,12 +62,17 @@ REQUIRED_MODULES = {
     "token_by_token_cli.offline",
     "token_by_token_cli.selftest",
     "token_by_token_cli.verify",
+    "token_by_token_cli.local_worker",
 }
 REQUIRED_RESOURCES = {
     "token_by_token_cli/resources/episodes/catalog.v1.json",
     "token_by_token_cli/resources/schemas/episode-manifest.v1.schema.json",
     "token_by_token_cli/resources/schemas/inventory.v1.schema.json",
     "token_by_token_cli/resources/schemas/run-replay.v1.schema.json",
+    "token_by_token_cli/resources/schemas/local-run-request.v1.schema.json",
+    "token_by_token_cli/resources/schemas/local-capabilities.v1.schema.json",
+    "token_by_token_cli/resources/schemas/local-result.v1.schema.json",
+    "token_by_token_cli/resources/schemas/public-result.v1.schema.json",
 }
 APPROVED_RESOURCE_PREFIXES = (
     "attrs-26.1.0.dist-info/",

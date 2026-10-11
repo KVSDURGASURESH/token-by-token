@@ -1,0 +1,16 @@
+{
+  "integrated_lufs": -16.0,
+  "true_peak_dbtp": -1.5,
+  "duration_seconds": 54.5,
+  "speech_music_margin_db": 17.18,
+  "narration_gain_db": 6.7,
+  "music_gain_db": -7.1,
+  "attack_ms": 175,
+  "release_ms": 575,
+  "schema": "token-by-token.audio/v1",
+  "mode": "preview",
+  "candidate": "b-afro-tech-pulse",
+  "status": "preview-unapproved-music",
+  "rights_status": "unverified",
+  "wav": "preview-mix.wav"
+}

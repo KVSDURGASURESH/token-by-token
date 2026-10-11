@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "local-result.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "classification", "execution_path", "result"],
+  "properties": {
+    "schema_version": {"const": "local-result.v1"},
+    "classification": {"const": "synthetic_mock"},
+    "execution_path": {"const": "agentbench_coordinator_worker_loopback_http"},
+    "result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "episode", "run_id", "qualification", "cost_state", "attempted_requests", "valid_requests", "metrics"],
+      "properties": {
+        "schema_version": {"const": "public-result.v1"},
+        "episode": {"const": 1},
+        "run_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+        "qualification": {"enum": ["partial", "unqualified"]},
+        "cost_state": {"const": "unavailable"},
+        "attempted_requests": {"type": "integer", "minimum": 1},
+        "valid_requests": {"type": "integer", "minimum": 1},
+        "metrics": {"type": "object", "additionalProperties": false,
+          "required": ["ttft_p50_ms", "decode_tps_p10", "output_tokens_per_s"],
+          "properties": {
+            "ttft_p50_ms": {"type": "number", "minimum": 0, "maximum": 1000000000},
+            "decode_tps_p10": {"type": "number", "minimum": 0, "maximum": 1000000000},
+            "output_tokens_per_s": {"type": "number", "minimum": 0, "maximum": 1000000000}
+          }
+        }
+      }
+    }
+  }
+}

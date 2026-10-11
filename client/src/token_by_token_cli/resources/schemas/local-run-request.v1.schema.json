@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "local-run-request.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode", "model", "gpu", "load_profile", "request_id"],
+  "properties": {
+    "schema_version": {"const": "local-run-request.v1"},
+    "episode": {"const": 1},
+    "model": {"const": "loopback-model"},
+    "gpu": {"const": "none"},
+    "load_profile": {"const": "single"},
+    "request_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"}
+  }
+}

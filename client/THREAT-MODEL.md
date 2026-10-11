@@ -7,11 +7,11 @@ and the meaning of an evidence classification. Its trusted computing base is the
 checked-out client source, locked build dependencies, Python runtime or reviewed
 standalone executable, and the local operating system.
 
-The client currently performs only four operations: list public episodes,
-describe a public contract, run a deterministic offline synthetic self-test, and
-verify a bounded `.tbt.zip` archive. It has no authenticated service, provider
-adapter, telemetry upload, auto-update path, or recorded-evidence signature
-authority.
+The client lists public episodes, describes contracts, runs a deterministic
+offline self-test, verifies bounded `.tbt.zip` archives, and can invoke an
+explicitly selected local AgentBench worker for a synthetic loopback diagnostic.
+It has no authenticated service, provider adapter, telemetry upload,
+auto-update path, or recorded-evidence signature authority.
 
 ## Threats and controls
 
@@ -39,6 +39,12 @@ admit only the expected public fields.
 
 Residual risk: non-Linux platforms do not receive the same syscall proof in CI.
 The code review and schema boundary remain required.
+
+The opt-in `run-local` path permits only the worker's 127.0.0.1 mock HTTP
+traffic. The public client passes a closed request and minimal environment,
+invokes the binary without a shell, and validates both its stdout and written
+result. Users must verify the selected binary before running it. A malicious
+executable chosen by the user remains outside the client's trust guarantees.
 
 ### Binary supply chain
 
@@ -74,25 +80,26 @@ Residual risk: a user can remove surrounding explanatory text or make a false
 claim. Recorded evidence will require a separately designed signature and
 provenance model; this client does not provide one.
 
-### Future hosted and cross-tenant risks
+### Future real local runs
 
-Hosted execution would introduce authentication, authorization, tenant
-isolation, rate and spend limits, request privacy, artifact access control,
-retention/deletion, abuse handling, worker trust, and auditability. None of those
-controls exists in this release. The CLI therefore offers no submit, login,
-provider, or remote-run command. Adding one requires a separate threat model and
-reviewed implementation plan.
+A real GPU run needs approved local engine discovery, immutable alias and
+workload mapping, deadlines, cancellation, cost controls, qualification, and
+recorded-evidence verification. None exists in this candidate. The current
+worker has only a synthetic loopback alias and never receives provider tokens.
 
 ## Security invariants
 
 1. `selftest` requires the literal `--offline` flag.
 2. The self-test never performs a provider or network operation.
 3. Only declared per-episode controls are accepted.
-4. Output paths must end in `.tbt.zip` and must not already exist.
+4. Self-test output ends in `.tbt.zip`; local worker output ends in `.tbt.json`.
+   Neither may overwrite an existing file.
 5. The current writer emits only `synthetic_mock` evidence.
 6. Bundle verification fails closed on structural or integrity ambiguity.
 7. A standalone candidate contains only the public client and public resources.
 8. No CI job publishes a release or authorizes a paid benchmark.
+9. `run-local` accepts only the fixed Episode 01 loopback combination and
+   reports `synthetic_mock`.
 
 Changes that weaken an invariant require security review, new negative tests,
 and explicit owner approval.

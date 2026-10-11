@@ -49,6 +49,8 @@ class SelfTestCliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
         self.assertEqual(report["classification"], "synthetic_mock")
+        self.assertIn("digest_scope", report)
+        self.assertEqual(report["digest_scope"], "inventory.json")
         self.assertEqual(report["episode"], 2)
         self.assertEqual(report["users"], 4)
         self.assertEqual(verify_bundle(self.output).digest, report["digest"])

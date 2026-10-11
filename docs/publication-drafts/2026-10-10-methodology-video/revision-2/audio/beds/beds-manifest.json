@@ -1,0 +1,65 @@
+{
+  "schema": "token-by-token.synth-beds/v1",
+  "origin": "locally synthesized original percussion, bass and tones; no samples, no downloads",
+  "sample_rate": 48000,
+  "bpm": 120,
+  "beds": [
+    {
+      "variant": "afro-house-drive",
+      "bpm": 120,
+      "bars": 29,
+      "kick_hits": 116,
+      "boundaries": [
+        5,
+        12.5,
+        25,
+        34,
+        43,
+        50
+      ],
+      "final_start": 50,
+      "file": "afro-house-drive.wav",
+      "seconds": 56.0,
+      "character": "A - Afro-house drive: warm four-on-the-floor, tresillo congas, rolling sub, kalimba arpeggio",
+      "sha256": "a3145372608ac2f8b5480e697aaa3e9fba5a0ddadfb97594bebd74f1d1066791"
+    },
+    {
+      "variant": "afro-tech-pulse",
+      "bpm": 120,
+      "bars": 29,
+      "kick_hits": 122,
+      "boundaries": [
+        5,
+        12.5,
+        25,
+        34,
+        43,
+        50
+      ],
+      "final_start": 50,
+      "file": "afro-tech-pulse.wav",
+      "seconds": 56.0,
+      "character": "B - Afro-tech pulse: tighter kick, 16th ticks, off-beat pulsing bass, plucked saw arp",
+      "sha256": "bf1ffd1ec6ccbf9a855cb73c4a0afa429b180b08547d23492f5f8272dbf61f28"
+    },
+    {
+      "variant": "organic-afro-edm",
+      "bpm": 120,
+      "bars": 29,
+      "kick_hits": 116,
+      "boundaries": [
+        5,
+        12.5,
+        25,
+        34,
+        43,
+        50
+      ],
+      "final_start": 50,
+      "file": "organic-afro-edm.wav",
+      "seconds": 56.0,
+      "character": "C - organic Afro-EDM: round kick, djembe and log-drum patterns, kalimba melody, warm pad and stabs",
+      "sha256": "9f96efd5723258c8746bd28ecea2ca862275506f63050acb93132386c543de44"
+    }
+  ]
+}

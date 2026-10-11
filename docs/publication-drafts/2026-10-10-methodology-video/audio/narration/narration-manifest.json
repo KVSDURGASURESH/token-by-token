@@ -1,0 +1,85 @@
+{
+  "schema": "token-by-token.narration/v1",
+  "engine": "kokoro",
+  "voice": "af_heart",
+  "speed": 1.0,
+  "ok": true,
+  "problems": [],
+  "timeline": "narration.wav",
+  "timeline_sha256": "da5ffe9359ca4d936db80d78e5ab948803c8e04ea156363bb73adba882187559",
+  "duration_seconds": 52,
+  "scenes": [
+    {
+      "id": "s01-brand",
+      "wav": "s01-brand.wav",
+      "start_seconds": 0.3,
+      "duration_seconds": 4.501,
+      "end_seconds": 4.801,
+      "scene_end_seconds": 5,
+      "sha256": "3366bcc31dcfe5249328c7039ae03a599ebdece70a7d4b81a04aba6f93c16a83"
+    },
+    {
+      "id": "s02-episodes",
+      "wav": "s02-episodes.wav",
+      "start_seconds": 5.3,
+      "duration_seconds": 8.448,
+      "end_seconds": 13.748,
+      "scene_end_seconds": 15,
+      "sha256": "be85097314eb6f0fcfb5a3563e06ecda81b7f8366c51297455fc616aa5c6d803"
+    },
+    {
+      "id": "s03-freeze",
+      "wav": "s03-freeze.wav",
+      "start_seconds": 15.3,
+      "duration_seconds": 4.992,
+      "end_seconds": 20.292,
+      "scene_end_seconds": 21,
+      "sha256": "ed020a3a785dec90fcb5b736e08a01f146d569fbde733af78aab942643b31f71"
+    },
+    {
+      "id": "s04-resolve",
+      "wav": "s04-resolve.wav",
+      "start_seconds": 21.3,
+      "duration_seconds": 4.565,
+      "end_seconds": 25.865,
+      "scene_end_seconds": 27,
+      "sha256": "d5e3828eda6116ff9913d90c5c9a509993d65361d1e8b503dc707e8b367f98d9"
+    },
+    {
+      "id": "s05-measure",
+      "wav": "s05-measure.wav",
+      "start_seconds": 27.3,
+      "duration_seconds": 6.4,
+      "end_seconds": 33.7,
+      "scene_end_seconds": 34,
+      "sha256": "8bb792e5df2f2d17e711bdbdc0748c1fcdcfda124720dd6233579d64459a730c"
+    },
+    {
+      "id": "s06-states",
+      "wav": "s06-states.wav",
+      "start_seconds": 34.3,
+      "duration_seconds": 4.096,
+      "end_seconds": 38.396,
+      "scene_end_seconds": 40,
+      "sha256": "8016a85a454b5e768846506a9314595c95caa7e29ab7130b7c527498bcec2d80"
+    },
+    {
+      "id": "s07-boundaries",
+      "wav": "s07-boundaries.wav",
+      "start_seconds": 40.3,
+      "duration_seconds": 4.075,
+      "end_seconds": 44.375,
+      "scene_end_seconds": 46,
+      "sha256": "9a89ffe4913c1fed9abd61a93dd06a2487df117d8ea254e4b1bbb319653c6f34"
+    },
+    {
+      "id": "s08-end-card",
+      "wav": "s08-end-card.wav",
+      "start_seconds": 46.3,
+      "duration_seconds": 4.544,
+      "end_seconds": 50.844,
+      "scene_end_seconds": 52,
+      "sha256": "cab091276373f5ed8aee7548c90e34a8e59b1372731bd9d7c5908e8517f9a885"
+    }
+  ]
+}

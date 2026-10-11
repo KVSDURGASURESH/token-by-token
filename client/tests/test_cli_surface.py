@@ -52,7 +52,7 @@ class CliSurfaceTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertFalse(output.exists())
 
-    def test_capabilities_fail_closed_when_real_service_is_unavailable(self) -> None:
+    def test_capabilities_fail_closed_when_real_protocol_is_unavailable(self) -> None:
         result = self.run_cli("capabilities", "--episode", "1", "--format", "json")
         self.assertEqual(result.returncode, 0, result.stderr)
         document = json.loads(result.stdout)

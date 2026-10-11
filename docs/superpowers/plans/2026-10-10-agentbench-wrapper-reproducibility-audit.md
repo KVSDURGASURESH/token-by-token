@@ -1,5 +1,10 @@
 # AgentBench wrapper reproducibility audit and implementation plan
 
+**Superseded product direction (2026-10-10):** The owner selected a local
+GitHub-distributed worker binary. Hosted-service, authenticated API, signed
+capability, and remote plan/run recommendations below remain historical audit
+context. See the [current local implementation](../../agentbench-wrapper-implementation.md).
+
 **Date:** 2026-10-10  
 **Public repository reviewed:** `token-by-token` at `02dc9f2` / `origin/main`  
 **Private repository reviewed:** AgentBench at `7020f85` / `origin/main`  

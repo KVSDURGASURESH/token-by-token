@@ -11,8 +11,8 @@ public-release approval.
 - [ ] Approve product name, trademarks, attribution, and third-party notices.
 - [ ] Publish a verified private security-reporting route in
       `client/SECURITY.md` and define supported versions and response targets.
-- [ ] Approve service terms and privacy disclosures, or state clearly that no
-      hosted service exists.
+- [ ] State clearly that local loopback execution is synthetic and no hosted
+      benchmark service exists.
 - [ ] Confirm public documentation contains no private tool identity,
       organization identity, profiles, endpoints, credentials, payloads, raw
       exports, or internal deployment recipes.
@@ -28,7 +28,10 @@ public-release approval.
 - [ ] Confirm every generated artifact is labeled `synthetic_mock` and cannot
       be mistaken for recorded benchmark evidence.
 - [ ] Run the repository privacy scanner against source and built contents.
-- [ ] Verify no submit, login, provider, paid-run, or auto-update path was added.
+- [ ] Verify the only added run path is the allowlisted local loopback mock;
+      no provider, paid-run, login, or auto-update path is present.
+- [ ] Verify the local worker schemas and binary contain no private profiles,
+      corpus content, provider identifiers, endpoints, or credentials.
 
 ## Reproducible build and supply chain
 
@@ -49,7 +52,7 @@ public-release approval.
 
 - [ ] Execute every command in `client/README.md` from a clean checkout.
 - [ ] Confirm the README states $0, offline, synthetic-only behavior prominently.
-- [ ] Confirm hosted submission and recorded replay remain unavailable unless a
+- [ ] Confirm real GPU runs and recorded replay remain unavailable unless a
       separately approved release implements them.
 - [ ] Document supported operating systems, architectures, Python versions,
       installation, uninstall, known limitations, and rollback.
@@ -71,7 +74,7 @@ public-release approval.
 
 ## Explicitly separate follow-on work
 
-Hosted benchmark submission, authenticated workers, recorded-evidence signing,
-provider execution, public Grafana, and paid measurements require independent
-plans, security review, and owner approval. Releasing this offline client does
-not authorize any of them.
+Real local GPU execution, recorded-evidence verification, provider action,
+public Grafana, and paid measurements require independent security review and
+owner approval. Releasing this synthetic local diagnostic does not authorize
+any of them.

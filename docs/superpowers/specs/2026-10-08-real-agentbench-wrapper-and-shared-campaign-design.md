@@ -1,5 +1,9 @@
 # Real AgentBench Wrapper and Shared Episode Campaign Design
 
+**Superseded product direction (2026-10-10):** The owner selected a local
+GitHub-distributed worker binary. The hosted service design below is retained
+as historical design context. See the [current local implementation](../../agentbench-wrapper-implementation.md).
+
 **Status:** Revised written specification for owner review
 **Date:** 2026-10-08  
 **Repositories:** public `token-by-token`; private AgentBench  
