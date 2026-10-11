@@ -1,0 +1,2339 @@
+{
+  "classification": "local_fixture_not_provider_measurement",
+  "execution_ready": false,
+  "limitations": [
+    "synthetic contract timings; no transport was exercised",
+    "no GPU was used",
+    "no runtime image or flag was verified",
+    "not paid evidence and not approval evidence"
+  ],
+  "protocol_sha256": "c3d51d6ecf9733c96780fa35530201d94f636e95bae4cc65d0c3e904e2256d85",
+  "provider_charges": "not_applicable",
+  "schema_version": "episode1.v1",
+  "summaries": [
+    {
+      "block_id": "block-01",
+      "cell_id": "fixed-short",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 581.0,
+          "p95": 581.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-1",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        }
+      }
+    },
+    {
+      "block_id": "block-01",
+      "cell_id": "fixed-medium",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 621.0,
+          "p95": 621.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 110.0,
+          "p95": 110.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-1",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        }
+      }
+    },
+    {
+      "block_id": "block-01",
+      "cell_id": "natural-quality",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 23,
+        "failed": 0,
+        "fixed_length_valid": 0,
+        "http_failed": 0,
+        "nontruncated": 23,
+        "qualified_output_tokens": 639,
+        "quality_valid": 22,
+        "scheduled": 24,
+        "schema_valid": 23,
+        "semantic_correct": 22,
+        "slo_qualified": 22,
+        "sse_failed": 0,
+        "successful_output_tokens": 673,
+        "timeout": 0,
+        "transport_success": 23,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 185.0,
+          "p95": 205.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "natural_stop",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-1",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 23,
+        "error": 0,
+        "length": 0,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 116.43598615916954,
+          "wall_seconds": 5.78
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.806228373702422,
+          "wall_seconds": 5.78
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.979238754325259,
+          "wall_seconds": 5.78
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 110.55363321799308,
+          "wall_seconds": 5.78
+        }
+      }
+    },
+    {
+      "block_id": "block-02",
+      "cell_id": "fixed-short",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 581.0,
+          "p95": 581.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-1",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        }
+      }
+    },
+    {
+      "block_id": "block-02",
+      "cell_id": "fixed-medium",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 621.0,
+          "p95": 621.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 110.0,
+          "p95": 110.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-1",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        }
+      }
+    },
+    {
+      "block_id": "block-02",
+      "cell_id": "natural-quality",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 23,
+        "failed": 0,
+        "fixed_length_valid": 0,
+        "http_failed": 0,
+        "nontruncated": 23,
+        "qualified_output_tokens": 639,
+        "quality_valid": 22,
+        "scheduled": 24,
+        "schema_valid": 23,
+        "semantic_correct": 22,
+        "slo_qualified": 22,
+        "sse_failed": 0,
+        "successful_output_tokens": 673,
+        "timeout": 0,
+        "transport_success": 23,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 185.0,
+          "p95": 205.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "natural_stop",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-1",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 23,
+        "error": 0,
+        "length": 0,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 116.43598615916954,
+          "wall_seconds": 5.78
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.806228373702422,
+          "wall_seconds": 5.78
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.979238754325259,
+          "wall_seconds": 5.78
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 110.55363321799308,
+          "wall_seconds": 5.78
+        }
+      }
+    },
+    {
+      "block_id": "block-03",
+      "cell_id": "fixed-medium",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 621.0,
+          "p95": 621.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 110.0,
+          "p95": 110.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-2",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        }
+      }
+    },
+    {
+      "block_id": "block-03",
+      "cell_id": "fixed-short",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 581.0,
+          "p95": 581.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-2",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        }
+      }
+    },
+    {
+      "block_id": "block-03",
+      "cell_id": "natural-quality",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 23,
+        "failed": 0,
+        "fixed_length_valid": 0,
+        "http_failed": 0,
+        "nontruncated": 23,
+        "qualified_output_tokens": 639,
+        "quality_valid": 22,
+        "scheduled": 24,
+        "schema_valid": 23,
+        "semantic_correct": 22,
+        "slo_qualified": 22,
+        "sse_failed": 0,
+        "successful_output_tokens": 673,
+        "timeout": 0,
+        "transport_success": 23,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 185.0,
+          "p95": 205.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "natural_stop",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-2",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 23,
+        "error": 0,
+        "length": 0,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 116.43598615916954,
+          "wall_seconds": 5.78
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.806228373702422,
+          "wall_seconds": 5.78
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.979238754325259,
+          "wall_seconds": 5.78
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 110.55363321799308,
+          "wall_seconds": 5.78
+        }
+      }
+    },
+    {
+      "block_id": "block-04",
+      "cell_id": "fixed-medium",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 621.0,
+          "p95": 621.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 110.0,
+          "p95": 110.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-2",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        }
+      }
+    },
+    {
+      "block_id": "block-04",
+      "cell_id": "fixed-short",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 581.0,
+          "p95": 581.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-2",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        }
+      }
+    },
+    {
+      "block_id": "block-04",
+      "cell_id": "natural-quality",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 23,
+        "failed": 0,
+        "fixed_length_valid": 0,
+        "http_failed": 0,
+        "nontruncated": 23,
+        "qualified_output_tokens": 639,
+        "quality_valid": 22,
+        "scheduled": 24,
+        "schema_valid": 23,
+        "semantic_correct": 22,
+        "slo_qualified": 22,
+        "sse_failed": 0,
+        "successful_output_tokens": 673,
+        "timeout": 0,
+        "transport_success": 23,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 185.0,
+          "p95": 205.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "natural_stop",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-2",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 23,
+        "error": 0,
+        "length": 0,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 116.43598615916954,
+          "wall_seconds": 5.78
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.806228373702422,
+          "wall_seconds": 5.78
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.979238754325259,
+          "wall_seconds": 5.78
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 110.55363321799308,
+          "wall_seconds": 5.78
+        }
+      }
+    },
+    {
+      "block_id": "block-05",
+      "cell_id": "fixed-short",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 581.0,
+          "p95": 581.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-3",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        }
+      }
+    },
+    {
+      "block_id": "block-05",
+      "cell_id": "fixed-medium",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 621.0,
+          "p95": 621.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 110.0,
+          "p95": 110.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-3",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        }
+      }
+    },
+    {
+      "block_id": "block-05",
+      "cell_id": "natural-quality",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 23,
+        "failed": 0,
+        "fixed_length_valid": 0,
+        "http_failed": 0,
+        "nontruncated": 23,
+        "qualified_output_tokens": 639,
+        "quality_valid": 22,
+        "scheduled": 24,
+        "schema_valid": 23,
+        "semantic_correct": 22,
+        "slo_qualified": 22,
+        "sse_failed": 0,
+        "successful_output_tokens": 673,
+        "timeout": 0,
+        "transport_success": 23,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 185.0,
+          "p95": 205.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "natural_stop",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-3",
+      "runtime": "vllm-0.29.0",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 23,
+        "error": 0,
+        "length": 0,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 116.43598615916954,
+          "wall_seconds": 5.78
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.806228373702422,
+          "wall_seconds": 5.78
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.979238754325259,
+          "wall_seconds": 5.78
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 110.55363321799308,
+          "wall_seconds": 5.78
+        }
+      }
+    },
+    {
+      "block_id": "block-06",
+      "cell_id": "fixed-short",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 581.0,
+          "p95": 581.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-3",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 1.331615120274914,
+          "wall_seconds": 23.28
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 170.446735395189,
+          "wall_seconds": 23.28
+        }
+      }
+    },
+    {
+      "block_id": "block-06",
+      "cell_id": "fixed-medium",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 31,
+        "failed": 0,
+        "fixed_length_valid": 31,
+        "http_failed": 0,
+        "nontruncated": 0,
+        "qualified_output_tokens": 3968,
+        "quality_valid": 0,
+        "scheduled": 32,
+        "schema_valid": 0,
+        "semantic_correct": 0,
+        "slo_qualified": 31,
+        "sse_failed": 0,
+        "successful_output_tokens": 3968,
+        "timeout": 0,
+        "transport_success": 31,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 621.0,
+          "p95": 621.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 31,
+          "p50": 110.0,
+          "p95": 110.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "fixed_output",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-3",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 0,
+        "error": 0,
+        "length": 31,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.81632401821987,
+          "wall_seconds": 8.123
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 488.48947433214335,
+          "wall_seconds": 8.123
+        }
+      }
+    },
+    {
+      "block_id": "block-06",
+      "cell_id": "natural-quality",
+      "classification": "local_fixture",
+      "coalesced_content_requests": 1,
+      "counts": {
+        "cancelled": 0,
+        "dispatched": 23,
+        "failed": 0,
+        "fixed_length_valid": 0,
+        "http_failed": 0,
+        "nontruncated": 23,
+        "qualified_output_tokens": 639,
+        "quality_valid": 22,
+        "scheduled": 24,
+        "schema_valid": 23,
+        "semantic_correct": 22,
+        "slo_qualified": 22,
+        "sse_failed": 0,
+        "successful_output_tokens": 673,
+        "timeout": 0,
+        "transport_success": 23,
+        "unsent": 1
+      },
+      "latency": {
+        "e2e_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 185.0,
+          "p95": 205.0,
+          "unavailable_reason": null
+        },
+        "scheduling_lag_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "send_preparation_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 1.0,
+          "p95": 1.0,
+          "unavailable_reason": null
+        },
+        "terminal_overhead_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 3.0,
+          "p95": 3.0,
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 4.0,
+          "p95": 4.0,
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 23,
+          "p50": 70.0,
+          "p95": 70.0,
+          "unavailable_reason": null
+        }
+      },
+      "mode": "natural_stop",
+      "notes": [
+        "per-block primary summary",
+        "p95 is descriptive",
+        "p99 intentionally omitted"
+      ],
+      "pair_id": "pair-3",
+      "runtime": "sglang-0.5.20",
+      "schema_version": "episode1.v1",
+      "stop_reasons": {
+        "cancelled": 0,
+        "eos": 23,
+        "error": 0,
+        "length": 0,
+        "not_started": 1,
+        "stop": 0,
+        "timeout": 0
+      },
+      "throughput": {
+        "output_tokens": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 116.43598615916954,
+          "wall_seconds": 5.78
+        },
+        "request_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.806228373702422,
+          "wall_seconds": 5.78
+        },
+        "requests": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "requests/s",
+          "value": 3.979238754325259,
+          "wall_seconds": 5.78
+        },
+        "token_goodput": {
+          "available": true,
+          "unavailable_reason": null,
+          "unit": "tokens/s",
+          "value": 110.55363321799308,
+          "wall_seconds": 5.78
+        }
+      }
+    }
+  ],
+  "telemetry": [
+    {
+      "available": false,
+      "block_id": "block-01",
+      "cell_id": "fixed-short",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-01",
+      "cell_id": "fixed-medium",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-01",
+      "cell_id": "natural-quality",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-02",
+      "cell_id": "fixed-short",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-02",
+      "cell_id": "fixed-medium",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-02",
+      "cell_id": "natural-quality",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-03",
+      "cell_id": "fixed-short",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-03",
+      "cell_id": "fixed-medium",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-03",
+      "cell_id": "natural-quality",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-04",
+      "cell_id": "fixed-short",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-04",
+      "cell_id": "fixed-medium",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-04",
+      "cell_id": "natural-quality",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-05",
+      "cell_id": "fixed-short",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-05",
+      "cell_id": "fixed-medium",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-05",
+      "cell_id": "natural-quality",
+      "metric": "gpu_power_watts",
+      "runtime": "vllm-0.29.0",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-06",
+      "cell_id": "fixed-short",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-06",
+      "cell_id": "fixed-medium",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    },
+    {
+      "available": false,
+      "block_id": "block-06",
+      "cell_id": "natural-quality",
+      "metric": "gpu_power_watts",
+      "runtime": "sglang-0.5.20",
+      "source": "gpu_sampler",
+      "unavailable_reason": "local fixture has no GPU telemetry",
+      "unit": "W",
+      "value": null,
+      "window": "cell"
+    }
+  ]
+}

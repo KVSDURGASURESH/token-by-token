@@ -1,0 +1,45 @@
+{
+  "cadence_seconds": 1,
+  "classification": "exploratory_noncanonical",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "runtime_native_metrics_collected": true,
+  "schema_version": 1,
+  "summaries": [
+    {
+      "gpu_utilization_peak_pct": 100.0,
+      "memory_used_peak_mib": 74139.0,
+      "power_peak_w": 704.67,
+      "run": "baseline",
+      "runtime": "vllm",
+      "samples": 313,
+      "temperature_peak_c": 63.0
+    },
+    {
+      "gpu_utilization_peak_pct": 100.0,
+      "memory_used_peak_mib": 70632.0,
+      "power_peak_w": 696.46,
+      "run": "baseline",
+      "runtime": "sglang",
+      "samples": 358,
+      "temperature_peak_c": 59.0
+    },
+    {
+      "gpu_utilization_peak_pct": 100.0,
+      "memory_used_peak_mib": 74139.0,
+      "power_peak_w": 703.22,
+      "run": "stress",
+      "runtime": "vllm",
+      "samples": 372,
+      "temperature_peak_c": 70.0
+    },
+    {
+      "gpu_utilization_peak_pct": 100.0,
+      "memory_used_peak_mib": 71178.0,
+      "power_peak_w": 706.04,
+      "run": "stress",
+      "runtime": "sglang",
+      "samples": 544,
+      "temperature_peak_c": 67.0
+    }
+  ]
+}

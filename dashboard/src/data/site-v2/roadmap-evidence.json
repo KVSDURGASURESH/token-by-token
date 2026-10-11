@@ -1,0 +1,18 @@
+{
+  "episode-1": "versioned workload and quality sets, declared thresholds and denominators, exact provenance, raw per-request records and a report schema that can retain failed or inconclusive results.",
+  "episode-2": "selected images and kernels, tokenizer/template hashes, per-repetition TTFT and end-to-end latency, output lengths, stop reasons, correctness checks, errors, device telemetry and attributable cost.",
+  "episode-3": "eligible and reused tokens, cache-hit definition, KV capacity, evictions or recomputation, prefill duration, TTFT and SLO-qualified goodput. Reset cache state between the appropriate arms.",
+  "episode-4": "verified effective flags, running/waiting requests, scheduled tokens per iteration when exposed, queue time, TTFT and decode gaps by request class, maximum wait, starvation indicators and KV time series.",
+  "episode-5": "compatibility record, profiler confirmation where available, memory use, latency, useful throughput and results on the fixed quality set against its acceptance threshold.",
+  "episode-6": "accepted tokens per step and its definition, draft and verification duration, added memory, TTFT/TPOT/goodput, retries, schema validity, semantic correctness, unsupported claims and total cost.",
+  "episode-7": "GPU topology and NVLink/PCIe paths, placement, memory per rank, collective time/bytes, PP stage balance, expert load/skew, throughput and request tails.",
+  "episode-8": "node and accelerator placement, NIC/link speeds, selected transport, collective latency, throughput, transfer volume, failures and recovery behavior.",
+  "episode-9": "KV-transfer bytes and duration, queue and utilization in both pools, cache ownership, cancellation/failure behavior, routing decisions, hit benefit versus queue delay, class-specific SLO attainment, starvation and maximum wait.",
+  "episode-10": "comparable job and service definitions plus an explicit decision based on queue semantics, gang scheduling, topology awareness, failure recovery, service discovery, rollout control and operator burden. Keep platform health evidence separate from engine benchmarks.",
+  "episode-11": "reproducible tensor-shape and parameter-count walkthroughs, attention inspection, gradient checks and optimizer-state accounting.",
+  "episode-12": "deterministic lineage, learning curves, memory/time measurements, held-out quality results, uncertainty across repetitions where practical and inference cost for accepted adapters.",
+  "episode-13": "versioned labeled task set, adapter or API configuration, exact decision schema, per-example outcomes, aggregate metrics with uncertainty and an error analysis. Product-specific integration details remain contingent on the selected Jev interface and version.",
+  "episode-14": "immutable manifests and digests, compatibility matrix, effective launch flags, failure signatures, memory telemetry, client-visible behavior and verified recovery state.",
+  "episode-15": "predeclared TTFT/TPOT/end-to-end SLOs, warmup policy, request schedule, achieved rate, errors, client CPU/network load, latency distributions and cost per qualifying unit of work.",
+  "episode-16": "fixed workload and gates, repeated measurements, rejected configurations, immutable release manifest, pre-promotion rejection, recovery time, retained failure evidence, end-to-end traces and successful cleanup. A local mock validates gate logic only; it does not validate production availability, autoscaling or provider billing."
+}

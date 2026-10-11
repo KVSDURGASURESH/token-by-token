@@ -1,0 +1,10 @@
+- targets:
+    - gpu-host.example.invalid:9400
+  labels:
+    collector_scope: remote_gpu_host
+    catalog_version: episode-catalog.v2
+    episode: replace-me
+    run_id: replace-me
+    config_digest: replace-with-sha256
+    repeat: replace-me
+    engine: replace-me

@@ -1,0 +1,30 @@
+{
+  "gpu": {
+    "gpu_id": "REQUIRED_CURRENT_RUNPOD_GPU_OFFER_ID",
+    "hourly_usd": "REQUIRED_CURRENT_HOURLY_PRICE",
+    "stock": "available",
+    "cloud": "SECURE",
+    "region": "REQUIRED_CURRENT_REGION",
+    "datacenter": "REQUIRED_CURRENT_DATACENTER",
+    "source": "REQUIRED_PRIVATE_PROVIDER_CAPTURE_REFERENCE",
+    "observed_at": "REQUIRED_CURRENT_RFC3339_TIME",
+    "expires_at": "REQUIRED_RFC3339_TIME_WITHIN_15_MINUTES"
+  },
+  "account": {"balance_usd": "REQUIRED_CURRENT_BALANCE", "auto_recharge_verified_disabled": true},
+  "estimate": {"expected_minutes": 90, "maximum_minutes": 120},
+  "compatibility": {"status": "pass", "evidence": ["REQUIRED_NO_COST_STATIC_CHECK_AND_APPROVED_POD_SMOKE_EVIDENCE"]},
+  "ancillary_costs": {
+    "observed_at": "REQUIRED_CURRENT_RFC3339_TIME",
+    "expires_at": "REQUIRED_RFC3339_TIME_WITHIN_15_MINUTES",
+    "source": "REQUIRED_PRIVATE_PROVIDER_PRICING_CAPTURE_REFERENCE",
+    "components": {
+      "storage": {"status": "REQUIRED_INCLUDED_ZERO_OR_BILLED", "amount_usd": "0"},
+      "network_volume": {"status": "zero", "amount_usd": "0"},
+      "endpoint_public_ip": {"status": "zero", "amount_usd": "0"},
+      "egress": {"status": "REQUIRED_INCLUDED_ZERO_OR_BILLED", "amount_usd": "0"},
+      "image_pull": {"status": "REQUIRED_INCLUDED_ZERO_OR_BILLED", "amount_usd": "0"},
+      "startup": {"status": "REQUIRED_INCLUDED_ZERO_OR_BILLED", "amount_usd": "0"},
+      "other": {"status": "zero", "amount_usd": "0"}
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:token-by-token:schemas:episode1-phase-ledger",
+  "title": "Episode 1 local-fixture phase ledger envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["classification", "records"],
+  "properties": {
+    "classification": {"const": "local_fixture"},
+    "records": {"type": "array", "minItems": 7, "maxItems": 7, "items": {"$ref": "#/$defs/record"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "evidence_class", "clock_domain", "sequence", "phase", "start_ns", "end_ns", "start_utc", "end_utc", "accounting_class", "amount_usd", "source_artifact_sha256", "previous_sha256", "record_sha256"],
+      "properties": {
+        "schema_version": {"const": "episode1.v1"},
+        "evidence_class": {"const": "local_fixture"},
+        "clock_domain": {"const": "fixture_monotonic_ns"},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 7},
+        "phase": {"enum": ["preflight", "startup", "warmup", "measurement", "export", "teardown", "settlement"]},
+        "start_ns": {"type": "integer", "minimum": 0},
+        "end_ns": {"type": "integer", "minimum": 0},
+        "start_utc": {"type": "string", "format": "date-time"},
+        "end_utc": {"type": "string", "format": "date-time"},
+        "accounting_class": {"const": "not_applicable_fixture"},
+        "amount_usd": {"type": "null"},
+        "source_artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "previous_sha256": {"$ref": "#/$defs/sha256"},
+        "record_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

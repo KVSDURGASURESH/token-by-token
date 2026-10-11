@@ -1,0 +1,41 @@
+I quadrupled simulated users on one H200 deployment.
+
+Aggregate output: +3.2%.
+
+Median wait for visible text: 1.17 → 22.23 seconds.
+
+The highest-throughput setting would have been a poor choice for this interactive workload.
+
+That is the central result from the newest Token by Token — Inference Lab experiment.
+
+I replayed the same synthetic, multi-turn coding sessions against Qwen3.6-27B-FP8 on two documented vLLM deployments: one RTX PRO 6000 and one H200.
+
+The test swept from 2 to 100 simulated users, with two ordered conversation slots per user, then ran matched 15-minute soaks at 16 users.
+
+Tools were not executed and coding-task correctness was not scored.
+
+In those longer soaks:
+
+RTX PRO 6000
+• 245.72 aggregate output tok/s
+• 8.22 s p95 wait for visible text
+
+H200
+• 379.94 aggregate output tok/s
+• 2.83 s p95 wait for visible text
+
+At this point, the H200 deployment produced more aggregate output with a lower p95 visible-text wait. Software environments differed, so the comparison does not isolate hardware effects.
+
+The finding I care about is the shape of the tradeoff.
+
+More concurrency added substantial waiting with little additional output.
+
+Important boundary: this experiment did not establish production capacity. “128K” was a server setting; actual soak prompts were about 1.2K–6.6K tokens. Cache-hit evidence and verified provenance were unavailable, so every formal capacity verdict remains unqualified.
+
+Next I’ll capture cache usage and matched server telemetry, then repeat the 8/16/32-user neighborhood against a declared response-start target.
+
+For an interactive coding assistant, what visible-response budget would you refuse to cross—even if throughput kept rising?
+
+Full experiment, configuration matrix, earlier-study comparison, interactive dashboard and evidence limits: [SUBSTACK LINK]
+
+#LLMInference #LLMOps #PerformanceEngineering #vLLM

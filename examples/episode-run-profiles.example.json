@@ -1,0 +1,36 @@
+{
+  "profiles": [
+    {
+      "id": "vllm-runpod",
+      "label": "RunPod vLLM endpoint",
+      "url": "https://replace-vllm-endpoint.example.invalid/v1/chat/completions",
+      "runtime_id": "vllm",
+      "model": "replace-with-served-model-name",
+      "api_key_env": "VLLM_API_KEY",
+      "supported_optional_fields": ["seed", "stop"],
+      "context_length": 32768,
+      "gpu_type": "replace-with-gpu-type",
+      "gpu_count": 1,
+      "node_count": 1,
+      "parallelism": {"dp": 1, "tp": 1, "pp": 1, "ep": 1},
+      "runtime_controls": {"prompt_caching": "enabled", "chunked_prefill": "enabled", "continuous_batching": "enabled"},
+      "gpu_telemetry": "unavailable"
+    },
+    {
+      "id": "sglang-runpod",
+      "label": "RunPod SGLang endpoint",
+      "url": "https://replace-sglang-endpoint.example.invalid/v1/chat/completions",
+      "runtime_id": "sglang",
+      "model": "replace-with-served-model-name",
+      "api_key_env": "SGLANG_API_KEY",
+      "supported_optional_fields": ["seed", "stop"],
+      "context_length": 32768,
+      "gpu_type": "replace-with-gpu-type",
+      "gpu_count": 1,
+      "node_count": 1,
+      "parallelism": {"dp": 1, "tp": 1, "pp": 1, "ep": 1},
+      "runtime_controls": {"prompt_caching": "enabled", "chunked_prefill": "enabled", "continuous_batching": "enabled"},
+      "gpu_telemetry": "unavailable"
+    }
+  ]
+}

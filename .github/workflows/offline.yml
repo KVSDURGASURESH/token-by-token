@@ -1,0 +1,91 @@
+name: Offline validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  public-client:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install syscall tracer
+        run: sudo apt-get update && sudo apt-get install -y strace
+      - name: Install source client from the isolated package
+        run: python3 -m pip install ./client
+      - name: Run public client tests
+        run: PYTHONPATH=client/src python3 -m unittest discover -s client/tests -p 'test_*.py' -v
+      - name: Build and audit standalone candidate
+        working-directory: client
+        run: python3 scripts/build_binary.py
+      - name: Prove source self-test attempts no network syscall
+        run: |
+          strace -f -qq -e trace=network -e signal=none -o "$RUNNER_TEMP/source-network.trace" \
+            token-by-token episode 2 selftest --offline --users 4 --output "$RUNNER_TEMP/source.tbt.zip"
+          test ! -s "$RUNNER_TEMP/source-network.trace"
+      - name: Prove binary self-test attempts no network syscall
+        run: |
+          strace -f -qq -e trace=network -e signal=none -o "$RUNNER_TEMP/binary-network.trace" \
+            client/dist/token-by-token episode 2 selftest --offline --users 4 --output "$RUNNER_TEMP/binary.tbt.zip"
+          test ! -s "$RUNNER_TEMP/binary-network.trace"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: token-by-token-client-${{ runner.os }}
+          path: |
+            client/dist/token-by-token
+            client/dist/SHA256SUMS
+          if-no-files-found: error
+
+  fixture-and-dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check publication files and reachable history
+        run: |
+          python3 scripts/check_publication_privacy.py
+          python3 scripts/check_publication_privacy.py --history
+      - name: Check episode navigation
+        run: python3 scripts/update_episode_index.py --check
+      - name: Verify the immutable historical snapshot
+        run: python3 scripts/verify_bundle.py data/public
+      - name: Rehearse the zero-cost fixture
+        run: python3 scripts/rehearse_workflow.py --output "$RUNNER_TEMP/rehearsal"
+      - name: Verify the rehearsed fixture
+        run: python3 scripts/verify_bundle.py "$RUNNER_TEMP/rehearsal"
+      - name: Install locked Python test and live dependency set
+        run: |
+          python3 -m pip install uv==0.12.23
+          uv sync --locked --extra test --extra live --python python3.12
+      - name: Run Python evidence and privacy tests
+        run: PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - name: Install dashboard dependencies from lockfile
+        run: npm --prefix dashboard ci
+      - name: Type-check dashboard
+        run: npm --prefix dashboard run check
+      - name: Build dashboard
+        run: npm --prefix dashboard run build
+      - name: Scan compiled publication bundle
+        run: python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
+      - name: Install headless browser
+        run: npx --prefix dashboard playwright install --with-deps chromium
+      - name: Verify static bundle works offline
+        run: node tests/dashboard_offline_acceptance.cjs dashboard/dist

@@ -1,0 +1,48 @@
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+
+const root = path.resolve(__dirname, "..");
+const episode = fs.readFileSync(path.join(root, "dashboard/src/Episode1Instrument.tsx"), "utf8");
+const instrument = fs.readFileSync(path.join(root, "dashboard/src/instrument/LinkedMetricInstrument.tsx"), "utf8");
+const shell = fs.readFileSync(path.join(root, "dashboard/src/instrument/EpisodeShell.tsx"), "utf8");
+const styles = fs.readFileSync(path.join(root, "dashboard/src/styles.css"), "utf8");
+const publicEvidence = fs.readFileSync(path.join(root, "dashboard/src/data/episode-1-public.v1.json"), "utf8");
+const evidenceBuilder = fs.readFileSync(path.join(root, "scripts/build_static_benchmark_evidence.py"), "utf8");
+
+assert.match(episode, /ComparisonMode/);
+assert.match(episode, /Compare deployments/);
+assert.match(episode, /Compare loads/);
+assert.match(episode, /instrument-lead/);
+assert.match(episode, /URLSearchParams/);
+assert.match(episode, /history\.replaceState/);
+assert.match(episode, /load=/);
+assert.match(episode, /mode=/);
+assert.match(episode, /ExperienceDepth/);
+assert.match(episode, /Open evidence lab/);
+assert.match(episode, /Back to the episode brief/);
+assert.match(episode, /episode-basic-readout/);
+assert.match(episode, /metric-outcome/);
+assert.match(instrument, /return "neutral"/);
+assert.match(instrument, /\? "better" : "worse"/);
+assert.match(instrument, /Higher is better|Lower is better/);
+assert.match(instrument, /function PlotMarker/);
+assert.match(instrument, /arm\.marker/);
+assert.match(instrument, /comparisonPoint/);
+assert.match(instrument, /mode === "deployments"/);
+assert.match(instrument, /at \$\{selected\} users/);
+assert.match(instrument, /MetricExplanation/);
+assert.match(instrument, /aria-label={`Explain \$\{metric\.label\}`}/);
+assert.match(instrument, /Client-visible|Engine-native|Aligned GPU/);
+assert.match(styles, /--better:/);
+assert.match(styles, /--worse:/);
+assert.match(styles, /--neutral:/);
+assert.match(styles, /\.metric-outcome\.better/);
+assert.match(styles, /\.metric-outcome\.worse/);
+assert.match(styles, /\.metric-outcome\.neutral/);
+assert.doesNotMatch(publicEvidence, /queue changes the winner/i);
+assert.doesNotMatch(evidenceBuilder, /queue changes the winner/i);
+assert.match(shell, /episode-scroll/);
+assert.match(shell, /Episode scroller/);
+
+console.log("Interactive evidence design contract passed.");

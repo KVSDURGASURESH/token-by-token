@@ -1,0 +1,15 @@
+{
+  "classification": "exploratory_noncanonical",
+  "execution_ready": false,
+  "measured_profiles": [
+    "128tok-c1",
+    "2048tok-c4",
+    "8192tok-c8",
+    "128tok-c16",
+    "2048tok-c24",
+    "8192tok-c32"
+  ],
+  "observed_cli_debit_usd": "2.19",
+  "publication_only": true,
+  "schema_version": 1
+}

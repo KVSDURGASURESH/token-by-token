@@ -1,0 +1,173 @@
+{
+  "classification": "exploratory recorded deployment study",
+  "levels": [
+    2,
+    4,
+    8,
+    16,
+    32,
+    64,
+    100
+  ],
+  "deployments": [
+    {
+      "name": "Deployment A",
+      "hardware": "RTX PRO 6000",
+      "soak": {
+        "users": 16,
+        "measured": 2340,
+        "valid": 2319,
+        "output_tps": 245.7181547412,
+        "decode_tps_p10": 31.5769309083,
+        "visible_ttft_p50_s": 4.891369792,
+        "visible_ttft_p95_s": 8.216985583,
+        "error_rate": 0.008974359
+      },
+      "sweep": [
+        {
+          "users": 2,
+          "measured": 89,
+          "valid": 88,
+          "output_tps": 48.1832042948,
+          "visible_ttft_p50_s": 1.164529625,
+          "visible_ttft_p95_s": 3.113420791,
+          "error_rate": 0.0112359551
+        },
+        {
+          "users": 4,
+          "measured": 149,
+          "valid": 148,
+          "output_tps": 76.9203009869,
+          "visible_ttft_p50_s": 1.210602792,
+          "visible_ttft_p95_s": 3.425362667,
+          "error_rate": 0.0067114094
+        },
+        {
+          "users": 8,
+          "measured": 281,
+          "valid": 271,
+          "output_tps": 144.2462906608,
+          "visible_ttft_p50_s": 1.349463917,
+          "visible_ttft_p95_s": 5.473454709,
+          "error_rate": 0.0355871886
+        },
+        {
+          "users": 16,
+          "measured": 460,
+          "valid": 456,
+          "output_tps": 233.501607133,
+          "visible_ttft_p50_s": 5.191367959,
+          "visible_ttft_p95_s": 8.0064425,
+          "error_rate": 0.0086956522
+        },
+        {
+          "users": 32,
+          "measured": 513,
+          "valid": 511,
+          "output_tps": 228.4629213981,
+          "visible_ttft_p50_s": 17.876449958,
+          "visible_ttft_p95_s": 20.459291709,
+          "error_rate": 0.0038986355
+        },
+        {
+          "users": 64,
+          "measured": 360,
+          "valid": 359,
+          "output_tps": 115.4685974538,
+          "visible_ttft_p50_s": 66.795110792,
+          "visible_ttft_p95_s": 75.391442917,
+          "error_rate": 0.0027777778
+        },
+        {
+          "users": 100,
+          "measured": 375,
+          "valid": 375,
+          "output_tps": 99.8822917906,
+          "visible_ttft_p50_s": 97.298342083,
+          "visible_ttft_p95_s": 110.291617292,
+          "error_rate": 0.0
+        }
+      ]
+    },
+    {
+      "name": "Deployment B",
+      "hardware": "H200",
+      "soak": {
+        "users": 16,
+        "measured": 3586,
+        "valid": 3568,
+        "output_tps": 379.9426568493,
+        "decode_tps_p10": 55.2858088644,
+        "visible_ttft_p50_s": 1.173034042,
+        "visible_ttft_p95_s": 2.828482458,
+        "error_rate": 0.0050195204
+      },
+      "sweep": [
+        {
+          "users": 2,
+          "measured": 102,
+          "valid": 101,
+          "output_tps": 54.1477388853,
+          "visible_ttft_p50_s": 0.811809334,
+          "visible_ttft_p95_s": 1.745207666,
+          "error_rate": 0.0098039216
+        },
+        {
+          "users": 4,
+          "measured": 156,
+          "valid": 150,
+          "output_tps": 79.8469404249,
+          "visible_ttft_p50_s": 0.914450959,
+          "visible_ttft_p95_s": 5.041445209,
+          "error_rate": 0.0384615385
+        },
+        {
+          "users": 8,
+          "measured": 360,
+          "valid": 358,
+          "output_tps": 187.0701528155,
+          "visible_ttft_p50_s": 0.905389833,
+          "visible_ttft_p95_s": 1.918323416,
+          "error_rate": 0.0055555556
+        },
+        {
+          "users": 16,
+          "measured": 688,
+          "valid": 686,
+          "output_tps": 359.8099363824,
+          "visible_ttft_p50_s": 1.168019291,
+          "visible_ttft_p95_s": 2.821556292,
+          "error_rate": 0.0029069767
+        },
+        {
+          "users": 32,
+          "measured": 627,
+          "valid": 521,
+          "output_tps": 258.4495677511,
+          "visible_ttft_p50_s": 8.883524792,
+          "visible_ttft_p95_s": 45.178208833,
+          "error_rate": 0.1690590112
+        },
+        {
+          "users": 64,
+          "measured": 880,
+          "valid": 876,
+          "output_tps": 371.3219049334,
+          "visible_ttft_p50_s": 22.234826458,
+          "visible_ttft_p95_s": 24.511964667,
+          "error_rate": 0.0045454545
+        },
+        {
+          "users": 100,
+          "measured": 701,
+          "valid": 510,
+          "output_tps": 183.90162103,
+          "visible_ttft_p50_s": 52.038218958,
+          "visible_ttft_p95_s": 107.43825425,
+          "error_rate": 0.2724679029957204
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,11 @@
+{
+  "distributions": {
+    "jsonschema": "4.25.1",
+    "packaging": "26.3",
+    "transformers": "5.17.0",
+    "zstandard": "0.25.0"
+  },
+  "python_implementation": "CPython",
+  "python_version": "3.12.13",
+  "schema_version": "episode1.client-environment.v1"
+}

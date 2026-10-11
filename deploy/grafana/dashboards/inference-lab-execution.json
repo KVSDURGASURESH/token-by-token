@@ -1,0 +1,226 @@
+{
+  "annotations": {"list": []},
+  "description": "Measured execution telemetry. Empty panels mean the named collector is unavailable; no values are synthesized.",
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "type": "text", "title": "Measurement contract", "id": 1,
+      "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
+      "options": {"mode": "markdown", "content": "**Measured only.** Set the dashboard time window and provenance filters before comparing runs. Local `*_ms` and `requests_total` series are latest-completed-run **gauges**. Their p95/p99 are queried directly; they are never passed to `rate()` or `histogram_quantile()`. `client_inter_chunk` measures non-empty SSE chunk gaps—chunks are not tokens. Empty queue/cache/cost/parallelism or DCGM panels mean the collector did not emit that metric."}
+    },
+    {
+      "type": "stat", "title": "Bridge scrape up", "id": 2,
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 4},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "max(inference_lab_up)", "refId": "A"}],
+      "fieldConfig": {"defaults": {"mappings": [{"options": {"0": {"text": "DOWN"}, "1": {"text": "UP"}}, "type": "value"}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true}
+    },
+    {
+      "type": "stat", "title": "Latest attempted requests", "id": 3,
+      "description": "Snapshot gauge for the latest completed local rehearsal, not a counter.",
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 4},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "sum(inference_lab_requests_total{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",status=\"attempted\"})", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true}
+    },
+    {
+      "type": "stat", "title": "Latest successful requests", "id": 4,
+      "description": "Snapshot gauge for the latest completed local rehearsal, not a counter.",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 4},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "sum(inference_lab_requests_total{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",status=\"successful\"})", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true}
+    },
+    {
+      "type": "stat", "title": "Latest error ratio", "id": 5,
+      "description": "Derived from attempted and successful snapshot gauges.",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 4},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "100 * (sum(inference_lab_requests_total{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",status=\"attempted\"}) - sum(inference_lab_requests_total{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",status=\"successful\"})) / clamp_min(sum(inference_lab_requests_total{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",status=\"attempted\"}), 1)", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 1}, {"color": "red", "value": 5}]}}, "overrides": []},
+      "options": {"colorMode": "value", "graphMode": "none", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true}
+    },
+    {
+      "type": "timeseries", "title": "TTFT · direct summary gauges", "id": 6,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_ttft_ms{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",statistic=~\"$statistic\"}", "legendFormat": "{{profile}} · {{cell}} · {{statistic}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ms", "custom": {"drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "showPoints": "auto"}}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "timeseries", "title": "TPOT · direct summary gauges", "id": 7,
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_tpot_ms{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",statistic=~\"$statistic\"}", "legendFormat": "{{profile}} · {{cell}} · {{statistic}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ms", "custom": {"drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "showPoints": "auto"}}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "timeseries", "title": "E2E latency · direct summary gauges", "id": 8,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_e2e_ms{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",statistic=~\"$statistic\"}", "legendFormat": "{{profile}} · {{cell}} · {{statistic}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ms", "custom": {"drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "showPoints": "auto"}}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "timeseries", "title": "Client inter-chunk latency · not token ITL", "id": 9,
+      "description": "Gap between non-empty SSE content chunks. A chunk is not guaranteed to contain one token.",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_client_inter_chunk_ms{episode=~\"$episode\",suite_round=~\"$suite_round\",cell=~\"$cell\",profile=~\"$profile\",statistic=~\"$statistic\"}", "legendFormat": "{{profile}} · {{cell}} · {{statistic}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ms", "custom": {"drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "showPoints": "auto"}}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "row", "title": "Execution counter/histogram contract · empty until an execution exporter emits it", "id": 10,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 24}, "collapsed": false, "panels": []
+    },
+    {
+      "type": "timeseries", "title": "Request rate", "id": 11,
+      "description": "Requires the monotonic request-attempt counter; the local snapshot gauge cannot supply a rate.",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 25},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "sum by (catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_request_attempts_total{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval]))", "legendFormat": "{{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}} · {{engine}} · GPU {{gpu}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom", "calcs": []}, "tooltip": {"mode": "single", "sort": "none"}}
+    },
+    {
+      "type": "timeseries", "title": "Output throughput", "id": 12,
+      "description": "Exact successful output tokens per second; unavailable without exact usage counters.",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 25},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "sum by (catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_output_tokens_total{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval]))", "legendFormat": "{{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}} · {{engine}} · GPU {{gpu}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "tps"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom", "calcs": []}, "tooltip": {"mode": "single", "sort": "none"}}
+    },
+    {
+      "type": "timeseries", "title": "Measured tail latency · p95 / p99", "id": 13,
+      "description": "Requires execution histogram buckets; unlike local summary gauges these are valid histogram_quantile inputs.",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 25},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum by (le, catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_ttft_seconds_bucket{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])))", "legendFormat": "TTFT p95 · {{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "A"},
+        {"expr": "histogram_quantile(0.99, sum by (le, catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_ttft_seconds_bucket{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])))", "legendFormat": "TTFT p99 · {{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "B"},
+        {"expr": "histogram_quantile(0.95, sum by (le, catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_tpot_seconds_bucket{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])))", "legendFormat": "TPOT p95 · {{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "C"},
+        {"expr": "histogram_quantile(0.99, sum by (le, catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_tpot_seconds_bucket{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])))", "legendFormat": "TPOT p99 · {{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "D"},
+        {"expr": "histogram_quantile(0.95, sum by (le, catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_e2e_seconds_bucket{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])))", "legendFormat": "E2E p95 · {{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "E"},
+        {"expr": "histogram_quantile(0.99, sum by (le, catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_e2e_seconds_bucket{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])))", "legendFormat": "E2E p99 · {{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "F"},
+        {"expr": "histogram_quantile(0.95, sum by (le, catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_client_inter_chunk_seconds_bucket{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])))", "legendFormat": "chunk p95 · {{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "G"},
+        {"expr": "histogram_quantile(0.99, sum by (le, catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_client_inter_chunk_seconds_bucket{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])))", "legendFormat": "chunk p99 · {{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "H"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "timeseries", "title": "Runtime queue depth", "id": 14,
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 33},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_runtime_queue_depth{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}", "legendFormat": "{{engine}} · {{profile}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "timeseries", "title": "KV cache occupancy", "id": 15,
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 33},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "100 * inference_lab_kv_cache_occupancy_ratio{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}", "legendFormat": "{{engine}} · {{profile}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "timeseries", "title": "Prefix cache hit ratio", "id": 16,
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 33},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "100 * sum by (catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_prefix_cache_hits_total{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])) / clamp_min(sum by (catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_prefix_cache_hits_total{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])) + sum by (catalog_version, episode, run_id, config_digest, repeat, engine, gpu) (rate(inference_lab_prefix_cache_misses_total{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}[$__rate_interval])), 1)", "legendFormat": "{{catalog_version}} · ep{{episode}} · {{run_id}} · r{{repeat}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom", "calcs": []}, "tooltip": {"mode": "single", "sort": "none"}}
+    },
+    {
+      "type": "row", "title": "GPU · local sampler summaries and optional remote DCGM", "id": 17,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 41}, "collapsed": false, "panels": []
+    },
+    {
+      "type": "timeseries", "title": "GPU utilization · measured sources", "id": 18,
+      "description": "Local bridge summary gauges are host-wide and not lane-attributable. DCGM is present only when its remote collector is configured.",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 42},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_gpu_utilization_percent{episode=~\"$episode\",statistic=~\"$statistic\"}", "legendFormat": "local sampler · {{episode}} · {{statistic}}", "refId": "A"}, {"expr": "DCGM_FI_DEV_GPU_UTIL{gpu=~\"$gpu\"}", "legendFormat": "DCGM GPU {{gpu}} · {{modelName}}", "refId": "B"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "timeseries", "title": "GPU frame-buffer memory · measured sources", "id": 19,
+      "description": "The local sampler exposes host-wide used memory summaries. DCGM adds per-GPU used/free series when configured.",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 42},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_gpu_memory_used_mib{episode=~\"$episode\",statistic=~\"$statistic\"}", "legendFormat": "local sampler used · {{episode}} · {{statistic}}", "refId": "A"}, {"expr": "DCGM_FI_DEV_FB_USED{gpu=~\"$gpu\"}", "legendFormat": "DCGM GPU {{gpu}} used", "refId": "B"}, {"expr": "DCGM_FI_DEV_FB_FREE{gpu=~\"$gpu\"}", "legendFormat": "DCGM GPU {{gpu}} free", "refId": "C"}],
+      "fieldConfig": {"defaults": {"unit": "mbytes"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "timeseries", "title": "GPU board power · DCGM required", "id": 20,
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 42},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "DCGM_FI_DEV_POWER_USAGE{gpu=~\"$gpu\"}", "legendFormat": "GPU {{gpu}} · {{modelName}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "watt"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"]}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "type": "table", "title": "Effective parallelism · unavailable without info collector", "id": 21,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 50},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_parallelism_info{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}", "format": "table", "instant": true, "refId": "A"}],
+      "fieldConfig": {"defaults": {}, "overrides": []}, "options": {"cellHeight": "sm", "showHeader": true}
+    },
+    {
+      "type": "table", "title": "Cost · unavailable until settled/provisional source is declared", "id": 22,
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 50},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_run_cost_usd{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}", "format": "table", "instant": true, "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "currencyUSD"}, "overrides": []}, "options": {"cellHeight": "sm", "showHeader": true}
+    },
+    {
+      "type": "table", "title": "Run provenance", "id": 23,
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 58},
+      "datasource": {"type": "prometheus", "uid": "inference-lab-vm"},
+      "targets": [{"expr": "inference_lab_run_info{catalog_version=~\"$catalog_version\",episode=~\"$episode\",run_id=~\"$run_id\",config_digest=~\"$config_digest\",repeat=~\"$repeat\",engine=~\"$engine\",gpu=~\"$gpu\"}", "format": "table", "instant": true, "refId": "A"}],
+      "fieldConfig": {"defaults": {}, "overrides": []}, "options": {"cellHeight": "sm", "showHeader": true}
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 41,
+  "style": "dark",
+  "tags": ["inference-lab", "measured", "victoriametrics"],
+  "templating": {
+    "list": [
+      {"name": "catalog_version", "label": "Catalog", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_run_info, catalog_version)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 1},
+      {"name": "episode", "label": "Episode", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_requests_total, episode)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 3},
+      {"name": "run_id", "label": "Run", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_run_info{episode=~\"$episode\"}, run_id)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 1},
+      {"name": "config_digest", "label": "Config digest", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_run_info{run_id=~\"$run_id\"}, config_digest)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 1},
+      {"name": "repeat", "label": "Repeat", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_run_info{run_id=~\"$run_id\"}, repeat)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 3},
+      {"name": "engine", "label": "Engine", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_run_info, engine)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 1},
+      {"name": "gpu", "label": "GPU", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values({__name__=~\"inference_lab_run_info|DCGM_FI_DEV_GPU_UTIL\"}, gpu)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 1},
+      {"name": "suite_round", "label": "Suite round", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_requests_total{episode=~\"$episode\"}, suite_round)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 3},
+      {"name": "cell", "label": "Cell", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_requests_total{episode=~\"$episode\"}, cell)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 1},
+      {"name": "profile", "label": "Profile", "type": "query", "datasource": {"type": "prometheus", "uid": "inference-lab-vm"}, "query": {"query": "label_values(inference_lab_requests_total{episode=~\"$episode\"}, profile)", "refId": "VariableQuery"}, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 1},
+      {"name": "statistic", "label": "Statistic", "type": "custom", "query": "mean,p50,p95,p99", "includeAll": true, "allValue": "mean|p50|p95|p99", "current": {"text": ["p95", "p99"], "value": ["p95", "p99"]}, "multi": true}
+    ]
+  },
+  "time": {"from": "now-1h", "to": "now"},
+  "timepicker": {"refresh_intervals": ["5s", "10s", "30s", "1m", "5m"]},
+  "timezone": "browser",
+  "title": "Inference Lab · Execution telemetry",
+  "uid": "inference-lab-execution",
+  "version": 1,
+  "weekStart": ""
+}

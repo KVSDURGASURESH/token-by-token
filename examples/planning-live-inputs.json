@@ -1,0 +1,21 @@
+{
+  "gpu": {
+    "gpu_id": "static-planning-fixture",
+    "hourly_usd": "0.000001",
+    "stock": "available"
+  },
+  "account": {
+    "balance_usd": "10.00",
+    "auto_recharge_verified_disabled": true
+  },
+  "estimate": {
+    "expected_minutes": 1,
+    "maximum_minutes": 1
+  },
+  "compatibility": {
+    "status": "pass",
+    "evidence": [
+      "static planning fixture only; not current provider evidence"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:token-by-token:schemas:episode1-public-aggregate",
+  "title": "Episode 1 public local-fixture aggregate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "classification", "execution_ready", "provider_charges", "protocol_sha256", "summaries", "telemetry", "limitations"],
+  "properties": {
+    "schema_version": {"const": "episode1.v1"},
+    "classification": {"const": "local_fixture_not_provider_measurement"},
+    "execution_ready": {"const": false},
+    "provider_charges": {"const": "not_applicable"},
+    "protocol_sha256": {"$ref": "#/$defs/sha256"},
+    "summaries": {"type": "array", "minItems": 18, "maxItems": 18, "items": {"$ref": "#/$defs/summary"}},
+    "telemetry": {"type": "array", "items": {"$ref": "#/$defs/telemetry"}},
+    "limitations": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nullableCount": {"type": ["integer", "null"], "minimum": 0},
+    "count": {"type": "integer", "minimum": 0},
+    "distribution": {"type": "object", "additionalProperties": false, "required": ["available", "count", "p50", "p95", "unavailable_reason"], "properties": {"available": {"type": "boolean"}, "count": {"type": "integer", "minimum": 0}, "p50": {"type": ["number", "null"], "minimum": 0}, "p95": {"type": ["number", "null"], "minimum": 0}, "unavailable_reason": {"type": ["string", "null"]}}},
+    "rate": {"type": "object", "additionalProperties": false, "required": ["available", "value", "unit", "wall_seconds", "unavailable_reason"], "properties": {"available": {"type": "boolean"}, "value": {"type": ["number", "null"], "minimum": 0}, "unit": {"enum": ["requests/s", "tokens/s"]}, "wall_seconds": {"type": "number", "exclusiveMinimum": 0}, "unavailable_reason": {"type": ["string", "null"]}}},
+    "counts": {"type": "object", "additionalProperties": false, "required": ["failed", "http_failed", "sse_failed", "timeout", "cancelled", "unsent", "scheduled", "dispatched", "transport_success", "fixed_length_valid", "schema_valid", "semantic_correct", "nontruncated", "quality_valid", "slo_qualified", "successful_output_tokens", "qualified_output_tokens"], "properties": {"failed": {"$ref": "#/$defs/count"}, "http_failed": {"$ref": "#/$defs/count"}, "sse_failed": {"$ref": "#/$defs/count"}, "timeout": {"$ref": "#/$defs/count"}, "cancelled": {"$ref": "#/$defs/count"}, "unsent": {"$ref": "#/$defs/count"}, "scheduled": {"$ref": "#/$defs/count"}, "dispatched": {"$ref": "#/$defs/count"}, "transport_success": {"$ref": "#/$defs/count"}, "fixed_length_valid": {"$ref": "#/$defs/count"}, "schema_valid": {"$ref": "#/$defs/count"}, "semantic_correct": {"$ref": "#/$defs/count"}, "nontruncated": {"$ref": "#/$defs/count"}, "quality_valid": {"$ref": "#/$defs/count"}, "slo_qualified": {"$ref": "#/$defs/nullableCount"}, "successful_output_tokens": {"$ref": "#/$defs/nullableCount"}, "qualified_output_tokens": {"$ref": "#/$defs/nullableCount"}}},
+    "latency": {"type": "object", "additionalProperties": false, "required": ["scheduling_lag_ms", "send_preparation_ms", "ttft_ms", "e2e_ms", "terminal_overhead_ms", "tpot_ms"], "properties": {"scheduling_lag_ms": {"$ref": "#/$defs/distribution"}, "send_preparation_ms": {"$ref": "#/$defs/distribution"}, "ttft_ms": {"$ref": "#/$defs/distribution"}, "e2e_ms": {"$ref": "#/$defs/distribution"}, "terminal_overhead_ms": {"$ref": "#/$defs/distribution"}, "tpot_ms": {"$ref": "#/$defs/distribution"}}},
+    "throughput": {"type": "object", "additionalProperties": false, "required": ["requests", "output_tokens", "request_goodput", "token_goodput"], "properties": {"requests": {"$ref": "#/$defs/rate"}, "output_tokens": {"$ref": "#/$defs/rate"}, "request_goodput": {"$ref": "#/$defs/rate"}, "token_goodput": {"$ref": "#/$defs/rate"}}},
+    "stops": {"type": "object", "additionalProperties": false, "required": ["cancelled", "eos", "error", "length", "not_started", "stop", "timeout"], "properties": {"cancelled": {"$ref": "#/$defs/count"}, "eos": {"$ref": "#/$defs/count"}, "error": {"$ref": "#/$defs/count"}, "length": {"$ref": "#/$defs/count"}, "not_started": {"$ref": "#/$defs/count"}, "stop": {"$ref": "#/$defs/count"}, "timeout": {"$ref": "#/$defs/count"}}},
+    "summary": {"type": "object", "additionalProperties": false, "required": ["schema_version", "classification", "runtime", "block_id", "pair_id", "cell_id", "mode", "counts", "latency", "throughput", "stop_reasons", "coalesced_content_requests", "notes"], "properties": {"schema_version": {"const": "episode1.v1"}, "classification": {"const": "local_fixture"}, "runtime": {"enum": ["vllm-0.29.0", "sglang-0.5.20"]}, "block_id": {"type": "string"}, "pair_id": {"type": "string"}, "cell_id": {"enum": ["fixed-short", "fixed-medium", "natural-quality"]}, "mode": {"enum": ["fixed_output", "natural_stop"]}, "counts": {"$ref": "#/$defs/counts"}, "latency": {"$ref": "#/$defs/latency"}, "throughput": {"$ref": "#/$defs/throughput"}, "stop_reasons": {"$ref": "#/$defs/stops"}, "coalesced_content_requests": {"type": "integer", "minimum": 0}, "notes": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string"}}}},
+    "telemetry": {"type": "object", "additionalProperties": false, "required": ["runtime", "block_id", "cell_id", "metric", "available", "unit", "source", "window", "value", "unavailable_reason"], "properties": {"runtime": {"enum": ["vllm-0.29.0", "sglang-0.5.20"]}, "block_id": {"type": "string"}, "cell_id": {"enum": ["fixed-short", "fixed-medium", "natural-quality"]}, "metric": {"enum": ["gpu_power_watts", "gpu_utilization_percent", "gpu_memory_mib", "runtime_queue_requests", "kv_cache_utilization"]}, "available": {"type": "boolean"}, "unit": {"enum": ["W", "%", "MiB", "requests", "fraction"]}, "source": {"enum": ["gpu_sampler", "runtime_native"]}, "window": {"enum": ["cell", "block"]}, "value": {"type": ["number", "null"], "minimum": 0}, "unavailable_reason": {"type": ["string", "null"]}}}
+  }
+}

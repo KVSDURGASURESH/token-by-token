@@ -1,0 +1,58 @@
+FROM nvidia/cuda@sha256:a85c9f5af049f0ab679c1669ae6fa8393022886739af7361e85bb96878e8cdd4
+
+# These arguments intentionally have no defaults.  A release build must bind
+# the reviewed Ubuntu package versions and uv artifact hash in its attestation.
+ARG PYTHON312_VERSION
+ARG PYTHON312_VENV_VERSION
+ARG OPENSSH_SERVER_VERSION
+ARG CA_CERTIFICATES_VERSION
+ARG CURL_VERSION
+ARG UV_VERSION=0.12.3
+ARG UV_AMD64_SHA256
+
+RUN test -n "$PYTHON312_VERSION" && test -n "$PYTHON312_VENV_VERSION" \
+ && test -n "$OPENSSH_SERVER_VERSION" && test -n "$CA_CERTIFICATES_VERSION" \
+ && test -n "$CURL_VERSION" && test -n "$UV_AMD64_SHA256" \
+ && apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      "python3.12=$PYTHON312_VERSION" "python3.12-venv=$PYTHON312_VENV_VERSION" \
+      "openssh-server=$OPENSSH_SERVER_VERSION" "ca-certificates=$CA_CERTIFICATES_VERSION" \
+      "curl=$CURL_VERSION" \
+ && rm -f /etc/ssh/ssh_host_* \
+ && rm -rf /var/lib/apt/lists/* \
+ && curl --fail --location --proto '=https' --tlsv1.2 \
+      "https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-x86_64-unknown-linux-gnu.tar.gz" \
+      --output /tmp/uv.tar.gz \
+ && echo "${UV_AMD64_SHA256}  /tmp/uv.tar.gz" | sha256sum --check --strict \
+ && tar -xzf /tmp/uv.tar.gz -C /tmp \
+ && install -m 0755 /tmp/uv-x86_64-unknown-linux-gnu/uv /usr/local/bin/uv \
+ && rm -rf /tmp/uv.tar.gz /tmp/uv-x86_64-unknown-linux-gnu
+
+COPY runtime/episode1/locks /locks
+COPY src/runpod_benchmark/dependency_validator.py /opt/episode1/dependency_validator.py
+RUN python3.12 -m venv --without-pip /opt/venvs/vllm \
+ && uv pip sync --python /opt/venvs/vllm/bin/python --require-hashes /locks/vllm.lock \
+ && python3.12 -m venv --without-pip /opt/venvs/sglang \
+ && uv pip sync --python /opt/venvs/sglang/bin/python --require-hashes /locks/sglang-wheel.lock \
+ && uv pip check --python /opt/venvs/vllm/bin/python \
+ && mkdir -p /opt/episode1/build-evidence \
+ && /opt/venvs/vllm/bin/python /opt/episode1/dependency_validator.py \
+      --runtime vllm --lock /locks/vllm.lock \
+      > /opt/episode1/build-evidence/vllm-dependencies.json \
+ && /opt/venvs/sglang/bin/python /opt/episode1/dependency_validator.py \
+      --runtime sglang --lock /locks/sglang-wheel.lock \
+      > /opt/episode1/build-evidence/sglang-dependencies.json \
+ && rm -rf /root/.cache/uv
+
+COPY src/runpod_benchmark/__init__.py /opt/episode1/runpod_benchmark/__init__.py
+COPY src/runpod_benchmark/episode1.py /opt/episode1/runpod_benchmark/episode1.py
+COPY src/runpod_benchmark/episode1_runner.py /opt/episode1/runpod_benchmark/episode1_runner.py
+COPY src/runpod_benchmark/metrics.py /opt/episode1/runpod_benchmark/metrics.py
+COPY src/runpod_benchmark/pod_supervisor.py /opt/episode1/runpod_benchmark/pod_supervisor.py
+COPY src/runpod_benchmark/runtime_metrics.py /opt/episode1/runpod_benchmark/runtime_metrics.py
+COPY src/runpod_benchmark/telemetry_summary.py /opt/episode1/runpod_benchmark/telemetry_summary.py
+COPY src/runpod_benchmark/streaming.py /opt/episode1/runpod_benchmark/streaming.py
+COPY runtime/episode1/entrypoint.sh /usr/local/bin/episode1-entrypoint
+ENV PYTHONNOUSERSITE=1 PYTHONPATH=/opt/episode1 HUMMING_COMPILER=nvrtc
+EXPOSE 22
+ENTRYPOINT ["/usr/local/bin/episode1-entrypoint"]

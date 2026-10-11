@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400..700&amp;display=swap" rel="stylesheet">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#fbfaf5}
+[data-tbt]{--paper:#fbfaf5;--panel:#f1f0e9;--ink:#172f2d;--copy:#455a56;--muted:#5a6966;--line:#d6dad2;--line-strong:#98a8a2;--better:#006d45;--worse:#b22f18;--neutral:#8a5b00;--c1:#6e5f12;--c2:#6e5f12;--c3:#6e5f12;--c4:#6e5f12;--c5:#6e5f12;--disp:"Oswald","Oswald Variable","Arial Narrow",sans-serif;--text:"Avenir Next",Avenir,"Helvetica Neue",Helvetica,Arial,sans-serif;--mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;color-scheme:light}
+[data-tbt][data-theme="dark"]{--paper:#0e1112;--panel:#171c1d;--ink:#eef1ec;--copy:#c3cac7;--muted:#9aa4a1;--line:#283133;--line-strong:#4a5659;--better:#4bdcaf;--worse:#ff7a4d;--neutral:#f0ba4b;--c1:#d4c26a;--c2:#d4c26a;--c3:#d4c26a;--c4:#d4c26a;--c5:#d4c26a;color-scheme:dark}
+[data-tbt] a{color:var(--ink);text-decoration-color:var(--line-strong);text-underline-offset:3px}
+[data-tbt] a:hover{text-decoration-color:var(--ink)}
+[data-tbt] button{font:inherit;color:inherit}
+[data-tbt] :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+[data-tbt] ::selection{background:var(--ink);color:var(--paper)}
+@media (prefers-reduced-motion:reduce){[data-tbt] *{transition:none!important}}
+</style>
+</helmet>
+<div data-tbt="" data-theme="{{ theme }}" style="min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--text);font-size:1rem;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip">
+<div aria-live="polite" role="status" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">{{ live }}</div>
+<button type="button" onClick="{{ skip }}" style="position:absolute;left:-9999px;top:8px;z-index:30;background:var(--ink);color:var(--paper);border:0;padding:10px 14px" style-focus="left:8px">Skip to content</button>
+
+<header data-screen-label="Site bar" style="border-bottom:1px solid var(--line);position:relative;z-index:20;background:var(--paper)">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(12px,3vw,40px);min-height:56px;display:flex;align-items:center;gap:6px 26px;flex-wrap:wrap">
+    <a href="#episodes" style="display:flex;align-items:center;gap:10px;text-decoration:none;min-height:44px;flex:0 0 auto"><img src="token-by-token.svg" width="22" height="22" alt=""><span style="font:600 .6875rem/1.2 var(--text);letter-spacing:.16em;white-space:nowrap">{{ wordmark }}</span></a>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav aria-label="Site" style="display:flex;align-items:stretch;gap:22px;flex:1;min-height:56px">
+        <sc-for list="{{ siteLinks }}" as="l" hint-placeholder-count="3">
+          <a href="{{ l.href }}" aria-current="{{ l.cur }}" style="display:flex;align-items:center;text-decoration:none;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:{{ l.fg }};border-bottom:2px solid {{ l.bar }};margin-bottom:-1px">{{ l.label }}</a>
+        </sc-for>
+        <button type="button" onClick="{{ toggleLabMenu }}" aria-expanded="{{ labMenuOpen }}" aria-controls="lab-tools" id="lab-tools-btn" style="display:flex;align-items:center;gap:6px;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Lab tools <span aria-hidden="true">{{ labMenuGlyph }}</span></button>
+      </nav>
+      <div data-screen-label="External links" style="display:flex;align-items:center;gap:18px">
+        <a href="https://github.com/KVSDURGASURESH/token-by-token" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub (opens in a new tab)" style="display:flex;align-items:center;gap:7px;min-height:44px;text-decoration:none;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)" style-hover="color:var(--ink)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg><span>GitHub</span><span aria-hidden="true" style="font-size:.625rem">↗</span></a>
+        <a href="{{ grafanaUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Live Grafana dashboard, hosted separately (opens in a new tab)" style="display:flex;align-items:center;gap:7px;min-height:44px;text-decoration:none;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)" style-hover="color:var(--ink)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="2" width="13" height="12"></rect><path d="M4 11V8.5M7 11V5.5M10 11V7M13 11V4"></path></svg><span>Live dashboard</span><span aria-hidden="true" style="font-size:.625rem">↗</span></a>
+      </div>
+      <div role="group" aria-label="Colour theme" style="display:flex;border:1px solid var(--line-strong)">
+        <sc-for list="{{ themeOpts }}" as="t" hint-placeholder-count="2">
+          <button type="button" aria-pressed="{{ t.sel }}" onClick="{{ t.pick }}" style="min-height:32px;padding:0 12px;border:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button type="button" id="ep-menu-btn" onClick="{{ toggleEpMenu }}" aria-expanded="{{ epMenuOpen }}" aria-controls="ep-menu" style="flex:1 1 9rem;min-width:0;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:none;border:1px solid var(--line-strong);padding:0 12px;cursor:pointer;text-align:left"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.8125rem;font-weight:600">{{ epMenuLabel }}</span><span aria-hidden="true">{{ epMenuGlyph }}</span></button>
+      <button type="button" id="site-menu-btn" onClick="{{ toggleSiteMenu }}" aria-expanded="{{ siteMenuOpen }}" aria-controls="site-menu" style="min-height:44px;min-width:44px;background:none;border:0;cursor:pointer;font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase">Menu</button>
+      <button type="button" onClick="{{ flipTheme }}" aria-label="{{ flipLabel }}" style="min-height:44px;min-width:44px;background:none;border:0;cursor:pointer;font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">{{ flipText }}</button>
+    </sc-if>
+  </div>
+  <sc-if value="{{ labMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <div id="lab-tools" style="position:absolute;right:clamp(12px,3vw,40px);top:56px;width:min(380px,calc(100vw - 24px));background:var(--paper);border:1px solid var(--line-strong);padding:16px 18px 10px;box-sizing:border-box">
+      <p style="margin:0 0 4px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Local operator tools</p>
+      <p style="margin:0 0 10px;font-size:.8125rem;color:var(--copy)">These run only in a local checkout of the lab. They are not public evidence and are not part of this public build.</p>
+      <sc-for list="{{ labTools }}" as="t" hint-placeholder-count="5">
+        <div style="display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:.875rem"><span>{{ t }}</span><span style="font:.6875rem var(--mono);color:var(--muted)">LOCAL ONLY</span></div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ siteMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <nav id="site-menu" aria-label="Site" style="border-top:1px solid var(--line);padding:6px clamp(12px,3vw,40px) 14px">
+      <sc-for list="{{ siteLinks }}" as="l" hint-placeholder-count="3">
+        <a href="{{ l.href }}" aria-current="{{ l.cur }}" style="display:flex;align-items:center;min-height:48px;border-bottom:1px solid var(--line);text-decoration:none;font-size:.8125rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase">{{ l.label }}</a>
+      </sc-for>
+      <a href="https://github.com/KVSDURGASURESH/token-by-token" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub (opens in a new tab)" style="display:flex;align-items:center;gap:10px;min-height:48px;border-bottom:1px solid var(--line);text-decoration:none;font-size:.8125rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg><span>GitHub</span><span aria-hidden="true" style="margin-left:auto;font-size:.75rem;color:var(--muted)">↗</span></a>
+      <a href="{{ grafanaUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Live Grafana dashboard, hosted separately (opens in a new tab)" style="display:flex;align-items:center;gap:10px;min-height:48px;border-bottom:1px solid var(--line);text-decoration:none;font-size:.8125rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="2" width="13" height="12"></rect><path d="M4 11V8.5M7 11V5.5M10 11V7M13 11V4"></path></svg><span>Live dashboard</span><span aria-hidden="true" style="margin-left:auto;font-size:.75rem;color:var(--muted)">↗</span></a>
+      <p style="margin:14px 0 4px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Lab tools · local only</p>
+      <p style="margin:0;font-size:.8125rem;color:var(--copy)">Local results, Quick test, Experiment planner, Episode runner and Canonical launch run only in a local checkout. They are not part of this public build.</p>
+    </nav>
+  </sc-if>
+  <sc-if value="{{ epMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <nav id="ep-menu" aria-label="Episodes and chapters" style="border-top:1px solid var(--line);padding:6px clamp(12px,3vw,40px) 14px;max-height:72vh;overflow:auto">
+      <sc-if value="{{ hasChapters }}" hint-placeholder-val="{{ true }}">
+        <p style="margin:10px 0 2px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">On this page</p>
+        <sc-for list="{{ chapters }}" as="c" hint-placeholder-count="5">
+          <button type="button" onClick="{{ c.go }}" aria-current="{{ c.cur }}" style="display:grid;grid-template-columns:34px 1fr;align-items:center;width:100%;min-height:46px;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:0;cursor:pointer;font-size:.9375rem"><span style="font:600 .75rem var(--mono);color:{{ c.col }}">{{ c.num }}</span><span style="font-weight:{{ c.fw }}">{{ c.label }} <span style="color:var(--muted);font-size:.75rem;font-weight:400">{{ c.hint }}</span></span></button>
+        </sc-for>
+      </sc-if>
+      <p style="margin:18px 0 2px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Episodes</p>
+      <sc-for list="{{ epList }}" as="e" hint-placeholder-count="6">
+        <a href="{{ e.href }}" aria-current="{{ e.cur }}" style="display:grid;grid-template-columns:34px 1fr;align-items:center;min-height:48px;border-bottom:1px solid var(--line);text-decoration:none;color:{{ e.fg }}"><b style="font:500 1rem/1 var(--disp);color:{{ e.numC }}">{{ e.num }}</b><span style="font-size:.875rem;line-height:1.3;font-weight:{{ e.fw }};padding:6px 0">{{ e.title }} <span style="color:var(--muted);font-size:.6875rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase">{{ e.status }}</span></span></a>
+      </sc-for>
+    </nav>
+  </sc-if>
+</header>
+
+<div style="max-width:1360px;margin:0 auto;padding:0 clamp(12px,3vw,40px);display:flex;gap:48px;align-items:flex-start;box-sizing:border-box">
+  <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+    <nav data-screen-label="Episode rail" aria-label="Episodes and chapters" style="flex:0 0 220px;position:sticky;top:0;max-height:100vh;overflow:auto;padding:30px 0 30px;box-sizing:border-box">
+      <p style="margin:0 0 10px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Episodes</p>
+      <ul style="list-style:none;margin:0;padding:0;max-height:min(46vh,520px);overflow:auto;border-top:1px solid var(--line)">
+        <sc-for list="{{ epList }}" as="e" hint-placeholder-count="8">
+          <li><a href="{{ e.href }}" aria-current="{{ e.cur }}" style="display:grid;grid-template-columns:28px 1fr;gap:0 6px;padding:8px 6px 8px 10px;border-bottom:1px solid var(--line);border-left:2px solid {{ e.bar }};text-decoration:none;color:{{ e.fg }}"><b style="font:500 .9375rem/1.3 var(--disp);color:{{ e.numC }}">{{ e.num }}</b><span style="font-size:.8125rem;line-height:1.3;font-weight:{{ e.fw }}">{{ e.title }}<span style="display:block;font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-top:2px">{{ e.status }}</span></span></a></li>
+        </sc-for>
+      </ul>
+      <sc-if value="{{ hasChapters }}" hint-placeholder-val="{{ true }}">
+        <p style="margin:28px 0 10px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">On this page</p>
+        <div style="border-top:1px solid var(--line)">
+          <sc-for list="{{ chapters }}" as="c" hint-placeholder-count="5">
+            <button type="button" onClick="{{ c.go }}" aria-current="{{ c.cur }}" style="display:grid;grid-template-columns:28px 1fr;gap:0 6px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);border-left:2px solid {{ c.bar }};padding:9px 6px 9px 10px;cursor:pointer;font-size:.8125rem"><span style="font:600 .75rem/1.5 var(--mono);color:{{ c.col }}">{{ c.num }}</span><span style="font-weight:{{ c.fw }}">{{ c.label }} <span style="color:var(--muted);font-size:.6875rem;font-weight:400">{{ c.hint }}</span></span></button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </nav>
+  </sc-if>
+
+  <main id="main" tabindex="-1" style="flex:1 1 auto;min-width:0;max-width:1040px;padding:clamp(22px,3.4vw,40px) 0 72px;outline:none">
+
+    <sc-for list="{{ notices }}" as="n" hint-placeholder-count="0">
+      <div role="status" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:center;margin:0 0 20px;padding:10px 0;border-block:1px solid var(--line-strong);font-size:.875rem"><span><b style="font-weight:600">Link adjusted.</b> {{ n.t }}</span><button type="button" onClick="{{ n.dismiss }}" style="min-height:36px;background:none;border:1px solid var(--line-strong);padding:0 12px;cursor:pointer;font-size:.75rem">Dismiss</button></div>
+    </sc-for>
+
+    <sc-if value="{{ isStudy }}" hint-placeholder-val="{{ true }}">
+      <article aria-labelledby="page-title">
+        <header data-screen-label="Episode header" style="display:grid;gap:12px">
+          <sc-if value="{{ headTitle }}" hint-placeholder-val="{{ true }}">
+            <p style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ pg.label }}</p>
+            <h1 id="page-title" style="margin:0;font:600 clamp(2.5rem,5.6vw,4.75rem)/.92 var(--disp);letter-spacing:-.005em;text-transform:uppercase;text-wrap:balance">{{ pg.title }}</h1>
+            <p style="margin:2px 0 0;max-width:38em;font-size:clamp(1.0625rem,1.6vw,1.25rem);line-height:1.45;color:var(--copy);text-wrap:pretty">{{ pg.deck }}</p>
+          </sc-if>
+          <sc-if value="{{ headQuestion }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)"><span style="color:var(--ink)">{{ pg.kicker }}</span><span style="font:500 1rem/1 var(--disp);letter-spacing:.02em;color:var(--ink)">{{ pg.title }}</span><span style="padding-left:12px;border-left:1px solid var(--line-strong)">{{ pg.kind }}</span></p>
+            <h1 id="page-title" style="margin:4px 0 0;max-width:15em;font:500 clamp(2.125rem,4.6vw,3.875rem)/1.02 var(--disp);letter-spacing:-.005em;text-wrap:balance">{{ pg.news }}</h1>
+            <p style="margin:2px 0 0;max-width:38em;font-size:clamp(1.0625rem,1.6vw,1.25rem);line-height:1.45;color:var(--copy);text-wrap:pretty">{{ pg.deck }}</p>
+          </sc-if>
+          <p style="margin:0;display:flex;flex-wrap:wrap;gap:4px 0;font:.75rem/1.5 var(--mono);color:var(--copy)">
+            <sc-for list="{{ pg.quals }}" as="q" hint-placeholder-count="3"><span style="padding:0 12px;border-left:1px solid {{ q.bl }};margin-left:{{ q.ml }}">{{ q.t }}</span></sc-for>
+          </p>
+        </header>
+
+        <sc-if value="{{ pg.hasSel }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="Selector" style="position:sticky;top:0;z-index:6;background:var(--paper);margin:22px 0 0;padding:10px 0;border-block:1px solid var(--line-strong);display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px">
+            <span id="sel-label" style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ pg.sel.label }}</span>
+            <sc-if value="{{ pg.sel.isTrack }}" hint-placeholder-val="{{ true }}">
+              <div role="group" aria-labelledby="sel-label" data-track="" onKeyDown="{{ pg.sel.onKey }}" onPointerDown="{{ pg.sel.drag }}" style="position:relative;flex:1 1 18rem;min-width:min(100%,15rem);max-width:30rem;height:62px;margin:0 24px;touch-action:none;cursor:pointer;user-select:none">
+                <div aria-hidden="true" style="position:absolute;left:-24px;right:-24px;top:15px;border-top:1px dashed var(--line-strong)"></div>
+                <div aria-hidden="true" style="position:absolute;top:14px;height:3px;left:{{ pg.sel.fillL }};width:{{ pg.sel.fillW }};background:var(--ink);transition:width .3s cubic-bezier(.3,.7,.2,1)"></div>
+                <sc-for list="{{ pg.sel.opts }}" as="o" hint-placeholder-count="3">
+                  <button type="button" data-seg="{{ pg.sel.key }}" data-val="{{ o.val }}" aria-pressed="{{ o.sel }}" tabIndex="{{ o.tab }}" onClick="{{ o.pick }}" style="position:absolute;left:{{ o.pos }};top:0;transform:translateX(-50%);min-width:52px;height:62px;padding:0;border:0;background:none;cursor:pointer;display:grid;justify-items:center;align-content:start">
+                    <span aria-hidden="true" style="width:9px;height:9px;margin-top:11px;border-radius:50%;border:1.5px solid var(--ink);background:var(--paper);box-sizing:border-box"></span>
+                    <b style="margin-top:10px;font:500 1.125rem/1 var(--disp);color:{{ o.lc }}">{{ o.label }}</b>
+                    <small style="margin-top:3px;font-size:.625rem;line-height:1;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ o.sub }}</small>
+                  </button>
+                </sc-for>
+                <div aria-hidden="true" style="position:absolute;top:4px;left:{{ pg.sel.thumb }};width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 4px var(--paper);cursor:grab;transition:left .3s cubic-bezier(.3,.7,.2,1)"></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ pg.sel.isStrip }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1 1 100%;min-width:0;display:flex;align-items:stretch;gap:6px">
+                <button type="button" aria-label="Previous workload" onClick="{{ pg.sel.prev }}" disabled="{{ pg.sel.atStart }}" style="flex:0 0 40px;border:1px solid var(--line-strong);background:none;cursor:pointer;font-size:1.125rem;opacity:{{ pg.sel.prevOp }}">←</button>
+                <div role="group" aria-labelledby="sel-label" data-strip="" onKeyDown="{{ pg.sel.onKey }}" style="position:relative;flex:1 1 auto;min-width:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border:1px solid var(--line-strong)">
+                  <sc-for list="{{ pg.sel.opts }}" as="o" hint-placeholder-count="6">
+                    <button type="button" data-seg="{{ pg.sel.key }}" data-val="{{ o.val }}" aria-pressed="{{ o.sel }}" tabIndex="{{ o.tab }}" onClick="{{ o.pick }}" style="flex:0 0 auto;scroll-snap-align:start;width:12.5rem;max-width:68vw;padding:9px 14px 10px;border:0;border-right:1px solid var(--line-strong);background:{{ o.bg }};color:{{ o.fg }};cursor:pointer;display:grid;gap:3px;align-content:start;text-align:left;transition:background .2s,color .2s">
+                      <small style="font-size:.625rem;line-height:1.3;letter-spacing:.12em;text-transform:uppercase">{{ o.tier }}</small>
+                      <b style="font:500 1.0625rem/1.15 var(--disp);letter-spacing:.01em">{{ o.label }}</b>
+                      <small style="font-size:.6875rem;line-height:1.3">{{ o.sub }}</small>
+                      <small style="margin-top:2px;font:.6875rem/1.3 var(--mono)">{{ o.work }}</small>
+                    </button>
+                  </sc-for>
+                </div>
+                <button type="button" aria-label="Next workload" onClick="{{ pg.sel.next }}" disabled="{{ pg.sel.atEnd }}" style="flex:0 0 40px;border:1px solid var(--line-strong);background:none;cursor:pointer;font-size:1.125rem;opacity:{{ pg.sel.nextOp }}">→</button>
+              </div>
+            </sc-if>
+            <span style="font-size:.75rem;color:var(--muted);max-width:24rem">{{ pg.sel.note }}</span>
+          </div>
+        </sc-if>
+
+        <section id="ch-brief" data-screen-label="01 Brief" aria-labelledby="h-brief" style="padding-top:30px">
+          <h2 id="h-brief" tabindex="-1" style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--c1);outline:none;display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="flex:0 0 auto;width:24px;height:3px;background:var(--c1)"></span>01 Brief</h2>
+          <sc-if value="{{ pg.failClosed }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:16px;padding:20px 0;border-block:1px solid var(--ink);display:grid;gap:8px;max-width:44rem">
+              <p style="margin:0;font:500 clamp(1.5rem,2.6vw,2rem)/1.1 var(--disp);text-transform:uppercase">∅ Evidence manifest unavailable</p>
+              <p style="margin:0;color:var(--copy)">This episode’s public data file could not be loaded, so the page fails closed: no finding, no numbers and no charts are shown, and nothing is estimated in their place.</p>
+              <p style="margin:0;font-size:.875rem;display:flex;flex-wrap:wrap;gap:6px 20px"><a href="{{ pg.reloadHref }}">Reload this view</a><a href="#episodes">All episodes</a><a href="#methodology">How evidence is published</a></p>
+            </div>
+          </sc-if>
+          <sc-if value="{{ pg.hasBrief }}" hint-placeholder-val="{{ true }}">
+            <p style="margin:12px 0 0;max-width:24em;font:500 clamp(1.75rem,3.5vw,2.875rem)/1.06 var(--disp);text-transform:uppercase;letter-spacing:.002em;text-wrap:pretty"><sc-for list="{{ pg.brief.segs }}" as="s" hint-placeholder-count="5"><span style="color:{{ s.c }};transition:color .25s">{{ s.t }}</span></sc-for></p>
+            <p style="margin:12px 0 0;font-size:.8125rem;color:var(--muted);max-width:44rem">{{ pg.brief.operands }}</p>
+            <div role="list" aria-label="Signals" style="margin-top:24px;border-top:1px solid var(--ink)">
+              <sc-for list="{{ pg.brief.signals }}" as="s" hint-placeholder-count="4">
+                <div role="listitem" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:8px 22px;padding:13px 0;border-bottom:1px solid var(--line);align-items:start">
+                  <div><div style="font-weight:600;font-size:.9375rem;line-height:1.3">{{ s.name }}</div><div style="font-size:.75rem;color:var(--muted)">{{ s.dirTxt }}</div></div>
+                  <sc-for list="{{ s.vals }}" as="v" hint-placeholder-count="2"><div><div style="font-size:.75rem;color:var(--muted)"><span style="color:{{ v.mc }}">{{ v.mark }}</span> {{ v.name }}</div><div style="font:500 1.3125rem/1.2 var(--disp);font-variant-numeric:tabular-nums">{{ v.val }}</div></div></sc-for>
+                  <div style="display:grid;gap:4px"><sc-for list="{{ s.sts }}" as="t" hint-placeholder-count="1"><div style="font-size:.8125rem;font-weight:600;line-height:1.35;color:{{ t.c }}">{{ t.sym }} {{ t.text }}<span style="display:block;font-weight:400;color:var(--muted);font-size:.75rem">{{ t.sub }}</span></div></sc-for></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:26px;padding-left:16px;border-left:1px solid var(--ink);max-width:46rem">
+              <h3 style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">What this does not say</h3>
+              <ul style="margin:8px 0 0;padding:0 0 0 1.1em;display:grid;gap:4px;color:var(--copy);font-size:.9375rem">
+                <sc-for list="{{ pg.brief.caveats }}" as="c" hint-placeholder-count="3"><li>{{ c }}</li></sc-for>
+              </ul>
+            </div>
+            <dl style="margin:26px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:12px 24px;border-top:1px solid var(--line);padding-top:14px">
+              <sc-for list="{{ pg.brief.facts }}" as="f" hint-placeholder-count="4"><div><dt style="font:600 .625rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ f.k }}</dt><dd style="margin:4px 0 0;font-size:.875rem">{{ f.v }}</dd></div></sc-for>
+            </dl>
+            <div style="margin-top:30px;padding:14px 0;border-block:1px solid var(--line-strong);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between">
+              <span style="font-size:.875rem;color:var(--copy)">{{ labHint }}</span>
+              <button type="button" id="lab-toggle" aria-expanded="{{ labOpen }}" aria-controls="lab" onClick="{{ toggleLab }}" style="min-height:44px;padding:0 20px;background:var(--ink);color:var(--paper);border:0;cursor:pointer;font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem">{{ labLabel }}</button>
+            </div>
+          </sc-if>
+        </section>
+
+        <sc-if value="{{ labOpen }}" hint-placeholder-val="{{ false }}">
+          <div id="lab">
+            <section id="ch-method" data-screen-label="02 Method" aria-labelledby="h-method" style="padding-top:60px">
+              <h2 id="h-method" tabindex="-1" style="margin:0;display:grid;gap:8px;outline:none"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--c2);display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="flex:0 0 auto;width:24px;height:3px;background:var(--c2)"></span>02 Method</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase;text-wrap:balance">{{ pg.method.h }}</span></h2>
+              <p style="margin:12px 0 0;max-width:42rem;color:var(--copy);text-wrap:pretty">{{ pg.method.lede }}</p>
+              <div style="margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:18px 32px;border-top:1px solid var(--ink);padding-top:16px">
+                <sc-for list="{{ pg.method.wwh }}" as="x" hint-placeholder-count="3"><div><h3 style="margin:0 0 6px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ x.k }}</h3><p style="margin:0;font-size:.9375rem;text-wrap:pretty">{{ x.v }}</p></div></sc-for>
+              </div>
+              <dl style="margin:28px 0 0;display:grid;border-top:1px solid var(--line)">
+                <sc-for list="{{ pg.method.protocol }}" as="x" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:2px 24px;padding:10px 0;border-bottom:1px solid var(--line)"><dt style="font-size:.8125rem;color:var(--muted)">{{ x.k }}</dt><dd style="margin:0;font-size:.9375rem;grid-column:span 2">{{ x.v }}</dd></div></sc-for>
+              </dl>
+              <sc-if value="{{ pg.method.schematic }}" hint-placeholder-val="{{ false }}">
+                <figure style="margin:34px 0 0;padding:18px 0 4px;border-top:1px solid var(--ink)">
+                  <figcaption style="display:grid;gap:4px"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Anatomy of one request</span><span style="font:.75rem var(--mono);color:var(--ink);padding:3px 0">Schematic explanation — not measured traces.</span></figcaption>
+                  <div role="group" aria-label="Choose a metric to locate on the request" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
+                    <sc-for list="{{ anatOpts }}" as="o" hint-placeholder-count="4"><button type="button" aria-pressed="{{ o.sel }}" onClick="{{ o.pick }}" style="min-height:40px;padding:0 14px;border:1px solid var(--line-strong);background:{{ o.bg }};color:{{ o.fg }};cursor:pointer;font-size:.8125rem;font-weight:600">{{ o.label }}</button></sc-for>
+                  </div>
+                  <div aria-hidden="true" style="position:relative;margin-top:18px;height:58px">
+                    <div style="display:flex;height:26px;border:1px solid var(--line-strong)">
+                      <div style="width:14%;border-right:1px solid var(--line-strong);display:flex;align-items:center;padding-left:6px;font-size:.6875rem;color:var(--muted);overflow:hidden">Queue</div>
+                      <div style="width:22%;border-right:1px solid var(--line-strong);background:var(--panel);display:flex;align-items:center;padding-left:6px;font-size:.6875rem;overflow:hidden">Prefill</div>
+                      <div style="width:2%;background:var(--ink)"></div>
+                      <div style="flex:1;background:repeating-linear-gradient(90deg,transparent 0 9px,var(--line-strong) 9px 10px);display:flex;align-items:center;padding-left:8px;font-size:.6875rem;overflow:hidden"><span style="background:var(--paper);padding:0 4px">Decode, one token at a time</span></div>
+                    </div>
+                    <div style="position:absolute;top:34px;height:10px;border:1px solid var(--ink);border-top:0;left:{{ anat.l }};width:{{ anat.w }};box-sizing:border-box;transition:left .3s,width .3s"></div>
+                  </div>
+                  <p style="margin:0;max-width:42rem;font-size:.9375rem"><b style="font-weight:600">{{ anat.name }}</b> — {{ anat.txt }}</p>
+                </figure>
+              </sc-if>
+              <p style="margin:24px 0 0;font-size:.875rem;display:flex;flex-wrap:wrap;gap:6px 22px"><a href="#methodology">Metric definitions and evidence states — Methodology</a></p>
+            </section>
+
+            <section id="ch-evidence" data-screen-label="03 Evidence" aria-labelledby="h-evidence" style="padding-top:60px">
+              <h2 id="h-evidence" tabindex="-1" style="margin:0;display:grid;gap:8px;outline:none"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--c3);display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="flex:0 0 auto;width:24px;height:3px;background:var(--c3)"></span>03 Evidence</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase">{{ pg.ev.h }}</span></h2>
+              <p style="margin:12px 0 0;max-width:44rem;color:var(--copy);text-wrap:pretty">{{ pg.ev.lede }}</p>
+
+              <sc-if value="{{ pg.ev.hasCompare }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:22px;padding:12px 0;border-block:1px solid var(--line-strong);display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px">
+                    <span id="mode-label" style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Compare</span>
+                    <div role="group" aria-labelledby="mode-label" onKeyDown="{{ pg.ev.modeKey }}" style="display:flex;flex-wrap:wrap;border:1px solid var(--line-strong)">
+                      <sc-for list="{{ pg.ev.modeOpts }}" as="o" hint-placeholder-count="2"><button type="button" data-seg="mode" data-val="{{ o.val }}" aria-pressed="{{ o.sel }}" tabIndex="{{ o.tab }}" onClick="{{ o.pick }}" style="min-height:44px;padding:0 14px;border:0;border-right:1px solid var(--line-strong);background:{{ o.bg }};color:{{ o.fg }};cursor:pointer;font-size:.8125rem;font-weight:600">{{ o.label }}</button></sc-for>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px">
+                    <span id="base-label" style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ pg.ev.baseLabel }}</span>
+                    <div role="group" aria-labelledby="base-label" onKeyDown="{{ pg.ev.baseKey }}" style="display:flex;border:1px solid var(--line-strong)">
+                      <sc-for list="{{ pg.ev.baseOpts }}" as="o" hint-placeholder-count="2"><button type="button" data-seg="base" data-val="{{ o.val }}" aria-pressed="{{ o.sel }}" tabIndex="{{ o.tab }}" onClick="{{ o.pick }}" style="min-height:44px;min-width:48px;padding:0 14px;border:0;border-right:1px solid var(--line-strong);background:{{ o.bg }};color:{{ o.fg }};cursor:pointer;font-size:.8125rem;font-weight:600">{{ o.label }}</button></sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ pg.ev.hasSweep }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:22px;padding:12px 0;border-block:1px solid var(--line-strong);display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center">
+                  <span id="sweep-label" style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Sweep · simulated users</span>
+                  <div role="group" aria-labelledby="sweep-label" onKeyDown="{{ pg.ev.sweepKey }}" style="display:flex;border:1px solid var(--line-strong);overflow-x:auto;max-width:100%">
+                    <sc-for list="{{ pg.ev.sweepOpts }}" as="o" hint-placeholder-count="7"><button type="button" data-seg="users" data-val="{{ o.val }}" aria-pressed="{{ o.sel }}" tabIndex="{{ o.tab }}" onClick="{{ o.pick }}" style="flex:0 0 auto;min-height:44px;min-width:46px;padding:0 10px;border:0;border-right:1px solid var(--line-strong);background:{{ o.bg }};color:{{ o.fg }};cursor:pointer;font:500 1.0625rem/1 var(--disp)">{{ o.label }}</button></sc-for>
+                  </div>
+                  <span style="font-size:.75rem;color:var(--muted)">Changes only the sweep below. The soak headline stays fixed.</span>
+                </div>
+              </sc-if>
+              <p style="margin:12px 0 0;font-size:.8125rem;color:var(--muted)">{{ pg.ev.operands }}</p>
+              <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:4px 22px;font-size:.75rem;color:var(--copy)">
+                <sc-for list="{{ pg.ids }}" as="d" hint-placeholder-count="2"><span style="display:flex;align-items:center;gap:8px"><svg width="34" height="10" viewBox="0 0 34 10" aria-hidden="true"><line x1="0" x2="34" y1="5" y2="5" style="stroke:{{ d.c }};stroke-width:1.5;stroke-dasharray:{{ d.dash }}"></line><path d="{{ d.glyph }}" style="fill:var(--paper);stroke:{{ d.c }};stroke-width:1.5"></path></svg>{{ d.name }}</span></sc-for>
+                <span>Shaded column — selected · dashed rule — baseline or threshold</span>
+              </div>
+
+              <sc-for list="{{ pg.ev.groups }}" as="g" hint-placeholder-count="2">
+                <div style="margin-top:30px">
+                  <h3 style="margin:0;display:flex;flex-wrap:wrap;gap:2px 14px;align-items:baseline;padding-bottom:8px;border-bottom:1px solid var(--ink)"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap">{{ g.title }}</span><span style="font-size:.8125rem;font-weight:400;color:var(--muted)">{{ g.note }}</span></h3>
+                  <sc-for list="{{ g.rows }}" as="row" hint-placeholder-count="1">
+                    <div style="display:grid;grid-template-columns:{{ row.cols }};column-gap:28px">
+                      <sc-for list="{{ row.plots }}" as="p" hint-placeholder-count="3">
+                        <button type="button" data-metric="{{ p.id }}" onClick="{{ p.toggle }}" aria-expanded="{{ p.open }}" aria-controls="{{ p.exId }}" style="display:flex;flex-direction:column;justify-content:flex-start;width:100%;min-width:0;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);border-top:2px solid {{ p.top }};margin-top:-1px;padding:12px 0 14px;cursor:pointer">
+                          <span style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span style="font-weight:600;font-size:.9375rem">{{ p.label }}</span><span style="font-size:.6875rem;color:var(--muted);white-space:nowrap">{{ p.dirTxt }}</span></span>
+                          <sc-if value="{{ p.na }}" hint-placeholder-val="{{ false }}">
+                            <span style="display:block;margin-top:10px;padding:18px 0;border-block:1px dashed var(--line-strong);font-size:.8125rem;color:var(--muted)">∅ Unavailable — {{ p.why }}</span>
+                          </sc-if>
+                          <sc-if value="{{ p.has }}" hint-placeholder-val="{{ true }}">
+                            <svg viewBox="0 0 280 100" role="img" aria-label="{{ p.aria }}" style="display:block;width:100%;height:auto;margin-top:8px;overflow:visible">
+                              <rect x="{{ p.bandX }}" y="0" width="{{ p.bandW }}" height="100" style="fill:var(--panel)"></rect>
+                              <line x1="0" x2="280" y1="92" y2="92" style="stroke:var(--line-strong);stroke-width:1"></line>
+                              <line x1="0" x2="280" y1="{{ p.thrY }}" y2="{{ p.thrY }}" style="stroke:var(--ink);stroke-width:1;stroke-dasharray:2 3"></line>
+                              <line x1="{{ p.baseX }}" x2="{{ p.baseX }}" y1="0" y2="92" style="stroke:var(--ink);stroke-width:1;stroke-dasharray:2 3"></line>
+                              <path d="{{ p.l0 }}" style="fill:none;stroke:var(--ink);stroke-width:1.5"></path>
+                              <path d="{{ p.l1 }}" style="fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 4"></path>
+                              <path d="{{ p.m0 }}" style="fill:var(--paper);stroke:var(--ink);stroke-width:1.5"></path>
+                              <path d="{{ p.m1 }}" style="fill:var(--paper);stroke:var(--muted);stroke-width:1.5"></path>
+                            </svg>
+                            <span style="display:grid;grid-template-columns:{{ p.axCols }};margin-top:2px;font:.6875rem/1.3 var(--mono);color:var(--muted);text-align:center"><sc-for list="{{ p.ax }}" as="a" hint-placeholder-count="3"><span style="font-weight:{{ a.fw }};color:{{ a.c }};white-space:pre-line">{{ a.t }}</span></sc-for></span>
+                            <span style="display:block;margin-top:6px;font-size:.6875rem;color:var(--muted)">{{ p.thrNote }}</span>
+                          </sc-if>
+                          <span style="display:flex;flex-wrap:wrap;gap:2px 16px;margin-top:8px;font-size:.8125rem"><sc-for list="{{ p.vals }}" as="v" hint-placeholder-count="2"><span><span style="color:{{ v.mc }}">{{ v.mark }}</span> {{ v.name }} <b style="font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap">{{ v.val }}</b></span></sc-for></span>
+                          <span style="display:grid;gap:2px;margin-top:4px"><sc-for list="{{ p.sts }}" as="t" hint-placeholder-count="1"><span style="font-size:.8125rem;font-weight:600;color:{{ t.c }}">{{ t.sym }} {{ t.text }} <span style="font-weight:400;color:var(--muted)">{{ t.sub }}</span></span></sc-for></span>
+                          <span style="display:block;margin-top:8px;font-size:.8125rem;color:var(--copy);text-wrap:pretty">{{ p.notice }}</span>
+                        </button>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{ row.open }}" hint-placeholder-val="{{ false }}">
+                      <div id="{{ row.ex.domId }}" role="region" aria-label="{{ row.ex.aria }}" style="margin:0 0 6px;padding:18px 0 20px;border-bottom:1px solid var(--ink);display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:18px 32px;background:linear-gradient(var(--panel),var(--panel)) top/100% 2px no-repeat">
+                        <div>
+                          <p style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Explaining</p>
+                          <h4 style="margin:6px 0 6px;font:500 1.375rem/1.1 var(--disp);text-transform:uppercase">{{ row.ex.title }}</h4>
+                          <p style="margin:0;font-size:.9375rem">{{ row.ex.def }}</p>
+                          <dl style="margin:12px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.8125rem"><dt style="color:var(--muted)">Direction</dt><dd style="margin:0">{{ row.ex.dir }}</dd><dt style="color:var(--muted)">Unit</dt><dd style="margin:0">{{ row.ex.unit }}</dd><dt style="color:var(--muted)">Source</dt><dd style="margin:0">{{ row.ex.lane }}</dd></dl>
+                        </div>
+                        <div>
+                          <p style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Comparison</p>
+                          <p style="margin:6px 0 0;font:.8125rem/1.5 var(--mono)">{{ row.ex.eq }}</p>
+                          <p style="margin:12px 0 0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">What to notice</p>
+                          <p style="margin:6px 0 0;font-size:.9375rem">{{ row.ex.notice }}</p>
+                          <p style="margin:10px 0 0;font-size:.8125rem;color:var(--copy)">{{ row.ex.caveat }}</p>
+                        </div>
+                        <div style="min-width:0">
+                          <p style="margin:0 0 6px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Exact recorded values</p>
+                          <div style="overflow-x:auto">
+                            <div style="display:grid;grid-template-columns:{{ row.ex.cols }};font:.75rem/1.4 var(--mono);min-width:{{ row.ex.minW }}">
+                              <span style="padding:4px 0;border-bottom:1px solid var(--line-strong);color:var(--muted)"></span>
+                              <sc-for list="{{ row.ex.head }}" as="h" hint-placeholder-count="3"><span style="padding:4px 4px;border-bottom:1px solid var(--line-strong);color:var(--muted);font-weight:{{ h.fw }};text-align:right">{{ h.t }}</span></sc-for>
+                              <sc-for list="{{ row.ex.cells }}" as="c" hint-placeholder-count="8"><span style="padding:5px 4px;border-bottom:1px solid var(--line);text-align:{{ c.al }};background:{{ c.bg }};font-weight:{{ c.fw }};white-space:nowrap">{{ c.t }}</span></sc-for>
+                            </div>
+                          </div>
+                          <button type="button" onClick="{{ row.ex.close }}" style="margin-top:14px;min-height:40px;padding:0 14px;background:none;border:1px solid var(--line-strong);cursor:pointer;font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase">Close explanation</button>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </sc-for>
+                </div>
+              </sc-for>
+
+              <sc-if value="{{ pg.ev.hasTele }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:38px">
+                  <h3 style="margin:0;display:flex;flex-wrap:wrap;gap:2px 14px;align-items:baseline;padding-bottom:8px;border-bottom:1px solid var(--ink)"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase">Workload-level telemetry</span><span style="font-size:.8125rem;font-weight:400;color:var(--muted)">{{ pg.ev.tele.wlNote }}</span></h3>
+                  <div style="overflow-x:auto">
+                    <div style="display:grid;grid-template-columns:minmax(10rem,1.4fr) repeat(2,minmax(9rem,1fr));min-width:30rem;font-size:.875rem">
+                      <span style="padding:8px 0;border-bottom:1px solid var(--line-strong);font-size:.75rem;color:var(--muted)">Reading · context only</span>
+                      <span style="padding:8px 0;border-bottom:1px solid var(--line-strong);font-size:.75rem">● vLLM</span>
+                      <span style="padding:8px 0;border-bottom:1px solid var(--line-strong);font-size:.75rem;color:var(--muted)">◆ SGLang</span>
+                      <sc-for list="{{ pg.ev.tele.wlCells }}" as="c" hint-placeholder-count="12"><span style="padding:9px 8px 9px 0;border-bottom:1px solid var(--line);color:{{ c.c }}">{{ c.t }}</span></sc-for>
+                    </div>
+                  </div>
+                  <h3 style="margin:30px 0 0;display:flex;flex-wrap:wrap;gap:2px 14px;align-items:baseline;padding-bottom:8px;border-bottom:1px solid var(--ink)"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase">Run-level device telemetry</span><span style="font-size:.8125rem;font-weight:400;color:var(--muted)">One peak spans three workloads. It does not change with the workload selector and is not attributable to one workload.</span></h3>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:0 28px">
+                    <sc-for list="{{ pg.ev.tele.runs }}" as="r" hint-placeholder-count="2">
+                      <div style="padding:12px 0;border-bottom:1px solid var(--line)">
+                        <p style="margin:0;font-weight:600;font-size:.9375rem">{{ r.name }}</p>
+                        <p style="margin:2px 0 8px;font-size:.75rem;color:var(--muted)">{{ r.wls }} · <b style="font-weight:600;color:var(--ink)">{{ r.contains }}</b></p>
+                        <sc-for list="{{ r.rows }}" as="x" hint-placeholder-count="2"><p style="margin:0;padding:4px 0;font:.75rem/1.5 var(--mono)"><span style="color:{{ x.mc }}">{{ x.mark }}</span> {{ x.t }}</p></sc-for>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <p style="margin:26px 0 0;display:flex;flex-wrap:wrap;gap:4px 24px;font-size:.875rem"><sc-for list="{{ pg.ev.validity }}" as="v" hint-placeholder-count="2"><span><span style="color:{{ v.mc }}">{{ v.mark }}</span> {{ v.t }}</span></sc-for></p>
+
+              <div style="margin-top:26px;border-top:1px solid var(--line-strong)">
+                <button type="button" id="ledger-toggle" onClick="{{ toggleLedger }}" aria-expanded="{{ ledgerOpen }}" aria-controls="ledger" style="display:flex;width:100%;justify-content:space-between;align-items:center;gap:12px;min-height:52px;background:none;border:0;border-bottom:1px solid var(--line-strong);cursor:pointer;text-align:left;padding:0"><span style="font:600 .75rem/1.3 var(--text);letter-spacing:.14em;text-transform:uppercase">Exact measurement ledger</span><span style="font-size:.8125rem;color:var(--muted)">{{ ledgerHint }}</span></button>
+                <sc-if value="{{ ledgerOpen }}" hint-placeholder-val="{{ false }}">
+                  <div id="ledger" role="table" aria-label="Exact measurement ledger" tabindex="0" style="overflow-x:auto;padding-top:4px">
+                    <div style="display:grid;grid-template-columns:{{ pg.ledger.cols }};min-width:{{ pg.ledger.minW }};font:.75rem/1.4 var(--mono)">
+                      <sc-for list="{{ pg.ledger.head }}" as="h" hint-placeholder-count="8"><span role="columnheader" style="padding:8px 6px 8px 0;border-bottom:1px solid var(--ink);color:var(--muted);font-weight:{{ h.fw }};background:{{ h.bg }}">{{ h.t }}</span></sc-for>
+                      <sc-for list="{{ pg.ledger.cells }}" as="c" hint-placeholder-count="24"><span role="cell" style="padding:8px 6px 8px 0;border-bottom:1px solid var(--line);background:{{ c.bg }};color:{{ c.c }};font-family:{{ c.ff }};font-weight:{{ c.fw }}">{{ c.t }}</span></sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </section>
+
+            <section id="ch-boundaries" data-screen-label="04 Boundaries" aria-labelledby="h-boundaries" style="padding-top:60px">
+              <h2 id="h-boundaries" tabindex="-1" style="margin:0;display:grid;gap:8px;outline:none"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--c4);display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="flex:0 0 auto;width:24px;height:3px;background:var(--c4)"></span>04 Boundaries</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase;text-wrap:balance">{{ pg.bounds.h }}</span></h2>
+              <p style="margin:12px 0 0;max-width:42rem;color:var(--copy)">{{ pg.bounds.lede }}</p>
+              <div style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:0 36px;border-top:1px solid var(--ink)">
+                <sc-for list="{{ pg.bounds.blocks }}" as="b" hint-placeholder-count="4">
+                  <div style="padding:16px 0;border-bottom:1px solid var(--line)">
+                    <h3 style="margin:0 0 8px;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ b.t }}</h3>
+                    <ul style="margin:0;padding:0 0 0 1.1em;display:grid;gap:4px;font-size:.9375rem"><sc-for list="{{ b.items }}" as="i" hint-placeholder-count="3"><li>{{ i }}</li></sc-for></ul>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+
+            <section id="ch-source" data-screen-label="05 Source" aria-labelledby="h-source" style="padding-top:60px">
+              <h2 id="h-source" tabindex="-1" style="margin:0;display:grid;gap:8px;outline:none"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--c5);display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="flex:0 0 auto;width:24px;height:3px;background:var(--c5)"></span>05 Source</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase">Where these numbers come from</span></h2>
+              <p style="margin:12px 0 0;max-width:42rem;color:var(--copy)">{{ pg.source.lede }}</p>
+              <dl style="margin:22px 0 0;border-top:1px solid var(--ink)">
+                <sc-for list="{{ pg.source.rows }}" as="x" hint-placeholder-count="4">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:2px 24px;padding:12px 0;border-bottom:1px solid var(--line)">
+                    <dt style="font-size:.8125rem;color:var(--muted)">{{ x.k }}</dt>
+                    <dd style="margin:0;font-size:.9375rem;grid-column:span 2"><span style="color:{{ x.c }}">{{ x.v }}</span><sc-if value="{{ x.hasLink }}" hint-placeholder-val="{{ false }}"> <a href="{{ x.href }}" style="font-size:.875rem">{{ x.linkText }}</a></sc-if></dd>
+                  </div>
+                </sc-for>
+              </dl>
+              <div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center">
+                <button type="button" onClick="{{ copyLink }}" style="min-height:44px;padding:0 18px;background:none;border:1px solid var(--ink);cursor:pointer;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase">Copy link to this view</button>
+                <span style="font-size:.8125rem;color:var(--muted)">{{ copyNote }}</span>
+              </div>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ pg.hasPager }}" hint-placeholder-val="{{ true }}">
+          <nav aria-label="Episode pager" style="margin-top:72px;display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:0 28px;border-top:1px solid var(--ink)">
+            <sc-for list="{{ pager }}" as="p" hint-placeholder-count="2">
+              <a href="{{ p.href }}" style="display:grid;gap:4px;padding:16px 0;border-bottom:1px solid var(--line);text-decoration:none;text-align:{{ p.al }}"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ p.k }}</span><span style="font:500 1.25rem/1.15 var(--disp);text-transform:uppercase">{{ p.t }}</span></a>
+            </sc-for>
+          </nav>
+        </sc-if>
+      </article>
+    </sc-if>
+
+    <sc-if value="{{ isPlanned }}" hint-placeholder-val="{{ false }}">
+      <article aria-labelledby="page-title">
+        <header style="display:grid;gap:12px">
+          <p style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ pl.label }}</p>
+          <h1 id="page-title" style="margin:0;font:600 clamp(2.5rem,5.6vw,4.75rem)/.92 var(--disp);text-transform:uppercase;text-wrap:balance">{{ pl.title }}</h1>
+          <p style="margin:2px 0 0;max-width:38em;font-size:clamp(1.0625rem,1.6vw,1.25rem);line-height:1.45;color:var(--copy)">{{ pl.summary }}</p>
+          <p style="margin:0;font:.75rem/1.5 var(--mono);color:var(--copy)">{{ pl.evidence }}</p>
+        </header>
+        <section id="ch-brief" aria-labelledby="h-brief" style="padding-top:34px;border-top:1px solid var(--line-strong);margin-top:24px">
+          <h2 id="h-brief" style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--c1);display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="flex:0 0 auto;width:24px;height:3px;background:var(--c1)"></span>01 Brief</h2>
+          <p style="margin:12px 0 0;font:500 clamp(1.75rem,3.5vw,2.875rem)/1.06 var(--disp);text-transform:uppercase;color:var(--muted)">No recorded evidence yet.</p>
+          <p style="margin:12px 0 0;max-width:40rem;color:var(--copy)">Nothing on this page is a result. A finding appears here only after a recorded run is published with its public data file.</p>
+          <dl style="margin:24px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:12px 24px;border-top:1px solid var(--line);padding-top:14px">
+            <sc-for list="{{ pl.facts }}" as="f" hint-placeholder-count="4"><div><dt style="font:600 .625rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ f.k }}</dt><dd style="margin:4px 0 0;font-size:.875rem">{{ f.v }}</dd><dd style="margin:2px 0 0;font:.6875rem var(--mono);color:var(--muted)">Candidate · unverified</dd></div></sc-for>
+          </dl>
+        </section>
+        <sc-for list="{{ pl.chapters }}" as="c" hint-placeholder-count="4">
+          <section id="{{ c.domId }}" aria-labelledby="{{ c.hId }}" style="padding:22px 0;border-bottom:1px solid var(--line);margin-top:{{ c.mt }}">
+            <h2 id="{{ c.hId }}" style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:{{ c.col }};display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="flex:0 0 auto;width:24px;height:3px;background:{{ c.col }}"></span>{{ c.num }} {{ c.name }}</h2>
+            <p style="margin:8px 0 0;max-width:42rem;font-size:.9375rem">{{ c.text }} <sc-if value="{{ c.hasLink }}" hint-placeholder-val="{{ false }}"><a href="{{ c.href }}" target="_blank" rel="noopener">{{ c.linkText }}</a></sc-if></p>
+          </section>
+        </sc-for>
+        <nav aria-label="Episode pager" style="margin-top:72px;display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:0 28px;border-top:1px solid var(--ink)">
+          <sc-for list="{{ pager }}" as="p" hint-placeholder-count="2">
+            <a href="{{ p.href }}" style="display:grid;gap:4px;padding:16px 0;border-bottom:1px solid var(--line);text-decoration:none;text-align:{{ p.al }}"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ p.k }}</span><span style="font:500 1.25rem/1.15 var(--disp);text-transform:uppercase">{{ p.t }}</span></a>
+          </sc-for>
+        </nav>
+      </article>
+    </sc-if>
+
+    <sc-if value="{{ isIndex }}" hint-placeholder-val="{{ false }}">
+      <article aria-labelledby="page-title">
+        <header data-screen-label="Landing" style="display:grid;gap:24px;padding:clamp(8px,2vw,28px) 0 clamp(32px,5vw,60px);border-bottom:1px solid var(--ink)">
+          <p style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Token by Token · an open inference lab</p>
+          <h1 id="page-title" style="margin:0;font:600 clamp(3rem,9.5vw,7.75rem)/.86 var(--disp);letter-spacing:-.01em;text-transform:uppercase;text-wrap:balance">Every token is a measurement.</h1>
+          <p style="margin:0;max-width:34em;font-size:clamp(1.125rem,1.9vw,1.4375rem);line-height:1.4;color:var(--copy);text-wrap:pretty">We run open model-serving engines under recorded load and read the results one claim at a time — what a user waits for, what the hardware does, and where the evidence stops.</p>
+          <figure style="margin:6px 0 0;display:grid;gap:10px">
+            <div aria-hidden="true" style="display:flex;flex-wrap:wrap;border-left:1px solid var(--line)"><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:3px solid var(--ink)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">Time</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t00</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·to</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t01</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·first</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t02</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·token</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t03</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·is</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t04</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·the</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t05</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·wait</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t06</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·a</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t07</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·user</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t08</span></span><span style="display:grid;gap:6px;padding:10px 12px 8px;border-right:1px solid var(--line);border-top:1px dashed var(--line-strong)"><span style="font:500 clamp(1rem,1.8vw,1.375rem)/1 var(--mono);white-space:pre">·feels.</span><span style="font:.625rem/1 var(--mono);color:var(--muted)">t09</span></span></div>
+            <figcaption style="display:flex;flex-wrap:wrap;gap:6px 22px;font-size:.75rem;color:var(--muted)"><span style="display:flex;align-items:center;gap:8px"><span style="width:22px;border-top:3px solid var(--ink)"></span>First token — TTFT</span><span style="display:flex;align-items:center;gap:8px"><span style="width:22px;border-top:1px dashed var(--line-strong)"></span>Every token after — TPOT</span></figcaption>
+          </figure>
+          <div style="display:flex;flex-wrap:wrap;gap:10px 12px;margin-top:4px">
+            <a href="#episode-0" style="display:flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;background:var(--ink);color:var(--paper);text-decoration:none;font-size:.8125rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase">Start with Episode 00 <span aria-hidden="true">→</span></a>
+            <a href="#episode-1" style="display:flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;border:1px solid var(--ink);text-decoration:none;font-size:.8125rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase">Episode 01 · Measure what matters</a>
+            <a href="#methodology" style="display:flex;align-items:center;min-height:48px;padding:0 6px;font-size:.8125rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase">How the lab measures</a>
+          </div>
+          <p style="margin:0;display:flex;flex-wrap:wrap;font:.75rem/1.5 var(--mono);color:var(--copy)"><span style="padding-right:12px">2 recorded episodes</span><span style="padding:0 12px;border-left:1px solid var(--line-strong)">1 field note</span><span style="padding:0 12px;border-left:1px solid var(--line-strong)">15 planned</span></p>
+        </header>
+        <sc-for list="{{ idx }}" as="g" hint-placeholder-count="3">
+          <section id="{{ g.domId }}" aria-labelledby="{{ g.hId }}" style="padding-top:44px">
+            <h2 id="{{ g.hId }}" style="margin:0;display:flex;flex-wrap:wrap;gap:2px 14px;align-items:baseline;padding-bottom:8px;border-bottom:1px solid var(--ink)"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap">{{ g.title }}</span><span style="font-size:.8125rem;font-weight:400;color:var(--muted)">{{ g.note }}</span></h2>
+            <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+              <a href="{{ r.href }}" style="display:grid;grid-template-columns:3.25rem minmax(0,1fr);gap:4px 16px;padding:{{ r.pad }};border-bottom:1px solid var(--line);text-decoration:none">
+                <span style="font:500 {{ r.numSize }}/1 var(--disp);color:{{ r.numC }}">{{ r.num }}</span>
+                <span style="display:grid;gap:4px;min-width:0"><span style="font:600 .625rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">{{ r.status }}</span><span style="font:500 {{ r.titleSize }}/1.1 var(--disp);text-transform:uppercase">{{ r.title }}</span><span style="font-size:.875rem;color:var(--copy);max-width:46rem">{{ r.summary }}</span></span>
+              </a>
+            </sc-for>
+          </section>
+        </sc-for>
+      </article>
+    </sc-if>
+
+    <sc-if value="{{ isMethodology }}" hint-placeholder-val="{{ false }}">
+      <article aria-labelledby="page-title">
+        <header style="display:grid;gap:12px">
+          <p style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Methodology · applies to all episodes</p>
+          <h1 id="page-title" style="margin:0;font:600 clamp(2.5rem,5.6vw,4.75rem)/.92 var(--disp);text-transform:uppercase">How the lab measures</h1>
+          <p style="margin:2px 0 0;max-width:38em;font-size:clamp(1.0625rem,1.6vw,1.25rem);line-height:1.45;color:var(--copy)">Definitions and evidence rules shared by every episode. Each episode’s own protocol lives in its Method chapter.</p>
+        </header>
+        <section id="ch-definitions" aria-labelledby="h-def" style="padding-top:48px">
+          <h2 id="h-def" style="margin:0;display:grid;gap:8px"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">01 Definitions</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase">Metrics, units and directions</span></h2>
+          <p style="margin:12px 0 0;max-width:42rem;color:var(--copy)">A metric only gets a better direction if it has one. Everything else is context.</p>
+          <div style="margin-top:20px;overflow-x:auto" tabindex="0" role="table" aria-label="Metric definitions">
+            <div style="display:grid;grid-template-columns:minmax(9rem,1fr) minmax(6rem,.6fr) minmax(8rem,.8fr) minmax(6rem,.6fr) minmax(16rem,2fr);min-width:46rem;font-size:.875rem">
+              <span role="columnheader" style="padding:8px 8px 8px 0;border-bottom:1px solid var(--ink);font-size:.75rem;color:var(--muted)">Metric</span><span role="columnheader" style="padding:8px 8px 8px 0;border-bottom:1px solid var(--ink);font-size:.75rem;color:var(--muted)">Unit</span><span role="columnheader" style="padding:8px 8px 8px 0;border-bottom:1px solid var(--ink);font-size:.75rem;color:var(--muted)">Better direction</span><span role="columnheader" style="padding:8px 8px 8px 0;border-bottom:1px solid var(--ink);font-size:.75rem;color:var(--muted)">Source</span><span role="columnheader" style="padding:8px 8px 8px 0;border-bottom:1px solid var(--ink);font-size:.75rem;color:var(--muted)">Meaning</span>
+              <sc-for list="{{ defCells }}" as="c" hint-placeholder-count="20"><span role="cell" style="padding:9px 8px 9px 0;border-bottom:1px solid var(--line);font-weight:{{ c.fw }};color:{{ c.c }}">{{ c.t }}</span></sc-for>
+            </div>
+          </div>
+        </section>
+        <section id="ch-states" aria-labelledby="h-states" style="padding-top:56px">
+          <h2 id="h-states" style="margin:0;display:grid;gap:8px"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">02 Evidence states</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase">One symbol, one meaning</span></h2>
+          <p style="margin:12px 0 0;max-width:42rem;color:var(--copy)">Colour is never the only signal. Every state pairs a unique symbol with words, and every change names both operands.</p>
+          <div style="margin-top:20px;border-top:1px solid var(--ink)">
+            <sc-for list="{{ stateRows }}" as="s" hint-placeholder-count="9">
+              <div style="display:grid;grid-template-columns:2.5rem repeat(auto-fit,minmax(13rem,1fr));gap:2px 20px;padding:11px 0;border-bottom:1px solid var(--line);align-items:baseline">
+                <span style="font:600 1.25rem/1 var(--text);color:{{ s.c }}">{{ s.sym }}</span>
+                <span style="font-weight:600;color:{{ s.c }}">{{ s.word }}</span>
+                <span style="font-size:.875rem;color:var(--copy)">{{ s.rule }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+        <section id="ch-identity" aria-labelledby="h-id" style="padding-top:56px">
+          <h2 id="h-id" style="margin:0;display:grid;gap:8px"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">03 Identity</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase">Identity is not judgement</span></h2>
+          <p style="margin:12px 0 0;max-width:42rem;color:var(--copy)">Engines and deployments are told apart by name, marker and line style. Green, red and orange are reserved for outcome states and never identify an engine.</p>
+          <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:0 28px;border-top:1px solid var(--ink)">
+            <sc-for list="{{ idRows }}" as="d" hint-placeholder-count="2"><div style="display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)"><svg width="44" height="12" viewBox="0 0 34 10" aria-hidden="true"><line x1="0" x2="34" y1="5" y2="5" style="stroke:{{ d.c }};stroke-width:1.5;stroke-dasharray:{{ d.dash }}"></line><path d="{{ d.glyph }}" style="fill:var(--paper);stroke:{{ d.c }};stroke-width:1.5"></path></svg><span><b style="font-weight:600">{{ d.name }}</b><span style="display:block;font-size:.8125rem;color:var(--muted)">{{ d.rule }}</span></span></div></sc-for>
+          </div>
+        </section>
+        <section id="ch-rules" aria-labelledby="h-rules" style="padding-top:56px">
+          <h2 id="h-rules" style="margin:0;display:grid;gap:8px"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">04 Rules</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase">What the evidence may and may not claim</span></h2>
+          <ol style="margin:20px 0 0;padding:0;list-style:none;border-top:1px solid var(--ink)">
+            <sc-for list="{{ rules }}" as="r" hint-placeholder-count="8"><li style="display:grid;grid-template-columns:2.5rem 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:.9375rem"><span style="font:.75rem/1.6 var(--mono);color:var(--muted)">{{ r.n }}</span><span>{{ r.t }}</span></li></sc-for>
+          </ol>
+        </section>
+        <section id="ch-protocols" aria-labelledby="h-proto" style="padding-top:56px">
+          <h2 id="h-proto" style="margin:0;display:grid;gap:8px"><span style="font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">05 Episode protocols</span><span style="font:500 clamp(1.75rem,3vw,2.5rem)/1 var(--disp);text-transform:uppercase">Protocols live with their episode</span></h2>
+          <p style="margin:12px 0 0;max-width:42rem;color:var(--copy)">Each study measured differently. Read the protocol in the study’s own Method chapter.</p>
+          <div style="margin-top:20px;border-top:1px solid var(--ink)">
+            <sc-for list="{{ protoRows }}" as="p" hint-placeholder-count="3"><a href="{{ p.href }}" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:4px 20px;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none"><span style="font:500 1.125rem/1.2 var(--disp);text-transform:uppercase">{{ p.t }}</span><span style="font-size:.875rem;color:var(--copy)">{{ p.d }} →</span></a></sc-for>
+          </div>
+        </section>
+      </article>
+    </sc-if>
+
+    <sc-if value="{{ isNotFound }}" hint-placeholder-val="{{ false }}">
+      <article aria-labelledby="page-title" style="display:grid;gap:12px;max-width:44rem">
+        <p style="margin:0;font:600 .6875rem/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Not in the catalog</p>
+        <h1 id="page-title" style="margin:0;font:600 clamp(2.5rem,5.6vw,4.75rem)/.92 var(--disp);text-transform:uppercase">{{ nf.title }}</h1>
+        <p style="margin:0;font-size:1.125rem;color:var(--copy)">{{ nf.text }}</p>
+        <p style="margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px 22px"><a href="#episodes">All episodes</a><a href="#episode-1">Episode 01 · Measure what matters</a><a href="#methodology">Methodology</a></p>
+      </article>
+    </sc-if>
+
+  </main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;headline&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Title&quot;,&quot;Question&quot;],&quot;default&quot;:&quot;Title&quot;,&quot;tsType&quot;:&quot;'Title'|'Question'&quot;,&quot;section&quot;:&quot;Episode header&quot;},&quot;grafanaUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://grafana.example.com/d/token-by-token&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;External links&quot;}}">
+const W=280,H=100,PT=10,PB=8,AX=92;
+const EPS=[
+ {n:0,t:'Warm-up',s:'Follow a request through prefill, decode and the KV cache. Explore the recorded vLLM and SGLang runs and the limits of the comparison.',st:'recorded'},
+ {n:1,t:'Measure what matters',s:'Compare SGLang and vLLM deployments on one H200 across matched recorded load levels, then inspect latency, throughput and telemetry together.',st:'recorded'},
+ {n:2,t:'Equal-work runtime baseline',s:'Compare HF/PyTorch, vLLM and SGLang under the same model, corpus, template and output contract.',a:'equal-work-runtime-baseline',m:'Selected in planner',h:'Candidate hardware — availability unverified',r:'vLLM · SGLang · control'},
+ {n:3,t:'Prefix reuse',s:'Control exact shared-prefix ratios and compare cold and warm cache behavior.',a:'prefix-reuse'},
+ {n:4,t:'Batching, scheduling and mixed traffic',s:'Study chunked prefill and scheduler behavior under controlled long/short traffic mixes.',a:'batching-scheduling-and-mixed-traffic'},
+ {n:5,t:'Attention kernels and precision',s:'Compare verified attention backends, then separately compare weight and KV precision.',a:'attention-kernels-and-precision'},
+ {n:6,t:'Speculative decoding and structured outputs',s:'Evaluate compatible proposal paths and constrained generation without assuming speedup.',a:'speculative-decoding-and-structured-outputs',m:'Target and optional draft — selected in planner'},
+ {n:7,t:'Parallelism within one node',s:'Compare DP, TP and justified PP or EP layouts under one declared GPU budget.',a:'parallelism-within-one-node',h:'Candidate multi-GPU node — unverified'},
+ {n:8,t:'Parallelism across nodes',s:'Test placement and communication costs on a documented multi-node network topology.',a:'parallelism-across-nodes',h:'Candidate multi-node topology — unverified'},
+ {n:9,t:'Prefill/decode disaggregation and cache-aware routing',s:'Compare colocated and supported disaggregated serving with queue- and cache-aware routing.',a:'prefilldecode-disaggregation-and-cache-aware-routing',h:'Candidate serving pools — unverified'},
+ {n:10,t:'Slurm and Kubernetes orchestration',s:'Compare representative scheduled jobs and long-running services as platform choices, separate from engines.',a:'slurm-and-kubernetes-orchestration',m:'Workload selected in planner',h:'Candidate platform resources — unverified',r:'Platform track'},
+ {n:11,t:'Model internals: weights to optimization',s:'Trace weights, attention, gradients and optimizer state with a small inspectable model.',a:'model-internals-weights-to-optimization',m:'Small inspectable model — selected in planner',h:'Companion study',r:'Training/model track'},
+ {n:12,t:'LoRA and QLoRA with held-out evaluation',s:'Compare adapter training with fixed data, budgets and held-out quality evaluation.',a:'lora-and-qlora-with-held-out-evaluation',m:'Base and adapter lineage — selected in planner',h:'Companion study',r:'Training/model track'},
+ {n:13,t:'Jev and LLMs on labeled decision tasks',s:'Compare typed and LLM decision approaches on one versioned labeled task contract.',a:'jev-and-llms-on-labeled-decision-tasks',m:'Decision systems — selected in planner',h:'Companion study',r:'Decision track'},
+ {n:14,t:'Packaging, accelerator preflight and memory containment',s:'Verify reproducible containers, accelerator visibility, model loading and bounded memory behavior.',a:'packaging-accelerator-preflight-and-memory-containment',h:'Candidate accelerator — unverified'},
+ {n:15,t:'Saturation, SLO and cost',s:'Sweep concurrency and offered rate to find SLO-qualified goodput and attributable cost.',a:'saturation-slo-and-cost'},
+ {n:16,t:'Release gates, recovery and capstone synthesis',s:'Combine promising settings, reject regressions and exercise rollback and recovery against original gates.',a:'release-gates-recovery-and-capstone-synthesis',m:'Selected release candidate',h:'Candidate release topology — unverified',r:'Selected serving/runtime path'}
+];
+const REPO='https://github.com/KVSDURGASURESH/token-by-token/blob/main/docs/roadmap.md#';
+const pad2=n=>String(n).padStart(2,'0');
+const ST={
+ better:{sym:'✓',word:'Better',c:'var(--better)'},
+ worse:{sym:'✕',word:'Worse',c:'var(--worse)'},
+ band:{sym:'≈',word:'Within ±2% display band',c:'var(--neutral)'},
+ ctx:{sym:'△',word:'Context only — not ranked',c:'var(--muted)'},
+ na:{sym:'∅',word:'Unavailable',c:'var(--muted)'},
+ invalid:{sym:'⚠',word:'Invalid — excluded',c:'var(--ink)'},
+ unequal:{sym:'≠',word:'Unequal work — not compared',c:'var(--neutral)'},
+ equal:{sym:'=',word:'Equal delivered work',c:'var(--ink)'}
+};
+const nf=(v,d)=>Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+function fv(v,u){if(v==null)return '—';
+ if(u==='ms')return v>=10000?nf(v/1000,1)+' s':nf(v,1)+' ms';
+ if(u==='s')return nf(v,2)+' s';
+ if(u==='tok/s')return nf(v,1)+' tok/s';
+ if(u==='ms/token')return nf(v,1)+' ms/tok';
+ if(u==='%')return nf(v,2)+'%';
+ if(u==='GiB')return nf(v,1)+' GiB';
+ if(u==='W')return nf(v,0)+' W';
+ if(u==='req')return nf(v,2)+' req';
+ if(u==='tok/req')return nf(v,1)+' tok/req';
+ return nf(v,2)+' '+u;}
+const pctTxt=p=>(p>0?'+':p<0?'−':'±')+nf(Math.abs(p),1)+'%';
+function dcmp(m,s,b){
+ if(s==null||b==null)return{k:'na',why:'one operand has no recorded point'};
+ if(b===0)return{k:'na',why:'% change undefined — baseline is zero'};
+ if(s===b)return{k:'band',pct:0};
+ const p=(s-b)/b*100;
+ if(Math.abs(p)<2)return{k:'band',pct:p};
+ return{k:(m.dir==='higher'?p>0:p<0)?'better':'worse',pct:p};}
+function thr(m,v){
+ if(v==null)return{sym:'∅',text:'Unavailable',c:'var(--muted)'};
+ const ge=m.op==='>=',met=ge?v>=m.thr:v<=m.thr;
+ return{sym:met?(ge?'≥':'≤'):(ge?'<':'>'),text:met?m.metWord:m.missWord,c:met?'var(--better)':'var(--worse)'};}
+const R=(o,t,v,s,m,w,ru,wa,gu,gm,gp,tot,val)=>({output_tps:o,ttft_p50_ms:t,ttft_p95_ms:v,tpot_p50_ms:s,decode_p10_tps:m,error_rate_pct:w,running_requests_mean:ru,waiting_requests_mean:wa,gpu_utilization_pct:gu,gpu_memory_gib:gm,gpu_power_w:gp,cache_context:null,total:tot,valid:val});
+const E1={vllm:{12:R(374.7588,2327.0245,14548.0813,36.7493,21.6474,0.1558,15.53,0.03,100,133.59,591.2,642,641),16:R(376.7271,2789.8120,17179.2702,49.5426,15.9592,0.1502,23.27,0.03,99.92,133.59,600.9,666,665),24:R(379.4803,5455.0112,30787.4555,74.4828,9.5812,0,36.62,0.2,100,133.59,629.8,662,662)},
+ sglang:{12:R(497.3699,1667.3970,8229.3205,20.6360,33.0052,0,13.72,0.05,98.87,125.67,671.2,747,747),16:R(480.4362,2041.9413,9764.0113,27.7066,17.4828,0,19.05,0.58,97.73,125.67,682.4,889,889),24:R(365.3459,5451.4412,30014.6452,68.2977,8.1623,0,34.52,1.2,99.27,125.68,692.2,601,601)}};
+const IDS2=[{id:'vllm',name:'vLLM',mark:'●',mc:'var(--ink)'},{id:'sglang',name:'SGLang',mark:'◆',mc:'var(--muted)'}];
+const IDSF=[{id:'A',name:'Deployment A',hw:'RTX PRO 6000',mark:'●',mc:'var(--ink)'},{id:'B',name:'Deployment B',hw:'H200',mark:'◆',mc:'var(--muted)'}];
+const M1=[
+ {id:'output_tps',label:'Output throughput',unit:'tok/s',kind:'dir',dir:'higher',lane:'Client-visible',def:'Successful output tokens per measured second.',notice:'SGLang’s lead narrows from 12 to 16 users and reverses at 24; vLLM stays near 375–379 tok/s.'},
+ {id:'ttft_p50_ms',label:'TTFT p50',unit:'ms',kind:'dir',dir:'lower',lane:'Client-visible',def:'Median client-visible time to first token.',notice:'The median first-token wait more than doubles from 12 to 24 users for both; at 24 the gap is inside the band.'},
+ {id:'ttft_p95_ms',label:'TTFT p95',unit:'ms',kind:'dir',dir:'lower',lane:'Client-visible',def:'95th-percentile client-visible time to first token.',notice:'Tail first-token waits grow fastest; at 24 users both exceed 30 s.'},
+ {id:'tpot_p50_ms',label:'TPOT p50',unit:'ms/token',kind:'dir',dir:'lower',lane:'Client-visible',def:'Median time per output token after the first token.',notice:'Per-token time rises with load for both; SGLang is lower at every recorded load.'},
+ {id:'decode_p10_tps',label:'Decode p10',unit:'tok/s',kind:'thr',op:'>=',thr:20,thrTxt:'20 tok/s experience floor',metWord:'Meets 20 tok/s floor',missWord:'Below 20 tok/s floor',lane:'Client-visible',def:'Ten-percentile per-request decode speed: 90% of valid requests were at least this fast.',notice:'Both deployments meet the floor at 12 users and fall below it at 16 and 24.'},
+ {id:'error_rate_pct',label:'Error rate',unit:'%',kind:'thr',op:'<=',thr:1,thrTxt:'1% validity limit',metWord:'Within 1% validity limit',missWord:'Over 1% validity limit',lane:'Client-visible',def:'Share of measured requests that did not satisfy the validity contract.',notice:'Both stay inside the 1% validity limit at every recorded load.'},
+ {id:'running_requests_mean',label:'Running requests',unit:'req',kind:'ctx',lane:'Engine-native gauge',def:'Mean runtime-native running-request gauge in the measured window.',notice:'Rises with load for both. Gauge definitions are not normalised across engines.'},
+ {id:'waiting_requests_mean',label:'Waiting requests',unit:'req',kind:'ctx',lane:'Engine-native gauge',def:'Mean runtime-native waiting-request gauge in the measured window.',notice:'Average queues stay short; this is a window mean, not a peak.'},
+ {id:'gpu_utilization_pct',label:'GPU utilization',unit:'%',kind:'ctx',lane:'GPU device sample',def:'Mean sampled device utilization in the measured window.',notice:'The device is busy at every load for both deployments.'},
+ {id:'gpu_power_w',label:'GPU board power',unit:'W',kind:'ctx',lane:'GPU device sample',def:'Mean sampled board power in the measured window.',notice:'SGLang draws more board power at every load; this is not an efficiency verdict.'},
+ {id:'gpu_memory_gib',label:'GPU memory',unit:'GiB',kind:'ctx',lane:'GPU device sample',def:'Mean sampled device memory use in the measured window.',notice:'Memory is reserved up front and barely moves with load.'},
+ {id:'cache_context',label:'Cache context',unit:'%',kind:'na',lane:'Engine-native gauge',def:'Available cache context retained without cross-engine normalisation.',why:'not available with a comparable public definition.',notice:'Shown so its absence is visible; never plotted as zero.'}
+];
+const G1=[{title:'Directional comparisons',note:'Symbol and colour show the change in each metric’s better direction.',ids:['output_tps','ttft_p50_ms','ttft_p95_ms','tpot_p50_ms']},{title:'Declared thresholds',note:'Met or missed is judged against the declared threshold, never against the other engine.',ids:['decode_p10_tps','error_rate_pct']},{title:'Context only',note:'Engine and device readings describe the setting. They are not ranked.',ids:['running_requests_mean','waiting_requests_mean','gpu_utilization_pct','gpu_power_w','gpu_memory_gib','cache_context']}];
+const WL=[
+ {id:'128-c1',inp:128,c:1,tier:'Baseline',S:[39.2912,37.2718,24.3557,24.3457,1572.254,3840,60],V:[38.8045,47.6741,24.4211,24.4402,1586.592,3840,60],kv:[0.0074,0.01],wq:[0,0],ph:[0.0380,1.5392]},
+ {id:'128-c16',inp:128,c:16,tier:'Stress',S:[483.6269,136.8561,25.5082,25.2479,3405.184,8192,64],V:[527.3339,107.7189,25.3473,25.1841,3345.636,8192,64],kv:[0.1306,0.2],wq:[0,0],ph:[0.0893,3.2214]},
+ {id:'2048-c4',inp:2048,c:4,tier:'Baseline',S:[95.4123,783.5071,26.2874,26.2416,2454.018,3840,60],V:[104.3734,688.9017,25.1922,25.2666,2296.854,3840,60],kv:[0.3238,0.49],wq:[0,0],ph:[0.4971,1.7344]},
+ {id:'2048-c24',inp:2048,c:24,tier:'Stress',S:[176.7062,10688.1772,29.7037,26.6692,14390.019,12288,96],V:[263.0482,6404.7930,35.5869,27.3941,11088.655,12288,96],kv:[0.9988,0.99],wq:[14.5,17],ph:[1.1217,4.5523]},
+ {id:'8192-c8',inp:8192,c:8,tier:'Baseline',S:[32.7871,12579.3805,38.1343,30.5288,15421.022,3840,60],V:[37.8120,6582.8144,45.6897,26.6780,8745.115,2868,60],kv:[0.9566,0.98],wq:[5,6],ph:[1.2194,2.5245]},
+ {id:'8192-c32',inp:8192,c:32,tier:'Stress',S:[43.6653,88319.7620,34.2955,30.5224,93142.457,16384,128],V:[57.4642,47936.1170,39.3676,27.0644,49844.984,12786,128],kv:[0.9646,0.99],wq:[29,30],ph:[0.9625,4.1279]}
+];
+const wlOf=id=>WL.find(w=>w.id===id);
+const perReq=a=>a[5]/a[6];
+const unequalWL=w=>Math.abs(perReq(w.V)-perReq(w.S))>1e-9;
+const M0=[
+ {id:'out',i:0,label:'Delivered output rate',unit:'tok/s',kind:'dir',dir:'higher',lane:'Client-visible',def:'Successful output tokens per second for the workload.',notice:'Rate rises with concurrency inside each input length; the two 8,192-token workloads are not compared.'},
+ {id:'ttft',i:1,label:'TTFT p50',unit:'ms',kind:'dir',dir:'lower',lane:'Client-visible',def:'Median client-visible time to first token.',notice:'Input length and concurrency change together, so the climb across workloads is not a sweep.'},
+ {id:'tpot',i:2,label:'TPOT p50',unit:'ms/token',kind:'dir',dir:'lower',lane:'Client-visible',def:'Median time per output token after the first.',notice:'Per-token time stays between about 24 and 46 ms in every workload.'},
+ {id:'e2e',i:4,label:'End-to-end p50',unit:'ms',kind:'dir',dir:'lower',lane:'Client-visible',def:'Median time from request sent to final token received.',notice:'End-to-end time includes waiting and decoding, so it inherits the spread in TTFT.'},
+ {id:'itl',i:3,label:'Inter-token latency p50',unit:'ms',kind:'dir',dir:'lower',lane:'Client stream events',def:'Median gap between streamed chunks.',notice:'Chunk gaps stay steady across workloads.',ledgerOnly:true},
+ {id:'work',label:'Delivered output per request',unit:'tok/req',kind:'work',lane:'Client-visible',def:'Successful output tokens divided by successful requests. Equal work is required before throughput or latency can be compared.',notice:'Both engines delivered identical token counts except in the two 8,192-token workloads.'}
+];
+const G0=[{title:'Directional comparisons',note:'Six categorical workloads. Points are not joined: there is no sweep between them.',ids:['out','ttft','tpot','e2e']},{title:'Delivered work',note:'The equal-work check that gates every comparison above.',ids:['work']}];
+const FNL=[2,4,8,16,32,64,100];
+const FNS={A:{2:[48.183,1.1645,3.1134,1.12,89,88],4:[76.920,1.2106,3.4254,0.67,149,148],8:[144.246,1.3495,5.4735,3.56,281,271],16:[233.502,5.1914,8.0064,0.87,460,456],32:[228.463,17.8764,20.4593,0.39,513,511],64:[115.469,66.7951,75.3914,0.28,360,359],100:[99.882,97.2983,110.2916,0,375,375]},
+ B:{2:[54.148,0.8118,1.7452,0.98,102,101],4:[79.847,0.9145,5.0414,3.85,156,150],8:[187.070,0.9054,1.9183,0.56,360,358],16:[359.810,1.1680,2.8216,0.29,688,686],32:[258.450,8.8835,45.1782,16.91,627,521],64:[371.322,22.2348,24.5120,0.45,880,876],100:[183.902,52.0382,107.4383,27.25,701,510]}};
+const SOAK={A:{out:245.718,t50:4.8914,t95:8.2170,d10:31.577,err:0.90,meas:2340,valid:2319},B:{out:379.943,t50:1.1730,t95:2.8285,d10:55.286,err:0.50,meas:3586,valid:3568}};
+const MF=[
+ {id:'out',i:0,label:'Output throughput',unit:'tok/s',kind:'dir',dir:'higher',lane:'Client-visible',def:'Valid output tokens per measured second.',notice:'Deployment B dips at 32 and 100 users, where its error rate also rises; Deployment A peaks around 16–32 users.'},
+ {id:'t50',i:1,label:'Visible TTFT p50',unit:'s',kind:'dir',dir:'lower',lane:'Client-visible',def:'Median time until the first visible token.',notice:'Median first-token wait climbs steeply beyond 16 users for both deployments.'},
+ {id:'t95',i:2,label:'Visible TTFT p95',unit:'s',kind:'dir',dir:'lower',lane:'Client-visible',def:'95th-percentile time until the first visible token.',notice:'Deployment B’s tail wait at 32 users is longer than its 64-user reading.'},
+ {id:'err',i:3,label:'Error rate',unit:'%',kind:'ctx',lane:'Client-visible',def:'Share of measured requests that were not valid.',notice:'No validity limit was declared for this field note, so no point is excluded; the rate is shown beside every point.'}
+];
+const GF=[{title:'Directional comparisons',note:'Deployment B relative to Deployment A at the selected sweep level.',ids:['out','t50','t95']},{title:'Context only',note:'No validity limit was declared for this study.',ids:['err']}];
+const CH5=[['brief','Brief'],['method','Method'],['evidence','Evidence'],['boundaries','Boundaries'],['source','Source']];
+
+class Component extends DCLogic {
+  state={w:typeof window!=='undefined'?window.innerWidth:1440,theme:'light',r:{page:'episodes',path:'episodes',q:{}},notices:[],menu:null,anat:'ttft',spy:'brief',copied:''};
+  componentDidMount(){
+    let t=null;try{t=localStorage.getItem('tbt-theme');}catch(e){}
+    if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+    this.setState({theme:t});
+    this._sync=()=>this.sync(false);
+    window.addEventListener('hashchange',this._sync);window.addEventListener('popstate',this._sync);
+    this._rs=()=>this.setState({w:window.innerWidth});window.addEventListener('resize',this._rs);
+    this._sc=()=>this.spy();window.addEventListener('scroll',this._sc,{passive:true});
+    this._kd=e=>{if(e.key==='Escape')this.onEsc();};window.addEventListener('keydown',this._kd);
+    this.sync(true);
+  }
+  componentWillUnmount(){window.removeEventListener('hashchange',this._sync);window.removeEventListener('popstate',this._sync);window.removeEventListener('resize',this._rs);window.removeEventListener('scroll',this._sc);window.removeEventListener('keydown',this._kd);}
+  componentDidUpdate(){
+    document.body.style.background=this.state.theme==='dark'?'#0e1112':'#fbfaf5';
+    const st=document.querySelector('[data-strip]');if(st){const b=st.querySelector('[aria-pressed="true"]');const v=b&&b.dataset.val;if(b&&v!==this._sv){st.scrollTo({left:b.offsetLeft-(st.clientWidth-b.offsetWidth)/2,behavior:this._sv&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'auto'});this._sv=v;}}
+    if(this._ps){const id=this._ps;this._ps=null;setTimeout(()=>this.scrollToId(id),40);}
+    if(this._pf){const s=this._pf;this._pf=null;setTimeout(()=>{const el=document.querySelector(s);if(el)el.focus({preventScroll:true});},60);}
+  }
+  parse(){const raw=(location.hash||'').replace(/^#\/?/,'');const i=raw.indexOf('?');const path=decodeURIComponent(i<0?raw:raw.slice(0,i))||'episodes';const q={};new URLSearchParams(i<0?'':raw.slice(i+1)).forEach((v,k)=>{q[k]=v;});return{path,q};}
+  sync(first){
+    const{path,q}=this.parse();const notices=[];let page='notfound',ep=null,m;
+    if(path==='episodes')page='episodes';else if(path==='methodology')page='methodology';else if(path==='field-notes')page='fieldnotes';
+    else if((m=path.match(/^episode-(\d+)$/))){ep=+m[1];page=EPS.some(e=>e.n===ep)?(ep===0?'ep0':ep===1?'ep1':'planned'):'notfound';}
+    const v={...q};
+    const fix=(k,ok,def,msg)=>{if(v[k]==null){v[k]=def;return;}if(!ok(v[k])){notices.push(msg(v[k]));v[k]=def;}};
+    const ignore=(keys,why)=>keys.forEach(k=>{if(q[k]!=null){notices.push(`“${k}” ${why}`);delete v[k];}});
+    if(page==='ep1'){
+      fix('load',x=>['12','16','24'].includes(x),'16',x=>`${x} users is not a recorded load. Showing 16 users — recorded points are never interpolated.`);
+      fix('mode',x=>['engines','loads'].includes(x),'engines',x=>`“${x}” is not a comparison mode. Showing engines at this load.`);
+      const loads=v.mode==='loads';
+      fix('base',x=>(loads?['12','16','24']:['vllm','sglang']).includes(x),loads?'12':'vllm',x=>`“${x}” is not a valid baseline here. Using ${loads?'12 users':'vLLM'}.`);
+      ignore(['wl','users'],'does not apply to Episode 01 and was ignored.');
+    }
+    if(page==='ep0'){
+      fix('wl',x=>!!wlOf(x),'2048-c24',x=>`“${x}” is not one of the six recorded workloads. Showing 2,048-token input · 24 concurrent requests.`);
+      ignore(['load','users','base','mode'],'does not apply: Episode 00 uses six categorical workloads, not a load sweep. It was ignored.');
+    }
+    if(page==='fieldnotes'){fix('users',x=>FNL.map(String).includes(x),'16',x=>`${x} users is not a recorded sweep level. Showing 16 users.`);ignore(['load','wl','mode','base'],'does not apply to this field note and was ignored.');}
+    if(['ep0','ep1','fieldnotes'].includes(page)){
+      fix('depth',x=>['brief','lab','ledger'].includes(x),'brief',x=>`“${x}” is not a depth. Showing the Brief.`);
+      fix('ch',x=>CH5.some(c=>c[0]===x),'brief',x=>`“${x}” is not a chapter. Showing the Brief.`);
+      const ids=(page==='ep1'?M1:page==='ep0'?M0.filter(x=>!x.ledgerOnly):MF).map(x=>x.id);
+      if(v.metric!=null&&!ids.includes(v.metric)){notices.push(`“${v.metric}” is not a metric in this study, so no explanation is open.`);delete v.metric;}
+      if(v.ch!=='brief'&&v.depth==='brief')v.depth='lab';
+    }
+    if(q.theme==='dark'||q.theme==='light')this.setState({theme:q.theme});
+    document.documentElement.style.fontSize=({'125':'125%','150':'150%','200':'200%'})[q.text]||'';
+    const prevCh=this.state.r&&this.state.r.path===path?this.state.r.q.ch:null;
+    const target=v.ch&&v.ch!=='brief'&&(first||v.ch!==prevCh)?'ch-'+v.ch:null;
+    this.setState({r:{page,ep,path,q:v},notices,menu:null});
+    if(target){this._ps=null;const go=()=>this.settleScroll(target,!!first);setTimeout(go,first?120:30);}
+  }
+  hashFor(path,q){const p=new URLSearchParams();Object.keys(q).forEach(k=>{if(q[k]!=null&&q[k]!=='')p.set(k,q[k]);});const s=p.toString();return '#'+path+(s?'?'+s:'');}
+  setQ(up,push){const{path,q}=this.state.r;const nq={...q,...up};Object.keys(nq).forEach(k=>{if(nq[k]==null)delete nq[k];});const h=this.hashFor(path,nq);try{if(push)history.pushState(null,'',h);else history.replaceState(null,'',h);}catch(e){location.hash=h;}this.sync(false);}
+  selH(){const el=document.querySelector('[data-screen-label="Selector"]');return el?el.offsetHeight+8:16;}
+  settleScroll(id,instant){let last=null,stable=0,tries=0;const step=()=>{tries++;const el=document.getElementById(id);if(el){const t=el.getBoundingClientRect().top+window.scrollY;if(last!==null&&Math.abs(t-last)<1)stable++;else stable=0;last=t;if(stable>=3||tries>60){const top=Math.max(0,t-this.selH());window.scrollTo(0,top);return;}}else if(tries>60)return;setTimeout(step,50);};setTimeout(step,0);}
+  scrollToId(id){const el=document.getElementById(id);if(!el)return;const top=el.getBoundingClientRect().top+window.scrollY-this.selH();window.scrollTo({top:Math.max(0,top),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
+  spy(){const ids=this.chapterDefs().map(c=>c.id);let cur=ids[0];ids.forEach(id=>{const el=document.getElementById('ch-'+id);if(el&&el.getBoundingClientRect().top<this.selH()+60)cur=id;});if(cur&&cur!==this.state.spy)this.setState({spy:cur});}
+  onEsc(){const mn=this.state.menu;if(mn){this.setState({menu:null});this._pf=mn==='lab'?'#lab-tools-btn':mn==='ep'?'#ep-menu-btn':'#site-menu-btn';return;}const met=this.state.r.q.metric;if(met){this._pf=`[data-metric="${met}"]`;this.setQ({metric:null},false);}}
+  segKey(e,opts,pick,key){const i=opts.findIndex(o=>o.sel);let j=i;const k=e.key;if(k==='ArrowRight'||k==='ArrowDown')j=Math.min(opts.length-1,i+1);else if(k==='ArrowLeft'||k==='ArrowUp')j=Math.max(0,i-1);else if(k==='Home')j=0;else if(k==='End')j=opts.length-1;else return;e.preventDefault();this._pf=`[data-seg="${key}"][data-val="${opts[j].val}"]`;if(j!==i)pick(opts[j].val);else this.forceUpdate();}
+  trackDown(e,vals,lo,span,pick){if(e.target.closest&&e.target.closest('button'))return;const el=e.currentTarget;const near=x=>{const r=el.getBoundingClientRect();const v=lo+(x-r.left)/r.width*span;return vals.reduce((a,b)=>Math.abs(b-v)<Math.abs(a-v)?b:a);};let cur=near(e.clientX);pick(cur,true);try{el.setPointerCapture(e.pointerId);}catch(_){}const mv=ev=>{const n=near(ev.clientX);if(n!==cur){cur=n;pick(n,false);}};const up=()=>{el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);};el.addEventListener('pointermove',mv);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);}
+  segs(list,cur,pick){return list.map(o=>{const sel=String(o.val)===String(cur);return{...o,sel,tab:sel?0:-1,bg:sel?'var(--ink)':'transparent',fg:sel?'var(--paper)':'var(--ink)',pick:()=>pick(o.val)};});}
+  chapterDefs(){const p=this.state.r.page;
+    if(['ep0','ep1','fieldnotes','planned'].includes(p))return CH5.map((c,i)=>({id:c[0],num:pad2(i+1),label:c[1],col:`var(--c${i+1})`}));
+    if(p==='methodology')return[['definitions','Definitions'],['states','Evidence states'],['identity','Identity'],['rules','Rules'],['protocols','Episode protocols']].map((c,i)=>({id:c[0],num:pad2(i+1),label:c[1]}));
+    if(p==='episodes')return[['recorded','Recorded'],['notes','Field notes'],['planned','Planned']].map((c,i)=>({id:c[0],num:pad2(i+1),label:c[1]}));
+    return[];}
+  goCh(id){const{page,q}=this.state.r;this.setState({menu:null});
+    if(!['ep0','ep1','fieldnotes'].includes(page)){this.scrollToId('ch-'+id);return;}
+    const up={ch:id};const opening=id!=='brief'&&q.depth==='brief';if(opening)up.depth='lab';
+    this._ps='ch-'+id;this._pf='#h-'+id;this.setQ(up,opening);}
+
+  plot(st,m,xsel,xbase,open,toggle,cmpMode,exId){
+    const xs=st.xs,n=xs.length,xi=i=>(i+.5)*W/n,si=xs.indexOf(xsel);
+    const base={id:m.id,label:m.label,open,toggle,exId,top:open?'var(--ink)':'transparent',dirTxt:m.kind==='dir'?(m.dir==='higher'?'Higher is better':'Lower is better'):m.kind==='thr'?(m.op==='>='?'Floor ':'Limit ')+(m.op==='>='?'≥ ':'≤ ')+m.thr+' '+(m.unit==='%'?'%':m.unit):m.kind==='work'?'Equal work gates comparison':m.kind==='na'?'Unavailable':'Context only',notice:m.notice};
+    const ro=this.readout(st,m,xsel,xbase,cmpMode);
+    if(m.kind==='na')return{...base,na:true,has:false,why:m.why,vals:[],sts:[]};
+    let mx=0;st.ids.forEach(d=>xs.forEach(x=>{const v=st.val(d.id,x,m);if(v!=null&&v>mx)mx=v;}));if(m.thr)mx=Math.max(mx,m.thr);mx=(mx||1)*1.15;
+    const yy=v=>PT+(AX-PT)*(1-v/mx);const off=st.lines?0:6;
+    const ps=st.ids.map((d,k)=>{let l='',mk='',pen=false;xs.forEach((x,i)=>{const v=st.val(d.id,x,m);if(v==null){pen=false;return;}const X=+(xi(i)+(k?off:-off)).toFixed(1),Y=+yy(v).toFixed(1);l+=(pen?'L':'M')+X+' '+Y+' ';pen=true;mk+=k?`M${X} ${Y-4.6}L${X+4.6} ${Y}L${X} ${Y+4.6}L${X-4.6} ${Y}Z`:`M${X-3.8} ${Y}a3.8 3.8 0 1 0 7.6 0a3.8 3.8 0 1 0 -7.6 0Z`;});return{l:st.lines?l:'',mk};});
+    const bi=xbase!=null?xs.indexOf(xbase):-1;
+    const aria=`${m.label}: `+st.ids.map(d=>d.name+' '+xs.map(x=>st.xl(x)+' '+fv(st.val(d.id,x,m),m.unit)).join(', ')).join('; ');
+    return{...base,na:false,has:true,aria,bandX:(si*W/n).toFixed(1),bandW:(W/n).toFixed(1),thrY:m.thr?yy(m.thr).toFixed(1):'-9999',baseX:bi>=0&&bi!==si?xi(bi).toFixed(1):'-9999',l0:ps[0].l||'M0 0',l1:ps[1].l||'M0 0',m0:ps[0].mk||'M0 0',m1:ps[1].mk||'M0 0',axCols:`repeat(${n},minmax(0,1fr))`,ax:xs.map(x=>({t:st.xl(x),fw:x===xsel?'700':'400',c:x===xsel?'var(--ink)':'var(--muted)'})),thrNote:m.thr?`Dashed rule: ${m.thrTxt}`:(bi>=0&&bi!==si?`Dashed rule: baseline at ${st.xl(xbase)}`:''),vals:ro.vals,sts:ro.sts};
+  }
+  readout(st,m,x,xb,mode){
+    const vals=st.ids.map(d=>({mark:d.mark,mc:d.mc,name:d.name,val:fv(st.val(d.id,x,m),m.unit)}));
+    let sts=[];
+    if(m.kind==='na')sts=[{sym:'∅',text:'Unavailable',sub:m.why,c:'var(--muted)'}];
+    else if(m.kind==='ctx')sts=[{sym:ST.ctx.sym,text:ST.ctx.word,sub:'',c:ST.ctx.c}];
+    else if(m.kind==='thr')sts=st.ids.map(d=>{const t=thr(m,st.val(d.id,x,m));return{sym:t.sym,text:t.text,sub:d.name,c:t.c};});
+    else if(m.kind==='work'){const u=st.unequal&&st.unequal(x);sts=[{sym:u?ST.unequal.sym:ST.equal.sym,text:u?'Unequal work':'Equal delivered work',sub:u?'throughput and latency not compared':'',c:u?ST.unequal.c:ST.equal.c}];}
+    else if(mode&&mode.type==='loads'){
+      if(xb===x)sts=[{sym:'∅',text:'No change computed',sub:'the baseline is the selected load',c:'var(--muted)'}];
+      else sts=st.ids.map(d=>{const c=dcmp(m,st.val(d.id,x,m),st.val(d.id,xb,m));return this.stOut(c,`${d.name}: ${st.xl(x)} vs ${st.xl(xb)}`);});
+    } else {
+      const s=mode.subj,b=mode.base;
+      if(st.unequal&&st.unequal(x))sts=[{sym:ST.unequal.sym,text:ST.unequal.word,sub:'delivered work differs',c:ST.unequal.c}];
+      else{const c=dcmp(m,st.val(s.id,x,m),st.val(b.id,x,m));sts=[this.stOut(c,`${s.name} vs ${b.name}`)];}
+    }
+    return{vals,sts};
+  }
+  stOut(c,sub){if(c.k==='na')return{sym:'∅',text:'Unavailable',sub:`${sub} — ${c.why}`,c:'var(--muted)'};const s=ST[c.k];return{sym:s.sym,text:(c.k==='band'&&c.pct===0?'Same value':pctTxt(c.pct))+' · '+s.word,sub,c:s.c};}
+  explain(st,m,x,xb,mode,domId){
+    const xs=st.xs,eqs={dir:mode&&mode.type==='loads'?`Change = (value at ${st.xl(x)} − value at ${st.xl(xb)}) ÷ value at ${st.xl(xb)}, within each identity`:`Change = (${mode.subj.name} − ${mode.base.name}) ÷ ${mode.base.name}, at ${st.xl(x)}`,thr:`Each identity is compared with the ${m.thrTxt}. No cross-identity delta.`,ctx:'No better direction is declared, so no change is coloured.',work:'Equal only when both identities delivered the same tokens per request.',na:'No comparison: the reading has no comparable public definition.'};
+    const cav={dir:'Under ±2% is a descriptive display band, not a significance test.',thr:'Threshold attainment is separate from improvement against a baseline.',ctx:m.lane.indexOf('GPU')===0?'Device readings are means over the measured window.':'Runtime-native gauges are not normalised across engines.',work:'Unequal work makes rate and latency comparisons invalid for that workload.',na:'Unavailable values are labelled and never drawn as zero.'};
+    const cells=[];st.ids.forEach(d=>{cells.push({t:d.mark+' '+d.name,al:'left',bg:'transparent',fw:'400'});xs.forEach(xx=>cells.push({t:fv(st.val(d.id,xx,m),m.unit),al:'right',bg:xx===x?'var(--panel)':'transparent',fw:xx===x?'700':'400'}));});
+    return{domId,aria:'Explanation: '+m.label,title:m.label,def:m.def,dir:m.kind==='dir'?(m.dir==='higher'?'Higher is better':'Lower is better'):m.kind==='thr'?`Threshold: ${m.thrTxt}`:m.kind==='work'?'Must be equal to compare':'None declared — context only',unit:m.unit,lane:m.lane,eq:eqs[m.kind],notice:m.notice,caveat:cav[m.kind],cols:`7rem repeat(${xs.length},minmax(4.5rem,1fr))`,minW:(7+xs.length*5)+'rem',head:xs.map(xx=>({t:st.xl(xx),fw:xx===x?'700':'400'})),cells,close:()=>{this._pf=`[data-metric="${m.id}"]`;this.setQ({metric:null},false);}};
+  }
+  groups(st,G,M,x,xb,mode,metric,cols){
+    return G.map(g=>{const ms=g.ids.map(id=>M.find(mm=>mm.id===id));const rows=[];for(let i=0;i<ms.length;i+=cols){const chunk=ms.slice(i,i+cols);const openM=chunk.find(mm=>mm.id===metric);rows.push({cols:`repeat(${cols},minmax(0,1fr))`,plots:chunk.map(mm=>this.plot(st,mm,x,xb,mm.id===metric,()=>this.setQ({metric:metric===mm.id?null:mm.id},false),mode,'ex-'+mm.id)),open:!!openM,ex:openM?this.explain(st,openM,x,xb,mode,'ex-'+openM.id):{}});}return{title:g.title,note:g.note,rows};});
+  }
+  ledger(st,M,x,xb,mode){
+    const xs=st.xs,nC=st.ids.length*xs.length;
+    const head=[{t:'Metric',fw:'600',bg:'transparent'}];st.ids.forEach(d=>xs.forEach(xx=>head.push({t:`${d.mark} ${d.name} · ${st.xl(xx)}`,fw:xx===x?'700':'400',bg:xx===x?'var(--panel)':'transparent'})));head.push({t:'Selected comparison',fw:'600',bg:'transparent'});
+    const cells=[];M.forEach(m=>{cells.push({t:`${m.label} (${m.unit})`,bg:'transparent',c:'var(--ink)',ff:'var(--text)',fw:'600'});st.ids.forEach(d=>xs.forEach(xx=>{const v=st.val(d.id,xx,m);cells.push({t:v==null?(m.kind==='na'?'∅ n/a':'∅ —'):fv(v,m.unit),bg:xx===x?'var(--panel)':'transparent',c:v==null?'var(--muted)':'var(--ink)',ff:'var(--mono)',fw:xx===x?'600':'400'});}));const ro=this.readout(st,m,x,xb,mode);cells.push({t:ro.sts.map(s=>`${s.sym} ${s.text}${s.sub?' ('+s.sub+')':''}`).join(' · '),bg:'transparent',c:ro.sts.length===1?ro.sts[0].c:'var(--ink)',ff:'var(--text)',fw:'600'});});
+    return{cols:`minmax(11rem,1.3fr) repeat(${nC},minmax(6.5rem,1fr)) minmax(15rem,1.8fr)`,minW:(26+nC*6.5)+'rem',head,cells};
+  }
+  finding(st,x,s,b,items,lead){
+    const D=[],N=[];
+    for(const it of items){const m=it.m;const c=dcmp(m,st.val(s.id,x,m),st.val(b.id,x,m));if(c.k==='na')return null;if(c.k==='band')N.push(it.name);else D.push({t:`${ST[c.k].sym} ${nf(Math.abs(c.pct),1)}% ${c.pct>0?it.up:it.down}`,c:ST[c.k].c});}
+    const segs=[];
+    if(!D.length){segs.push({t:`${lead}${s.name} and ${b.name} recorded ${N.join(' and ')} `,c:'var(--ink)'},{t:'≈ within the ±2% display band',c:ST.band.c},{t:'.',c:'var(--ink)'});return segs;}
+    segs.push({t:`${lead}${s.name} recorded `,c:'var(--ink)'});D.forEach((d,i)=>{if(i)segs.push({t:' and ',c:'var(--ink)'});segs.push(d);});segs.push({t:` than ${b.name}`,c:'var(--ink)'});
+    if(N.length){segs.push({t:`; ${N.join(' and ')} stayed `,c:'var(--ink)'},{t:'≈ within the ±2% display band',c:ST.band.c});}
+    segs.push({t:'.',c:'var(--ink)'});return segs;
+  }
+  signal(st,x,m,s,b){
+    const ro=this.readout(st,m,x,null,{type:'engines',subj:s,base:b});
+    const dirTxt=m.kind==='dir'?(m.dir==='higher'?'Higher is better':'Lower is better'):m.kind==='thr'?`Threshold: ${m.thrTxt}`:m.kind==='work'?'Equal work is required to compare':'Context only';
+    return{name:m.label,dirTxt,vals:ro.vals,sts:ro.sts};
+  }
+
+  buildEp1(){
+    const{q}=this.state.r,sim=q.sim,L=+q.load;
+    const data=JSON.parse(JSON.stringify(E1));if(sim==='partial')data.sglang[24]=null;
+    const st={ids:IDS2,xs:[12,16,24],xl:x=>x+' users',lines:true,val:(id,x,m)=>{const p=data[id][x];return p?(p[m.id]??null):null;}};
+    const stAx={...st,xl:x=>String(x)};
+    const vI=IDS2[0],sI=IDS2[1];
+    const M=id=>M1.find(m=>m.id===id);
+    const failClosed=sim==='manifest';
+    const segsF=this.finding(st,L,sI,vI,[{m:M('output_tps'),up:'more output',down:'less output',name:'output'},{m:M('ttft_p50_ms'),up:'higher median TTFT',down:'lower median TTFT',name:'median TTFT'}],`At ${L} users, `)||[{t:`At ${L} users only vLLM has a recorded point. `,c:'var(--ink)'},{t:'∅ No comparison is made.',c:'var(--muted)'}];
+    const floorMet=data.vllm[L]&&data.vllm[L].decode_p10_tps>=20;
+    const caveats=['Capacity was not established under the declared service objectives.','This is a recorded deployment comparison, not an engine-only benchmark.',floorMet?`Both deployments meet the 20 tok/s decode floor at ${L} users — a declared threshold, not a capacity claim.`:`Both deployments fall below the 20 tok/s decode floor at ${L} users.`];
+    const mode=q.mode==='loads'?{type:'loads'}:{type:'engines',subj:q.base==='sglang'?vI:sI,base:q.base==='sglang'?sI:vI};
+    const xb=q.mode==='loads'?+q.base:null;
+    const cols=this.plotCols();
+    const sel={key:'load',label:'Measured load',note:'Recorded points only — selecting never reruns, interpolates or extrapolates.',opts:this.segs([12,16,24].map(l=>({val:l,label:String(l),sub:sim==='partial'&&l===24?'users · partial':'users'})),L,v=>this.setQ({load:String(v)},true))};
+    sel.onKey=e=>this.segKey(e,sel.opts,v=>this.setQ({load:String(v)},true),'load');
+    {const P=v=>((v-10)/16*100)+'%';sel.isTrack=true;sel.note='Drag, tap or use ← →. Snaps to recorded loads only — the dashed rail between them was never measured.';sel.opts=sel.opts.map(o=>({...o,pos:P(o.val),lc:o.sel?'var(--ink)':'var(--muted)'}));sel.thumb=P(+L);sel.fillL=P(12);sel.fillW=((+L-12)/16*100)+'%';sel.drag=e=>this.trackDown(e,[12,16,24],10,16,(v,push)=>{if(String(v)!==String(L))this.setQ({load:String(v)},push);});}
+    const modeOpts=this.segs([{val:'engines',label:'Engines at this load'},{val:'loads',label:'Loads within each engine'}],q.mode,v=>this.setQ({mode:v,base:v==='loads'?(L===12?'16':'12'):'vllm',metric:q.metric},true));
+    const baseOpts=q.mode==='loads'?this.segs([12,16,24].map(l=>({val:String(l),label:String(l)})),q.base,v=>this.setQ({base:v},true)):this.segs([{val:'vllm',label:'vLLM'},{val:'sglang',label:'SGLang'}],q.base,v=>this.setQ({base:v},true));
+    const evH=q.mode==='loads'?`Loads compared with ${xb} users`:`Engines at ${L} users`;
+    const evLede=q.mode==='loads'?(xb===L?`The baseline equals the selected load, so there is no change to report. Choose another baseline, or move the measured load.`:`Each engine at ${L} users relative to itself at ${xb} users. The engines are not compared with each other in this mode.`):`${mode.subj.name} relative to ${mode.base.name}. Runtime configurations differ; capacity is not established; changes under ±2% show as ≈.`;
+    const operands=q.mode==='loads'?`Operands: each engine at ${L} users (selected) and at ${xb} users (baseline).`:`Operands: ${mode.subj.name} at ${L} users (subject) and ${mode.base.name} at ${L} users (baseline).`;
+    const valid=IDS2.map(d=>{const p=data[d.id][L];return{mark:d.mark,mc:d.mc,t:p?`${d.name} · ${nf(p.valid,0)} of ${nf(p.total,0)} measured requests valid at ${L} users`:`${d.name} · ∅ no recorded point at ${L} users`};});
+    const order=[...G1.flatMap(g=>g.ids)].map(M);
+    return{
+      label:'Episode 01 · Recorded study',kicker:'Episode 01',kind:'Recorded study',news:'What breaks first when two inference engines meet the same H200 workload?',title:'Measure what matters',deck:'What did vLLM and SGLang deliver at three matched loads on one H200?',
+      quals:this.quals(['Recorded deployment comparison','Capacity not established','Significance not estimated']),
+      hasSel:!failClosed,sel,failClosed,hasBrief:!failClosed,reloadHref:'#episode-1',
+      brief:{segs:segsF,operands:`Change = (SGLang − vLLM) ÷ vLLM at ${L} users. Under ±2% shows as ≈ — a descriptive band, not a significance test.`,signals:['output_tps','ttft_p50_ms','tpot_p50_ms','decode_p10_tps'].map(id=>this.signal(st,L,M(id),sI,vI)),caveats,facts:[{k:'Hardware',v:'1× NVIDIA H200 per recorded arm'},{k:'Engines',v:'● vLLM   ◆ SGLang'},{k:'Measured loads',v:'12 · 16 · 24 simulated users'},{k:'Window',v:'120 s warm-up · 300 s measured'}]},
+      findingText:segsF.map(s=>s.t).join(''),
+      method:{h:'One GPU, two engines, three matched loads',lede:'Two serving deployments of one matched model were recorded on identical single-GPU hardware. Each deployment met the same synthetic session population at three load levels.',schematic:true,
+        wwh:[{k:'What',v:'vLLM and SGLang deployments of one matched model, one H200 each, recorded at 12, 16 and 24 simulated users.'},{k:'Why',v:'Aggregate output and visible latency can move in different directions as load rises. One load point cannot describe the trade.'},{k:'How',v:'Realistic synthetic conversations, agentic coding and tool-call-like payloads. Aligned client, engine and GPU readings over one measured window.'}],
+        protocol:[{k:'Simulated users',v:'12 · 16 · 24'},{k:'Session slots',v:'24 · 32 · 48 — two sessions per user. Slots are not necessarily simultaneous active requests.'},{k:'Warm-up and window',v:'120 s warm-up, then a 300 s measured window per load'},{k:'Declared experience floor',v:'Decode p10 ≥ 20 tok/s, declared before measurement'},{k:'Validity limit',v:'≤ 1% of measured requests failing the validity contract'},{k:'Withheld',v:'Serving profiles, versions, launch settings and optimisation recipes are not published.'}]},
+      ev:{h:evH,lede:evLede,operands,hasCompare:true,hasSweep:false,modeOpts,modeKey:e=>this.segKey(e,modeOpts,v=>this.setQ({mode:v,base:v==='loads'?(L===12?'16':'12'):'vllm'},true),'mode'),baseLabel:q.mode==='loads'?'Baseline load':'Baseline engine',baseOpts,baseKey:e=>this.segKey(e,baseOpts,v=>this.setQ({base:v},true),'base'),groups:this.groups(stAx,G1,M1,L,xb,mode,q.metric,cols),hasTele:false,validity:valid},
+      ledger:this.ledger(stAx,order,L,xb,mode),
+      bounds:{h:'A deployment comparison, not an engine-only verdict',lede:'Read this before sharing. The public bundle holds measured outcomes, not serving recipes.',blocks:[
+        {t:'Matched',items:['One H200 per recorded arm','Same model family and precision','Same synthetic session population, users, slots, warm-up and window','Same client measurement and validity contract']},
+        {t:'Deployment-specific',items:['Serving configuration and launch settings (withheld)','Runtime-native gauge definitions','Cache accounting — not comparable, so not ranked']},
+        {t:'Observed',items:['At 12 and 16 users SGLang recorded more output and lower median TTFT than vLLM','At 24 users the output difference reversed and median TTFT fell inside the display band','Both met the decode floor at 12 users; both fell below it at 16 and 24']},
+        {t:'Not established',items:['Capacity under the declared service objectives','Statistical significance of any difference','Engine-only causation','Behaviour between the recorded loads']}]},
+      source:this.sourceRows('episode-1-public.v1.json','public-inference-evidence.v1','Aggregated from aligned client, engine and GPU measurements into a static publication bundle. Selecting a load or comparison changes the view only; it never reruns the benchmark.'),
+      hasPager:true,ids:this.idLegend(IDS2)
+    };
+  }
+  buildEp0(){
+    const{q}=this.state.r,X=q.wl,w=wlOf(X);
+    const st={ids:IDS2,xs:WL.map(x=>x.id),xl:x=>{const ww=wlOf(x);return nf(ww.inp,0)+'\nc'+ww.c;},lines:false,unequal:x=>unequalWL(wlOf(x)),val:(id,x,m)=>{const ww=wlOf(x);const a=id==='vllm'?ww.V:ww.S;return m.kind==='work'?perReq(a):a[m.i];}};
+    const vI=IDS2[0],sI=IDS2[1],M=id=>M0.find(m=>m.id===id);
+    const lead=`With ${nf(w.inp,0)}-token inputs and ${w.c} concurrent ${w.c>1?'requests':'request'}, `;
+    const ue=unequalWL(w);
+    const segsF=ue?[{t:lead+'the engines delivered ',c:'var(--ink)'},{t:'≠ unequal work',c:ST.unequal.c},{t:` — vLLM ${nf(perReq(w.V),1)} vs SGLang ${nf(perReq(w.S),1)} tokens per request — so throughput and latency are not compared.`,c:'var(--ink)'}]:this.finding(st,X,sI,vI,[{m:M('out'),up:'higher output rate',down:'lower output rate',name:'output rate'},{m:M('ttft'),up:'higher median TTFT',down:'lower median TTFT',name:'median TTFT'}],lead);
+    const cols=this.plotCols();
+    const sel={key:'wl',label:'Workload · categorical',note:'Input length and concurrency change together. These are six separate workloads, not a sweep.',opts:this.segs(WL.map(x=>({val:x.id,label:nf(x.inp,0)+'-token input',sub:`${x.c} concurrent ${x.c>1?'requests':'request'} · ${x.tier.toLowerCase()}`})),X,v=>this.setQ({wl:v},true))};
+    sel.onKey=e=>this.segKey(e,sel.opts,v=>this.setQ({wl:v},true),'wl');
+    {const ix=WL.findIndex(x=>x.id===X);sel.isStrip=true;sel.opts=sel.opts.map((o,i)=>{const x=WL[i];return{...o,tier:`${x.tier} · ${i+1} of ${WL.length}`,sub:`${x.c} concurrent ${x.c>1?'requests':'request'}`,work:unequalWL(x)?'≠ unequal work — not compared':'= equal work'};});sel.atStart=ix<=0;sel.atEnd=ix>=WL.length-1;sel.prevOp=sel.atStart?'.35':'1';sel.nextOp=sel.atEnd?'.35':'1';sel.prev=()=>{if(ix>0)this.setQ({wl:WL[ix-1].id},true);};sel.next=()=>{if(ix<WL.length-1)this.setQ({wl:WL[ix+1].id},true);};}
+    const mode={type:'engines',subj:sI,base:vI};
+    const runFor=t=>WL.filter(x=>x.tier===t).map(x=>nf(x.inp,0)+' · c'+x.c).join(', ');
+    const GP={Baseline:{V:[100,74139,704.67,63,313],S:[100,70632,696.46,59,358]},Stress:{V:[100,74139,703.22,70,372],S:[100,71178,706.04,67,544]}};
+    const gpRow=(d,a)=>({mark:d.mark,mc:d.mc,t:`${d.name}  util ${a[0]}% · mem ${nf(a[1]/1024,1)} GiB · power ${nf(a[2],0)} W · ${a[3]} °C · ${a[4]} samples`});
+    const wlCells=[['KV cache peak',nf(w.kv[0]*100,1)+'%',nf(w.kv[1]*100,1)+'%'],['Waiting requests peak',nf(w.wq[0],1),nf(w.wq[1],1)],['Prefill duration (native)',nf(w.ph[0],2)+' s','∅ Not exposed by this runtime'],['Decode duration (native)',nf(w.ph[1],2)+' s','∅ Not exposed by this runtime']].flatMap(r=>[{t:r[0],c:'var(--ink)'},{t:r[1],c:'var(--ink)'},{t:r[2],c:r[2][0]==='∅'?'var(--muted)':'var(--ink)'}]);
+    return{
+      label:'Episode 00 · Recorded study · Exploratory',kicker:'Episode 00',kind:'Recorded study · Exploratory',news:'What happens to one request as prompts grow longer and the queue gets busier?',title:'Warm-up',deck:'What did vLLM and SGLang deliver across six workloads on one H100?',
+      quals:this.quals(['Exploratory recorded study','Categorical workloads — not a sweep','No winner claimed']),
+      hasSel:true,sel,failClosed:false,hasBrief:true,
+      brief:{segs:segsF,operands:ue?'Comparison withheld for this workload: delivered output per request differs between engines.':'Change = (SGLang − vLLM) ÷ vLLM for this workload. Under ±2% shows as ≈ — a descriptive band, not a significance test.',signals:['out','ttft','tpot','work'].map(id=>this.signal(st,X,M(id),sI,vI)),caveats:['No winner is claimed across workloads, and workloads are not compared with each other.','Input length and concurrency change together, so the six workloads are categorical observations, not a sweep.','In the two 8,192-token workloads the engines delivered unequal work; their rate and latency are not compared.'],facts:[{k:'Hardware',v:'One H100 80GB per run'},{k:'Engines',v:'● vLLM   ◆ SGLang'},{k:'Model',v:'Qwen2.5-32B-Instruct · BF16'},{k:'Requests',v:'936 measured · 0 failed'}]},
+      findingText:segsF.map(s=>s.t).join(''),
+      method:{h:'Six workloads, two engines, one GPU class',lede:'A closed-loop synthetic workload with exact-token prompts, run on both engines with the same model, precision and client harness.',schematic:false,
+        wwh:[{k:'What',v:'vLLM and SGLang serving Qwen2.5-32B-Instruct in BF16, one H100 80GB per run.'},{k:'Why',v:'A first, honest look at how delivered work complicates runtime rankings before any capacity claim.'},{k:'How',v:'Six input-length and concurrency workloads in two tiers; client-side streaming measurement on every request.'}],
+        protocol:[{k:'Workloads',v:'128-token input at 1 and 16 concurrent; 2,048 at 4 and 24; 8,192 at 8 and 32'},{k:'Tiers',v:'Baseline (1, 4, 8 concurrent) and Stress (16, 24, 32 concurrent)'},{k:'Repetitions',v:'3 per baseline workload · 2 per stress workload'},{k:'Matched',v:'Hardware class, model, precision, prompt construction, sampling contract and client harness'},{k:'Telemetry scope',v:'Queue, KV and phase readings are per workload. GPU peaks are per run and span a whole tier.'},{k:'Withheld',v:'Engine versions, serving profiles, launch settings and optimisation recipes.'}]},
+      ev:{h:`${nf(w.inp,0)}-token input · ${w.c} concurrent`,lede:ue?'This workload delivered unequal work, so values are shown without better or worse. Every other workload remains selectable above.':'SGLang relative to vLLM for the selected workload only. Workloads are never compared with each other.',operands:`Operands: SGLang and vLLM, both at the ${nf(w.inp,0)}-token, ${w.c}-concurrent workload.`,hasCompare:false,hasSweep:false,groups:this.groups(st,G0,M0,X,null,mode,q.metric,cols),hasTele:true,
+        tele:{wlNote:`For the selected workload. Medians of repetition-level readings; definitions are runtime-native.`,wlCells,runs:['Baseline','Stress'].map(t=>({name:`${t} run`,wls:'Spans '+runFor(t),contains:w.tier===t?'Contains the selected workload':'Does not contain the selected workload',rows:[gpRow(vI,GP[t].V),gpRow(sI,GP[t].S)]}))},
+        validity:IDS2.map(d=>{const a=d.id==='vllm'?w.V:w.S;return{mark:d.mark,mc:d.mc,t:`${d.name} · ${a[6]} of ${a[6]} requests succeeded`};})},
+      ledger:this.ledger(st,M0,X,null,mode),
+      bounds:{h:'An exploratory study, not a ranking',lede:'Read this before sharing. The categories below come from the normalised study record.',blocks:[
+        {t:'Compatibility',items:['Both engines used the same hardware class, model family, precision, prompt construction, sampling contract and client harness within each workload.','Engine versions, serving profiles, launch settings and optimisation recipes are withheld.']},
+        {t:'Exclusions',items:['Other engines were not measured; their deployment contracts did not fit this study’s environment.','Kernel-level tracing was unavailable in the measurement environment.','Goodput is unavailable because no latency objective was declared before measurement.']},
+        {t:'Preflight',items:['Every measured arm passed hardware identity, driver, runtime, readiness and warm-up checks.','All 936 measured requests succeeded.']},
+        {t:'Not established',items:['A winner across workloads','A controlled concurrency sweep','Stable p99 tails — 60 to 128 observations per workload is a weak tail sample','SLO-qualified capacity']}]},
+      source:this.sourceRows('episode-0-public.json','study record v1','Sanitized public aggregates: client streaming results per workload, workload-level runtime telemetry and run-level device peaks. Selecting a workload changes the view only.'),
+      hasPager:true,ids:this.idLegend(IDS2)
+    };
+  }
+  buildFN(){
+    const{q}=this.state.r,U=+q.users;
+    const A=IDSF[0],B=IDSF[1];
+    const st={ids:IDSF,xs:FNL,xl:x=>String(x),lines:true,val:(id,x,m)=>FNS[id][x][m.i]};
+    const soak={ids:IDSF,xs:['soak'],xl:()=>'soak',val:(id,x,m)=>SOAK[id][m.sk]};
+    const SM=[{id:'out',sk:'out',label:'Output throughput',unit:'tok/s',kind:'dir',dir:'higher'},{id:'t50',sk:'t50',label:'Visible TTFT p50',unit:'s',kind:'dir',dir:'lower'},{id:'t95',sk:'t95',label:'Visible TTFT p95',unit:'s',kind:'dir',dir:'lower'},{id:'d10',sk:'d10',label:'Decode p10',unit:'tok/s',kind:'dir',dir:'higher'}];
+    const segsF=this.finding(soak,'soak',{...B,name:'Deployment B (H200)'},{...A,name:'Deployment A (RTX PRO 6000)'},[{m:SM[0],up:'more output',down:'less output',name:'output'},{m:SM[1],up:'higher median visible TTFT',down:'lower median visible TTFT',name:'median visible TTFT'}],'Over a 15-minute soak at 16 users, ');
+    const mode={type:'engines',subj:B,base:A};
+    const sweepOpts=this.segs(FNL.map(l=>({val:String(l),label:String(l)})),String(U),v=>this.setQ({users:v},true));
+    return{
+      label:'Field note · Recorded study',kicker:'Field note',kind:'Recorded study',news:'How many conversations can one deployment hold before the first token stalls?',title:'Session capacity',deck:'How did two vLLM deployments behave as conversational load increased?',
+      quals:this.quals(['Recorded results with unverified provenance fields','Capacity not qualified','Different GPUs — a deployment comparison']),
+      hasSel:false,failClosed:false,hasBrief:true,
+      brief:{segs:segsF,operands:'Change = (Deployment B − Deployment A) ÷ Deployment A over the fixed 900 s soak at 16 users. The sweep in Evidence does not change this headline.',signals:SM.map(m=>this.signal(soak,'soak',m,B,A)),caveats:['Capacity was not qualified: no service objective was declared.','Tools were not executed and task correctness was not scored.','Some provenance fields in this record are unverified; treat values as recorded, not audited.'],facts:[{k:'Deployments',v:'● A · RTX PRO 6000   ◆ B · H200'},{k:'Runtime',v:'vLLM on both deployments'},{k:'Soak',v:'16 users · 900 s measured'},{k:'Sweep',v:'2 – 100 users · 180 s per level'}]},
+      findingText:segsF.map(s=>s.t).join(''),
+      method:{h:'One runtime, two deployments, one session replay',lede:'A synthetic multi-turn coding and issue-fix session replay, run against two single-GPU deployments of the same runtime.',schematic:false,
+        wwh:[{k:'What',v:'Two vLLM deployments of a matched model family on different single GPUs.'},{k:'Why',v:'Throughput and waiting complicate how many users a deployment can serve.'},{k:'How',v:'A fixed 15-minute soak at 16 users, plus a separate sweep from 2 to 100 users.'}],
+        protocol:[{k:'Sessions',v:'50 sessions · 914 turns · two session slots per user'},{k:'Prompt sizes',v:'1,170 – 6,691 tokens, recorded'},{k:'Warm-up',v:'60 s before every measured window'},{k:'Sweep window',v:'180 s per level at 2, 4, 8, 16, 32, 64 and 100 users'},{k:'Soak window',v:'900 s at 16 users'},{k:'Validity',v:'No validity limit was declared; error rate is shown with every point'}]},
+      ev:{h:`Sweep at ${U} users`,lede:'Deployment B relative to Deployment A at the selected sweep level. Lines join recorded levels only; nothing between them is measured.',operands:`Operands: Deployment B and Deployment A, both at ${U} simulated users.`,hasCompare:false,hasSweep:true,sweepOpts,sweepKey:e=>this.segKey(e,sweepOpts,v=>this.setQ({users:v},true),'users'),groups:this.groups(st,GF,MF,U,null,mode,q.metric,this.plotCols()),hasTele:false,
+        validity:IDSF.map(d=>{const a=FNS[d.id][U];return{mark:d.mark,mc:d.mc,t:`${d.name} · ${a[5]} of ${a[4]} measured requests valid at ${U} users`};})},
+      ledger:this.ledger(st,MF,U,null,mode),
+      bounds:{h:'A field note, not a capacity rating',lede:'Different GPUs, the same runtime. Differences describe deployments, not engines.',blocks:[
+        {t:'Matched',items:['Same runtime and model family','Same session replay, warm-up and windows']},
+        {t:'Deployment-specific',items:['GPU model and memory','Serving configuration (withheld)']},
+        {t:'Observed',items:['Deployment B recorded more output and shorter waits through the soak','Both deployments’ median waits climb steeply beyond 16 users','Deployment B’s error rate is high at 32 and 100 users']},
+        {t:'Not established',items:['A capacity number for either deployment','Task correctness','Audited provenance for every field']}]},
+      source:this.sourceRows('session-capacity-study.json','study record v1','Recorded sweep and soak aggregates. Some provenance fields are unverified and are labelled as such.'),
+      hasPager:false,ids:this.idLegend(IDSF)
+    };
+  }
+  sourceRows(file,schema,lede){
+    const dl=this.state.r.q.sim==='download';
+    return{lede,rows:[
+      {k:'Public data file',v:dl?'∅ Unavailable in this build — the page renders from its embedded copy; nothing is fetched.':file,c:dl?'var(--muted)':'var(--ink)',hasLink:!dl,href:'data/'+file,linkText:'Download'},
+      {k:'Schema',v:schema,c:'var(--ink)',hasLink:false},
+      {k:'Public command',v:'A public command-line evidence reader is proposed, not released. No command is offered until it exists and is tested.',c:'var(--ink)',hasLink:false},
+      {k:'Definitions',v:'Metric definitions and evidence states',c:'var(--ink)',hasLink:true,href:'#methodology',linkText:'Methodology →'}]};
+  }
+  quals(a){return a.map((t,i)=>({t,bl:i?'var(--line-strong)':'transparent',ml:i?'0':'-12px'}));}
+  idLegend(ids){return ids.map((d,k)=>({name:d.name+(d.hw?' · '+d.hw:''),c:k?'var(--muted)':'var(--ink)',dash:k?'5 4':'none',glyph:k?'M17 0.4L21.6 5L17 9.6L12.4 5Z':'M13.2 5a3.8 3.8 0 1 0 7.6 0a3.8 3.8 0 1 0 -7.6 0Z'}));}
+  plotCols(){const w=this.state.w,main=w>=981?Math.min(1040,w-80-268):w-32;return main>=860?3:main>=520?2:1;}
+
+  renderVals(){
+    const{r,theme,menu,w,spy}=this.state,page=r.page,q=r.q;
+    const wide=w>=981,narrow=!wide;
+    const isStudy=['ep0','ep1','fieldnotes'].includes(page);
+    let pg={hasSel:false,sel:{opts:[]},brief:{segs:[],signals:[],caveats:[],facts:[]},method:{wwh:[],protocol:[]},ev:{groups:[],validity:[],tele:{wlCells:[],runs:[]}},ledger:{head:[],cells:[]},bounds:{blocks:[]},source:{rows:[]},quals:[],ids:[]};
+    if(page==='ep1')pg=this.buildEp1();else if(page==='ep0')pg=this.buildEp0();else if(page==='fieldnotes')pg=this.buildFN();
+    const labOpen=isStudy&&q.depth!=='brief'&&!pg.failClosed,ledgerOpen=q.depth==='ledger';
+    const chDefs=this.chapterDefs();
+    const chapters=chDefs.map(c=>{const cur=c.id===(isStudy?(labOpen?spy:'brief'):spy);return{...c,cur,col:c.col||'var(--muted)',bar:cur?(c.col||'var(--ink)'):'transparent',fw:cur?'600':'400',hint:isStudy&&!labOpen&&c.id!=='brief'?'· in lab':'',go:()=>this.goCh(c.id)};});
+    const curEp=page==='ep0'?0:page==='ep1'?1:page==='planned'?r.ep:null;
+    const epList=EPS.map(e=>{const cur=e.n===curEp;return{num:pad2(e.n),title:e.t,status:e.st==='recorded'?'Recorded':'Planned',href:'#episode-'+e.n,cur:cur?'page':'false',bar:cur?'var(--ink)':'transparent',fg:cur||e.st==='recorded'?'var(--ink)':'var(--copy)',numC:cur||e.st==='recorded'?'var(--ink)':'var(--line-strong)',fw:cur?'600':'400'};});
+    const sec=page==='methodology'?'m':page==='fieldnotes'?'f':'e';
+    const siteLinks=[['Episodes','#episodes','e'],['Methodology','#methodology','m'],['Field notes','#field-notes','f']].map(l=>({label:l[0],href:l[1],cur:l[2]===sec?'true':'false',fg:l[2]===sec?'var(--ink)':'var(--muted)',bar:l[2]===sec?'var(--ink)':'transparent'}));
+    const setTheme=t=>{try{localStorage.setItem('tbt-theme',t);}catch(e){}this.setState({theme:t});if(q.theme)this.setQ({theme:t},false);};
+    let pager=[];
+    if(curEp!=null){const p=EPS.find(e=>e.n===curEp-1),n=EPS.find(e=>e.n===curEp+1);pager=[p?{k:'← Previous · Episode '+pad2(p.n),t:p.t,href:'#episode-'+p.n,al:'left'}:{k:'← Series',t:'All episodes',href:'#episodes',al:'left'},n?{k:'Next · Episode '+pad2(n.n)+' →',t:n.t,href:'#episode-'+n.n,al:'right'}:{k:'Series →',t:'All episodes',href:'#episodes',al:'right'}];}
+    let pl={facts:[],chapters:[]};
+    if(page==='planned'){const e=EPS.find(x=>x.n===r.ep);const href=REPO+e.a;pl={label:`Episode ${pad2(e.n)} · Planned`,title:e.t,summary:e.s,evidence:'Planned — no measurements',facts:[{k:'Model',v:e.m||'Selected in planner'},{k:'Hardware',v:e.h||'Candidate GPU topology — unverified'},{k:'Engines',v:e.r||'vLLM · SGLang'},{k:'Status',v:'Not execution-ready'}],
+      chapters:[['method','Method','The planned method is defined in the roadmap stage and may change before any run.',true,'Read roadmap stage ↗'],['evidence','Evidence','No recorded evidence yet. Plots, thresholds and the ledger appear only after a recorded run is published.',false],['boundaries','Boundaries','A planned proposal — not a result, a forecast, or an authorisation to spend.',false],['source','Source','Catalog entry in the public episode list. No data file exists for this episode.',true,'Roadmap ↗']].map((c,i)=>({domId:'ch-'+c[0],hId:'h-'+c[0],num:pad2(i+2),name:c[1],text:c[2],hasLink:c[3],href,linkText:c[4]||'',mt:i===0?'24px':'0',col:'var(--c'+(i+2)+')'}))};}
+    const idx=[{domId:'ch-recorded',hId:'h-rec',title:'Recorded',note:'Published evidence you can inspect',rows:EPS.filter(e=>e.st==='recorded').map(e=>({num:pad2(e.n),status:e.n===0?'Recorded · exploratory':'Recorded · capacity not established',title:e.t,summary:e.s,href:'#episode-'+e.n,pad:'20px 0',numSize:'2.25rem',titleSize:'1.75rem',numC:'var(--ink)'}))},
+      {domId:'ch-notes',hId:'h-notes',title:'Field notes',note:'Shorter recorded studies outside the episode sequence',rows:[{num:'FN',status:'Recorded · unverified provenance fields',title:'Session capacity',summary:'How two vLLM deployments behaved as conversational load increased, with a fixed soak and a separate sweep.',href:'#field-notes',pad:'20px 0',numSize:'2.25rem',titleSize:'1.75rem',numC:'var(--ink)'}]},
+      {domId:'ch-planned',hId:'h-planned',title:'Planned',note:'Fifteen episodes with no recorded evidence yet',rows:EPS.filter(e=>e.st!=='recorded').map(e=>({num:pad2(e.n),status:'Planned · no measurements',title:e.t,summary:e.s,href:'#episode-'+e.n,pad:'12px 0',numSize:'1.25rem',titleSize:'1.125rem',numC:'var(--muted)'}))}];
+    const defs=[['Output throughput','tok/s','Higher','Client','Successful output tokens per measured second.'],['TTFT p50 / p95','ms','Lower','Client','Median / 95th-percentile time to the first visible token.'],['TPOT p50','ms/token','Lower','Client','Median time per output token after the first.'],['Decode p10','tok/s','Threshold','Client','Speed that 90% of valid requests met or exceeded; judged against a declared floor.'],['Error rate','%','Threshold','Client','Share of measured requests failing the validity contract; judged against a declared limit.'],['Delivered output per request','tok/req','Equal work','Client','Must match across arms before rate or latency can be compared.'],['Running / waiting requests','requests','None — context','Engine','Runtime-native gauges; definitions differ between engines.'],['GPU utilization, memory, power','%, GiB, W','None — context','GPU','Device samples averaged or peaked over the stated scope.'],['Goodput','tok/s','Higher','Client','Unavailable unless a latency objective was declared before measurement.']];
+    const defCells=defs.flatMap(d=>d.map((t,i)=>({t,fw:i===0?'600':'400',c:i===4?'var(--copy)':'var(--ink)'})));
+    const stateRows=[[ST.better,'Directional improvement: the change favours the metric’s declared direction by 2% or more.'],[ST.worse,'Directional regression: the change opposes the declared direction by 2% or more.'],[ST.band,'The change is under ±2%. A descriptive display band, not a significance test.'],[{sym:'≥ ≤',word:'Threshold met',c:'var(--better)'},'The value satisfies a threshold declared before measurement. Judged per identity, never between them.'],[{sym:'< >',word:'Threshold missed',c:'var(--worse)'},'The value fails a declared threshold.'],[ST.ctx,'A reading with no declared better direction. Shown, never coloured or ranked.'],[ST.unequal,'The arms delivered different work, so rate and latency are not compared.'],[ST.na,'Missing, partial or undefined — for example a zero baseline. Always with a reason; never drawn as zero.'],[ST.invalid,'A recorded point that failed a validity gate. Excluded from every comparative sentence.']].map(s=>({sym:s[0].sym,word:s[0].word,c:s[0].c,rule:s[1]}));
+    const idRows=[...this.idLegend(IDS2).map((d,i)=>({...d,rule:i?'Muted ink · diamond · dashed line':'Ink · circle · solid line'})),...this.idLegend(IDSF).map((d,i)=>({...d,rule:'Field note deployments reuse the same neutral marks'}))];
+    const rules=['Recorded points are never interpolated, extrapolated or joined across categorical workloads.','Every change names both operands and the shared condition (load or workload).','Unavailable or partial evidence is labelled with a reason and never drawn as zero.','Thresholds are declared before measurement and judged separately from improvement.','Context readings are shown without colour and without ranking.','Invalid points are excluded from every comparative sentence.','No causal, capacity, significance or certification claim is made unless the study measured it.','Public pages never carry serving profiles, versions, launch settings, endpoints, organisation names, internal tools or private payloads.'].map((t,i)=>({n:pad2(i+1),t}));
+    const protoRows=[{t:'Episode 00 · Warm-up',d:'Closed-loop, six categorical workloads, two tiers',href:'#episode-0?depth=lab&ch=method'},{t:'Episode 01 · Measure what matters',d:'Session replay at three matched loads',href:'#episode-1?depth=lab&ch=method'},{t:'Field note · Session capacity',d:'Fixed soak plus a separate sweep',href:'#field-notes?depth=lab&ch=method'}];
+    const anatMap={ttft:{name:'TTFT',l:'0%',w:'38%',txt:'time to first token: queueing, prefill and the first token together. This is the wait a user sees.'},tpot:{name:'TPOT',l:'38%',w:'62%',txt:'time per output token after the first: decode duration divided by the remaining tokens.'},decode:{name:'Decode p10',l:'38%',w:'62%',txt:'decode speed in tokens per second; p10 is the speed 90% of requests met or beat.'},e2e:{name:'End-to-end',l:'0%',w:'100%',txt:'from request sent to final token received.'}};
+    const anatOpts=this.segs([{val:'ttft',label:'TTFT'},{val:'tpot',label:'TPOT'},{val:'decode',label:'Decode p10'},{val:'e2e',label:'End-to-end'}],this.state.anat,v=>this.setState({anat:v})).map(o=>({...o,bg:o.sel?'var(--ink)':'transparent'}));
+    const epName=curEp!=null?`Episode ${pad2(curEp)} · ${EPS.find(e=>e.n===curEp).t}`:page==='fieldnotes'?'Field note · Session capacity':page==='methodology'?'Methodology':'Choose an episode';
+    const nfp=page==='notfound'?{title:r.ep!=null?`No episode ${pad2(r.ep)}`:'Page not found',text:r.ep!=null?`The catalog has episodes 00 to 16. Nothing was recorded or planned under ${r.ep}.`:`“${r.path}” is not a page in this lab.`}:{};
+    const live=isStudy&&pg.findingText?`${pg.hasSel?pg.sel.label+': '+(pg.sel.opts.find(o=>o.sel)||{}).label+' '+((pg.sel.opts.find(o=>o.sel)||{}).sub||'')+'. ':''}${pg.findingText}${this.state.copied?' '+this.state.copied:''}`:'';
+    return{
+      headQuestion:(q.head||String(this.props.headline||'').toLowerCase())==='question',headTitle:(q.head||String(this.props.headline||'').toLowerCase())!=='question',
+      grafanaUrl:this.props.grafanaUrl||'https://grafana.example.com/d/token-by-token',
+      theme,wide,narrow,wordmark:wide?'TOKEN BY TOKEN / INFERENCE LAB':'TOKEN BY TOKEN',siteLinks,live,
+      skip:()=>{const m=document.getElementById('main');m&&m.focus();},
+      themeOpts:[{val:'light',label:'Light'},{val:'dark',label:'Dark'}].map(t=>({...t,sel:t.val===theme,bg:t.val===theme?'var(--ink)':'transparent',fg:t.val===theme?'var(--paper)':'var(--ink)',pick:()=>setTheme(t.val)})),
+      flipTheme:()=>setTheme(theme==='dark'?'light':'dark'),flipText:theme==='dark'?'Light':'Dark',flipLabel:theme==='dark'?'Switch to light theme':'Switch to dark theme',
+      labMenuOpen:menu==='lab',labMenuGlyph:menu==='lab'?'▴':'▾',toggleLabMenu:()=>this.setState({menu:menu==='lab'?null:'lab'}),
+      siteMenuOpen:menu==='site',toggleSiteMenu:()=>this.setState({menu:menu==='site'?null:'site'}),
+      epMenuOpen:menu==='ep',epMenuGlyph:menu==='ep'?'▴':'▾',toggleEpMenu:()=>this.setState({menu:menu==='ep'?null:'ep'}),epMenuLabel:epName,
+      labTools:['Local results','Quick test','Experiment planner','Episode runner','Canonical launch'],
+      epList,chapters,hasChapters:chapters.length>0,
+      notices:this.state.notices.map((t,i)=>({t,dismiss:()=>this.setState(s=>({notices:s.notices.filter((_,j)=>j!==i)}))})),
+      isStudy,isPlanned:page==='planned',isIndex:page==='episodes',isMethodology:page==='methodology',isNotFound:page==='notfound',
+      pg,pl,idx,nf:nfp,pager,defCells,stateRows,idRows,rules,protoRows,anat:anatMap[this.state.anat],anatOpts,
+      labOpen,labLabel:labOpen?'Collapse lab ↑':'Open evidence lab ↓',labHint:labOpen?'Evidence lab open — Method, Evidence, Boundaries and Source follow.':'Method, Evidence, Boundaries and Source open below the Brief.',
+      toggleLab:()=>{if(labOpen){this._pf='#lab-toggle';this.setQ({depth:'brief',ch:'brief',metric:null},true);}else{this._ps='ch-method';this._pf='#h-method';this.setQ({depth:'lab',ch:'method'},true);}},
+      ledgerOpen,ledgerHint:ledgerOpen?'Hide':'Every metric, every point, exact values',
+      toggleLedger:()=>{this._pf='#ledger-toggle';this.setQ({depth:ledgerOpen?'lab':'ledger'},true);},
+      copyLink:()=>{const done=t=>this.setState({copied:t});try{navigator.clipboard.writeText(location.href).then(()=>done('Link copied — it reopens this exact view.'),()=>done('Copy failed — use the address bar; it already holds this view.'));}catch(e){done('Copy failed — use the address bar; it already holds this view.');}},
+      copyNote:this.state.copied||'The address already encodes episode, selection, comparison, depth, chapter and metric.'
+    };
+  }
+}
+</script>
+</body>
+</html>

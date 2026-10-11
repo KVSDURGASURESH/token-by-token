@@ -1,0 +1,126 @@
+{
+  "classification": "public_authored_synthetic",
+  "schema_version": "episode1.v1",
+  "tasks": [
+    {
+      "gold_json": "{\"priority\":\"low\",\"service\":\"billing\",\"ticket\":\"LAB-001\"}",
+      "note": "Synthetic learner note LAB-001: service=billing; priority=low. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-01"
+    },
+    {
+      "gold_json": "{\"priority\":\"low\",\"service\":\"identity\",\"ticket\":\"LAB-002\"}",
+      "note": "Synthetic learner note LAB-002: service=identity; priority=low. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-02"
+    },
+    {
+      "gold_json": "{\"priority\":\"low\",\"service\":\"storage\",\"ticket\":\"LAB-003\"}",
+      "note": "Synthetic learner note LAB-003: service=storage; priority=low. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-03"
+    },
+    {
+      "gold_json": "{\"priority\":\"low\",\"service\":\"network\",\"ticket\":\"LAB-004\"}",
+      "note": "Synthetic learner note LAB-004: service=network; priority=low. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-04"
+    },
+    {
+      "gold_json": "{\"priority\":\"low\",\"service\":\"compute\",\"ticket\":\"LAB-005\"}",
+      "note": "Synthetic learner note LAB-005: service=compute; priority=low. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-05"
+    },
+    {
+      "gold_json": "{\"priority\":\"low\",\"service\":\"support\",\"ticket\":\"LAB-006\"}",
+      "note": "Synthetic learner note LAB-006: service=support; priority=low. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-06"
+    },
+    {
+      "gold_json": "{\"priority\":\"normal\",\"service\":\"billing\",\"ticket\":\"LAB-007\"}",
+      "note": "Synthetic learner note LAB-007: service=billing; priority=normal. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-07"
+    },
+    {
+      "gold_json": "{\"priority\":\"normal\",\"service\":\"identity\",\"ticket\":\"LAB-008\"}",
+      "note": "Synthetic learner note LAB-008: service=identity; priority=normal. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-08"
+    },
+    {
+      "gold_json": "{\"priority\":\"normal\",\"service\":\"storage\",\"ticket\":\"LAB-009\"}",
+      "note": "Synthetic learner note LAB-009: service=storage; priority=normal. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-09"
+    },
+    {
+      "gold_json": "{\"priority\":\"normal\",\"service\":\"network\",\"ticket\":\"LAB-010\"}",
+      "note": "Synthetic learner note LAB-010: service=network; priority=normal. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-10"
+    },
+    {
+      "gold_json": "{\"priority\":\"normal\",\"service\":\"compute\",\"ticket\":\"LAB-011\"}",
+      "note": "Synthetic learner note LAB-011: service=compute; priority=normal. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-11"
+    },
+    {
+      "gold_json": "{\"priority\":\"normal\",\"service\":\"support\",\"ticket\":\"LAB-012\"}",
+      "note": "Synthetic learner note LAB-012: service=support; priority=normal. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-12"
+    },
+    {
+      "gold_json": "{\"priority\":\"high\",\"service\":\"billing\",\"ticket\":\"LAB-013\"}",
+      "note": "Synthetic learner note LAB-013: service=billing; priority=high. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-13"
+    },
+    {
+      "gold_json": "{\"priority\":\"high\",\"service\":\"identity\",\"ticket\":\"LAB-014\"}",
+      "note": "Synthetic learner note LAB-014: service=identity; priority=high. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-14"
+    },
+    {
+      "gold_json": "{\"priority\":\"high\",\"service\":\"storage\",\"ticket\":\"LAB-015\"}",
+      "note": "Synthetic learner note LAB-015: service=storage; priority=high. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-15"
+    },
+    {
+      "gold_json": "{\"priority\":\"high\",\"service\":\"network\",\"ticket\":\"LAB-016\"}",
+      "note": "Synthetic learner note LAB-016: service=network; priority=high. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-16"
+    },
+    {
+      "gold_json": "{\"priority\":\"high\",\"service\":\"compute\",\"ticket\":\"LAB-017\"}",
+      "note": "Synthetic learner note LAB-017: service=compute; priority=high. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-17"
+    },
+    {
+      "gold_json": "{\"priority\":\"high\",\"service\":\"support\",\"ticket\":\"LAB-018\"}",
+      "note": "Synthetic learner note LAB-018: service=support; priority=high. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-18"
+    },
+    {
+      "gold_json": "{\"priority\":\"urgent\",\"service\":\"billing\",\"ticket\":\"LAB-019\"}",
+      "note": "Synthetic learner note LAB-019: service=billing; priority=urgent. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-19"
+    },
+    {
+      "gold_json": "{\"priority\":\"urgent\",\"service\":\"identity\",\"ticket\":\"LAB-020\"}",
+      "note": "Synthetic learner note LAB-020: service=identity; priority=urgent. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-20"
+    },
+    {
+      "gold_json": "{\"priority\":\"urgent\",\"service\":\"storage\",\"ticket\":\"LAB-021\"}",
+      "note": "Synthetic learner note LAB-021: service=storage; priority=urgent. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-21"
+    },
+    {
+      "gold_json": "{\"priority\":\"urgent\",\"service\":\"network\",\"ticket\":\"LAB-022\"}",
+      "note": "Synthetic learner note LAB-022: service=network; priority=urgent. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-22"
+    },
+    {
+      "gold_json": "{\"priority\":\"urgent\",\"service\":\"compute\",\"ticket\":\"LAB-023\"}",
+      "note": "Synthetic learner note LAB-023: service=compute; priority=urgent. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-23"
+    },
+    {
+      "gold_json": "{\"priority\":\"urgent\",\"service\":\"support\",\"ticket\":\"LAB-024\"}",
+      "note": "Synthetic learner note LAB-024: service=support; priority=urgent. Return one JSON object with exactly the string fields ticket, service, and priority; emit no prose, markdown, or code fences.",
+      "task_id": "quality-24"
+    }
+  ]
+}
