@@ -116,8 +116,15 @@ class SystemSamplerTests(unittest.TestCase):
                 self.assertTrue(pidfile.exists())
                 child = int(pidfile.read_text())
                 self.assertGreater(child, 1)
-                with self.assertRaises(ProcessLookupError):
+                try:
                     os.kill(child, 0)
+                except ProcessLookupError:
+                    pass
+                else:
+                    # A container's PID 1 may leave a killed child as a zombie.
+                    self.assertTrue(sys.platform.startswith("linux"))
+                    fields = Path(f"/proc/{child}/stat").read_text().rsplit(")", 1)[1].split()
+                    self.assertEqual(fields[0], "Z")
             finally:
                 if child is not None:
                     try: os.kill(child, signal.SIGKILL)
