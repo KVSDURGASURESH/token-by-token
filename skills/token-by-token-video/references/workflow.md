@@ -31,3 +31,13 @@ Validate exact JSON values, then use sensible rounded labels. Keep engine names 
 The verifier checks full decode, dimensions, CFR/frame count, duration, codecs, audio loudness/peak, review markers and source/spec fingerprints. Claude runs the visual browser check. Independently inspect animated seams, scroll direction, settled-text motion, actual note unfolding, and a decoded QR from a rendered end frame. Record findings in `preview/REVIEW-NOTES.md`.
 
 Music selection is settled; publication clearance requires rights evidence. Portal availability requires an actual HTTPS check. Neither follows from a successful local render. Owner review and publication are separate from this local workflow.
+
+## End-to-end workflow handoff
+
+This skill owns the **video stage**, not benchmark execution, analysis, documentation authorship, Substack/LinkedIn drafting, or publishing. A parent workflow should invoke `$token-by-token-video` after those upstream stages provide reviewed public evidence.
+
+Required input: episode/subject identity, reviewed public dashboard JSON/documentation with source paths, factual findings and limitations, subject dashboard route/actions, current destination URLs, and a versioned scene/capture spec. Use the locked production contract for all style choices; do not duplicate or override it in the parent skill.
+
+Return the revision directory and final MP4, poster/contact sheet, share-copy draft, composition and reusable spec, input/capture/audio manifests, technical QA and visual-review notes, and explicit owner-review/publication-gate status. These artifacts feed the downstream Substack and LinkedIn draft stages; `share-copy.txt` is supporting material, not a completed platform-specific post.
+
+Stop on stale evidence, missing dependencies or failed QA. Do not mark the parent workflow complete or authorize publication merely because rendering succeeded. The current Episode 01 reference is an approved frozen snapshot; its independent QA records concurrent live-dashboard source drift. New episodes must prepare fresh inputs. Reference media are local artifacts, not bundled into the committed skill; if absent on another machine, obtain the approved files rather than invent replacement references.

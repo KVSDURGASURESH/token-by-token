@@ -1,5 +1,28 @@
 {
   "version": 2,
+  "style_lock": {
+    "version": 1,
+    "status": "owner-approved-locked",
+    "approved_on": "2026-10-11",
+    "change_policy": "Explicit owner approval and a versioned contract update required for baseline changes; episode-specific content and timing may vary within the rules.",
+    "publication_authorized": false,
+    "references": [
+      {
+        "subject": "methodology",
+        "video": "docs/publication-drafts/2026-10-10-methodology-video/revision-6/preview/methodology-preview-v6.mp4",
+        "video_sha256": "a5689eecb6badb82753166d64193d2f8eec7989c9631cbc5033615c6d9a0074f",
+        "composition": "docs/publication-drafts/2026-10-10-methodology-video/revision-6/composition/index.html",
+        "composition_sha256": "f7cfae6fc2a3119a7a911900360203fd3a79d0ac44023e79c5d2f163918c67e9"
+      },
+      {
+        "subject": "episode-01",
+        "video": "docs/publication-drafts/2026-10-11-episode-01-video/revision-1/preview/episode-01-v2.mp4",
+        "video_sha256": "284d56281a218339d90a004c603b0d56a229bd8cdae7734c15c3132b34b3c5f1",
+        "composition": "docs/publication-drafts/2026-10-11-episode-01-video/revision-1/composition/index.html",
+        "composition_sha256": "a49a63df0d69398c948ec0ba10de16b9f1581a373c747393792c1b4e4b537d08"
+      }
+    ]
+  },
   "brand": {
     "logo": "assets/token-by-token.svg",
     "logo_sha256": "80476ad52eda1072f2ccddc5f22ac7b6fd22480b259186311f876f52f512d6a4",

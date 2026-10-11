@@ -5,9 +5,11 @@ description: Create or revise Token by Token methodology and episode videos with
 
 # Token by Token video
 
-Use Claude Code Brag for creative composition. Codex prepares evidence, captures the real UI, mixes local Kokoro narration, and verifies the result. The approved methodology reference is `docs/publication-drafts/2026-10-10-methodology-video/revision-6/`.
+Use Claude Code Brag for creative composition. Codex prepares evidence, captures the real UI, mixes local Kokoro narration, and verifies the result. The owner-approved methodology and Episode 01 references are pinned by path and SHA-256 in the production contract.
 
-Read [production-contract.json](references/production-contract.json) and [editorial-direction.v5.md](references/editorial-direction.v5.md) for each new video. Read [workflow.md](references/workflow.md) for commands and the spec format.
+**Style baseline locked by the owner on 2026-10-11.** Preserve the agreed identity, signature audio, motion, real UI interactions, evidence boundaries and end-card rules. Adapt episode content and timing within those rules. Changing the baseline requires explicit owner approval and a versioned contract update; do not silently redesign it. Approval of these reference videos does not approve publication of future videos.
+
+Read [production-contract.json](references/production-contract.json) and [editorial-direction.v5.md](references/editorial-direction.v5.md) for each new video. Read [workflow.md](references/workflow.md) for commands, the spec format and the end-to-end workflow handoff boundary.
 
 ## Permanent identity and motion
 
