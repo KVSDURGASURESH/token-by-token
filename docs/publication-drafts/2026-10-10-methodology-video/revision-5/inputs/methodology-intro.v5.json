@@ -1,6 +1,6 @@
 {
   "schema": "token-by-token.video/v1",
-  "slug": "methodology-intro-v2",
+  "slug": "methodology-intro-v5",
   "type": "methodology",
   "title": "Token by Token — an introduction to the lab and its methodology",
   "duration_seconds": 54.5,
@@ -39,7 +39,7 @@
   "claims": [
     {
       "id": "c-open-lab",
-      "text": "Token by Token is an open inference lab.",
+      "text": "Token by Token is an inference lab.",
       "source": {
         "file": "dashboard/src/PublicSite.tsx",
         "excerpt": "Token by Token · an open inference lab"
@@ -247,11 +247,11 @@
       "title": "What Token by Token is",
       "start_seconds": 0,
       "duration_seconds": 5,
-      "narration": "Token by Token is an open inference lab, where every token is a measurement.",
+      "narration": "Token by Token is an inference lab, where every token is a measurement.",
       "on_screen": [
         "TOKEN BY TOKEN",
         "Inference Lab",
-        "An open inference lab",
+        "An inference lab",
         "Every token is a measurement."
       ],
       "claim_ids": [
