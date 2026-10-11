@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "brand": {
+    "logo": "assets/token-by-token.svg",
+    "logo_sha256": "80476ad52eda1072f2ccddc5f22ac7b6fd22480b259186311f876f52f512d6a4",
+    "font": "dashboard/node_modules/@fontsource-variable/oswald/files/oswald-latin-wght-normal.woff2",
+    "font_sha256": "bd73278ee0c50041b91b4c03d1229e35b501637f46b6409e7da2d3a758446ea5",
+    "descriptor": "The Inference Lab",
+    "weight": 600, "tracking_em": 0.055, "by_color": "#ff7a4d",
+    "palette": {"paper":"#0e1112","panel":"#171c1d","ink":"#eef1ec","copy":"#c3cac7","muted":"#9aa4a1","better":"#4bdcaf","worse":"#ff7a4d","neutral":"#f0ba4b","accent":"#79d8df"}
+  },
+  "audio": {
+    "music_file_name": "TOO-EZ-Instrumental-version.aac",
+    "music_sha256": "35e4ad723c26a1d904488b2d212f0b16e28b384685871fbe8b7c0419e63ab602",
+    "source_offset_seconds": 20.0, "bpm": 105,
+    "voice": "af_heart", "speed": 1.12,
+    "target_lufs": -16, "maximum_true_peak_dbtp": -1.5,
+    "minimum_mean_speech_margin_db": 16, "target_mean_speech_margin_db": 17.5, "duck_attack_ms": 175, "duck_release_ms": 575,
+    "rights": {"status":"unverified","evidence":null}
+  },
+  "delivery": {"width":1080,"height":1350,"fps":30,"video_codec":"h264","audio_codec":"aac"},
+  "end_card": {"github":"https://github.com/KVSDURGASURESH/token-by-token","portal":"https://tokenbytoken.org","portal_verified":false,"qr_minimum_pixels":260,"qr_minimum_hold_seconds":3},
+  "reference_composition": "docs/publication-drafts/2026-10-10-methodology-video/revision-6/composition/index.html"
+}

@@ -35,3 +35,13 @@ docs/publication-drafts/*-methodology-video/revision-*/composition/.hyperframes/
 docs/publication-drafts/*-methodology-video/revision-*/composition/renders/
 docs/publication-drafts/*-methodology-video/revision-*/work/
 brag-output-*/composition/assets/vendor/
+
+# Episode video media/runtime output stays local; specs and review metadata are source.
+docs/publication-drafts/*-episode-*-video/**/work/
+docs/publication-drafts/*-episode-*-video/**/composition/assets/
+docs/publication-drafts/*-episode-*-video/**/composition/.hyperframes/
+docs/publication-drafts/*-episode-*-video/**/cue-analysis/assets/
+docs/publication-drafts/*-episode-*-video/**/*.mp4
+docs/publication-drafts/*-episode-*-video/**/*.wav
+docs/publication-drafts/*-episode-*-video/**/*.jpg
+docs/publication-drafts/*-episode-*-video/**/*.png
