@@ -10,7 +10,7 @@
     "Local verification done 2026-10-11 (Hyperframes check passed, render 1080x1350 30fps 54.5s H.264/AAC, full decode clean, -16.1 LUFS-I / -2.0 dBTP). Owner review of the synced preview is still pending (see preview/REVIEW-NOTES.md)."
   ],
   "music": {
-    "source_file": "/Users/durgasuresh/Downloads/TOO-EZ-Instrumental-version.aac",
+    "source_file": "TOO-EZ-Instrumental-version.aac",
     "source_kind": "owner-provided local file",
     "source_offset": "00:20.000",
     "segment": "00:20.000-01:14.500 (54.5 s)",

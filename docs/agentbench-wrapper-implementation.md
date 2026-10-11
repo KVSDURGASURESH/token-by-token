@@ -60,7 +60,7 @@ On 2026-10-10, the following checks passed on macOS arm64:
 | Check | Command and result |
 |---|---|
 | Public client tests | `PYTHONPATH=client/src .venv/bin/python -m pytest -q client/tests` — 64 passed |
-| Private worker tests | `PYTHONPATH=. /Users/durgasuresh/Workspaces/MIRASTACKLABS/agentbench/.venv/bin/python -m pytest -p no:cacheprovider tests/test_local_worker.py tests/test_local_sanitizer.py tests/test_run_coordinator.py -q` — 21 passed |
+| Private worker tests | `cd "$AGENTBENCH_ROOT" && PYTHONPATH=. .venv/bin/python -m pytest -p no:cacheprovider tests/test_local_worker.py tests/test_local_sanitizer.py tests/test_run_coordinator.py -q` — 21 passed |
 | Public binary | `cd client && ../.venv/bin/python scripts/build_binary.py` — audit, offline self-test, and bundle verification passed; SHA-256 `80e4846cd52f481c31e02e6ce32841c2df2c376e8927b63d4830dbd9b0fa6edb` |
 | Private binary | `.venv/bin/python tools/build_local_worker.py --output-dir /private/tmp/agentbench-locked-final-dist` — archive audit passed; SHA-256 `d0fc2175cfb6bb80f133246744092b804ba5d63ca2f90b5a46dbeae95701dd68` |
 | Packaged pair | `client/dist/token-by-token episode 1 run-local --worker /private/tmp/agentbench-locked-final-dist/agentbench-worker --output /private/tmp/tbt-final-hardened-pair.tbt.json --format json` — exit 0, `synthetic_mock`, one valid request |

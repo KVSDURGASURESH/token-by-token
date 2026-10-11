@@ -8,7 +8,7 @@ This is the permanent methodology/introduction video. It is not an episode video
 
 | Item | Value |
 | --- | --- |
-| Source | Owner-supplied local file `/Users/durgasuresh/Downloads/TOO-EZ-Instrumental-version.aac` |
+| Source | Owner-supplied local file `TOO-EZ-Instrumental-version.aac` |
 | Source offset | **00:20.000** (segment 00:20.000–01:14.500, 54.5 s) |
 | Extracted segment | `cue-analysis/assets/music/too-ez-from-20s.wav` |
 | Beat map | `cue-analysis/beats/assets/music/too-ez-from-20s.wav.json` (detector 210 BPM; musical feel 105 BPM) |
@@ -57,7 +57,7 @@ Unchanged: narration, copy, claims, scene boundaries (0, 5, 12.5, 25, 34, 43, 50
 
 ## Verification (finish pass, 2026-10-11)
 
-The beat-sync pass had no shell, so this follow-up pass ran the checks. It made no edits to `composition/index.html`. All commands ran from `revision-4/`. Hyperframes was the local binary `/Users/durgasuresh/.npm/_npx/702923228c2ce1e6/node_modules/.bin/hyperframes` (shown as `$HF` below), v0.8.146. It was run without `npx` and nothing was fetched. Telemetry was already off: `hyperframes telemetry status` → `disabled`, source `HYPERFRAMES_NO_TELEMETRY`.
+The beat-sync pass had no shell, so this follow-up pass ran the checks. It made no edits to `composition/index.html`. All commands ran from `revision-4/`. Hyperframes was the preinstalled local binary exposed as `$HF`, v0.8.146. It was run without `npx` and nothing was fetched. Telemetry was already off: `hyperframes telemetry status` → `disabled`, source `HYPERFRAMES_NO_TELEMETRY`.
 
 - [x] **Hyperframes check**: `$HF check composition`
   - Result: `Check passed`.

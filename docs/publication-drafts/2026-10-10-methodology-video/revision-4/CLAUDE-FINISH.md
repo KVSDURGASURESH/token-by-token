@@ -6,7 +6,7 @@ The prior Claude pass already made the creative beat-sync edits in `composition/
 
 Finish the outstanding work:
 
-1. Use the already installed local Hyperframes binary at `/Users/durgasuresh/.npm/_npx/702923228c2ce1e6/node_modules/.bin/hyperframes`; do not use `npx` and do not fetch anything.
+1. Use the already installed local Hyperframes binary exposed as `$HF`; do not use `npx` and do not fetch anything.
 2. Run Hyperframes check on `composition/index.html`, fix any in-scope error, and render `preview/methodology-preview-too-ez-synced.mp4` at 1080x1350, 30 fps, H.264/AAC, exactly 54.5 seconds.
 3. Generate `preview/poster.jpg` and `preview/contact-sheet.jpg` from the synced render using local FFmpeg.
 4. Inspect the poster/contact sheet if the available tools support it; otherwise explicitly leave visual inspection unchecked for the parent agent.

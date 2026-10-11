@@ -70,7 +70,7 @@ The Brag review pass itself could not run shell commands. The parent agent subse
 
 ## Remaining owner and publication gates
 
-1. **Music rights (blocking).** The owner-supplied TOO EZ instrumental (`/Users/durgasuresh/Downloads/TOO-EZ-Instrumental-version.aac`, from 00:20.000) still has no recorded license or download evidence and no intended publishing channels. `inputs/music-lock.too-ez.v4.json` lists rights as unverified. Publication and master use stay blocked until a new music lock records them.
+1. **Music rights (blocking).** The owner-supplied TOO EZ instrumental (`TOO-EZ-Instrumental-version.aac`, from 00:20.000) still has no recorded license or download evidence and no intended publishing channels. `inputs/music-lock.too-ez.v4.json` lists rights as unverified. Publication and master use stay blocked until a new music lock records them.
 2. **Owner review at full speed with sound.** Confirm the beat feel, and confirm the earlier scene-3 note doesn't run ahead of the narration.
 3. **Narration-over-music margin (~17.71 dB) is still not re-measured.** It needs stems. The mix itself is unchanged.
 4. **Thumbnail decision (optional, owner's call).** Brag's delivery step bakes the poster in as frame 0, and this render doesn't do that. If the target platform uses frame 0 as the thumbnail, it will show the near-empty opening frame. Replacing frame 0 keeps the duration and audio sync, but it adds a one-frame flash and changes the verified render.

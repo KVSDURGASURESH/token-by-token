@@ -18,7 +18,7 @@ The owner has approved this redesign and the additional requirements below. Do t
 
 - Rework `composition/index.html` with deliberate visual quality. Avoid idle visualizer flicker, decorative junk, and too many simultaneously moving elements.
 - Write `brag-plan.md` briefly documenting the final scene treatments and source usage.
-- Use only the preinstalled local Hyperframes at `/Users/durgasuresh/.npm/_npx/702923228c2ce1e6/node_modules/.bin/hyperframes`. Telemetry is disabled by environment. No npx/package downloads.
+- Use only the preinstalled local Hyperframes binary exposed as `$HF`. Telemetry is disabled by environment. No npx/package downloads.
 - Run local Hyperframes check with transition and cue samples; fix all actual runtime/layout/motion errors. Structural lint warnings may remain with explanation.
 - Render `preview/methodology-preview-v5.mp4`, 1080x1350, 30fps, H.264/AAC, 54.5s.
 - Generate `preview/poster.jpg`, `preview/contact-sheet.jpg`, and closeup review frames for the configuration opening, penultimate dashboard motion, and QR end card.

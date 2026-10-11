@@ -6,7 +6,7 @@ Do not publish, upload, host, deploy, log in, or use WebFetch/WebSearch. Do not 
 
 ## Owner direction
 
-- Use the owner-supplied audio file `/Users/durgasuresh/Downloads/TOO-EZ-Instrumental-version.aac` beginning at exactly source time `00:20.000`.
+- Use the owner-supplied audio file `TOO-EZ-Instrumental-version.aac` beginning at exactly source time `00:20.000`.
 - Match the video action to the music while keeping vocals dominant.
 - This is the permanent methodology/introduction video direction, not an episode video.
 - The track's reusable publication rights have not been documented. Everything must remain a local preview and clearly blocked from publication/master use.
