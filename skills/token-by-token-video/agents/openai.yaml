@@ -1,4 +1,0 @@
-interface:
-  display_name: "Token by Token Video"
-  short_description: "Create branded episode videos with Claude Brag"
-  default_prompt: "Use $token-by-token-video to create a local episode video with the approved signature, real dashboard actions, and verified public measurements."

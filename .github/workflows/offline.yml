@@ -44,7 +44,7 @@ jobs:
             client/dist/SHA256SUMS
           if-no-files-found: error
 
-  fixture-and-dashboard:
+  fixture-and-evidence:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -72,20 +72,5 @@ jobs:
           uv sync --locked --extra test --extra live --python python3.12
       - name: Run Python evidence and privacy tests
         run: PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: dashboard/package-lock.json
-      - name: Install dashboard dependencies from lockfile
-        run: npm --prefix dashboard ci
-      - name: Type-check dashboard
-        run: npm --prefix dashboard run check
-      - name: Build dashboard
-        run: npm --prefix dashboard run build
-      - name: Scan compiled publication bundle
-        run: python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
-      - name: Install headless browser
-        run: npx --prefix dashboard playwright install --with-deps chromium
-      - name: Verify static bundle works offline
-        run: node tests/dashboard_offline_acceptance.cjs dashboard/dist
+      - name: Enforce public repository boundary
+        run: python3 scripts/check_public_repository_boundary.py

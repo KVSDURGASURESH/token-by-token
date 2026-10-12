@@ -8,24 +8,26 @@ prepare a reviewable change.
 ## Add or update an episode
 
 Start with the copyable [episode skeleton](episodes/TEMPLATE.md) and keep each
-guide self-contained under `episodes/<number>-<slug>/README.md`. Follow the
-[Inference Lab publication workflow](skills/inference-lab-publication/SKILL.md)
-for the reusable evidence, report, dashboard, and review process. State the
+guide self-contained under `episodes/<number>-<slug>/README.md`. State the
 question, configuration, procedure, measured evidence, cost, cleanup, and
 interpretation limits. Label proposed work as proposed, and never present a
-fixture replay as a new measurement.
+fixture replay as a new measurement. Dashboard and editorial production use a
+separate, access-controlled review workflow; do not add those private assets or
+deployment sources to this repository.
 
-Add or update the matching entry in `dashboard/src/data/episodes.json`, then
+Add or update the matching entry in
+`public-data/contracts/episode-catalog.v2.json`, then
 regenerate the root table of contents:
 
 ```bash
 python3 scripts/update_episode_index.py
 ```
 
-The registry is the source for the root README episode index and dashboard
-navigation; do not hand-maintain a second episode list elsewhere. Keep future
-plans in the canonical [roadmap](docs/roadmap.md) and link to it instead of
-copying its planned sequence into an episode.
+The public registry is the source for the root README episode index and the
+reviewed contract consumed by the private dashboard build; do not hand-maintain
+a second public episode list elsewhere. Keep future plans in the canonical
+[roadmap](docs/roadmap.md) and link to it instead of copying its planned
+sequence into an episode.
 
 Before opening a pull request, confirm that:
 
@@ -45,6 +47,7 @@ it makes no provider call. For the smaller fresh-user path, use the root README.
 
 ```bash
 python3 scripts/update_episode_index.py --check
+python3 scripts/check_public_repository_boundary.py
 python3 scripts/check_publication_privacy.py
 python3 scripts/check_publication_privacy.py --history
 python3 scripts/verify_bundle.py data/public
@@ -54,13 +57,10 @@ python3 scripts/verify_bundle.py "$REHEARSAL_DIR"
 python3 -m pip install uv==0.12.23
 uv sync --locked --extra test --extra live --python python3.12
 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
-npm --prefix dashboard ci
-npm --prefix dashboard run check
-npm --prefix dashboard run build
 ```
 
-Do not commit generated `dashboard/dist/`, dependency directories, or local
-rehearsal output.
+Do not commit private dashboard/editorial sources, generated client binaries,
+dependency directories, or local rehearsal output.
 
 ## Public client changes
 

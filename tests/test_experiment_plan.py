@@ -16,7 +16,7 @@ def valid_plan():
 
 
 def test_catalog_is_exact_canonical_zero_through_sixteen():
-    catalog = json.loads((ROOT / "dashboard/src/data/episodes.json").read_text())
+    catalog = json.loads((ROOT / "public-data/contracts/episode-catalog.v2.json").read_text())
     assert [episode["number"] for episode in catalog["episodes"]] == list(range(17))
     assert catalog["episodeNumbering"]["version"] == "episode-catalog.v2"
     assert catalog["episodeNumbering"]["oldToCurrent"] == {
@@ -71,7 +71,7 @@ def test_nonfinite_ranges_and_incompatible_combinations_are_rejected():
 def test_money_is_decimal_string_and_unknown_compatibility_stays_unverified():
     plan = valid_plan(); plan["cost"]["desired_budget_usd"] = 5.0
     assert validate_plan(plan)
-    registry = json.loads((ROOT / "dashboard/src/data/capabilities.v1.json").read_text())
+    registry = json.loads((ROOT / "public-data/contracts/capabilities.v1.json").read_text())
     assert all(item["verifiedOn"] is None for item in registry["capabilities"])
     assert any(item["state"] == "requires_preflight" for item in registry["capabilities"])
 

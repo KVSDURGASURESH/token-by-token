@@ -17,7 +17,9 @@ from .playground import MAX_CONCURRENCY, MAX_REPETITIONS, PlaygroundValidationEr
 from .metrics import summarize_distribution, unavailable_metric
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-REGISTRY = json.loads((ROOT / "dashboard/src/data/episode-tests.v1.json").read_text(encoding="utf-8"))
+REGISTRY = json.loads(
+    (ROOT / "public-data/contracts/episode-tests.v1.json").read_text(encoding="utf-8")
+)
 PACKS = {item["episode"]: item for item in REGISTRY["episodes"]}
 SCHEMA_VERSION = "inference-lab.episode-rehearsal.v1"
 RESULT_SCHEMA_VERSION = "inference-lab.episode-rehearsal-result.v1"

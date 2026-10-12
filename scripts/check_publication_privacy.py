@@ -20,6 +20,8 @@ from urllib.parse import urlsplit
 
 EXCLUDED_DIRS = {
     ".git",
+    ".private",
+    ".superpowers",
     ".mypy_cache",
     ".pytest_cache",
     ".ruff_cache",
@@ -104,6 +106,7 @@ APPROVED_PUBLIC_TOOL_CONTEXT_RE = re.compile(
     r"default\s+AgentBench\s+corpus|"
     r"AgentBench\s+itself|"
     r"AgentBench\s+(?:takes|converts|keeps|stores|records|samples|invokes|wraps|implements|pins|turns)\b|"
+    r"Token\s+by\s+Token\s+and\s+AgentBench\s+define\b|"
     r"How\s+AgentBench\s+turns\b|"
     r"AgentBench\s+is\s+a\s+private\s+Mirastack\s+Labs\s+benchmarking\s+harness"
     r")",

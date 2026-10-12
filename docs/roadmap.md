@@ -19,7 +19,7 @@ Pooled percentiles, per-repetition percentiles and confidence intervals are diff
 
 ## The experiment map
 
-**Numbering provenance:** this is `episode-catalog.v2`, effective 2026-10-02. Historical evidence, handoffs and result packs keep the Episode 0–16 numbers recorded under `episode-catalog.v1`; use the explicit old-to-current map in `dashboard/src/data/episodes.json` when comparing them with this roadmap. The reorder changes planning identity only and does not relabel stored results.
+**Numbering provenance:** this is `episode-catalog.v2`, effective 2026-10-02. Historical evidence, handoffs and result packs keep the Episode 0–16 numbers recorded under `episode-catalog.v1`; use the explicit old-to-current map in `public-data/contracts/episode-catalog.v2.json` when comparing them with this roadmap. The reorder changes planning identity only and does not relabel stored results.
 
 ### 1. Measurement and quality contracts
 

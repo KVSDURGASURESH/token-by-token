@@ -8,7 +8,7 @@ from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PUBLIC_BUNDLE = ROOT / "dashboard" / "src" / "data" / "episode-1-public.v1.json"
+PUBLIC_BUNDLE = ROOT / "public-data" / "evidence" / "episode-1-public.v1.json"
 SCHEMA = ROOT / "schemas" / "public-inference-evidence.v1.schema.json"
 
 EXPECTED = {

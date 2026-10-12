@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the README episode table from the dashboard's single episode registry."""
+"""Render the README episode table from the public episode registry."""
 from __future__ import annotations
 
 import argparse
@@ -64,7 +64,7 @@ def main() -> int:
     source = readme.read_text(encoding="utf-8")
     if source.count(BEGIN) != 1 or source.count(END) != 1 or source.index(BEGIN) >= source.index(END):
         raise ValueError("README must contain one ordered pair of episode-index markers.")
-    registry = args.registry or args.root / "dashboard/src/data/episodes.json"
+    registry = args.registry or args.root / "public-data/contracts/episode-catalog.v2.json"
     replacement = BEGIN + "\n" + table(registry, args.root) + "\n" + END
     updated = source[:source.index(BEGIN)] + replacement + source[source.index(END) + len(END):]
     if args.check:

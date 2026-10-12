@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-TEMPLATES = {item["id"]: item for item in json.loads((ROOT / "dashboard/src/data/experiment-templates.v1.json").read_text())["templates"]}
+TEMPLATES = {item["id"]: item for item in json.loads((ROOT / "public-data/contracts/experiment-templates.v1.json").read_text())["templates"]}
 MONEY = re.compile(r"^(0|[1-9]\d*)(\.\d{1,2})?$")
 FORBIDDEN = re.compile(r"https?://|\b(?:api[_-]?key|token|password|secret)\b|(?:^|\s)(?:bash|sh|curl|wget)\s", re.I)
 KEYS = {

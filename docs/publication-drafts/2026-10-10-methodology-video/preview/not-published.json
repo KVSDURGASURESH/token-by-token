@@ -1,7 +1,0 @@
-{
-  "schema": "token-by-token.not-published/v1",
-  "status": "not-published",
-  "published": false,
-  "reason": "Local review artifact. Publication is a separate, explicit owner action.",
-  "shared_externally": false
-}

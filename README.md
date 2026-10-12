@@ -16,8 +16,10 @@ Promising settings are then combined and retested against the baseline. Each
 episode records what its evidence supports and what remains unknown.
 
 The repository is local-first: you can inspect retained public evidence,
-rehearse the measurement workflow, and run the dashboard without renting a
-GPU. A fresh provider measurement is a separate, paid workflow that requires a
+rehearse the measurement workflow, and exercise the public harness without
+renting a GPU. The hosted study dashboard is available at
+[tokenbytoken.org](https://tokenbytoken.org). A fresh provider measurement is a
+separate, paid workflow that requires a
 fully bound plan and the owner's exact approval before any resource is created.
 
 An [unreleased public-client candidate](client/README.md) now describes every
@@ -61,8 +63,8 @@ or authorization to spend.
 
 The repository is public at
 [`KVSDURGASURESH/token-by-token`](https://github.com/KVSDURGASURESH/token-by-token).
-The commands below take you from a fresh clone to the checked-in results, a
-repeatable zero-cost rehearsal, and the local dashboard. Run them in a POSIX
+The commands below take you from a fresh clone to the checked-in results and a
+repeatable zero-cost harness rehearsal. Run them in a POSIX
 shell on macOS, Linux, or WSL.
 
 ### 1. Clone and check prerequisites
@@ -111,39 +113,15 @@ reuses sanitized aggregates to exercise the workflow, makes no provider call,
 creates no paid resource, records no new measurement, and compiles a
 deliberately nonapprovable zero-cost plan.
 
-### 3. Check, build, and start the dashboard
+### 3. Explore the dashboard and run the public client
 
-```bash
-npm --prefix dashboard ci
-npm --prefix dashboard run check
-npm --prefix dashboard run build
-npm --prefix dashboard run dev -- --host 127.0.0.1 --port 5173 --strictPort
-```
+Open the production dashboard at [tokenbytoken.org](https://tokenbytoken.org)
+to read the recorded studies and methodology. Its application and deployment
+source are maintained privately so this public repository can stay focused on
+the runnable harness, experiment contracts, verification tools, attribution,
+and sanitized evidence under `data/public/` and `public-data/`.
 
-The check command should exit with no TypeScript errors, the build should end
-with a successful Vite build, and the final command should print a local URL. Open
-[http://127.0.0.1:5173/](http://127.0.0.1:5173/) in the same machine or WSL
-environment. The public dashboard reads its bundled, allowlisted projections
-from `dashboard/src/data/site-v2/`; the production build is written to
-`dashboard/dist/`. The older `dashboard/src/data/latest.json` snapshot remains
-an input to the legacy local view, not the current public-site source. Press
-**Ctrl-C** in the terminal to stop the development server.
-
-If port 5173 is already occupied, choose another loopback port and open the
-matching URL:
-
-```bash
-npm --prefix dashboard run dev -- --host 127.0.0.1 --port 5174 --strictPort
-```
-
-Then open [http://127.0.0.1:5174/](http://127.0.0.1:5174/).
-
-If `npm ci` reports a registry or network error, confirm registry reachability
-with `npm ping`, then retry when your network, VPN, proxy, or firewall permits
-access. Do not use `sudo`, disable TLS checks, or change global npm security
-settings to work around a failed install.
-
-To try the isolated client instead, follow its
+To try the isolated client, follow its
 [source quick start](client/README.md#quick-start-from-source). The client has
 its own package boundary, tests, threat model, locked standalone build, and
 release checklist. No binary or package-registry release has been published.
@@ -170,13 +148,12 @@ is a separate exploratory result.
 Continue with [Episode 0](episodes/00-warm-up/README.md) to inspect the retained
 study and understand the experiment's limits. The Episode 0
 [local-exploration notes](episodes/00-warm-up/README.md#explore-it-locally)
-explain what the fixture and recorded evidence can establish. Once the
-dashboard is running, its [episode index](http://127.0.0.1:5173/#episodes) is
-the default home.
+explain what the fixture and recorded evidence can establish. The hosted
+[episode index](https://tokenbytoken.org/episodes/) is the default reading path.
 
 Episode 01 is the recorded H200 deployment comparison. Open
-[`#episode-1`](http://127.0.0.1:5173/#episode-1) to explore the matched 12,
-16, and 24-user evidence, or [`#methodology`](http://127.0.0.1:5173/#methodology)
+[`Episode 01`](https://tokenbytoken.org/episodes/01-measure-what-matters/) to explore the matched 12,
+16, and 24-user evidence, or [`Methodology`](https://tokenbytoken.org/methodology/)
 to see how realistic multi-turn sessions, protocol gates, and aligned client,
 engine, and GPU measurements become a public result. Both pages are static and
 work in Light or Dark mode.
@@ -212,7 +189,7 @@ The metrics import is a one-time construction step for each approved evidence
 release. Local VictoriaMetrics and Grafana are used to validate the source
 windows and produce the allowlisted aggregate document; they are not website
 dependencies. Ordinary builds and every public page use only the committed
-`dashboard/src/data/episode-1-public.v1.json`. The raw metrics export, private
+`public-data/site-v2/episode-1.json`. The raw metrics export, private
 reports, receipts, containers, and dashboards are neither published nor needed
 again unless the approved source evidence changes.
 
@@ -221,11 +198,8 @@ Rebuild and verify the committed public site with:
 ```bash
 python3 -m unittest tests.test_static_evidence_pipeline tests.test_episode1_public_evidence tests.test_publication_privacy
 python3 scripts/check_publication_privacy.py --root .
-npm --prefix dashboard ci
-npm --prefix dashboard run check
-npm --prefix dashboard run build
-python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
-node tests/dashboard_offline_acceptance.cjs dashboard/dist
+python3 scripts/check_public_repository_boundary.py
+python3 scripts/update_episode_index.py --check
 ```
 
 When—and only when—an approved private evidence release changes, regenerate the
@@ -243,50 +217,26 @@ experiment. Original repository materials are available under the
 [MIT License](LICENSE); see [OWNERSHIP.md](OWNERSHIP.md) for its scope and the
 third-party boundaries.
 
-## Public site v2 (local preview)
+## Hosted dashboard boundary
 
-The public dashboard at `dashboard/index.html` is implemented in React in
-`dashboard/src/PublicSite.tsx` with styles in `dashboard/src/public-site.css`.
-Its recorded values come from the allowlisted static JSON under
-`dashboard/src/data/site-v2/`, projected from the existing public evidence
-files. These projections intentionally omit serving profiles, launch settings,
-private endpoints, and engine versions. Update the projections when the
-source evidence changes; review the resulting browser bundle with the
-publication privacy check before release.
+The production dashboard is hosted at [tokenbytoken.org](https://tokenbytoken.org).
+Its UI, SEO build, deployment configuration, and editorial production assets
+are maintained in a private repository. This repository intentionally publishes
+the portable harness and the allowlisted static evidence under
+`public-data/site-v2/`. Those projections omit serving profiles, private
+endpoints, credentials, raw request payloads, and private deployment recipes.
 
-The approved design handoff is preserved in
-`design/reference/claude-site-v2/`. Read its README and open the `.dc.html`
-there for the visual and behavior reference. `support.js` is present only to
-run that prototype locally and is not imported into the dashboard build.
-The earlier local operator UI remains available at `dashboard/legacy.html`
-during development; it is not part of the production Vite build.
-
-```sh
-npm --prefix dashboard ci
-npm --prefix dashboard run check
-npm --prefix dashboard run build
-python3 scripts/check_publication_privacy.py --root dashboard/dist --files-only
-node tests/dashboard_offline_acceptance.cjs dashboard/dist
-```
-
-For browser checks, start `npm --prefix dashboard run dev -- --port 4173`, then
-run `node tests/dashboard_site_v2_acceptance.cjs http://127.0.0.1:4173/`.
-The public site shows a Live dashboard link only when
-`VITE_PUBLIC_GRAFANA_ENABLED=true` is explicitly set at build time. That
-link points to the public base URL `https://graph.endlesstokens.ai`; it does
-not contain a dashboard UID, credentials, or query parameters. Leave it
-disabled until the owner verifies public, read-only access.
+Changes to public evidence must pass the privacy scanner, schema and bundle
+verification, and `scripts/check_public_repository_boundary.py`. The private
+dashboard imports only an allowlisted copy pinned to a reviewed public commit.
 
 ### Privacy-first reader analytics
 
-Analytics is disabled by default. To enable the optional Umami integration,
-copy `dashboard/analytics.env.example` to the deployment environment and set the
-tracker URL, website ID and an explicit production-domain allowlist before
-building. The public bundle records aggregate page/section views, fixed scroll
-depths and named interface actions such as opening the evidence lab. It does
-not assign a distinct user ID, record free-form input, capture exact pointer
-coordinates, replay sessions or load an analytics script when the variables
-are absent.
+Reader analytics is disabled unless the private production build receives the
+approved tracker configuration and explicit production-domain allowlist. The
+event contract permits aggregate page/section views, fixed scroll depths, and
+named interface actions; it excludes free-form input, exact pointer capture,
+session replay, and distinct-user profiling.
 
 The integration asks Umami to respect the browser Do Not Track preference and
 uses its cookie-free tracker. Hosting and configuration still need an owner
@@ -295,5 +245,5 @@ set retention and access controls, and update the public privacy notice before
 production collection. See `docs/analytics.md` for the event contract and
 deployment checklist.
 
-This branch is a local UI preview. Hosted development, staging, and production
-behavior have not been verified or published from this work.
+Dashboard deployment and production verification are managed separately from
+the public harness release process.
