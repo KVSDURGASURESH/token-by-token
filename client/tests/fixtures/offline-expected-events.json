@@ -1,0 +1,12 @@
+[
+  {"kind":"plan","monotonic_ms":0,"payload":{"classification":"synthetic_mock","episode":2,"protocol":"episode-02-public-v1","seed":42,"users":4},"sequence":0},
+  {"kind":"arm_started","monotonic_ms":10,"payload":{"arm":"synthetic-a"},"sequence":1},
+  {"kind":"request","monotonic_ms":20,"payload":{"arm":"synthetic-a","input_tokens":201,"output_tokens":32,"request_id":"mock-00-0000","seed":42,"users":4},"sequence":2},
+  {"kind":"metric","monotonic_ms":30,"payload":{"arm":"synthetic-a","name":"synthetic_output_tokens_per_second","unit":"tok/s","value":29},"sequence":3},
+  {"kind":"arm_completed","monotonic_ms":40,"payload":{"arm":"synthetic-a","requests":1},"sequence":4},
+  {"kind":"arm_started","monotonic_ms":50,"payload":{"arm":"synthetic-b"},"sequence":5},
+  {"kind":"request","monotonic_ms":60,"payload":{"arm":"synthetic-b","input_tokens":287,"output_tokens":86,"request_id":"mock-01-0000","seed":42,"users":4},"sequence":6},
+  {"kind":"metric","monotonic_ms":70,"payload":{"arm":"synthetic-b","name":"synthetic_output_tokens_per_second","unit":"tok/s","value":71},"sequence":7},
+  {"kind":"arm_completed","monotonic_ms":80,"payload":{"arm":"synthetic-b","requests":1},"sequence":8},
+  {"kind":"run_completed","monotonic_ms":90,"payload":{"arms":2,"classification":"synthetic_mock","requests":2},"sequence":9}
+]

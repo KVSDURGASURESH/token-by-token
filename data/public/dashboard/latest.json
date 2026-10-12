@@ -1,0 +1,835 @@
+{
+  "cells": [
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 1572.2540075,
+        "p95": 1579.87752355,
+        "p99": 1732.6262640399996,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 3780,
+        "p50": 24.3457175,
+        "p95": 26.184207349999998,
+        "p99": 37.33997274,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 24.355701444444442,
+        "p95": 24.41303414047619,
+        "p99": 24.439359907460318,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 37.271806,
+        "p95": 43.388786049999965,
+        "p99": 198.7574600499995,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 1,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 128,
+      "input_tokens_min": 128,
+      "output_tokens_per_second": 39.29120464328852,
+      "profile": "128tok-c1",
+      "runtime": "SGLang",
+      "runtime_id": "sglang",
+      "successful_output_tokens": 3840,
+      "successful_requests": 60
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 1586.5922405000001,
+        "p95": 1591.5193195999998,
+        "p99": 1596.58738042,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 3780,
+        "p50": 24.4401975,
+        "p95": 24.912264399999998,
+        "p99": 27.83329489,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 24.421091198412697,
+        "p95": 24.44641201825397,
+        "p99": 24.456914601111112,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 47.674054,
+        "p95": 52.5022582,
+        "p99": 57.11235762,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 1,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 128,
+      "input_tokens_min": 128,
+      "output_tokens_per_second": 38.804511007334014,
+      "profile": "128tok-c1",
+      "runtime": "vLLM",
+      "runtime_id": "vllm",
+      "successful_output_tokens": 3840,
+      "successful_requests": 60
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 64,
+        "p50": 3405.1838575,
+        "p95": 4642.5979001999995,
+        "p99": 4645.76929318,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 64 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 8128,
+        "p50": 25.24793,
+        "p95": 26.928018650000002,
+        "p99": 52.14321621999994,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 64,
+        "p50": 25.508198744094486,
+        "p95": 26.30231328622047,
+        "p99": 26.42342686023622,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 64 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 64,
+        "p50": 136.8560535,
+        "p95": 1424.07350425,
+        "p99": 1428.87720575,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 64 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 16,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 128,
+      "input_tokens_min": 128,
+      "output_tokens_per_second": 483.6268767386032,
+      "profile": "128tok-c16",
+      "runtime": "SGLang",
+      "runtime_id": "sglang",
+      "successful_output_tokens": 8192,
+      "successful_requests": 64
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 64,
+        "p50": 3345.6357015,
+        "p95": 3366.4778658,
+        "p99": 3372.40514524,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 64 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 8128,
+        "p50": 25.1841425,
+        "p95": 26.4884692,
+        "p99": 32.42774732999998,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 64,
+        "p50": 25.347270681102362,
+        "p95": 25.76301556181102,
+        "p99": 25.796283929291338,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 64 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 64,
+        "p50": 107.718879,
+        "p95": 162.65832065,
+        "p99": 167.11012975,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 64 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 16,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 128,
+      "input_tokens_min": 128,
+      "output_tokens_per_second": 527.3338852717051,
+      "profile": "128tok-c16",
+      "runtime": "vLLM",
+      "runtime_id": "vllm",
+      "successful_output_tokens": 8192,
+      "successful_requests": 64
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 2454.0177515,
+        "p95": 3308.1582817,
+        "p99": 3316.5542001,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 3780,
+        "p50": 26.241593,
+        "p95": 28.668641949999998,
+        "p99": 51.1057168,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 26.287440976190474,
+        "p95": 35.76130438412698,
+        "p99": 35.79248940968254,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 783.5071195,
+        "p95": 1653.0124247,
+        "p99": 1655.90748908,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 4,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 2048,
+      "input_tokens_min": 2048,
+      "output_tokens_per_second": 95.41229929113645,
+      "profile": "2048tok-c4",
+      "runtime": "SGLang",
+      "runtime_id": "sglang",
+      "successful_output_tokens": 3840,
+      "successful_requests": 60
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 2296.854413,
+        "p95": 2334.43890715,
+        "p99": 2345.52493358,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 3780,
+        "p50": 25.266640000000002,
+        "p95": 25.9856925,
+        "p99": 30.67172963,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 25.192176793650795,
+        "p95": 33.17623243730159,
+        "p99": 33.20683089968254,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 688.9016765,
+        "p95": 744.47722025,
+        "p99": 759.63871554,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 4,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 2048,
+      "input_tokens_min": 2048,
+      "output_tokens_per_second": 104.37343526657129,
+      "profile": "2048tok-c4",
+      "runtime": "vLLM",
+      "runtime_id": "vllm",
+      "successful_output_tokens": 3840,
+      "successful_requests": 60
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 96,
+        "p50": 14390.019393999999,
+        "p95": 19514.62813275,
+        "p99": 22128.464163699988,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 96 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 12192,
+        "p50": 26.6691675,
+        "p95": 27.940384999999996,
+        "p99": 54.19132411000002,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 96,
+        "p50": 29.703728409448818,
+        "p95": 36.26355843897638,
+        "p99": 120.58036338700786,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 96 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 96,
+        "p50": 10688.1771765,
+        "p95": 15314.55107575,
+        "p99": 15444.498795799998,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 96 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 24,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 2048,
+      "input_tokens_min": 2048,
+      "output_tokens_per_second": 176.7061587443571,
+      "profile": "2048tok-c24",
+      "runtime": "SGLang",
+      "runtime_id": "sglang",
+      "successful_output_tokens": 12288,
+      "successful_requests": 96
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 96,
+        "p50": 11088.654601,
+        "p95": 11819.75322925,
+        "p99": 12438.683486650001,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 96 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 12192,
+        "p50": 27.3941405,
+        "p95": 28.943182999999994,
+        "p99": 373.29226568,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 96,
+        "p50": 35.586935562992124,
+        "p95": 42.59937489566929,
+        "p99": 43.21320543897638,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 96 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 96,
+        "p50": 6404.793013,
+        "p95": 7638.16065,
+        "p99": 7917.6112044500005,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 96 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 24,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 2048,
+      "input_tokens_min": 2048,
+      "output_tokens_per_second": 263.04823861867374,
+      "profile": "2048tok-c24",
+      "runtime": "vLLM",
+      "runtime_id": "vllm",
+      "successful_output_tokens": 12288,
+      "successful_requests": 96
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 15421.0216865,
+        "p95": 15490.5107565,
+        "p99": 15528.814444829999,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 3780,
+        "p50": 30.5288135,
+        "p95": 33.209581199999995,
+        "p99": 58.558436050000005,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 38.13425647619047,
+        "p95": 45.7222501968254,
+        "p99": 45.88905814333334,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 12579.3804535,
+        "p95": 13549.705135350001,
+        "p99": 13577.23381193,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 8,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 8192,
+      "input_tokens_min": 8192,
+      "output_tokens_per_second": 32.78706037805621,
+      "profile": "8192tok-c8",
+      "runtime": "SGLang",
+      "runtime_id": "sglang",
+      "successful_output_tokens": 3840,
+      "successful_requests": 60
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 8745.115105500001,
+        "p95": 12429.9503113,
+        "p99": 12595.05385821,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 2790,
+        "p50": 26.6779535,
+        "p95": 36.45474654999992,
+        "p99": 818.93225364,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 45.68974209523809,
+        "p95": 218.55428755,
+        "p99": 221.1347121625,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 60,
+        "p50": 6582.8143965,
+        "p95": 9130.266395899996,
+        "p99": 9906.33430975,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 60 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 8,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 8192,
+      "input_tokens_min": 8192,
+      "output_tokens_per_second": 37.81195752879297,
+      "profile": "8192tok-c8",
+      "runtime": "vLLM",
+      "runtime_id": "vllm",
+      "successful_output_tokens": 2868,
+      "successful_requests": 60
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 128,
+        "p50": 93142.4573145,
+        "p95": 93229.78918400001,
+        "p99": 93242.09296955,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 128 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 16256,
+        "p50": 30.522381,
+        "p95": 31.283986249999998,
+        "p99": 57.27736150000001,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 128,
+        "p50": 34.295463606299215,
+        "p95": 38.06334812913386,
+        "p99": 38.076680348740155,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 128 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 128,
+        "p50": 88319.762002,
+        "p95": 89338.89256894999,
+        "p99": 89355.33457274,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 128 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 32,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 8192,
+      "input_tokens_min": 8192,
+      "output_tokens_per_second": 43.665255547079354,
+      "profile": "8192tok-c32",
+      "runtime": "SGLang",
+      "runtime_id": "sglang",
+      "successful_output_tokens": 16384,
+      "successful_requests": 128
+    },
+    {
+      "client_e2e_ms": {
+        "available": true,
+        "count": 128,
+        "p50": 49844.984036,
+        "p95": 57901.67663415,
+        "p99": 59848.99758889001,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 128 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_itl_ms": {
+        "available": true,
+        "count": 12628,
+        "p50": 27.0643965,
+        "p95": 31.752382749999995,
+        "p99": 789.62135401,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_stream_events",
+        "unavailable_reason": null,
+        "warnings": []
+      },
+      "client_tpot_ms": {
+        "available": true,
+        "count": 128,
+        "p50": 39.367638897637796,
+        "p95": 93.71829484999967,
+        "p99": 215.6703759675,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_derived",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 128 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "client_ttft_ms": {
+        "available": true,
+        "count": 128,
+        "p50": 47936.116976000005,
+        "p95": 51888.51969935,
+        "p99": 53377.13822639,
+        "percentile_method": "linear_rank_n_minus_1",
+        "source": "client_raw",
+        "unavailable_reason": null,
+        "warnings": [
+          "p99 is based on 128 applicable observations; fewer than 1000 observations is a statistically weak p99 sample"
+        ]
+      },
+      "concurrency": 32,
+      "failed_requests": 0,
+      "goodput": {
+        "available": false,
+        "slo_contract": {},
+        "unavailable_reason": "nonempty latency SLO contract required for goodput"
+      },
+      "input_tokens_max": 8192,
+      "input_tokens_min": 8192,
+      "output_tokens_per_second": 57.46422798345291,
+      "profile": "8192tok-c32",
+      "runtime": "vLLM",
+      "runtime_id": "vllm",
+      "successful_output_tokens": 12786,
+      "successful_requests": 128
+    }
+  ],
+  "classification": "exploratory_noncanonical",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "model": "Qwen/Qwen2.5-32B-Instruct",
+  "model_revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+  "precision": "bfloat16",
+  "schema_version": 1,
+  "study_facts": {
+    "compatibility": [
+      "vLLM: v0.29.0; FlashAttention-3; prefix caching and chunked prefill enabled.",
+      "SGLang: v0.5.20; Triton attention and PyTorch sampling; prefix caching and chunked prefill enabled.",
+      "Both runtimes used the same physical H100 offer, model revision, dtype, prompt construction, sampling, and client harness within each run.",
+      "Baseline cells used 64 output tokens and three repetitions; stress cells used 128 output tokens and two repetitions."
+    ],
+    "exclusions": [
+      "TGI and TensorRT-LLM were not measured in these runs because their validated deployment contracts were incompatible with the pinned image.",
+      "eBPF tracing was unavailable because the container lacked CAP_BPF/CAP_PERFMON/CAP_SYS_ADMIN, tracefs, bpftrace, and bpftool.",
+      "Goodput is unavailable because no latency SLO contract was declared before measurement."
+    ],
+    "future_work": [
+      "Repeat saturation cells as independent experimental runs and predeclare a tail-precision target; report uncertainty instead of treating any fixed request count as proof that p99 is stable.",
+      "Run a controlled open-loop arrival-rate sweep to estimate SLO-qualified capacity instead of closed-loop saturation alone."
+    ],
+    "preflight": [
+      "Every measured arm passed SSH, H100 identity, NVIDIA driver, runtime import, server readiness, and warmup gates.",
+      "All 936 measured requests succeeded; every created pod was deleted and provider inventory was verified empty."
+    ]
+  }
+}

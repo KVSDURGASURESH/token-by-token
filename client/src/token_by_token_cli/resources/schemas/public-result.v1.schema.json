@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "public-result.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode", "run_id", "qualification", "cost_state", "attempted_requests", "valid_requests", "metrics"],
+  "properties": {
+    "schema_version": {"const": "public-result.v1"},
+    "episode": {"type": "integer", "minimum": 0, "maximum": 16},
+    "run_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "qualification": {"enum": ["unqualified", "partial"]},
+    "cost_state": {"const": "unavailable"},
+    "attempted_requests": {"type": "integer", "minimum": 0, "maximum": 1000000000},
+    "valid_requests": {"type": "integer", "minimum": 0, "maximum": 1000000000},
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "ttft_p50_ms": {"type": "number", "minimum": 0, "maximum": 1000000000},
+        "ttft_p95_ms": {"type": "number", "minimum": 0, "maximum": 1000000000},
+        "decode_tps_p10": {"type": "number", "minimum": 0, "maximum": 1000000000},
+        "output_tokens_per_s": {"type": "number", "minimum": 0, "maximum": 1000000000}
+      }
+    }
+  }
+}

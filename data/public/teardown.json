@@ -1,0 +1,22 @@
+{
+  "classification": "exploratory_noncanonical",
+  "created_resources": [
+    {
+      "deleted": true,
+      "direct_lookup": "not_found",
+      "inventory_absent": true,
+      "kind": "pod",
+      "resource_ref": "local-baseline-h100"
+    },
+    {
+      "deleted": true,
+      "direct_lookup": "not_found",
+      "inventory_absent": true,
+      "kind": "pod",
+      "resource_ref": "local-stress-h100"
+    }
+  ],
+  "final_balance_observed": true,
+  "provider_calls_made": true,
+  "schema_version": 1
+}

@@ -1,0 +1,46 @@
+{
+  "aggregate_sha256": "a90d6e944c8157a2dc7702fe70ca58bf01e49adc57a366bde3c17f6c18aa47e3",
+  "classification": "local_fixture_material_hashes",
+  "files": [
+    {
+      "path": "schemas/episode1-observation.schema.json",
+      "sha256": "6904126e0874068f2950fa388e2778bcebfef407f480379cb32ae329d1802025"
+    },
+    {
+      "path": "schemas/episode1-phase-ledger.schema.json",
+      "sha256": "3be40ee4da828bc0ab7800f655f1cee4de42975d5411fc6a0daf95ce037107af"
+    },
+    {
+      "path": "schemas/episode1-protocol.schema.json",
+      "sha256": "e7888885775f3efad14aa36b9ce361bd37a4cfe78803bfd0d1276566aecc512f"
+    },
+    {
+      "path": "schemas/episode1-public-aggregate.schema.json",
+      "sha256": "50bfcc8af86b31f582dcd255bff7034605123e750d9863c87890543f3e94313c"
+    },
+    {
+      "path": "scripts/build_episode1_prompts.py",
+      "sha256": "56b9970835eab05d1c4f84b6f6f0c9010ed6a406c8adbe6f868cb81ba331014c"
+    },
+    {
+      "path": "scripts/prepare_episode1_fixture.py",
+      "sha256": "dc5638d17413aa1b867a7f3fdb153d56074d655f480d94580d8f49a01d0475ed"
+    },
+    {
+      "path": "scripts/run_episode1_loopback_rehearsal.py",
+      "sha256": "910d20e014547eee14832ce31de41d872cb008672197db8dc78e70efc23cdabc"
+    },
+    {
+      "path": "src/runpod_benchmark/episode1.py",
+      "sha256": "adcb4191d38a6c66c3156728715b5d5daf637391d2152c2060d95c1900234160"
+    },
+    {
+      "path": "src/runpod_benchmark/episode1_runner.py",
+      "sha256": "becf109d0647d6c73c2356c7b12b0b661e8791af3c6f23f73a4165d811e004f1"
+    },
+    {
+      "path": "src/runpod_benchmark/streaming.py",
+      "sha256": "a7c3b586e8ab6722e3847b14f93ef0f634a05b6e8a33b3565abaea0a1205c686"
+    }
+  ]
+}

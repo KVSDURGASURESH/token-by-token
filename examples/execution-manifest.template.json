@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "planning_only": false,
+  "experiment_id": "inference-lab-qwen32b-h100-vllm",
+  "budget": {"max_usd": "5.00", "minimum_final_balance_usd": "5.00"},
+  "resource": {"gpu_count": 1, "cloud": "SECURE", "terminate_after_minutes": 120},
+  "model": {"repository": "Qwen/Qwen2.5-32B-Instruct", "revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd"},
+  "runtimes": [{"id": "vllm", "version": "0.29.0", "fallbacks": []}],
+  "workload": {"cells": [
+    {"input_tokens": 128, "output_tokens": 128, "concurrency": 1, "requests": 128, "repetitions": 3, "timeout_seconds": 180},
+    {"input_tokens": 128, "output_tokens": 128, "concurrency": 32, "requests": 128, "repetitions": 3, "timeout_seconds": 180},
+    {"input_tokens": 2048, "output_tokens": 128, "concurrency": 4, "requests": 128, "repetitions": 3, "timeout_seconds": 300},
+    {"input_tokens": 2048, "output_tokens": 128, "concurrency": 32, "requests": 128, "repetitions": 3, "timeout_seconds": 600},
+    {"input_tokens": 8192, "output_tokens": 128, "concurrency": 8, "requests": 128, "repetitions": 3, "timeout_seconds": 900},
+    {"input_tokens": 8192, "output_tokens": 128, "concurrency": 32, "requests": 128, "repetitions": 3, "timeout_seconds": 1800}
+  ]},
+  "execution": {
+    "resource": {
+      "gpu_id": "REQUIRED_CURRENT_RUNPOD_GPU_OFFER_ID",
+      "regions": ["REQUIRED_CURRENT_REGION"],
+      "datacenters": ["REQUIRED_CURRENT_DATACENTER"],
+      "container": {
+        "image": "REQUIRED_DERIVED_IMAGE_REFERENCE",
+        "image_digest": "REQUIRED_IMMUTABLE_SHA256_DIGEST",
+        "cuda_version": "REQUIRED_VERIFIED_CUDA_VERSION",
+        "driver_requirement": "REQUIRED_VERIFIED_DRIVER_REQUIREMENT"
+      },
+      "storage": {"container_disk_gb": 100, "volume_gb": 0, "network_volume_gb": 0},
+      "network": {"ports": [22], "public_ip": false, "egress_policy": "model-download-only"}
+    },
+    "model": {
+      "tokenizer_repository": "Qwen/Qwen2.5-32B-Instruct",
+      "tokenizer_revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+      "dtype": "bfloat16",
+      "context_length": 16384,
+      "chat_template": {"revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd", "sha256": "REQUIRED_CHAT_TEMPLATE_SHA256"}
+    },
+    "runtimes": [{
+      "id": "vllm", "version": "0.29.0",
+      "dependencies": [{"name": "transformers", "version": "5.17.0"}],
+      "launch_arguments": ["serve", "Qwen/Qwen2.5-32B-Instruct", "--revision", "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd", "--served-model-name", "Qwen/Qwen2.5-32B-Instruct", "--dtype", "bfloat16", "--max-model-len", "16384", "--enable-prefix-caching", "--enable-chunked-prefill", "--host", "127.0.0.1", "--port", "8000"],
+      "backend": "vllm-openai",
+      "optimizations": {"continuous_batching": true, "chunked_prefill": true, "prefix_caching": true, "speculative_decoding": "disabled", "quantization": "none", "kv_cache_dtype": "auto", "tensor_parallel": 1, "pipeline_parallel": 1},
+      "fallback_policy": {"mode": "none", "max_attempts": 1}
+    }],
+    "workload": {
+      "dataset": {"source": "inference-lab-deterministic-filler-v1", "revision": "REQUIRED_40_OR_64_HEX_REVISION", "sha256": "REQUIRED_DATASET_CONTRACT_SHA256"},
+      "prompt_cells": [
+        {"id": "input-128-concurrency-1", "prompt_sha256": "REQUIRED_PROMPT_CONTRACT_SHA256_01"},
+        {"id": "input-128-concurrency-32", "prompt_sha256": "REQUIRED_PROMPT_CONTRACT_SHA256_02"},
+        {"id": "input-2048-concurrency-4", "prompt_sha256": "REQUIRED_PROMPT_CONTRACT_SHA256_03"},
+        {"id": "input-2048-concurrency-32", "prompt_sha256": "REQUIRED_PROMPT_CONTRACT_SHA256_04"},
+        {"id": "input-8192-concurrency-8", "prompt_sha256": "REQUIRED_PROMPT_CONTRACT_SHA256_05"},
+        {"id": "input-8192-concurrency-32", "prompt_sha256": "REQUIRED_PROMPT_CONTRACT_SHA256_06"}
+      ],
+      "sampling": {"temperature": "0", "top_p": "1", "top_k": 0},
+      "seed": 20260920, "warmup_requests": 8, "repetitions": 3,
+      "timeout_seconds": 1800, "load_mode": "closed-loop"
+    },
+    "quality_gates": {"minimum_success_rate": "1", "maximum_error_rate": "0", "maximum_p99_ms": 1800000, "output_validation": "record exact delivered tokens and stop reason"},
+    "telemetry": {"cadence_seconds": 1, "collectors": ["nvidia-smi", "runtime-native-prometheus"]},
+    "teardown": {"delete_after_minutes": 120, "resources": ["pod"], "require_inventory_absent": true, "require_direct_lookup_not_found": true}
+  }
+}

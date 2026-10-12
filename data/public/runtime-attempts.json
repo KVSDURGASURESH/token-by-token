@@ -1,0 +1,55 @@
+{
+  "attempts": [
+    {
+      "action": "create",
+      "kind": "pod",
+      "resource_ref": "local-baseline-h100",
+      "status": "created"
+    },
+    {
+      "action": "delete",
+      "kind": "pod",
+      "resource_ref": "local-baseline-h100",
+      "status": "deleted"
+    },
+    {
+      "action": "inventory_check",
+      "kind": "pod",
+      "resource_ref": "local-baseline-h100",
+      "status": "absent"
+    },
+    {
+      "action": "direct_lookup",
+      "kind": "pod",
+      "resource_ref": "local-baseline-h100",
+      "status": "not_found"
+    },
+    {
+      "action": "create",
+      "kind": "pod",
+      "resource_ref": "local-stress-h100",
+      "status": "created"
+    },
+    {
+      "action": "delete",
+      "kind": "pod",
+      "resource_ref": "local-stress-h100",
+      "status": "deleted"
+    },
+    {
+      "action": "inventory_check",
+      "kind": "pod",
+      "resource_ref": "local-stress-h100",
+      "status": "absent"
+    },
+    {
+      "action": "direct_lookup",
+      "kind": "pod",
+      "resource_ref": "local-stress-h100",
+      "status": "not_found"
+    }
+  ],
+  "classification": "exploratory_noncanonical",
+  "provider_calls_made": true,
+  "schema_version": 1
+}

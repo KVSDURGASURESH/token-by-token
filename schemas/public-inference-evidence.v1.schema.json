@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:token-by-token:schemas:public-inference-evidence:v1",
+  "title": "Public static inference evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "study",
+    "methodology",
+    "metric_definitions",
+    "levels",
+    "arms",
+    "synchronized_series",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "public-inference-evidence.v1"},
+    "study": {"$ref": "#/$defs/study"},
+    "methodology": {"$ref": "#/$defs/methodology"},
+    "metric_definitions": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {"$ref": "#/$defs/metricDefinition"}
+    },
+    "levels": {
+      "type": "array",
+      "const": [12, 16, 24]
+    },
+    "arms": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/arm"}, {"properties": {"engine": {"const": "vLLM"}}}]},
+        {"allOf": [{"$ref": "#/$defs/arm"}, {"properties": {"engine": {"const": "SGLang"}}}]}
+      ],
+      "items": false
+    },
+    "synchronized_series": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/series"}
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "study": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "model_family",
+        "precision",
+        "hardware",
+        "hardware_count",
+        "evidence_state",
+        "provenance"
+      ],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "model_family": {"type": "string", "minLength": 1},
+        "precision": {"type": "string", "minLength": 1},
+        "hardware": {"type": "string", "minLength": 1},
+        "hardware_count": {"type": "integer", "minimum": 1},
+        "evidence_state": {"const": "recorded_deployment_comparison"},
+        "provenance": {
+          "const": "Aggregated from aligned client, engine, and GPU measurements; static publication bundle."
+        }
+      }
+    },
+    "methodology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "warmup_seconds",
+        "measurement_seconds",
+        "sessions_per_user",
+        "decode_threshold_tps",
+        "ttft_gated",
+        "capacity_state"
+      ],
+      "properties": {
+        "warmup_seconds": {"type": "integer", "minimum": 0},
+        "measurement_seconds": {"type": "integer", "exclusiveMinimum": 0},
+        "sessions_per_user": {"type": "integer", "minimum": 1},
+        "decode_threshold_tps": {"type": "number", "exclusiveMinimum": 0},
+        "ttft_gated": {"const": false},
+        "capacity_state": {"const": "not_established"}
+      }
+    },
+    "metricDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "unit", "direction", "explanation"],
+      "properties": {
+        "id": {
+          "enum": [
+            "output_tps",
+            "ttft_p50_ms",
+            "ttft_p95_ms",
+            "tpot_p50_ms",
+            "decode_p10_tps",
+            "error_rate_pct",
+            "running_requests_mean",
+            "waiting_requests_mean",
+            "cache_context",
+            "gpu_utilization_pct",
+            "gpu_memory_gib",
+            "gpu_power_w"
+          ]
+        },
+        "label": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "direction": {"enum": ["higher", "lower", "contextual"]},
+        "explanation": {"type": "string", "minLength": 1}
+      }
+    },
+    "reading": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "value", "unit", "reason", "evidence_state"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "value": {"type": ["number", "null"], "minimum": 0},
+        "unit": {"type": "string", "minLength": 1},
+        "reason": {"type": ["string", "null"], "minLength": 1},
+        "evidence_state": {
+          "enum": [
+            "measured",
+            "threshold_met",
+            "threshold_missed",
+            "invalid_level",
+            "unavailable",
+            "not_established"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"available": {"const": true}}, "required": ["available"]},
+          "then": {
+            "properties": {
+              "value": {"type": "number", "minimum": 0},
+              "reason": {"type": "null"}
+            }
+          },
+          "else": {
+            "properties": {
+              "value": {"type": "null"},
+              "reason": {"type": "string", "minLength": 1},
+              "evidence_state": {"const": "unavailable"}
+            }
+          }
+        }
+      ]
+    },
+    "readings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "output_tps",
+        "ttft_p50_ms",
+        "ttft_p95_ms",
+        "tpot_p50_ms",
+        "decode_p10_tps",
+        "error_rate_pct",
+        "running_requests_mean",
+        "waiting_requests_mean",
+        "cache_context",
+        "gpu_utilization_pct",
+        "gpu_memory_gib",
+        "gpu_power_w"
+      ],
+      "properties": {
+        "output_tps": {"$ref": "#/$defs/reading"},
+        "ttft_p50_ms": {"$ref": "#/$defs/reading"},
+        "ttft_p95_ms": {"$ref": "#/$defs/reading"},
+        "tpot_p50_ms": {"$ref": "#/$defs/reading"},
+        "decode_p10_tps": {"$ref": "#/$defs/reading"},
+        "error_rate_pct": {"$ref": "#/$defs/reading"},
+        "running_requests_mean": {"$ref": "#/$defs/reading"},
+        "waiting_requests_mean": {"$ref": "#/$defs/reading"},
+        "cache_context": {"$ref": "#/$defs/reading"},
+        "gpu_utilization_pct": {"$ref": "#/$defs/reading"},
+        "gpu_memory_gib": {"$ref": "#/$defs/reading"},
+        "gpu_power_w": {"$ref": "#/$defs/reading"}
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "users",
+        "active_sessions",
+        "total_requests",
+        "valid_requests",
+        "level_valid",
+        "readings"
+      ],
+      "properties": {
+        "users": {"enum": [12, 16, 24]},
+        "active_sessions": {"type": "integer", "minimum": 0},
+        "total_requests": {"type": "integer", "minimum": 0},
+        "valid_requests": {"type": "integer", "minimum": 0},
+        "level_valid": {"type": "boolean"},
+        "readings": {"$ref": "#/$defs/readings"}
+      }
+    },
+    "arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engine", "marker", "line_style", "points"],
+      "properties": {
+        "engine": {"enum": ["vLLM", "SGLang"]},
+        "marker": {"enum": ["circle", "diamond", "square"]},
+        "line_style": {"enum": ["solid", "dashed", "dotted"]},
+        "points": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/point"}
+        }
+      }
+    },
+    "sample": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "integer", "minimum": 0},
+        {"type": "number"}
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "series": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lane", "metric", "engine", "users", "unit", "samples"],
+      "properties": {
+        "lane": {"enum": ["client", "engine", "gpu"]},
+        "metric": {"type": "string", "minLength": 1},
+        "engine": {"enum": ["vLLM", "SGLang"]},
+        "users": {"enum": [12, 16, 24]},
+        "unit": {"type": "string", "minLength": 1},
+        "samples": {"type": "array", "items": {"$ref": "#/$defs/sample"}}
+      }
+    }
+  }
+}

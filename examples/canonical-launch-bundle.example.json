@@ -1,0 +1,15 @@
+{
+  "schema_version": "inference-lab.canonical-launch.v1",
+  "episode": 1,
+  "inputs": {
+    "build_manifest": ".private/episode1/build-manifest.json",
+    "prompt_evidence": ".private/episode1/prompt-evidence.json",
+    "build_attestation": ".private/episode1/build-attestation.json",
+    "material": ".private/episode1/material.json",
+    "plan": ".private/episode1/plan.json",
+    "authorization_receipt": ".private/episode1/authorization-receipt.json",
+    "authorization_source": ".private/episode1/authorization-source.json",
+    "unique_name": "episode1-candidate-01-run-01",
+    "private_evidence_directory": ".private/episode1/evidence/run-01"
+  }
+}

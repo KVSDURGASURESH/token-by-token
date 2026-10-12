@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "status": "recommended_new_run_not_historical_provenance",
+  "hardware": {
+    "gpu_count": 1,
+    "gpu_class": "NVIDIA H100 80GB",
+    "selection_rule": "bind one current concrete Runpod offer to one runtime plan and allocation; separate runtime allocations are independent, not paired"
+  },
+  "model": {
+    "repository": "Qwen/Qwen2.5-32B-Instruct",
+    "revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+    "dtype": "bfloat16",
+    "max_model_len": 16384
+  },
+  "client": {
+    "python": "3.12",
+    "transformers": "5.17.0"
+  },
+  "runtimes": [
+    {
+      "id": "vllm",
+      "version": "0.29.0",
+      "recommended_image_tag": "vllm/vllm-openai:v0.29.0",
+      "image_digest": null,
+      "prefix_cache": true,
+      "chunked_prefill": true,
+      "metrics_url": "http://127.0.0.1:8000/metrics"
+    },
+    {
+      "id": "sglang",
+      "version": "0.5.20",
+      "recommended_image_tag": "lmsysorg/sglang:v0.5.20",
+      "image_digest": null,
+      "prefix_cache": true,
+      "chunked_prefill": true,
+      "metrics_url": "http://127.0.0.1:8000/metrics"
+    }
+  ],
+  "workload": {
+    "matrix": "128:1,128:32,2048:4,2048:32,8192:8,8192:32",
+    "requests_per_cell": 128,
+    "repetitions": 3,
+    "max_output_tokens": 128,
+    "temperature": 0,
+    "top_p": 1,
+    "top_k": 0,
+    "seed": 20260920,
+    "mode": "closed_loop"
+  }
+}

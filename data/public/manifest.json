@@ -1,0 +1,13 @@
+{
+  "classification": "exploratory_noncanonical",
+  "experiment_id": "2026-09-20-qwen32b-vllm-sglang-h100",
+  "hardware": "NVIDIA H100 80GB HBM3",
+  "model": "Qwen/Qwen2.5-32B-Instruct",
+  "model_revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+  "precision": "bfloat16",
+  "runs": [
+    "baseline",
+    "high-concurrency stress"
+  ],
+  "schema_version": 1
+}

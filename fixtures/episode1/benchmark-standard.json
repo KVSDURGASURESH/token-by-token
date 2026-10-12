@@ -1,0 +1,85 @@
+{
+  "adapter": {
+    "path": "src/runpod_benchmark/benchmark_standard.py",
+    "sha256": "424b3db8a8c163380ce603f480c0bdfcf1f61bb4313cb1f28b35f8e9ed9e1d92",
+    "size_bytes": 9039
+  },
+  "quality": {
+    "harness": {
+      "commit": "ddd67220430a2470529f25fd5c05a576ca1057a0",
+      "release": "v0.4.13",
+      "tag_object": "eb4678c395c2c1f157d462b8f3a09831160c861a",
+      "url": "https://github.com/EleutherAI/lm-evaluation-harness"
+    },
+    "protocol": {
+      "batch_size": 1,
+      "do_sample": false,
+      "filter": "strict-match",
+      "num_concurrent": 4,
+      "num_fewshot": 5,
+      "sample_count": 1319,
+      "seed": 20260923,
+      "task": "gsm8k",
+      "task_version": "3.0",
+      "temperature": 0
+    },
+    "task_config": {
+      "path_at_revision": "lm_eval/tasks/gsm8k/gsm8k.yaml",
+      "sha256": "82eb1780b263bc040729032b3e076990c7933f42163c91e359f38820dd1d8833",
+      "size_bytes": 1014
+    },
+    "test_dataset": {
+      "path_at_revision": "grade_school_math/data/test.jsonl",
+      "sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14",
+      "size_bytes": 749738
+    },
+    "train_dataset": {
+      "path_at_revision": "grade_school_math/data/train.jsonl",
+      "sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+      "size_bytes": 4166206
+    },
+    "upstream_dataset": {
+      "commit": "3101c7d5072418e28b9008a6636bde82a006892c",
+      "url": "https://github.com/openai/grade-school-math"
+    }
+  },
+  "schema_version": "episode1.benchmark-standard.v1",
+  "serving": {
+    "dataset": {
+      "filename": "ShareGPT_V3_unfiltered_cleaned_split.json",
+      "revision": "192ab2185289094fc556ec8ce5ce1e8e587154ca",
+      "sha256": "35f0e213ce091ed9b9af2a1f0755e9d39f9ccec34ab281cd4ca60d70f6479ba4",
+      "size_bytes": 672837942,
+      "url": "https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered"
+    },
+    "harness": {
+      "commit": "94602c9c2b7cbdb8efd5c52802dac6a1c180089e",
+      "release": "v0.5.20",
+      "source_files": {
+        "python/sglang/benchmark/bench_serving.py": "e2ed21f918212615d7aea997b858f8e7655c23923b968fa57a6b56559607bec7",
+        "python/sglang/benchmark/datasets/sharegpt.py": "1803646354f3a54f9ae87db0ad6235e7689038ff00303601aa84657075d929f4",
+        "python/sglang/benchmark/serving.py": "26a4458f64210916716606c50c9d75578c486bcc36ce4f6c89e109fde00e79c3"
+      },
+      "tag_object": "d158602ff1d2cb953196c95158c488d503d2470c",
+      "url": "https://github.com/sgl-project/sglang"
+    },
+    "protocol": {
+      "apply_chat_template": true,
+      "arrival_policy": "infinite",
+      "concurrency_levels": [1, 4],
+      "context_length": 4096,
+      "expected_selection_sha256": "0e1517d6b7ff22a5930e6110415938acf89418097809069eab49bcd7db7ed823",
+      "ignore_eos": true,
+      "output_tokens": 128,
+      "request_count": 32,
+      "seed": 20260923,
+      "temperature": 0,
+      "top_p": 1,
+      "warmup_requests": 4
+    },
+    "runtime_backends": {
+      "sglang-0.5.20": "sglang-oai",
+      "vllm-0.29.0": "vllm"
+    }
+  }
+}

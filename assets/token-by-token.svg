@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">Token by Token</title>
+  <desc id="desc">Three outlined tokens advance along a line; the last token is filled in teal.</desc>
+  <rect x="1" y="1" width="94" height="94" rx="18" fill="#f4f1e8" stroke="#203d3b" stroke-width="2"/>
+  <path d="M17 49h62" fill="none" stroke="#203d3b" stroke-width="2"/>
+  <rect x="15" y="39" width="18" height="20" rx="3" fill="#f4f1e8" stroke="#203d3b" stroke-width="2"/>
+  <rect x="39" y="31" width="18" height="28" rx="3" fill="#f4f1e8" stroke="#203d3b" stroke-width="2"/>
+  <rect x="63" y="23" width="18" height="36" rx="3" fill="#006d6b"/>
+  <path d="M16 72h16m8 0h16m8 0h16" fill="none" stroke="#203d3b" stroke-width="2"/>
+</svg>

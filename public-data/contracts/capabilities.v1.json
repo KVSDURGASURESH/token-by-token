@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "states": ["intrinsic","documented_candidate","requires_preflight","unsupported"],
+  "capabilities": [
+    {"feature":"prefix_caching","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Exact-token prefixes, eligibility and cold/warm policy must be declared.","source":"Runtime documentation; selected image not verified","verifiedOn":null},
+    {"feature":"chunked_prefill","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Token budget is engine/version specific and distinct from continuous batching.","source":"Runtime documentation; selected image not verified","verifiedOn":null},
+    {"feature":"attention_backend","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Use auto or a named backend and verify actual dispatch.","source":"Runtime documentation; selected image not verified","verifiedOn":null},
+    {"feature":"weight_quantization","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Checkpoint artifact and requested serving precision are separate identities.","source":"Runtime documentation; selected image not verified","verifiedOn":null},
+    {"feature":"kv_quantization","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Independent of weight precision; hardware and version support vary.","source":"Runtime documentation; selected image not verified","verifiedOn":null},
+    {"feature":"speculative_decoding","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Proposal method and draft compatibility required; no performance gain is guaranteed.","source":"Runtime documentation; selected image not verified","verifiedOn":null},
+    {"feature":"structured_output","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Schema validity and semantic correctness need separate gates.","source":"Runtime documentation; selected image not verified","verifiedOn":null},
+    {"feature":"continuous_batching","engines":["vllm","sglang"],"state":"intrinsic","constraint":"Informational capability; no assumed off switch.","source":"Runtime architecture","verifiedOn":null},
+    {"feature":"paged_kv","engines":["vllm","sglang"],"state":"intrinsic","constraint":"Informational capability unless a selected version exposes a verified control.","source":"Runtime architecture","verifiedOn":null},
+    {"feature":"parallelism","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Topology plan only; executable layouts are deferred.","source":"Runtime documentation; selected topology not verified","verifiedOn":null},
+    {"feature":"replicas","engines":["vllm","sglang"],"state":"requires_preflight","constraint":"Replica count is topology planning, not an engine optimization switch.","source":"Platform/runtime documentation","verifiedOn":null},
+    {"feature":"smaller_model","engines":["vllm","sglang"],"state":"documented_candidate","constraint":"Model change; requires a new quality contract.","source":"Experiment design","verifiedOn":null},
+    {"feature":"distillation","engines":[],"state":"documented_candidate","constraint":"Training change, not a serving flag; requires a new artifact and quality contract.","source":"Experiment design","verifiedOn":null}
+  ]
+}
