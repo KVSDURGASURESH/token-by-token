@@ -1,0 +1,12 @@
+{
+  "lookup_inventory": {
+    "arguments": {"sku": "widget"},
+    "result": {"stock": 6},
+    "schema": {
+      "additionalProperties": false,
+      "properties": {"sku": {"const": "widget"}},
+      "required": ["sku"],
+      "type": "object"
+    }
+  }
+}

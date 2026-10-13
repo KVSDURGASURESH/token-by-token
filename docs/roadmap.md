@@ -29,6 +29,8 @@ Choose a use case and declare its output contract, quality gate, latency SLO, me
 
 ### 2. Equal-work runtime baseline
 
+Formal mixed-workflow protocol and offline fixture: [Episode 02 preparation](episode-2-preparation/formal-protocol.md). This is still planned and has no provider measurements.
+
 Compare the same model, corpus, template, output contract and sampling settings across an HF/PyTorch control, vLLM and SGLang where compatible. Randomize or counterbalance execution order. Keep cold start separate from steady state, and compare output-length distributions before interpreting throughput.
 
 **Evidence:** selected images and kernels, tokenizer/template hashes, per-repetition TTFT and end-to-end latency, output lengths, stop reasons, correctness checks, errors, device telemetry and attributable cost.
