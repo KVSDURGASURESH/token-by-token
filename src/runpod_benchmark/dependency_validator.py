@@ -16,12 +16,12 @@ from pathlib import Path
 from typing import Iterable, Mapping, Sequence
 
 try:
-    from packaging.markers import default_environment
+    from packaging.markers import Marker, default_environment
     from packaging.requirements import Requirement
     from packaging.utils import canonicalize_name
     from packaging.version import InvalidVersion, Version
 except ImportError:  # packaging bundled by pip is still loaded from this interpreter's venv.
-    from pip._vendor.packaging.markers import default_environment
+    from pip._vendor.packaging.markers import Marker, default_environment
     from pip._vendor.packaging.requirements import Requirement
     from pip._vendor.packaging.utils import canonicalize_name
     from pip._vendor.packaging.version import InvalidVersion, Version
@@ -144,6 +144,22 @@ POLICIES = {
 }
 
 
+# Atomic equality only: arbitrary Boolean predicates are never override authority.
+_LINUX_MARKER = 'sys_platform == "linux"'
+_LINUX_MARKER_CASES = (("linux", "Linux"), ("darwin", "Darwin"), ("win32", "Windows"),
+                       ("freebsd14", "FreeBSD"), ("aix", "AIX"), ("sunos5", "SunOS"))
+
+
+def _exact_linux_marker(marker: Marker | None, env: Mapping[str, str]) -> bool:
+    if (marker is None or str(marker) not in {_LINUX_MARKER, 'platform_system == "Linux"'}
+            or env.get("sys_platform") != "linux" or env.get("platform_system") != "Linux"):
+        return False
+    expected = Marker(_LINUX_MARKER)
+    return all(marker.evaluate({**env, "sys_platform": system, "platform_system": platform_name})
+               == expected.evaluate({**env, "sys_platform": system, "platform_system": platform_name})
+               for system, platform_name in _LINUX_MARKER_CASES)
+
+
 def _error(code: str, **fields: str) -> dict[str, str]:
     return {"code": code, **fields}
 
@@ -256,6 +272,14 @@ def validate(
                 continue
             if req.specifier and not req.specifier.contains(Version(target_dist.version), prereleases=True):
                 marker = str(req.marker) if req.marker else ""
+                identity = (source, target, str(req.specifier), target_dist.version)
+                allowed_identity = ("torch", "nvidia-nccl-cu13", "==2.29.7", "2.30.7")
+                if (runtime == "sglang" and identity == allowed_identity
+                        and dist.version == policy["pins"]["torch"]):
+                    if _exact_linux_marker(req.marker, env):
+                        marker = _LINUX_MARKER
+                    elif marker == _LINUX_MARKER:
+                        errors.append(_error("incoherent_linux_marker_environment", package=source))
                 mismatches.append((source, target, str(req.specifier), marker, target_dist.version))
     expected_mismatches = sorted(policy["allowed"])
     actual_mismatches = sorted(mismatches)

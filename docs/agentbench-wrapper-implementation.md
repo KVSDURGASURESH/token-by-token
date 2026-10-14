@@ -77,3 +77,5 @@ never be inferred from this synthetic diagnostic.
 
 Development, staging, production, and published-release behavior remain
 unverified. No paid GPU was started, and no artifact was published or pushed.
+
+Episode 02 selection uses closed packaged schemas and a bounded worker invocation. The worker reports public source/material/adapter/check digests; paths, credentials, endpoints and recipes are excluded. An exact combination and fresh proof are required before the client writes a selection. Hashes identify proof bytes; independent review and the private operator's current authorization establish authority. No public client module imports AgentBench profiles or creates provider resources. Actual measured-worker capability remains unavailable until the private adapter and provider smoke checks are verified.

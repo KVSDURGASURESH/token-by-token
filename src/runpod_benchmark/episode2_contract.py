@@ -91,8 +91,12 @@ def _science(protocol: Mapping[str, Any]) -> None:
     _integer(warm["warmup_requests"], 1, 1000, "warmup requests")
     require(type(warm["cache_reset_between_arms"]) is bool and warm["cold_separate"] is True, "invalid warmup/reset policy")
     quality = protocol["quality"]
-    _closed(quality, {"schema_validity", "semantic_contract", "equal_work"}, "quality")
-    require(quality == {"schema_validity": "required", "semantic_contract": "canonical", "equal_work": "required"}, "invalid quality contract")
+    quality_keys = {"schema_validity", "semantic_contract", "equal_work"}
+    require(isinstance(quality, Mapping) and quality_keys <= set(quality) <= quality_keys | {"output_length_tolerance_fraction"}, "quality fields are closed")
+    require({k: quality[k] for k in quality_keys} == {"schema_validity": "required", "semantic_contract": "canonical", "equal_work": "required"}, "invalid quality contract")
+    if "output_length_tolerance_fraction" in quality:
+        value = quality["output_length_tolerance_fraction"]
+        require(type(value) in (int, float) and 0 <= value <= 1, "invalid output length tolerance")
     metrics = protocol["metrics"]
     _closed(metrics, {"primary_tail", "companions", "p99_min_n"}, "metrics")
     require(metrics["primary_tail"] == "request_e2e_ms" and metrics["companions"] == ["ttft_ms", "tpot_ms", "workflow_e2e_ms"], "invalid metrics")
@@ -104,11 +108,33 @@ def _science(protocol: Mapping[str, Any]) -> None:
     _integer(uncertainty["resamples"], 2000, 2000, "resamples")
     _integer(uncertainty["minimum_blocks"], 6, protocol["repetition_blocks"], "minimum paired blocks")
     safeguards = protocol["safeguards"]
-    _closed(safeguards, {"median_ceiling_ms", "error_rate_max", "quality_min", "cost_status", "resource_pressure"}, "safeguards")
+    base = {"median_ceiling_ms", "error_rate_max", "quality_min", "cost_status", "resource_pressure"}
+    numeric = {"e2e_slo_ms", "ttft_slo_ms", "tpot_slo_ms", "goodput_min_tokens_per_second", "admission_rate_min", "cost_max_usd", "resource_max"}
+    require(isinstance(safeguards, Mapping) and base <= set(safeguards) <= base | numeric, "safeguards fields are closed")
+    for key in ("e2e_slo_ms", "ttft_slo_ms", "tpot_slo_ms", "goodput_min_tokens_per_second"):
+        if key in safeguards:
+            value = safeguards[key]
+            require(type(value) in (int, float) and 0 < value <= 3600000, f"invalid safeguard {key}")
+    if "admission_rate_min" in safeguards:
+        value = safeguards["admission_rate_min"]
+        require(type(value) in (int, float) and 0 <= value <= 1, "invalid admission floor")
+    if "cost_max_usd" in safeguards:
+        require(isinstance(safeguards["cost_max_usd"], str) and re.fullmatch(r"(?:0|[1-9][0-9]{0,3})\.[0-9]{2}", safeguards["cost_max_usd"]), "cost ceiling must be a USD decimal string")
+    if "resource_max" in safeguards:
+        resources = safeguards["resource_max"]
+        _closed(resources, {"gpu_memory_fraction", "host_memory_fraction", "host_cpu_percent"}, "resource bounds")
+        for key, maximum in (("gpu_memory_fraction", 1), ("host_memory_fraction", 1), ("host_cpu_percent", 100)):
+            value = resources[key]
+            require(type(value) in (int, float) and 0 < value <= maximum, "invalid resource bound")
+    if protocol["material"]["execution_ready"]:
+        require(numeric <= set(safeguards) and "output_length_tolerance_fraction" in quality, "complete measured numeric gates required before compiled execution")
     for key, minimum, maximum in (("median_ceiling_ms", 1, 3600000), ("error_rate_max", 0, 1), ("quality_min", 0, 1)):
         value = safeguards[key]
         require(type(value) in (int, float) and minimum <= value <= maximum, f"invalid safeguard {key}")
     require(safeguards["cost_status"] == "required" and safeguards["resource_pressure"] == "reported", "invalid cost/resource safeguards")
+
+
+TOOL_COMPATIBILITY_PROFILE = {'profile': 'native performance defaults + tool compatibility', 'tool_choice': 'required', 'vllm': ['--enable-auto-tool-choice', '--tool-call-parser', 'hermes'], 'sglang': ['--tool-call-parser', 'qwen25']}
 
 
 def validate_protocol(protocol: Mapping[str, Any]) -> None:
@@ -134,7 +160,9 @@ def validate_protocol(protocol: Mapping[str, Any]) -> None:
         "sglang_defaults_sha256", "physical_gpu_policy", "common_launch_overrides",
         "harness_version", "context_window",
     }
-    require(isinstance(material, Mapping) and set(material) == material_keys, "invalid material fields")
+    require(isinstance(material, Mapping) and set(material) in (material_keys, material_keys | {"tool_compatibility"}), "invalid material fields")
+    if "tool_compatibility" in material:
+        require(canonical_bytes(material["tool_compatibility"]) == canonical_bytes(TOOL_COMPATIBILITY_PROFILE), "invalid tool compatibility profile")
     require(isinstance(material["model_revision"], str) and re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", material["model_revision"]), "model_revision must be immutable")
     for name in ("tokenizer_sha256", "template_sha256", "artifact_sha256", "vllm_image", "sglang_image", "vllm_defaults_sha256", "sglang_defaults_sha256"):
         require(_immutable(material[name]), f"{name} must be immutable")

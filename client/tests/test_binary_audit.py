@@ -49,6 +49,60 @@ class BinaryAuditTests(unittest.TestCase):
         (self.extracted_root / "payload.bin").write_bytes(b"token-by-token synthetic_mock")
         audit_binary(self.binary, self.write_inventory(["token_by_token_cli.cli", "jsonschema"]), self.extracted_root)
 
+    def test_audit_accepts_episode2_selection_inventory_and_actual_resources(self) -> None:
+        source_root = Path(__file__).resolve().parents[1] / "src"
+        module = "token_by_token_cli.selection"
+        (self.extracted_root / f"0050-{module}").write_bytes(
+            (source_root / "token_by_token_cli/selection.py").read_bytes()
+        )
+        resources = [
+            "token_by_token_cli/resources/schemas/episode2-selection.v1.schema.json",
+            "token_by_token_cli/resources/schemas/episode2-capabilities.v1.schema.json",
+        ]
+        for index, resource in enumerate(resources):
+            extracted = self.extracted_root / f"{index + 200:04d}-{resource}"
+            extracted.parent.mkdir(parents=True, exist_ok=True)
+            extracted.write_bytes((source_root / resource).read_bytes())
+        audit_binary(self.binary, self.write_inventory([module], resources), self.extracted_root)
+
+    def test_audit_rejects_inventory_missing_episode2_selection_module(self) -> None:
+        inventory = self.write_inventory([])
+        contents = json.loads(inventory.read_text(encoding="utf-8"))
+        contents["modules"] = [
+            module for module in contents["modules"] if module != "token_by_token_cli.selection"
+        ]
+        inventory.write_text(json.dumps(contents), encoding="utf-8")
+        with self.assertRaisesRegex(ClientError, "missing required public client modules"):
+            audit_binary(self.binary, inventory, self.extracted_root)
+
+    def test_audit_rejects_inventory_missing_either_episode2_schema(self) -> None:
+        resources = {
+            "token_by_token_cli/resources/schemas/episode2-selection.v1.schema.json",
+            "token_by_token_cli/resources/schemas/episode2-capabilities.v1.schema.json",
+        }
+        for missing in ([resource] for resource in sorted(resources)):
+            with self.subTest(missing=missing):
+                inventory = self.write_inventory(["token_by_token_cli.selection"], list(resources))
+                contents = json.loads(inventory.read_text(encoding="utf-8"))
+                contents["resources"] = sorted(set(contents["resources"]) - set(missing))
+                inventory.write_text(json.dumps(contents), encoding="utf-8")
+                with self.assertRaisesRegex(ClientError, "missing required public resources"):
+                    audit_binary(self.binary, inventory, self.extracted_root)
+
+    def test_audit_rejects_legacy_inventory_missing_both_episode2_schemas(self) -> None:
+        (self.extracted_root / "0050-token_by_token_cli.selection").write_bytes(b"public module")
+        inventory = self.write_inventory(["token_by_token_cli.selection"])
+        contents = json.loads(inventory.read_text(encoding="utf-8"))
+        contents["resources"] = [
+            resource for resource in contents["resources"]
+            if resource.rsplit("/", 1)[-1] not in {
+                "episode2-selection.v1.schema.json", "episode2-capabilities.v1.schema.json"
+            }
+        ]
+        inventory.write_text(json.dumps(contents), encoding="utf-8")
+        with self.assertRaisesRegex(ClientError, "missing required public resources"):
+            audit_binary(self.binary, inventory, self.extracted_root)
+
     @unittest.skipUnless(sys.platform == "darwin", "Homebrew framework resources are macOS-specific")
     def test_audit_accepts_homebrew_python_framework_runtime(self) -> None:
         python_version = f"{sys.version_info.major}.{sys.version_info.minor}"

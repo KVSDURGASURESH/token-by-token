@@ -78,3 +78,5 @@ Real local GPU execution, recorded-evidence verification, provider action,
 public Grafana, and paid measurements require independent security review and
 owner approval. Releasing this synthetic local diagnostic does not authorize
 any of them.
+
+For Episode 02, run `client/tests/test_episode2_selection.py` with the existing local-worker, hostile-bundle and binary/import audit tests. Verify exact combination rejection, expired proof rejection, duplicate/nonfinite JSON rejection, exclusive private output and symlink-ancestor rejection. Package both `episode2-selection.v1` and `episode2-capabilities.v1` schemas. A synthetic selection pass does not verify a provider, paid run or hosted environment; worker distribution still requires the reviewed inventory and owner release authority.

@@ -75,7 +75,18 @@ def _invoke(worker: Path, arguments: list[str], *, request: dict[str, object] | 
     if process.returncode != 0:
         raise ClientError("WORKER_FAILED", "local worker rejected or failed the request")
     try:
-        reply = json.loads(stdout.decode("utf-8"))
+        def unique_pairs(pairs):
+            document = {}
+            for key, value in pairs:
+                if key in document:
+                    raise ValueError("duplicate key")
+                document[key] = value
+            return document
+
+        def invalid_constant(value):
+            raise ValueError("nonfinite number")
+
+        reply = json.loads(stdout.decode("utf-8"), object_pairs_hook=unique_pairs, parse_constant=invalid_constant)
     except (UnicodeError, json.JSONDecodeError, ValueError) as error:
         raise ClientError("WORKER_REPLY", "local worker returned invalid JSON") from error
     if not isinstance(reply, dict):

@@ -1,0 +1,191 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "mechanism",
+    "predicted_signature",
+    "confounders",
+    "control",
+    "required_signals",
+    "observations",
+    "intervention_lineage",
+    "disposition",
+    "limits"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "mechanism": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "predicted_signature": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "predicates": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "signal": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "statistic": {
+                    "enum": [
+                      "mean",
+                      "minimum",
+                      "maximum"
+                    ]
+                  },
+                  "operator": {
+                    "enum": [
+                      "ge",
+                      "gt",
+                      "le",
+                      "lt"
+                    ]
+                  },
+                  "threshold": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "signal",
+                  "statistic",
+                  "operator",
+                  "threshold"
+                ]
+              }
+            },
+            "confounder_predicates": {
+              "type": "object",
+              "maxProperties": 128,
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "signal": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "statistic": {
+                    "enum": [
+                      "mean",
+                      "minimum",
+                      "maximum"
+                    ]
+                  },
+                  "operator": {
+                    "enum": [
+                      "ge",
+                      "gt",
+                      "le",
+                      "lt"
+                    ]
+                  },
+                  "threshold": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "signal",
+                  "statistic",
+                  "operator",
+                  "threshold"
+                ]
+              }
+            }
+          },
+          "required": [
+            "description",
+            "predicates",
+            "confounder_predicates"
+          ]
+        }
+      ]
+    },
+    "confounders": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      }
+    },
+    "control": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "required_signals": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      }
+    },
+    "observations": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      }
+    },
+    "intervention_lineage": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      }
+    },
+    "disposition": {
+      "enum": [
+        "supported",
+        "rejected",
+        "inconclusive"
+      ]
+    },
+    "limits": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      }
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokenbytoken.org/schemas/episode2-hypothesis.schema.json"
+}

@@ -1,0 +1,110 @@
+{
+  "comparison_status": "rejected",
+  "cost": {
+    "compiled_billable_minutes": 50,
+    "compiled_maximum_estimate_usd": "4.43",
+    "measured_window_attribution": "unavailable",
+    "status": "provisional"
+  },
+  "engines": {
+    "sglang": "0.5.20",
+    "vllm": "0.29.0"
+  },
+  "episode": 2,
+  "evidence_class": "recorded",
+  "files": {
+    "comparison.json": {
+      "sha256": "5b89e1b4bbed814d0a4f1f3d1ab40c2ed2c1da9044d9a2164c03513cba5d40c7",
+      "size_bytes": 43836
+    },
+    "sglang-summary.json": {
+      "sha256": "40b6a2864f62e6f13267eae35655ba6345a37de4ffd1e52f75be356b7826ab4a",
+      "size_bytes": 34542
+    },
+    "vllm-summary.json": {
+      "sha256": "3a70cb6320f6d803f04907a54a5a8c4b78514ee06df9513d0eb21453b87069d1",
+      "size_bytes": 34625
+    }
+  },
+  "hardware": {
+    "gpu": "NVIDIA H200",
+    "gpu_count": 1,
+    "same_physical_allocation": true
+  },
+  "limitations": [
+    "Output-heavy quality failed in every block for both engines.",
+    "Delivered-output equivalence exceeded the frozen tolerance.",
+    "Paired primary interval includes zero; no measured winner.",
+    "Cost and resource safeguards lack measured-window attribution.",
+    "Per-engine projection cleanup_status records the pre-teardown snapshot; terminal_evidence records later verified cleanup."
+  ],
+  "measured_at_utc": "2026-10-14",
+  "model": {
+    "repository": "Qwen/Qwen2.5-32B-Instruct",
+    "revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd"
+  },
+  "percentiles": {
+    "eligible_p99_minimum_per_group": 1000,
+    "headline": "p95",
+    "method": "linear_rank_n_minus_1",
+    "p99_status": "descriptive_only"
+  },
+  "profile": {
+    "profile": "native performance defaults + tool compatibility",
+    "sglang": [
+      "--tool-call-parser",
+      "qwen25"
+    ],
+    "tool_choice": "required",
+    "vllm": [
+      "--enable-auto-tool-choice",
+      "--tool-call-parser",
+      "hermes"
+    ]
+  },
+  "protocol_sha256": "87535f3c0975d7e1db2e092559eae83f88fac7cb3b6da67dcbe8be64f6c75f74",
+  "run_status": "complete",
+  "schema_version": "episode2.evidence-index.v1",
+  "source_lineage": {
+    "measured_bundle_sha256": "8644d922a2e4aa9b5171de4a447a8d7b79e7a354272bc28c2f7befbfb4fea914",
+    "measured_public_source_sha256": "0dc59b3c7119c7b602fbce72b960f7ad5971acf570b554daac737c7214cd9204",
+    "postrun_analysis_correction": {
+      "analysis_sha256": "3df2d6ad785ed8d66e670c0a76a8a491e31eada26f787e37043d4ffcb25406f3",
+      "change": "Accept null optional identity/name fields in actual SGLang tool-continuation events; reject changed nonnull identities and malformed arguments. Raw observations unchanged.",
+      "measured_sha256": "91679e88f6bd4095224260c930c3ac0d51eb257029ee55453c157e7b02711371",
+      "path": "src/runpod_benchmark/episode2_validity.py"
+    }
+  },
+  "terminal_evidence": {
+    "direct_not_found": "verified",
+    "export": "verified",
+    "inventory_absence": "verified",
+    "permanent_deletion": "verified",
+    "receipt_sha256": "dbb24c34a68d920bec78aa27e0a6d93dcdf9cd5a6e981fa503b532898d342a13"
+  },
+  "trace_sha256": "8676351e95040c209e82f238b9e8cbbc34dc1695b3a9ba1d510a16d670d095b9",
+  "winner": null,
+  "workflow_counts": {
+    "sglang": {
+      "scheduled": 48,
+      "successful": 42
+    },
+    "vllm": {
+      "scheduled": 48,
+      "successful": 42
+    }
+  },
+  "workload": {
+    "cell": "closed-loop-c2-warm",
+    "concurrent_workflows": 2,
+    "excluded_warmup_requests": 12,
+    "paired_blocks": 6,
+    "planned_requests": 144,
+    "qualified_requests": 132,
+    "request_deadline_seconds": 20,
+    "runtime_epochs": 12,
+    "semantic_invalid_requests": 12,
+    "sent_requests": 144,
+    "terminal_requests": 144
+  }
+}

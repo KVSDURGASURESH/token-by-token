@@ -25,6 +25,7 @@ def build_parser() -> argparse.ArgumentParser:
         "capabilities", help="Report the bounded public execution surface", allow_abbrev=False
     )
     capabilities.add_argument("--episode", type=int, choices=range(17), required=True)
+    capabilities.add_argument("--worker", help="Reviewed worker with Episode 02 capability proof")
     capabilities.add_argument("--format", choices=("human", "json"), default="human")
 
     doctor = commands.add_parser(
@@ -65,6 +66,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     local_run.add_argument("--format", choices=("human", "json"), default="human")
 
+    select = episode_commands.add_parser("select", help="Write a bounded Episode 02 selection request", allow_abbrev=False)
+    for option in ("worker", "mixture", "model", "gpu", "output"):
+        select.add_argument(f"--{option}", required=True)
+    select.add_argument("--format", choices=("human", "json"), default="human")
+
     evidence = commands.add_parser(
         "evidence", help="Verify a synthetic evidence bundle", allow_abbrev=False
     )
@@ -90,13 +96,35 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "capabilities":
             from .contracts import public_capabilities
 
-            document = public_capabilities(args.episode)
+            if args.worker:
+                from pathlib import Path
+                from .selection import read_episode2_capability
+                if args.episode != 2:
+                    raise ClientError("UNAVAILABLE_EPISODE", "worker capability selection supports Episode 02 only")
+                document = read_episode2_capability(Path(args.worker))
+            else:
+                document = public_capabilities(args.episode)
             if args.format == "json":
                 print(json.dumps(document, sort_keys=True, separators=(",", ":")))
+            elif args.worker:
+                print(f"Episode 02 · capability {document['status']}")
+                print("Selection grants no permission to create resources or execute a benchmark.")
             else:
                 print(f"Episode {args.episode:02d} · real execution unavailable")
                 print(document["reason"])
                 print("No real model, GPU, endpoint, or execution profile is accepted by this client.")
+            return 0
+        if args.command == "episode" and args.episode_command == "select":
+            from pathlib import Path
+            from .selection import create_selection
+            if args.number != 2:
+                raise ClientError("UNAVAILABLE_EPISODE", "selection supports Episode 02 only")
+            report = create_selection(Path(args.worker), Path(args.output), mixture=args.mixture, model=args.model, gpu=args.gpu)
+            if args.format == "json":
+                print(json.dumps(report, sort_keys=True, separators=(",", ":")))
+            else:
+                print(f"Episode 02 selection written: {args.output}")
+                print("Execution requires a separate private operator action and current paid approval.")
             return 0
         if args.command == "doctor":
             from pathlib import Path

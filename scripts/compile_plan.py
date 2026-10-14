@@ -163,7 +163,15 @@ def _plain_json_copy(value: object) -> object:
     return value
 
 
-def _validate_manifest(manifest: Mapping[str, object]) -> bool:
+def _validate_manifest(manifest: Mapping[str, object], *, _episode2_defaults: bool = False) -> bool:
+    if manifest.get("schema_version") == 2:
+        from runpod_benchmark.episode2_preflight import validate_binding, validate_manifest_binding
+        validate_binding(manifest.get("episode2"), planning_only=manifest.get("planning_only"))
+        validate_manifest_binding(manifest)
+        legacy = dict(manifest)
+        legacy.pop("episode2")
+        legacy["schema_version"] = 1
+        return _validate_manifest(legacy, _episode2_defaults=True)
     root = _shape(
         manifest,
         "manifest",
@@ -260,7 +268,7 @@ def _validate_manifest(manifest: Mapping[str, object]) -> bool:
             _integer(cell["timeout_seconds"], f"{path}.timeout_seconds", minimum=1, maximum=86400)
 
     if not planning_only:
-        _validate_execution_contract(root["execution"], runtimes, cells, resource)
+        _validate_execution_contract(root["execution"], runtimes, cells, resource, native_defaults=_episode2_defaults)
     return not planning_only
 
 
@@ -269,6 +277,7 @@ def _validate_execution_contract(
     base_runtimes: list[object],
     base_cells: list[object],
     base_resource: Mapping[str, object],
+    *, native_defaults: bool = False,
 ) -> None:
     execution = _shape(
         value,
@@ -353,8 +362,9 @@ def _validate_execution_contract(
         if runtime["id"] != base["id"] or runtime["version"] != base["version"]:
             raise ValueError(f"{path} id/version must match manifest.runtimes[{index}]")
         dependencies = runtime["dependencies"]
-        if not isinstance(dependencies, list) or not dependencies or len(dependencies) > 128:
-            raise ValueError(f"{path}.dependencies must be a non-empty array of at most 128 items")
+        dependency_limit = 512 if native_defaults else 128
+        if not isinstance(dependencies, list) or not dependencies or len(dependencies) > dependency_limit:
+            raise ValueError(f"{path}.dependencies must be a non-empty array of at most {dependency_limit} items")
         for dep_index, raw_dependency in enumerate(dependencies):
             dep_path = f"{path}.dependencies[{dep_index}]"
             dependency = _shape(raw_dependency, dep_path, required={"name", "version"})
@@ -368,6 +378,8 @@ def _validate_execution_contract(
             required={"continuous_batching", "chunked_prefill", "prefix_caching", "speculative_decoding", "quantization", "kv_cache_dtype", "tensor_parallel", "pipeline_parallel"},
         )
         for field in ("continuous_batching", "chunked_prefill", "prefix_caching"):
+            if native_defaults and optimization[field] == "native-auto":
+                continue
             _boolean(optimization[field], f"{path}.optimizations.{field}")
         for field in ("speculative_decoding", "quantization", "kv_cache_dtype"):
             _string(optimization[field], f"{path}.optimizations.{field}", maximum=128)
@@ -461,6 +473,8 @@ def _validate_execution_contract(
         _validate_guard_policy(execution["guard_policy"], detailed_runtimes)
         if resources != ["pod"]:
             raise ValueError("manifest.execution.guard_policy supports pod-only teardown")
+        if storage["network_volume_gb"] > 0:
+            raise ValueError("manifest.execution.guard_policy does not support network-volume storage")
     if "selected_arm" in execution:
         _validate_selected_arm(
             execution["selected_arm"],
@@ -1003,6 +1017,9 @@ def compile_plan(
     manifest = _mapping(manifest, "manifest")
     live_inputs = _mapping(live_inputs, "live_inputs")
     execution_ready = _validate_manifest(manifest)
+    if manifest["schema_version"] == 2:
+        from runpod_benchmark.episode2_preflight import validate_live_binding
+        validate_live_binding(manifest["episode2"], live_inputs, planning_only=manifest["planning_only"])
     guard_policy = None
     if execution_ready:
         execution = _mapping(manifest["execution"], "manifest.execution")
@@ -1132,7 +1149,7 @@ def compile_plan(
         )
 
     plan = {
-        "schema_version": 1,
+        "schema_version": manifest["schema_version"],
         "execution_ready": execution_ready,
         "manifest": _plain_json_copy(manifest),
         "live_inputs": _plain_json_copy(live_inputs),
@@ -1172,6 +1189,10 @@ def _validate_json_tree(
         return
     if value is None or isinstance(value, (bool, int)):
         return
+    if isinstance(value, float) and path.startswith("plan.manifest.episode2."):
+        import math
+        if math.isfinite(value):
+            return
     if active is None:
         active = set()
     if isinstance(value, Mapping):

@@ -1,0 +1,1122 @@
+{
+  "arm": "defaults",
+  "arms_lineage": [],
+  "blocks": [
+    {
+      "block_id": "block-01",
+      "counts": {
+        "attempted_requests": 12,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 1,
+        "other_unsent_requests": 0,
+        "qualified_requests": 11,
+        "scheduled_requests": 12,
+        "sent_requests": 12,
+        "terminal_successful_requests": 12
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 11,
+          "headline_percentile": "p95",
+          "p50": 344.187166,
+          "p95": 1459.2153334999998,
+          "p99": 1459.9328667,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": true,
+          "count": 2,
+          "headline_percentile": "p95",
+          "p50": 297.5584795,
+          "p95": 309.30533575,
+          "p99": 310.34950075,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 16.4274666,
+          "p95": 47.219584476923075,
+          "p99": 51.31135689538462,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 151.2975,
+          "p95": 336.68162519999987,
+          "p99": 410.22955863999994,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 7,
+          "headline_percentile": "p95",
+          "p50": 753.423541,
+          "p95": 1482.208534,
+          "p99": 1482.9224740000002,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    {
+      "block_id": "block-02",
+      "counts": {
+        "attempted_requests": 12,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 1,
+        "other_unsent_requests": 0,
+        "qualified_requests": 11,
+        "scheduled_requests": 12,
+        "sent_requests": 12,
+        "terminal_successful_requests": 12
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 11,
+          "headline_percentile": "p95",
+          "p50": 258.647,
+          "p95": 1501.064542,
+          "p99": 1531.0134084,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": true,
+          "count": 2,
+          "headline_percentile": "p95",
+          "p50": 293.69147899999996,
+          "p95": 303.1743101,
+          "p99": 304.01722842,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 16.325,
+          "p95": 35.081093007999996,
+          "p99": 42.6627759456,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 130.434334,
+          "p95": 726.4606665999997,
+          "p99": 942.04679972,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 7,
+          "headline_percentile": "p95",
+          "p50": 744.986292,
+          "p95": 1540.683659,
+          "p99": 1558.056599,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    {
+      "block_id": "block-03",
+      "counts": {
+        "attempted_requests": 12,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 1,
+        "other_unsent_requests": 0,
+        "qualified_requests": 11,
+        "scheduled_requests": 12,
+        "sent_requests": 12,
+        "terminal_successful_requests": 12
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 11,
+          "headline_percentile": "p95",
+          "p50": 291.658542,
+          "p95": 1597.07325,
+          "p99": 1602.8842164,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": true,
+          "count": 2,
+          "headline_percentile": "p95",
+          "p50": 281.2713755,
+          "p95": 301.43951284999997,
+          "p99": 303.23223616999996,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 15.707347222222223,
+          "p95": 40.02809419938461,
+          "p99": 48.99074015187692,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 131.950625,
+          "p95": 703.7320333999999,
+          "p99": 929.69367308,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 7,
+          "headline_percentile": "p95",
+          "p50": 747.105959,
+          "p95": 1621.4950043000001,
+          "p99": 1623.8328344600002,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    {
+      "block_id": "block-04",
+      "counts": {
+        "attempted_requests": 12,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 1,
+        "other_unsent_requests": 0,
+        "qualified_requests": 11,
+        "scheduled_requests": 12,
+        "sent_requests": 12,
+        "terminal_successful_requests": 12
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 11,
+          "headline_percentile": "p95",
+          "p50": 283.901791,
+          "p95": 1544.5610625,
+          "p99": 1552.6615789,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": true,
+          "count": 2,
+          "headline_percentile": "p95",
+          "p50": 306.029042,
+          "p95": 323.5734548,
+          "p99": 325.13295816,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 16.334899333333333,
+          "p95": 39.01183718461537,
+          "p99": 47.91736743692307,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 142.810542,
+          "p95": 677.2909665999998,
+          "p99": 898.99845972,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 7,
+          "headline_percentile": "p95",
+          "p50": 743.03775,
+          "p95": 1578.6698921,
+          "p99": 1582.25971202,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    {
+      "block_id": "block-05",
+      "counts": {
+        "attempted_requests": 12,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 1,
+        "other_unsent_requests": 0,
+        "qualified_requests": 11,
+        "scheduled_requests": 12,
+        "sent_requests": 12,
+        "terminal_successful_requests": 12
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 11,
+          "headline_percentile": "p95",
+          "p50": 306.327542,
+          "p95": 1559.1532705,
+          "p99": 1568.8480205,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": true,
+          "count": 2,
+          "headline_percentile": "p95",
+          "p50": 288.6180625,
+          "p95": 317.56241845,
+          "p99": 320.13525009,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 15.217739583333334,
+          "p95": 39.31045679199999,
+          "p99": 48.3330380144,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 126.478875,
+          "p95": 683.2159331999997,
+          "p99": 908.3255866399998,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 7,
+          "headline_percentile": "p95",
+          "p50": 742.168792,
+          "p95": 1589.1732544000001,
+          "p99": 1593.62568448,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    {
+      "block_id": "block-06",
+      "counts": {
+        "attempted_requests": 12,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 1,
+        "other_unsent_requests": 0,
+        "qualified_requests": 11,
+        "scheduled_requests": 12,
+        "sent_requests": 12,
+        "terminal_successful_requests": 12
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 11,
+          "headline_percentile": "p95",
+          "p50": 299.640792,
+          "p95": 2296.8311665,
+          "p99": 2339.5403997000003,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": true,
+          "count": 2,
+          "headline_percentile": "p95",
+          "p50": 301.5653125,
+          "p95": 338.95346935,
+          "p99": 342.27686107,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 16.11785,
+          "p95": 52.638311991999984,
+          "p99": 67.2979450544,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 9,
+          "headline_percentile": "p95",
+          "p50": 134.87525,
+          "p95": 1193.4911327999994,
+          "p99": 1579.7335593599998,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 7,
+          "headline_percentile": "p95",
+          "p50": 748.144875,
+          "p95": 2337.6850204999996,
+          "p99": 2362.9901704999997,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    }
+  ],
+  "cell_id": "closed-loop-c2-warm",
+  "classes": {
+    "agent_chain": {
+      "counts": {
+        "attempted_requests": 18,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 0,
+        "other_unsent_requests": 0,
+        "qualified_requests": 18,
+        "scheduled_requests": 18,
+        "sent_requests": 18,
+        "terminal_successful_requests": 18
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 18,
+          "headline_percentile": "p95",
+          "p50": 231.5216045,
+          "p95": 450.46217685,
+          "p99": 451.73476897,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 271.588958,
+          "p95": 304.591719,
+          "p99": 309.4067774,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 12,
+          "headline_percentile": "p95",
+          "p50": 14.924858400000002,
+          "p95": 16.62151247,
+          "p99": 16.911435774,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 12,
+          "headline_percentile": "p95",
+          "p50": 128.4566045,
+          "p95": 170.40131249999996,
+          "p99": 193.1036625,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 931.9965414999999,
+          "p95": 1013.8597602500001,
+          "p99": 1030.0254184500002,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    "code_reasoning": {
+      "counts": {
+        "attempted_requests": 6,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 0,
+        "other_unsent_requests": 0,
+        "qualified_requests": 6,
+        "scheduled_requests": 6,
+        "sent_requests": 6,
+        "terminal_successful_requests": 6
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 359.52,
+          "p95": 372.1695625,
+          "p99": 372.2649125,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 16.58015975,
+          "p95": 17.863437500000003,
+          "p99": 17.886295833333335,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 139.898104,
+          "p95": 156.13860375000002,
+          "p99": 157.63028715000002,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 375.4655415,
+          "p95": 394.99187500000005,
+          "p99": 396.114975,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    "conversation": {
+      "counts": {
+        "attempted_requests": 12,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 0,
+        "other_unsent_requests": 0,
+        "qualified_requests": 12,
+        "scheduled_requests": 12,
+        "sent_requests": 12,
+        "terminal_successful_requests": 12
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 12,
+          "headline_percentile": "p95",
+          "p50": 220.822125,
+          "p95": 242.2925641,
+          "p99": 251.90984562,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 12,
+          "headline_percentile": "p95",
+          "p50": 15.1580999,
+          "p95": 17.02358369,
+          "p99": 17.448803298,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 12,
+          "headline_percentile": "p95",
+          "p50": 133.739896,
+          "p95": 147.65485,
+          "p99": 150.56897,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 480.4958125,
+          "p95": 495.7488335,
+          "p99": 497.6284667,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    "long_prefill": {
+      "counts": {
+        "attempted_requests": 6,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 0,
+        "other_unsent_requests": 0,
+        "qualified_requests": 6,
+        "scheduled_requests": 6,
+        "sent_requests": 6,
+        "terminal_successful_requests": 6
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 1562.979208,
+          "p95": 2163.7475205,
+          "p99": 2312.9236705000003,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 22.808125019230772,
+          "p95": 35.948508394230764,
+          "p99": 38.8277106326923,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 975.3935415,
+          "p95": 1506.20645775,
+          "p99": 1642.27662435,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 1588.9479795000002,
+          "p95": 2183.0916665,
+          "p99": 2332.0714997,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    "output_heavy": {
+      "counts": {
+        "attempted_requests": 6,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 6,
+        "other_unsent_requests": 0,
+        "qualified_requests": 0,
+        "scheduled_requests": 6,
+        "sent_requests": 6,
+        "terminal_successful_requests": 6
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "tool_event_latency_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "tpot_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "ttft_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "workflow_e2e_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        }
+      }
+    },
+    "short": {
+      "counts": {
+        "attempted_requests": 6,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 0,
+        "other_unsent_requests": 0,
+        "qualified_requests": 6,
+        "scheduled_requests": 6,
+        "sent_requests": 6,
+        "terminal_successful_requests": 6
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 1540.735125,
+          "p95": 2080.03585425,
+          "p99": 2210.76287085,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 50.91004248,
+          "p95": 66.30571499000001,
+          "p99": 70.031425654,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 270.821688,
+          "p95": 432.524104,
+          "p99": 461.9340872,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 1572.193292,
+          "p95": 2101.5778330000003,
+          "p99": 2231.4182330000003,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    "structured": {
+      "counts": {
+        "attempted_requests": 6,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 0,
+        "other_unsent_requests": 0,
+        "qualified_requests": 6,
+        "scheduled_requests": 6,
+        "sent_requests": 6,
+        "terminal_successful_requests": 6
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 295.649667,
+          "p95": 334.72226,
+          "p99": 342.2941848,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": false,
+          "count": 0,
+          "headline_percentile": "p95",
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_label": "unavailable",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": "no applicable qualified observations"
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 16.25309261111111,
+          "p95": 17.79020713888889,
+          "p99": 17.826148805555555,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 134.5877085,
+          "p95": 148.60737475000002,
+          "p99": 150.79404135000001,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 311.4455625,
+          "p95": 360.2303025,
+          "p99": 370.68429410000005,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    },
+    "tool_call": {
+      "counts": {
+        "attempted_requests": 12,
+        "cancelled_requests": 0,
+        "dependency_blocked_requests": 0,
+        "dropped_requests": 0,
+        "error_requests": 0,
+        "other_unsent_requests": 0,
+        "qualified_requests": 12,
+        "scheduled_requests": 12,
+        "sent_requests": 12,
+        "terminal_successful_requests": 12
+      },
+      "metrics": {
+        "e2e_ms": {
+          "available": true,
+          "count": 12,
+          "headline_percentile": "p95",
+          "p50": 363.8520415,
+          "p95": 508.16363765,
+          "p99": 512.34756113,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tool_event_latency_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 312.503208,
+          "p95": 338.71149025,
+          "p99": 342.22846525,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "tpot_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 11.9374625,
+          "p95": 16.6015854,
+          "p99": 16.75851708,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "ttft_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 128.3774585,
+          "p95": 177.37475999999998,
+          "p99": 186.5918848,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        },
+        "workflow_e2e_ms": {
+          "available": true,
+          "count": 6,
+          "headline_percentile": "p95",
+          "p50": 746.0461255,
+          "p95": 752.1038745,
+          "p99": 753.1596077,
+          "p99_label": "descriptive p99",
+          "percentile_method": "linear_rank_n_minus_1",
+          "unavailable_reason": null
+        }
+      }
+    }
+  },
+  "cleanup_status": "unverified",
+  "cost_status": "unavailable",
+  "counts": {
+    "attempted_requests": 72,
+    "cancelled_requests": 0,
+    "dependency_blocked_requests": 0,
+    "dropped_requests": 0,
+    "error_requests": 6,
+    "other_unsent_requests": 0,
+    "qualified_requests": 66,
+    "scheduled_requests": 72,
+    "sent_requests": 72,
+    "terminal_successful_requests": 72
+  },
+  "engine": "sglang",
+  "error_rate": 0.08333333333333333,
+  "evidence_class": "recorded",
+  "goodput": {
+    "available": true,
+    "qualified_requests": 66,
+    "qualified_tokens": 858,
+    "reason": null,
+    "tokens_per_second": 20.353226892298448
+  },
+  "hypotheses": [],
+  "metrics": {
+    "e2e_ms": {
+      "available": true,
+      "count": 66,
+      "headline_percentile": "p95",
+      "p50": 295.649667,
+      "p95": 1585.1750835,
+      "p99": 2280.8152040499995,
+      "p99_label": "descriptive p99",
+      "percentile_method": "linear_rank_n_minus_1",
+      "unavailable_reason": null
+    },
+    "tool_event_latency_ms": {
+      "available": true,
+      "count": 12,
+      "headline_percentile": "p95",
+      "p50": 295.10783349999997,
+      "p95": 333.43602775,
+      "p99": 341.17337275,
+      "p99_label": "descriptive p99",
+      "percentile_method": "linear_rank_n_minus_1",
+      "unavailable_reason": null
+    },
+    "tpot_ms": {
+      "available": true,
+      "count": 54,
+      "headline_percentile": "p95",
+      "p50": 16.039030722222222,
+      "p95": 50.813634732,
+      "p99": 61.08972006039998,
+      "p99_label": "descriptive p99",
+      "percentile_method": "linear_rank_n_minus_1",
+      "unavailable_reason": null
+    },
+    "ttft_ms": {
+      "available": true,
+      "count": 54,
+      "headline_percentile": "p95",
+      "p50": 136.5297085,
+      "p95": 972.1563790499998,
+      "p99": 1315.7082245099991,
+      "p99_label": "descriptive p99",
+      "percentile_method": "linear_rank_n_minus_1",
+      "unavailable_reason": null
+    },
+    "workflow_e2e_ms": {
+      "available": true,
+      "count": 42,
+      "headline_percentile": "p95",
+      "p50": 746.0461255,
+      "p95": 1623.93024405,
+      "p99": 2326.0868267499995,
+      "p99_label": "descriptive p99",
+      "percentile_method": "linear_rank_n_minus_1",
+      "unavailable_reason": null
+    }
+  },
+  "mixture": {
+    "units_per_class": 1,
+    "weights": {
+      "agent_chain": 1,
+      "code_reasoning": 1,
+      "conversation": 1,
+      "long_prefill": 1,
+      "output_heavy": 1,
+      "short": 1,
+      "structured": 1,
+      "tool_call": 1
+    }
+  },
+  "mode": "closed-loop",
+  "output": {
+    "qualified_tokens": 858,
+    "terminal_success_tokens": 2547,
+    "tokens_per_second": 60.41919451594889
+  },
+  "protocol_sha256": "87535f3c0975d7e1db2e092559eae83f88fac7cb3b6da67dcbe8be64f6c75f74",
+  "quality_fraction": 0.9166666666666666,
+  "resource_status": "unavailable",
+  "schema_version": "episode2.public-aggregate.v1",
+  "source_sha256": "e1d2dbdeca45a949b6e3293864b72b445ef6f1a6f02f84d51875878956bf458c",
+  "temperature": "warm",
+  "trace_sha256": "8676351e95040c209e82f238b9e8cbbc34dc1695b3a9ba1d510a16d670d095b9",
+  "uncertainty": {
+    "independent_blocks": 6,
+    "method": "paired_whole_block_bootstrap",
+    "status": "requires_paired_arm_comparison"
+  }
+}

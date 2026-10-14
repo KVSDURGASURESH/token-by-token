@@ -48,7 +48,7 @@ STREAM_REQUEST_FIELDS = {
     "acknowledge_insecure_non_loopback_http", "thinking_enabled",
     "ignore_eos", "top_k", "use_max_completion_tokens",
     "repetition_penalty", "require_exact_prompt_tokens", "expected_prompt_tokens",
-    "stop", "content_callback",
+    "stop", "content_callback", "tools", "tool_choice", "response_format", "record_events", "defer_missing_required_tool",
 }
 
 
@@ -175,6 +175,8 @@ class StreamingError(RuntimeError):
         last_content_ns: int | None = None,
         content_event_count: int = 0,
         inter_chunk_gaps_ns: tuple[int, ...] = (),
+        content_events: tuple[dict[str, Any], ...] = (),
+        tool_events: tuple[dict[str, Any], ...] = (),
     ) -> None:
         super().__init__(message)
         self.actual_send_ns = actual_send_ns
@@ -184,6 +186,8 @@ class StreamingError(RuntimeError):
         self.last_content_ns = last_content_ns
         self.content_event_count = content_event_count
         self.inter_chunk_gaps_ns = inter_chunk_gaps_ns
+        self.content_events = content_events
+        self.tool_events = tool_events
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -928,6 +932,93 @@ def read_bounded_url(
         raise StreamingError("HTTP telemetry response is not valid UTF-8") from None
 
 
+def _strict_stream_json(data: str) -> Any:
+    def pairs(items: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError("duplicate JSON field")
+            result[key] = value
+        return result
+    def reject_constant(_value: str) -> None:
+        raise ValueError("nonfinite JSON value")
+    value = json.loads(data, object_pairs_hook=pairs, parse_constant=reject_constant)
+    json.dumps(value, allow_nan=False)
+    return value
+
+
+def _tool_parameters(schema: Any, arguments: Any = None) -> None:
+    """Admit a bounded closed scalar-argument function dialect, without coercion."""
+    if not isinstance(schema, dict) or set(schema) != {"type", "additionalProperties", "required", "properties"}:
+        raise StreamingError("unsupported tool parameter schema")
+    properties = schema["properties"]
+    required = schema["required"]
+    if schema["type"] != "object" or schema["additionalProperties"] is not False or not isinstance(properties, dict) or not 1 <= len(properties) <= 16 or not isinstance(required, list) or set(required) != set(properties) or len(required) != len(properties):
+        raise StreamingError("tool arguments must use a closed required object schema")
+    for name, rule in properties.items():
+        if not isinstance(name, str) or not 1 <= len(name) <= 64 or not isinstance(rule, dict) or not rule or not set(rule) <= {"const", "enum", "type"}:
+            raise StreamingError("unsupported tool argument rule")
+        if "type" in rule and rule["type"] not in {"string", "integer", "number", "boolean"}:
+            raise StreamingError("unsupported tool argument type")
+        if "enum" in rule and (not isinstance(rule["enum"], list) or not 1 <= len(rule["enum"]) <= 32):
+            raise StreamingError("unsupported tool argument enum")
+    if arguments is None:
+        return
+    if not isinstance(arguments, dict) or set(arguments) != set(properties):
+        raise StreamingError("tool arguments do not match declared schema")
+    for name, value in arguments.items():
+        rule = properties[name]
+        if "const" in rule and (type(value) is not type(rule["const"]) or value != rule["const"]):
+            raise StreamingError("tool arguments do not match declared schema")
+        if "enum" in rule and not any(type(value) is type(item) and value == item for item in rule["enum"]):
+            raise StreamingError("tool arguments do not match declared schema")
+        types = {"string": (str,), "integer": (int,), "number": (int, float), "boolean": (bool,)}
+        if "type" in rule and type(value) not in types[rule["type"]]:
+            raise StreamingError("tool arguments do not match declared schema")
+
+
+def _optional_payload(request: Mapping[str, Any], payload: dict[str, Any]) -> None:
+    if "record_events" in request and type(request["record_events"]) is not bool:
+        raise StreamingError("record_events must be boolean")
+    if "defer_missing_required_tool" in request:
+        if type(request["defer_missing_required_tool"]) is not bool or (request["defer_missing_required_tool"] and request.get("record_events") is not True):
+            raise StreamingError("defer_missing_required_tool requires boolean opt-in with recorded events")
+    if "tools" in request:
+        tools = request["tools"]
+        if not isinstance(tools, list) or len(tools) != 1:
+            raise StreamingError("exactly one declared function tool is supported")
+        tool = tools[0]
+        if not isinstance(tool, dict) or set(tool) != {"type", "function"} or tool["type"] != "function":
+            raise StreamingError("malformed function tool")
+        function = tool["function"]
+        if not isinstance(function, dict) or not {"name", "parameters"} <= set(function) or not set(function) <= {"name", "parameters", "description", "strict"}:
+            raise StreamingError("malformed function tool")
+        name = function["name"]
+        if not isinstance(name, str) or not 1 <= len(name) <= 64 or not name.isidentifier():
+            raise StreamingError("malformed function name")
+        if "description" in function and (not isinstance(function["description"], str) or len(function["description"]) > 1024):
+            raise StreamingError("malformed function description")
+        if "strict" in function and type(function["strict"]) is not bool:
+            raise StreamingError("malformed function strict setting")
+        _tool_parameters(function["parameters"])
+        payload["tools"] = tools
+    if "tool_choice" in request:
+        choice = request["tool_choice"]
+        if "tools" not in request:
+            raise StreamingError("tool_choice requires tools")
+        named = {"type": "function", "function": {"name": request["tools"][0]["function"]["name"]}}
+        if choice != "auto" and choice != "required" and choice != named:
+            raise StreamingError("unsupported tool_choice")
+        payload["tool_choice"] = choice
+    if "response_format" in request:
+        value = request["response_format"]
+        if not isinstance(value, dict) or value != {"type": "json_object"}:
+            raise StreamingError("unsupported response_format: only json_object is admitted")
+        payload["response_format"] = value
+    if len(json.dumps({key: payload[key] for key in ("tools", "tool_choice", "response_format") if key in payload}, allow_nan=False).encode("utf-8")) > 65536:
+        raise StreamingError("tool/request schema byte cap exceeded")
+
+
 def _request_payload(request: Mapping[str, Any]) -> dict[str, Any]:
     messages = request.get("messages")
     if not isinstance(messages, list) or not messages:
@@ -986,6 +1077,7 @@ def _request_payload(request: Mapping[str, Any]) -> dict[str, Any]:
         if isinstance(penalty, bool) or not isinstance(penalty, (int, float)) or not math.isfinite(float(penalty)) or penalty <= 0:
             raise StreamingError("repetition_penalty must be positive and finite")
         payload["repetition_penalty"] = penalty
+    _optional_payload(request, payload)
     try:
         json.dumps(payload, ensure_ascii=False, allow_nan=False)
     except (TypeError, ValueError) as exc:
@@ -1008,10 +1100,15 @@ def _validate_runtime_capabilities(request: Mapping[str, Any]) -> None:
     if any(capabilities.get(name) is not True for name in REQUIRED_STREAM_CAPABILITIES):
         raise StreamingError("runtime capability contract lacks exact streaming evidence")
     unknown_capabilities = set(capabilities) - REQUIRED_STREAM_CAPABILITIES - {
-        "thinking_enabled"
+        "thinking_enabled", "tools", "tool_choice", "response_format"
     }
     if unknown_capabilities:
         raise StreamingError("runtime capability contract contains unknown fields")
+    for field in ("tools", "tool_choice", "response_format"):
+        if field in capabilities and type(capabilities[field]) is not bool:
+            raise StreamingError("runtime capability flags must be boolean")
+        if field in request and capabilities.get(field) is not True:
+            raise StreamingError(f"unsupported optional request field: {field}")
     if "thinking_enabled" in request and capabilities.get("thinking_enabled") is not True:
         raise StreamingError("unsupported optional request field: thinking_enabled")
     require_prompt_tokens = request.get("require_exact_prompt_tokens", False)
@@ -1046,6 +1143,10 @@ def stream_chat(
     response_sockets: tuple[Any, Any] = (None, None)
     transport_owner: _TransportOwner | None = None
     content_times: list[int] = []
+    content_events: list[dict[str, Any]] = []
+    tool_events: list[dict[str, Any]] = []
+    tool_call: dict[str, Any] | None = None
+    episode2_stream = request.get("record_events") is True or "tools" in request or "response_format" in request
     try:
         _validate_runtime_capabilities(request)
         url = require_safe_http_url(
@@ -1087,7 +1188,7 @@ def stream_chat(
         event_lines: list[str] = []
 
         def consume_event(lines: list[str]) -> None:
-            nonlocal input_tokens, output_tokens, saw_done, stop_reason, terminal_event_ns
+            nonlocal input_tokens, output_tokens, saw_done, stop_reason, terminal_event_ns, tool_call
             data_lines = [line[5:].lstrip(" ") for line in lines if line.startswith("data:")]
             if not data_lines:
                 return
@@ -1097,8 +1198,8 @@ def stream_chat(
                 saw_done = True
                 return
             try:
-                event = json.loads(data)
-            except json.JSONDecodeError as exc:
+                event = _strict_stream_json(data) if episode2_stream else json.loads(data)
+            except (json.JSONDecodeError, ValueError) as exc:
                 raise StreamingError("malformed JSON in streaming event") from exc
             if not isinstance(event, dict):
                 raise StreamingError("malformed streaming event: expected an object")
@@ -1148,6 +1249,8 @@ def stream_chat(
                 if not has_completion_tokens:
                     raise StreamingError("malformed empty streaming choices")
                 return
+            if episode2_stream and (len(choices) != 1 or type(choices[0].get("index", 0)) is not int or choices[0].get("index", 0) != 0):
+                raise StreamingError("exactly one streaming completion is supported")
             first = choices[0]
             if not isinstance(first, dict):
                 raise StreamingError("malformed streaming choice")
@@ -1156,6 +1259,8 @@ def stream_chat(
             delta = first["delta"]
             if not isinstance(delta, dict):
                 raise StreamingError("malformed streaming delta")
+            if episode2_stream and stop_reason is not None and (delta.get("content") or delta.get("tool_calls")):
+                raise StreamingError("streaming output after finish reason")
             # Some OpenAI-compatible servers emit a legal empty delta as a
             # framing/heartbeat event.  It is deliberately not content and
             # therefore must not establish TTFT.
@@ -1166,6 +1271,36 @@ def stream_chat(
                 if stop_reason is not None and stop_reason != finish_reason:
                     raise StreamingError("conflicting finish reasons")
                 stop_reason = finish_reason
+            if episode2_stream and delta.get("tool_calls") is not None:
+                fragments = delta["tool_calls"]
+                if "tools" not in request or not isinstance(fragments, list) or len(fragments) != 1:
+                    raise StreamingError("undeclared or multiple tool calls")
+                fragment = fragments[0]
+                if not isinstance(fragment, dict) or not set(fragment) <= {"index", "id", "type", "function"} or type(fragment.get("index")) is not int or fragment["index"] != 0:
+                    raise StreamingError("malformed tool call index")
+                if fragment.get("type", "function") != "function":
+                    raise StreamingError("malformed tool call type")
+                function = fragment.get("function", {})
+                if not isinstance(function, dict) or not set(function) <= {"name", "arguments"}:
+                    raise StreamingError("malformed tool call function")
+                if stop_reason is not None and first.get("finish_reason") is None:
+                    raise StreamingError("tool data after finish reason")
+                if tool_call is None:
+                    tool_call = {"id": "", "type": "function", "function": {"name": "", "arguments": ""}}
+                identifier = fragment.get("id")
+                if identifier is not None:
+                    if not isinstance(identifier, str) or not 1 <= len(identifier) <= 256 or tool_call["id"]:
+                        raise StreamingError("duplicate or malformed tool identity")
+                    tool_call["id"] = identifier
+                for field in ("name", "arguments"):
+                    part = function.get(field)
+                    if part is not None:
+                        if not isinstance(part, str):
+                            raise StreamingError("malformed tool fragment")
+                        tool_call["function"][field] += part
+                if len(tool_call["function"]["name"]) > 64 or len(tool_call["function"]["arguments"].encode("utf-8")) > min(cap, 65536):
+                    raise StreamingError("tool arguments byte cap exceeded")
+                tool_events.append({"received_ns": clock(), "delta": fragment})
             if "content" not in delta:
                 return
             content = delta.get("content")
@@ -1177,6 +1312,8 @@ def stream_chat(
             if content:
                 text_parts.append(content)
                 content_times.append(received_ns)
+                if episode2_stream:
+                    content_events.append({"received_ns": received_ns, "text": content})
                 if content_callback is not None:
                     content_callback(content, received_ns)
 
@@ -1270,7 +1407,21 @@ def stream_chat(
                 request_timed_out=timeout_kind == "request",
             )
         end_ns = terminal_event_ns
-        if not content_times:
+        if tool_call is not None:
+            if stop_reason != "tool_calls" or not tool_call["id"] or tool_call["function"]["name"] != request["tools"][0]["function"]["name"]:
+                raise StreamingError("tool identity or finish reason does not match declared call")
+            try:
+                arguments = _strict_stream_json(tool_call["function"]["arguments"])
+            except (ValueError, TypeError) as exc:
+                raise StreamingError("malformed JSON tool arguments") from exc
+            if not isinstance(arguments, dict):
+                raise StreamingError("tool arguments must be a JSON object")
+            _tool_parameters(request["tools"][0]["function"]["parameters"], arguments)
+        missing_required_tool = tool_call is None and "tools" in request and request.get("tool_choice") != "auto"
+        defer_missing_tool = missing_required_tool and request.get("defer_missing_required_tool") is True
+        if missing_required_tool and not defer_missing_tool:
+            raise StreamingError("required declared tool call is missing")
+        if not content_times and tool_call is None and not defer_missing_tool:
             raise StreamingError(
                 "exact streaming content evidence and TTFT are required",
                 actual_send_ns=actual_send_ns,
@@ -1296,13 +1447,13 @@ def stream_chat(
                 "exact finish reason is required",
                 actual_send_ns=actual_send_ns,
             )
-        return {
+        result = {
             "success": True,
             "text": "".join(text_parts),
             "ttft_ms": (
                 (content_times[0] - actual_send_ns) / 1_000_000 if content_times else None
             ),
-            "content_span_ms": (content_times[-1] - content_times[0]) / 1_000_000,
+            "content_span_ms": (content_times[-1] - content_times[0]) / 1_000_000 if content_times else None,
             "inter_chunk_ms": [
                 (later - earlier) / 1_000_000
                 for earlier, later in zip(content_times, content_times[1:])
@@ -1316,12 +1467,15 @@ def stream_chat(
             "input_tokens": input_tokens,
             "stop_reason": stop_reason,
             "actual_send_ns": actual_send_ns,
-            "first_content_ns": content_times[0],
-            "last_content_ns": content_times[-1],
+            "first_content_ns": content_times[0] if content_times else None,
+            "last_content_ns": content_times[-1] if content_times else None,
             "terminal_ns": end_ns,
             "content_event_count": len(content_times),
             "error": None,
         }
+        if episode2_stream:
+            result.update(tool_calls=[tool_call] if tool_call is not None else [], content_events=content_events, tool_events=tool_events)
+        return result
     except Exception as exc:
         for candidate in response_sockets:
             close = getattr(candidate, "close", None)
@@ -1357,4 +1511,6 @@ def stream_chat(
             inter_chunk_gaps_ns=tuple(
                 later - earlier for earlier, later in zip(content_times, content_times[1:])
             ),
+            content_events=tuple(content_events),
+            tool_events=tuple(tool_events),
         ) from None
