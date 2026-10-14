@@ -178,5 +178,93 @@
     }
   },
   "protocol_sha256": "87535f3c0975d7e1db2e092559eae83f88fac7cb3b6da67dcbe8be64f6c75f74",
-  "trace_sha256": "8676351e95040c209e82f238b9e8cbbc34dc1695b3a9ba1d510a16d670d095b9"
+  "trace_sha256": "8676351e95040c209e82f238b9e8cbbc34dc1695b3a9ba1d510a16d670d095b9",
+  "configuration": {
+    "model": {
+      "repository": "Qwen/Qwen2.5-32B-Instruct",
+      "weight_dtype": "bfloat16",
+      "resolved_server_context_tokens": 32768,
+      "quantization": "none",
+      "speculative_decoding": false
+    },
+    "hardware": {
+      "accelerator": "NVIDIA H200 SXM 141GB",
+      "gpu_count": 1,
+      "same_physical_gpu": true,
+      "engine_execution": "sequential"
+    },
+    "performance_policy": {
+      "source": "Native performance defaults plus explicit model/server/tool compatibility arguments",
+      "forced_identical_settings": false,
+      "verified_runtime_epochs": 12,
+      "repeats_per_engine": 6,
+      "resolved_policy_fixed_across_repeats": true,
+      "native_capacity_observed_per_epoch": true
+    },
+    "runtimes": {
+      "vllm": {
+        "version": "0.29.0",
+        "tensor_parallel_size": 1,
+        "pipeline_parallel_size": 1,
+        "resolved_context_tokens": 32768,
+        "gpu_memory_utilization": 0.92,
+        "scheduling_policy": "fcfs",
+        "async_scheduling": true,
+        "max_num_seqs": 1024,
+        "enable_chunked_prefill": true,
+        "max_num_batched_tokens": 8192,
+        "enable_prefix_caching": true,
+        "enable_auto_tool_choice": true,
+        "tool_call_parser_argument": "hermes"
+      },
+      "sglang": {
+        "version": "0.5.20",
+        "tensor_parallel_size": 1,
+        "pipeline_parallel_size": 1,
+        "resolved_context_tokens": 32768,
+        "mem_fraction_static": 0.903,
+        "schedule_policy": "fcfs",
+        "max_running_requests": 4096,
+        "chunked_prefill_size": 8192,
+        "radix_caching": true,
+        "tool_call_parser_argument": "qwen25",
+        "native_tool_parser_alias": "qwen"
+      }
+    },
+    "benchmark": {
+      "paired_repetition_blocks": 6,
+      "engine_order": "counterbalanced",
+      "fresh_runtime_launches": 12,
+      "cache_reset_between_arms": true,
+      "mode": "closed-loop",
+      "cache_temperature": "warm",
+      "concurrent_workflows": 2,
+      "workflows_per_engine_block": 8,
+      "measured_requests_per_engine_block": 12,
+      "excluded_warmup_requests_per_engine_block": 1,
+      "measured_requests": 144,
+      "measured_requests_per_engine": 72,
+      "excluded_warmup_requests": 12,
+      "classes": [
+        "agent_chain",
+        "code_reasoning",
+        "conversation",
+        "long_prefill",
+        "output_heavy",
+        "short",
+        "structured",
+        "tool_call"
+      ],
+      "manifest_context_cap_tokens": 8192,
+      "sampling": {
+        "temperature": 0,
+        "top_p": 1
+      },
+      "requested_output_cap_tokens": {
+        "minimum": 64,
+        "maximum": 512
+      },
+      "request_deadline_seconds": 20
+    }
+  }
 }
