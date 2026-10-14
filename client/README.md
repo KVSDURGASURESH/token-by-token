@@ -216,3 +216,16 @@ Repository licensing and contribution terms are defined at the repository
 root. A source license does not make private AgentBench profiles or benchmark
 corpora public. A distributable binary can be inspected; it must be audited
 before release for embedded private content.
+
+Episode 02 can write an explicit bounded selection through a reviewed worker:
+
+```bash
+token-by-token capabilities --episode 2 --worker /absolute/path/to/reviewed-worker --format json
+token-by-token episode 2 select --worker /absolute/path/to/reviewed-worker \
+  --mixture public-fixture-v1 --model loopback-model --gpu none \
+  --output selection.json --format json
+```
+
+The request binds the formal protocol and capability digest and matches an approved combination. The synthetic aliases above require an `offline_verified` capability. Recorded aliases require a fresh `provider_verified` proof from the private operator; current actual provider execution remains unavailable. This command writes a new private file and grants no resource or spending authority. The historical `describe` and offline self-test formats remain separate from the formal measured contract.
+
+A provider capability includes `observed_at` and `expires_at`; its validity window is at most fifteen minutes. The public mixture always declares twelve model turns per block. Offline proof may last at most one day. The binary audit requires the selection module and both packaged schemas before an updated client can pass its import/resource closure check.

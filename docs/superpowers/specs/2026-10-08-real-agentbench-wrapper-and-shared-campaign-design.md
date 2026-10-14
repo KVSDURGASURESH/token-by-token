@@ -65,6 +65,8 @@ a result that has not been measured.
 | 00 — Warm-up | 00 unchanged |
 | 01 — Measure what matters | 01, retained as a historical study |
 | 02 — Equal-work runtime baseline | 01 |
+
+> Historical mapping note: the startup/readiness material below predates the current Episode 02 formal mixed-workflow baseline. It remains historical design context and is not the canonical Episode 02 experiment contract.
 | 03 — Prefix reuse | 03 |
 | 04 — Batching, scheduling and mixed traffic | 03 |
 | 05 — Attention kernels and precision | 06 |

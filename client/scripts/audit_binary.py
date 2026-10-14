@@ -53,6 +53,8 @@ APPROVED_RESOURCE_NAMES = {
     "token_by_token_cli/resources/schemas/local-capabilities.v1.schema.json",
     "token_by_token_cli/resources/schemas/local-result.v1.schema.json",
     "token_by_token_cli/resources/schemas/public-result.v1.schema.json",
+    "token_by_token_cli/resources/schemas/episode2-selection.v1.schema.json",
+    "token_by_token_cli/resources/schemas/episode2-capabilities.v1.schema.json",
 }
 REQUIRED_MODULES = {
     "run_client",
@@ -63,6 +65,7 @@ REQUIRED_MODULES = {
     "token_by_token_cli.selftest",
     "token_by_token_cli.verify",
     "token_by_token_cli.local_worker",
+    "token_by_token_cli.selection",
 }
 REQUIRED_RESOURCES = {
     "token_by_token_cli/resources/episodes/catalog.v1.json",
@@ -73,6 +76,8 @@ REQUIRED_RESOURCES = {
     "token_by_token_cli/resources/schemas/local-capabilities.v1.schema.json",
     "token_by_token_cli/resources/schemas/local-result.v1.schema.json",
     "token_by_token_cli/resources/schemas/public-result.v1.schema.json",
+    "token_by_token_cli/resources/schemas/episode2-selection.v1.schema.json",
+    "token_by_token_cli/resources/schemas/episode2-capabilities.v1.schema.json",
 }
 APPROVED_RESOURCE_PREFIXES = (
     "attrs-26.1.0.dist-info/",
