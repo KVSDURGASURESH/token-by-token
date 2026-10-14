@@ -92,3 +92,14 @@ and [NVIDIA DCGM Exporter metric contract](https://docs.nvidia.com/datacenter/dc
 VictoriaMetrics data. `docker compose down` stops the stack but preserves the
 named metrics volume. Do not add `--volumes` unless retained local metrics are
 intentionally being deleted.
+
+
+## Episode 02 aligned evidence
+
+`episode2_telemetry.align_signals` qualifies native/runtime, GPU, host and client signals by exact execution/engine/arm/cell/block identity, runtime version, normalized units, cadence, measured-window coverage, clock offsets and retained uncertainty. Source mappings must be independently proved for the pinned runtime; a normalized metric name does not establish availability. GPU samples require process attribution; counter resets and missing coverage remain explicit unavailable records. Converted timestamps are labeled client-monotonic while preserving their source domain. No guessed queue, cache, CPU or GPU values fill a missing signal.
+
+`episode2_rca.evaluate_hypothesis` recomputes the disposition from predeclared signatures, recorded evidence lineage, required aligned signals, confounder controls and a recorded controlled equal-work intervention. A high correlation or missing instrumentation leaves causal disposition inconclusive. Diagnostic attempts stay outside baseline/treatment aggregates. All hypotheses retain limits; an unsupported mechanism supplies no optimization winner or paid-rerun authority.
+
+Source schemas are `episode2-telemetry.schema.json` and `episode2-hypothesis.schema.json`. Offline checks: `PYTHONPATH=src:scripts .venv/bin/python -m pytest tests/test_episode2_telemetry.py tests/test_episode2_rca.py -q`. Runtime collection and provider readiness require separate measured evidence.
+
+Episode 02 causal dispositions require typed predicates over qualified recorded signals in every measured block. Each predicate names a normalized signal, mean/minimum/maximum, comparison operator and finite threshold; every declared confounder has a sample predicate. The evaluator validates raw run observations and aligns signal coverage before computing predicates. Legacy prose, caller verdict booleans and opaque hashes produce an inconclusive proposal. Controlled tests bind distinct execution/evidence, equal delivered work and the actual before/after configuration hashes. Independent review must still establish source authority and scientific suitability of the predeclared test.

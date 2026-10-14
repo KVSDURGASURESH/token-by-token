@@ -1,0 +1,1001 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokenbytoken.org/schemas/episode2-public-aggregate.schema.json",
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scheduled_requests",
+        "attempted_requests",
+        "sent_requests",
+        "terminal_successful_requests",
+        "qualified_requests",
+        "error_requests",
+        "dropped_requests",
+        "dependency_blocked_requests",
+        "cancelled_requests",
+        "other_unsent_requests"
+      ],
+      "properties": {
+        "scheduled_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempted_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sent_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "terminal_successful_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "qualified_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "error_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dependency_blocked_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cancelled_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "other_unsent_requests": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "count",
+        "available",
+        "unavailable_reason",
+        "percentile_method",
+        "headline_percentile",
+        "p50",
+        "p95",
+        "p99",
+        "p99_label"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "unavailable_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "percentile_method": {
+          "const": "linear_rank_n_minus_1"
+        },
+        "headline_percentile": {
+          "enum": [
+            "p95",
+            "p99"
+          ]
+        },
+        "p50": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "p95": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "p99": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "p99_label": {
+          "enum": [
+            "eligible p99",
+            "descriptive p99",
+            "unavailable"
+          ]
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "e2e_ms",
+        "ttft_ms",
+        "tpot_ms",
+        "workflow_e2e_ms",
+        "tool_event_latency_ms"
+      ],
+      "properties": {
+        "e2e_ms": {
+          "$ref": "#/$defs/metric"
+        },
+        "ttft_ms": {
+          "$ref": "#/$defs/metric"
+        },
+        "tpot_ms": {
+          "$ref": "#/$defs/metric"
+        },
+        "workflow_e2e_ms": {
+          "$ref": "#/$defs/metric"
+        },
+        "tool_event_latency_ms": {
+          "$ref": "#/$defs/metric"
+        }
+      }
+    },
+    "class": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "counts",
+        "metrics"
+      ],
+      "properties": {
+        "counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "metrics": {
+          "$ref": "#/$defs/metrics"
+        }
+      }
+    },
+    "goodput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available",
+        "reason",
+        "qualified_requests",
+        "qualified_tokens",
+        "tokens_per_second"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "qualified_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "qualified_tokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "tokens_per_second": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reason"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "verified",
+            "rejected",
+            "inconclusive"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        }
+      }
+    },
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "block_pairs",
+        "resamples",
+        "confidence",
+        "seed",
+        "estimate_ms",
+        "low_ms",
+        "high_ms"
+      ],
+      "properties": {
+        "method": {
+          "const": "paired_whole_block_bootstrap"
+        },
+        "block_pairs": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 8
+        },
+        "resamples": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20000
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimate_ms": {
+          "type": "number"
+        },
+        "low_ms": {
+          "type": "number"
+        },
+        "high_ms": {
+          "type": "number"
+        }
+      }
+    },
+    "comparison_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "percentile",
+        "baseline_count",
+        "treatment_count",
+        "baseline_p50_ms",
+        "treatment_p50_ms",
+        "baseline_tail_ms",
+        "treatment_tail_ms",
+        "baseline_gap_ms",
+        "treatment_gap_ms",
+        "gap_difference_ms",
+        "interval"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "supported",
+            "rejected",
+            "inconclusive"
+          ]
+        },
+        "percentile": {
+          "enum": [
+            "p95",
+            "p99"
+          ]
+        },
+        "baseline_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "treatment_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "baseline_p50_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "treatment_p50_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "baseline_tail_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "treatment_tail_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "baseline_gap_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "treatment_gap_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "gap_difference_ms": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/interval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "class_comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metrics",
+        "safeguards"
+      ],
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "e2e_ms",
+            "ttft_ms",
+            "tpot_ms",
+            "workflow_e2e_ms",
+            "tool_event_latency_ms"
+          ],
+          "properties": {
+            "e2e_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            },
+            "ttft_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            },
+            "tpot_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            },
+            "workflow_e2e_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            },
+            "tool_event_latency_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            }
+          }
+        },
+        "safeguards": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "quality",
+            "median",
+            "e2e_ms",
+            "ttft_ms",
+            "tpot_ms",
+            "workflow_e2e_ms",
+            "errors",
+            "admission",
+            "goodput"
+          ],
+          "properties": {
+            "quality": {
+              "$ref": "#/$defs/gate"
+            },
+            "median": {
+              "$ref": "#/$defs/gate"
+            },
+            "e2e_ms": {
+              "$ref": "#/$defs/gate"
+            },
+            "ttft_ms": {
+              "$ref": "#/$defs/gate"
+            },
+            "tpot_ms": {
+              "$ref": "#/$defs/gate"
+            },
+            "workflow_e2e_ms": {
+              "$ref": "#/$defs/gate"
+            },
+            "errors": {
+              "$ref": "#/$defs/gate"
+            },
+            "admission": {
+              "$ref": "#/$defs/gate"
+            },
+            "goodput": {
+              "$ref": "#/$defs/gate"
+            }
+          }
+        }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "evidence_class",
+        "source_sha256",
+        "protocol_sha256",
+        "trace_sha256",
+        "engine",
+        "arm",
+        "cell_id",
+        "mode",
+        "temperature",
+        "mixture",
+        "counts",
+        "metrics",
+        "classes",
+        "blocks",
+        "output",
+        "error_rate",
+        "quality_fraction",
+        "goodput",
+        "cost_status",
+        "resource_status",
+        "cleanup_status",
+        "uncertainty",
+        "hypotheses",
+        "arms_lineage"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "episode2.public-aggregate.v1"
+        },
+        "evidence_class": {
+          "enum": [
+            "synthetic_mock",
+            "recorded"
+          ]
+        },
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "protocol_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "trace_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "engine": {
+          "enum": [
+            "vllm",
+            "sglang"
+          ]
+        },
+        "arm": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "cell_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "mode": {
+          "enum": [
+            "closed-loop",
+            "open-loop"
+          ]
+        },
+        "temperature": {
+          "enum": [
+            "cold",
+            "warm"
+          ]
+        },
+        "mixture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "weights",
+            "units_per_class"
+          ],
+          "properties": {
+            "weights": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "short",
+                "long_prefill",
+                "output_heavy",
+                "structured",
+                "code_reasoning",
+                "tool_call",
+                "conversation",
+                "agent_chain"
+              ],
+              "properties": {
+                "short": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "long_prefill": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "output_heavy": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "structured": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "code_reasoning": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "tool_call": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "conversation": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "agent_chain": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "units_per_class": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 128
+            }
+          }
+        },
+        "counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "metrics": {
+          "$ref": "#/$defs/metrics"
+        },
+        "classes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "short",
+            "long_prefill",
+            "output_heavy",
+            "structured",
+            "code_reasoning",
+            "tool_call",
+            "conversation",
+            "agent_chain"
+          ],
+          "properties": {
+            "short": {
+              "$ref": "#/$defs/class"
+            },
+            "long_prefill": {
+              "$ref": "#/$defs/class"
+            },
+            "output_heavy": {
+              "$ref": "#/$defs/class"
+            },
+            "structured": {
+              "$ref": "#/$defs/class"
+            },
+            "code_reasoning": {
+              "$ref": "#/$defs/class"
+            },
+            "tool_call": {
+              "$ref": "#/$defs/class"
+            },
+            "conversation": {
+              "$ref": "#/$defs/class"
+            },
+            "agent_chain": {
+              "$ref": "#/$defs/class"
+            }
+          }
+        },
+        "blocks": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "block_id",
+              "counts",
+              "metrics"
+            ],
+            "properties": {
+              "block_id": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+              },
+              "counts": {
+                "$ref": "#/$defs/counts"
+              },
+              "metrics": {
+                "$ref": "#/$defs/metrics"
+              }
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "terminal_success_tokens",
+            "qualified_tokens",
+            "tokens_per_second"
+          ],
+          "properties": {
+            "terminal_success_tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "qualified_tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens_per_second": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        },
+        "error_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "quality_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "goodput": {
+          "$ref": "#/$defs/goodput"
+        },
+        "cost_status": {
+          "enum": [
+            "unavailable",
+            "settled",
+            "provisional"
+          ]
+        },
+        "resource_status": {
+          "enum": [
+            "unavailable",
+            "available"
+          ]
+        },
+        "cleanup_status": {
+          "enum": [
+            "verified",
+            "failed",
+            "unverified"
+          ]
+        },
+        "uncertainty": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "method",
+            "independent_blocks",
+            "status"
+          ],
+          "properties": {
+            "method": {
+              "const": "paired_whole_block_bootstrap"
+            },
+            "independent_blocks": {
+              "type": "integer",
+              "minimum": 6,
+              "maximum": 8
+            },
+            "status": {
+              "const": "requires_paired_arm_comparison"
+            }
+          }
+        },
+        "hypotheses": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "arms_lineage": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "protocol_sha256",
+        "trace_sha256",
+        "baseline_source_sha256",
+        "treatment_source_sha256",
+        "primary_metric",
+        "matched_work",
+        "primary",
+        "classes",
+        "safeguards",
+        "status",
+        "winner",
+        "metrics"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "episode2.comparison.v1"
+        },
+        "protocol_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "trace_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "baseline_source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "treatment_source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "primary_metric": {
+          "enum": [
+            "warm_closed-loop_request_e2e_ms",
+            "warm_open-loop_request_e2e_ms",
+            "cold_closed-loop_request_e2e_ms",
+            "cold_open-loop_request_e2e_ms"
+          ]
+        },
+        "matched_work": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "equivalent",
+            "reasons"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "equivalent",
+                "incompatible",
+                "inconclusive"
+              ]
+            },
+            "equivalent": {
+              "type": "boolean"
+            },
+            "reasons": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "string",
+                "maxLength": 256
+              }
+            }
+          }
+        },
+        "primary": {
+          "$ref": "#/$defs/comparison_metric"
+        },
+        "classes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "short",
+            "long_prefill",
+            "output_heavy",
+            "structured",
+            "code_reasoning",
+            "tool_call",
+            "conversation",
+            "agent_chain"
+          ],
+          "properties": {
+            "short": {
+              "$ref": "#/$defs/class_comparison"
+            },
+            "long_prefill": {
+              "$ref": "#/$defs/class_comparison"
+            },
+            "output_heavy": {
+              "$ref": "#/$defs/class_comparison"
+            },
+            "structured": {
+              "$ref": "#/$defs/class_comparison"
+            },
+            "code_reasoning": {
+              "$ref": "#/$defs/class_comparison"
+            },
+            "tool_call": {
+              "$ref": "#/$defs/class_comparison"
+            },
+            "conversation": {
+              "$ref": "#/$defs/class_comparison"
+            },
+            "agent_chain": {
+              "$ref": "#/$defs/class_comparison"
+            }
+          }
+        },
+        "safeguards": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "work",
+            "evidence_class",
+            "quality",
+            "errors",
+            "median",
+            "admission",
+            "goodput",
+            "attributable_cost",
+            "resource",
+            "reset",
+            "primary_cell",
+            "material"
+          ],
+          "properties": {
+            "work": {
+              "$ref": "#/$defs/gate"
+            },
+            "evidence_class": {
+              "$ref": "#/$defs/gate"
+            },
+            "quality": {
+              "$ref": "#/$defs/gate"
+            },
+            "errors": {
+              "$ref": "#/$defs/gate"
+            },
+            "median": {
+              "$ref": "#/$defs/gate"
+            },
+            "admission": {
+              "$ref": "#/$defs/gate"
+            },
+            "goodput": {
+              "$ref": "#/$defs/gate"
+            },
+            "attributable_cost": {
+              "$ref": "#/$defs/gate"
+            },
+            "resource": {
+              "$ref": "#/$defs/gate"
+            },
+            "reset": {
+              "$ref": "#/$defs/gate"
+            },
+            "primary_cell": {
+              "$ref": "#/$defs/gate"
+            },
+            "material": {
+              "$ref": "#/$defs/gate"
+            }
+          }
+        },
+        "status": {
+          "enum": [
+            "accepted",
+            "rejected",
+            "inconclusive"
+          ]
+        },
+        "winner": {
+          "enum": [
+            "treatment",
+            null
+          ]
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "e2e_ms",
+            "ttft_ms",
+            "tpot_ms",
+            "workflow_e2e_ms",
+            "tool_event_latency_ms"
+          ],
+          "properties": {
+            "e2e_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            },
+            "ttft_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            },
+            "tpot_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            },
+            "workflow_e2e_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            },
+            "tool_event_latency_ms": {
+              "$ref": "#/$defs/comparison_metric"
+            }
+          }
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/projection"
+    },
+    {
+      "$ref": "#/$defs/comparison"
+    }
+  ]
+}

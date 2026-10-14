@@ -272,3 +272,35 @@ def test_schema_runtime_negative_parity(mutation):
     assert list(Draft202012Validator(schema).iter_errors(protocol))
     with pytest.raises(ValueError):
         validate_protocol(protocol)
+
+
+def test_measured_numeric_safeguards_are_closed_and_bounded():
+    protocol=make_synthetic_protocol()
+    protocol['quality']['output_length_tolerance_fraction']=.1
+    protocol['safeguards'].update(e2e_slo_ms=30000,ttft_slo_ms=5000,tpot_slo_ms=100,goodput_min_tokens_per_second=1,admission_rate_min=1,cost_max_usd='10.80',resource_max={'gpu_memory_fraction':.95,'host_memory_fraction':.9,'host_cpu_percent':95})
+    validate_protocol(protocol)
+    schema=json.loads((ROOT/'schemas/episode2-protocol.schema.json').read_text())
+    assert not list(Draft202012Validator(schema).iter_errors(protocol))
+    protocol['safeguards']['resource_max']['unbound']=123
+    with pytest.raises(ValueError):validate_protocol(protocol)
+
+
+@pytest.mark.parametrize('field,value',[('e2e_slo_ms',True),('goodput_min_tokens_per_second',-1),('admission_rate_min',1.1),('cost_max_usd',10.8)])
+def test_invalid_measured_safeguard_values_fail_closed(field,value):
+    protocol=make_synthetic_protocol();protocol['safeguards'][field]=value
+    with pytest.raises(ValueError):validate_protocol(protocol)
+
+
+def test_only_closed_tool_compatibility_profile_is_accepted():
+    from copy import deepcopy
+    profile = {'profile':'native performance defaults + tool compatibility', 'tool_choice':'required',
+               'vllm':['--enable-auto-tool-choice','--tool-call-parser','hermes'], 'sglang':['--tool-call-parser','qwen25']}
+    protocol = make_synthetic_protocol()
+    protocol['material']['tool_compatibility'] = profile
+    validate_protocol(protocol)
+    Draft202012Validator(json.loads((ROOT/'schemas/episode2-protocol.schema.json').read_text())).validate(protocol)
+    for key, value in [('vllm', ['--max-num-seqs','1']), ('sglang',[]),
+                       ('tool_choice','auto'), ('profile','stock-native defaults')]:
+        changed = deepcopy(protocol)
+        changed['material']['tool_compatibility'][key] = value
+        with pytest.raises(ValueError): validate_protocol(changed)

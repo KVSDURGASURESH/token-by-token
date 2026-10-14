@@ -6,6 +6,9 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from compile_plan import approval_phrase, compile_plan, plan_digest
 
@@ -18,6 +21,8 @@ def main() -> int:
     args = parser.parse_args()
 
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+    if manifest.get("schema_version") == 2:
+        parser.error("Use compile_episode2_execution.py for private version 2 checkpoints.")
     live_inputs = json.loads(args.live_inputs.read_text(encoding="utf-8"))
     plan = compile_plan(manifest, live_inputs)
     digest = plan_digest(plan)

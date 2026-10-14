@@ -1,0 +1,141 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "episode2-capabilities.v1"
+    },
+    "episode": {
+      "type": "integer",
+      "const": 2
+    },
+    "protocol_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {
+      "enum": [
+        "unavailable",
+        "offline_verified",
+        "provider_verified"
+      ]
+    },
+    "combinations": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mixture_id": {
+            "const": "public-fixture-v1"
+          },
+          "model_id": {
+            "enum": [
+              "loopback-model",
+              "qwen2.5-32b-instruct"
+            ]
+          },
+          "gpu_id": {
+            "enum": [
+              "none",
+              "h200-sxm"
+            ]
+          },
+          "mode": {
+            "enum": [
+              "synthetic_mock",
+              "recorded"
+            ]
+          },
+          "limits": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "max_blocks": {
+                "type": "integer",
+                "minimum": 6,
+                "maximum": 8
+              },
+              "max_turns_per_block": {
+                "type": "integer",
+                "const": 12
+              }
+            },
+            "required": [
+              "max_blocks",
+              "max_turns_per_block"
+            ]
+          }
+        },
+        "required": [
+          "mixture_id",
+          "model_id",
+          "gpu_id",
+          "mode",
+          "limits"
+        ]
+      }
+    },
+    "proof": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "material_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "adapter_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "checks_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "source_sha256",
+            "material_sha256",
+            "adapter_sha256",
+            "checks_sha256"
+          ]
+        }
+      ]
+    },
+    "expires_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 40
+    },
+    "observed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 40
+    }
+  },
+  "required": [
+    "schema_version",
+    "episode",
+    "protocol_sha256",
+    "status",
+    "combinations",
+    "proof",
+    "expires_at",
+    "observed_at"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

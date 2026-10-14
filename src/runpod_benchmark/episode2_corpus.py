@@ -100,7 +100,7 @@ OUTPUT_CONCEPTS = (
     "time to first token", "end to end latency", "decode time", "goodput",
     "tail latency", "schema validity", "telemetry", "attributable cost",
 )
-LONG_TABLE = "\n".join(f"row_{index:03d}={index}; public reference value for indexed row {index:03d}." for index in range(256))
+LONG_TABLE = "\n".join(f"row_{index:03d}={index}; reference item." for index in range(256))
 TOOL_SEMANTIC = {"name": "lookup_inventory", "arguments": {"sku": "widget"}}
 
 
@@ -110,7 +110,7 @@ def initial_messages(turn: dict[str, Any]) -> list[dict[str, str]]:
     prompts = {
         "short": "Explain equal work in one sentence.",
         "long_prefill": "Use the indexed reference below. Return exactly the JSON object containing row_003 and row_127 as integer values, with no other keys.\n" + LONG_TABLE,
-        "output_heavy": "Write exactly 16 numbered lines, in the supplied order. Each line must begin with its reference concept and explain it in 12 to 18 words. Include no preface or conclusion.\n" + "\n".join(f"{i}. {concept}" for i, concept in enumerate(OUTPUT_CONCEPTS, 1)),
+        "output_heavy": "Write exactly 16 numbered lines, in the supplied order. Use the exact format N. concept: explanation. Each explanation must contain 12 to 18 words, excluding its concept and number. Include no preface or conclusion.\n" + "\n".join(f"{i}. {concept}" for i, concept in enumerate(OUTPUT_CONCEPTS, 1)),
         "structured": 'Return exactly {"answer":6,"unit":"items"}. No extra keys or prose.',
         "code_reasoning": 'Return exactly {"value":42,"expression":"6*7"}. No extra keys or prose.',
         "tool_call": "Call lookup_inventory with exactly the argument sku widget. Do not return text.",

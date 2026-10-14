@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "episode2-selection.v1"
+    },
+    "episode": {
+      "type": "integer",
+      "const": 2
+    },
+    "protocol_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "mixture_id": {
+      "const": "public-fixture-v1"
+    },
+    "model_id": {
+      "enum": [
+        "loopback-model",
+        "qwen2.5-32b-instruct"
+      ]
+    },
+    "gpu_id": {
+      "enum": [
+        "none",
+        "h200-sxm"
+      ]
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{32}$"
+    },
+    "capability_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "episode",
+    "protocol_sha256",
+    "mixture_id",
+    "model_id",
+    "gpu_id",
+    "request_id",
+    "capability_sha256"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
