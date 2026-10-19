@@ -3,7 +3,7 @@ name: Offline validation
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, codex/episode-02-public-clean]
 
 permissions:
   contents: read
@@ -20,9 +20,9 @@ jobs:
       - name: Install syscall tracer
         run: sudo apt-get update && sudo apt-get install -y strace
       - name: Install source client from the isolated package
-        run: python3 -m pip install ./client
+        run: python3 -m pip install ./client pytest==8.4.2
       - name: Run public client tests
-        run: PYTHONPATH=client/src python3 -m unittest discover -s client/tests -p 'test_*.py' -v
+        run: PYTHONPATH=client/src python3 -m pytest client/tests -v
       - name: Build and audit standalone candidate
         working-directory: client
         run: python3 scripts/build_binary.py
