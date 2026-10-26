@@ -1,0 +1,214 @@
+{
+  "schema_version": "episode03.full-campaign-cost.v1",
+  "read_at": "2026-10-25T23:59:54.978473+00:00",
+  "period_utc": [
+    "2026-10-22",
+    "2026-10-25"
+  ],
+  "status": "provider_reported_not_invoice_certified",
+  "episode03_attributed_usd": 35.04166290606372,
+  "earlier_trials_usd": 28.823776262113824,
+  "final_measurements_usd": 6.217886643949896,
+  "account_window_usd": 35.052895514061674,
+  "unassigned_account_usd": 0.011232607997953892,
+  "gpu_usd": 34.957172164693475,
+  "disk_usd": 0.08449074137024581,
+  "attributed_allocations": 20,
+  "earlier_allocations": 18,
+  "final_allocations": 2,
+  "rows": [
+    {
+      "date": "2026-10-22",
+      "description": "Early runtime timeout",
+      "category": "earlier_trials",
+      "amount_usd": 0.44083333015441895,
+      "gpu_usd": 0.44083333015441895,
+      "disk_usd": 0.0
+    },
+    {
+      "date": "2026-10-22",
+      "description": "Early setup trial",
+      "category": "earlier_trials",
+      "amount_usd": 0.25224483013153076,
+      "gpu_usd": 0.25224483013153076,
+      "disk_usd": 0.0
+    },
+    {
+      "date": "2026-10-22",
+      "description": "Early smoke/setup trial",
+      "category": "earlier_trials",
+      "amount_usd": 0.19370216131210327,
+      "gpu_usd": 0.19370216131210327,
+      "disk_usd": 0.0
+    },
+    {
+      "date": "2026-10-22",
+      "description": "Model startup deadline",
+      "category": "earlier_trials",
+      "amount_usd": 0.5104594870936126,
+      "gpu_usd": 0.5093020796775818,
+      "disk_usd": 0.0011574074160307646
+    },
+    {
+      "date": "2026-10-23",
+      "description": "Early setup trial",
+      "category": "earlier_trials",
+      "amount_usd": 0.17221595346927643,
+      "gpu_usd": 0.17221595346927643,
+      "disk_usd": 0.0
+    },
+    {
+      "date": "2026-10-23",
+      "description": "Early trial closed",
+      "category": "earlier_trials",
+      "amount_usd": 0.183112834347412,
+      "gpu_usd": 0.18195542693138123,
+      "disk_usd": 0.0011574074160307646
+    },
+    {
+      "date": "2026-10-23",
+      "description": "GPU warmup deadline",
+      "category": "earlier_trials",
+      "amount_usd": 0.7903984463773668,
+      "gpu_usd": 0.7880836315453053,
+      "disk_usd": 0.002314814832061529
+    },
+    {
+      "date": "2026-10-23",
+      "description": "Model startup deadline",
+      "category": "earlier_trials",
+      "amount_usd": 0.8110446676146239,
+      "gpu_usd": 0.8098872601985931,
+      "disk_usd": 0.0011574074160307646
+    },
+    {
+      "date": "2026-10-23",
+      "description": "Model startup deadline",
+      "category": "earlier_trials",
+      "amount_usd": 0.5613375648390502,
+      "gpu_usd": 0.5601801574230194,
+      "disk_usd": 0.0011574074160307646
+    },
+    {
+      "date": "2026-10-23",
+      "description": "Native preparation deadline",
+      "category": "earlier_trials",
+      "amount_usd": 1.1046949713490903,
+      "gpu_usd": 1.1023801565170288,
+      "disk_usd": 0.002314814832061529
+    },
+    {
+      "date": "2026-10-24",
+      "description": "Bootstrap deployment verification mismatch",
+      "category": "earlier_trials",
+      "amount_usd": 0.36351558566093445,
+      "gpu_usd": 0.36351558566093445,
+      "disk_usd": 0.0
+    },
+    {
+      "date": "2026-10-24",
+      "description": "Earlier vLLM measurements; SGLang admission failed",
+      "category": "earlier_trials",
+      "amount_usd": 8.647591347107664,
+      "gpu_usd": 8.62560060620308,
+      "disk_usd": 0.021990740904584527
+    },
+    {
+      "date": "2026-10-24",
+      "description": "Metrics reconciliation deadline",
+      "category": "earlier_trials",
+      "amount_usd": 1.2158373466227204,
+      "gpu_usd": 1.212365124374628,
+      "disk_usd": 0.0034722222480922937
+    },
+    {
+      "date": "2026-10-24",
+      "description": "Pilot completed; main study not admitted",
+      "category": "earlier_trials",
+      "amount_usd": 3.397597373696044,
+      "gpu_usd": 3.3894955217838287,
+      "disk_usd": 0.008101851912215352
+    },
+    {
+      "date": "2026-10-24",
+      "description": "Post-epoch controller exception",
+      "category": "earlier_trials",
+      "amount_usd": 1.1730462103150785,
+      "gpu_usd": 1.170731395483017,
+      "disk_usd": 0.002314814832061529
+    },
+    {
+      "date": "2026-10-24",
+      "description": "Power/thermal observation interrupted the run",
+      "category": "earlier_trials",
+      "amount_usd": 1.0756323202513158,
+      "gpu_usd": 1.0733175054192543,
+      "disk_usd": 0.002314814832061529
+    },
+    {
+      "date": "2026-10-25",
+      "description": "Baseline measurements retained; work window ended",
+      "category": "final_measurements",
+      "amount_usd": 2.5600820896215737,
+      "gpu_usd": 2.553137645125389,
+      "disk_usd": 0.0069444444961845875
+    },
+    {
+      "date": "2026-10-25",
+      "description": "Earlier SGLang measurements; balance-read guard interruption",
+      "category": "earlier_trials",
+      "amount_usd": 7.594259367091581,
+      "gpu_usd": 7.574583441019058,
+      "disk_usd": 0.019675926072522998
+    },
+    {
+      "date": "2026-10-25",
+      "description": "First-row artifact ordering error",
+      "category": "earlier_trials",
+      "amount_usd": 0.33625246468000114,
+      "gpu_usd": 0.3350950572639704,
+      "disk_usd": 0.0011574074160307646
+    },
+    {
+      "date": "2026-10-25",
+      "description": "Remaining baseline and cache-ON comparison completed",
+      "category": "final_measurements",
+      "amount_usd": 3.6578045543283224,
+      "gpu_usd": 3.6485452950000763,
+      "disk_usd": 0.009259259328246117
+    }
+  ],
+  "daily_account": [
+    {
+      "date": "2026-10-22",
+      "gpu_usd": 1.3960824012756348,
+      "disk_usd": 0.0011574074160307646,
+      "total_usd": 1.3972398086916655
+    },
+    {
+      "date": "2026-10-23",
+      "gpu_usd": 3.6147025860846043,
+      "disk_usd": 0.008101851912215352,
+      "total_usd": 3.6228044379968196
+    },
+    {
+      "date": "2026-10-24",
+      "gpu_usd": 10.36213431879878,
+      "disk_usd": 0.024305555736646056,
+      "total_usd": 10.386439874535426
+    },
+    {
+      "date": "2026-10-25",
+      "gpu_usd": 19.59548546653241,
+      "disk_usd": 0.05092592630535364,
+      "total_usd": 19.646411392837763
+    }
+  ],
+  "unassigned": [
+    {
+      "amount_usd": 0.011232607997953892,
+      "scope": "Unassigned account charge; no matching retained Episode03 launch receipt"
+    }
+  ],
+  "scope_note": "All matched Episode03 allocations in this billing window, including failed setup/warmup, recovery and earlier benchmark attempts. Earlier trials include useful pilot/vLLM/SGLang observations, not only failures. Disk charges are included within each allocation total. No per-setting cost efficiency claim."
+}

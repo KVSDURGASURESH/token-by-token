@@ -17,7 +17,7 @@ The three capstones have distinct outcomes: a serving configuration, an evidence
 | Planned phase | What we will explore |
 |---|---|
 | **Establish a comparable baseline** | Measurement and quality contracts; compare runtimes performing the same declared work. [Stages 1–2](roadmap.md#1-measurement-and-quality-contracts). |
-| **Bound capacity and test optimizations** | Prefix reuse, batching, attention kernels and precision, speculative decoding, memory containment, saturation and SLO-qualified cost. [Stages 3–6](roadmap.md#3-prefix-reuse) and [14–15](roadmap.md#14-packaging-accelerator-preflight-and-memory-containment). |
+| **Bound capacity and test optimizations** | Prefix reuse, speculative decoding, MoE inference, isolated scheduling/kernel/precision tune-ups, memory containment, saturation and SLO-qualified cost. [Stages 3–6](roadmap.md#3-prefix-reuse) and [14–15](roadmap.md#14-packaging-accelerator-preflight-and-memory-containment). |
 | **Scale within and across nodes** | Data (DP), tensor (TP), pipeline (PP) and expert (EP, for MoE) parallelism; split prefill/decode; test cache-aware and request-length-aware routing. [Stages 7–9](roadmap.md#7-parallelism-within-one-node). |
 | **Operate and validate** | Slurm/Kubernetes, KServe/Ray Serve, observability, quality gates, autoscaling and recovery; combine and retest settings for the use case. [Stage 10](roadmap.md#10-slurm-and-kubernetes-orchestration) and [Stage 16](roadmap.md#16-release-gates-recovery-and-capstone-synthesis). |
 
@@ -30,7 +30,7 @@ Project 1 asks four cumulative questions:
 3. Where are the KV-cache and memory-pressure boundaries, and which admission or scheduling control contains failure?
 4. Which combined configuration meets a declared latency, quality and cost target, including under controlled failure and recovery?
 
-Prefix reuse, attention kernels, precision and speculative decoding are candidate optimizations. Structured outputs add a separate correctness requirement: parseable or schema-valid output is not necessarily semantically correct. Distributed execution follows only after model fit or a measured capacity limit justifies its communication and operational cost.
+Prefix reuse, speculative decoding, MoE routing, attention kernels and precision are candidate optimizations. Structured outputs add a separate correctness requirement: parseable or schema-valid output is not necessarily semantically correct. Distributed execution follows only after model fit or a measured capacity limit justifies its communication and operational cost.
 
 ## Project 2 — Evidence-Grounded RAG Lab
 

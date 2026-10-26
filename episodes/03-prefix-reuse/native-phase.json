@@ -1,0 +1,95 @@
+{
+  "schema_version": "episode03.native-phase-context.v1",
+  "scope": "freshsamepodblocks6-8;nativeendpointsum/countdeltas;meansnotpercentiles;notperrequestspans",
+  "source_artifact_sha256": "2b505452c4ae9508f769a616fa81e626b9e97c98482c8a7d019608fb2ce78e5e",
+  "phase_means": [
+    {
+      "component": "queue",
+      "off": {
+        "mean_seconds": 2.6219246259929303,
+        "native_count_delta": 150.0,
+        "blocks": [
+          6,
+          7,
+          8
+        ]
+      },
+      "on": {
+        "mean_seconds": 0.38734827934997157,
+        "native_count_delta": 150.0,
+        "blocks": [
+          6,
+          7,
+          8
+        ]
+      }
+    },
+    {
+      "component": "prefill",
+      "off": {
+        "mean_seconds": 2.271782784534541,
+        "native_count_delta": 150.0,
+        "blocks": [
+          6,
+          7,
+          8
+        ]
+      },
+      "on": {
+        "mean_seconds": 1.1851993744890206,
+        "native_count_delta": 150.0,
+        "blocks": [
+          6,
+          7,
+          8
+        ]
+      }
+    },
+    {
+      "component": "decode",
+      "off": {
+        "mean_seconds": 3.1898540149085846,
+        "native_count_delta": 150.0,
+        "blocks": [
+          6,
+          7,
+          8
+        ]
+      },
+      "on": {
+        "mean_seconds": 0.836217679749243,
+        "native_count_delta": 150.0,
+        "blocks": [
+          6,
+          7,
+          8
+        ]
+      }
+    },
+    {
+      "component": "server_ttft",
+      "off": {
+        "mean_seconds": 5.209210853576661,
+        "native_count_delta": 150.0,
+        "blocks": [
+          6,
+          7,
+          8
+        ]
+      },
+      "on": {
+        "mean_seconds": 1.9659442710876465,
+        "native_count_delta": 150.0,
+        "blocks": [
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "counter_counts_verified": true,
+  "scientific_flags_retained": true,
+  "cross_host_alignment": "unverified",
+  "causal_interpretation": "consistentwithreducedprefillandqueueingundercompositecache+alignpolicy;noisolatedbit/outliercause"
+}

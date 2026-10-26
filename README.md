@@ -38,10 +38,10 @@ limits are tracked in the [local wrapper implementation status](docs/agentbench-
 | 0 | [Warm-up](episodes/00-warm-up/README.md) | Available | Exploratory recorded study |
 | 1 | [Measure what matters](episodes/01-measure-what-matters/README.md) | Available | Recorded exploratory H200 runtime comparison at tested loads; maximum sustainable rate not measured |
 | 2 | Equal-work runtime baseline | Planned | Planned — no measurements |
-| 3 | Prefix reuse | Planned | Planned — no measurements |
-| 4 | Batching, scheduling and mixed traffic | Planned | Planned — no measurements |
-| 5 | Attention kernels and precision | Planned | Planned — no measurements |
-| 6 | Speculative decoding and structured outputs | Planned | Planned — no measurements |
+| 3 | [Prefix reuse](episodes/03-prefix-reuse/README.md) | Available | Recorded exploratory study; 59% lower same-GPU content-TTFT p95 for the tested composite policy, with p99 descriptive |
+| 4 | Speculative decoding | Planned | Planned — no measurements |
+| 5 | Mixture-of-experts inference | Planned | Planned — no measurements |
+| 6 | Serving tune-up: scheduling and precision | Planned | Planned — no measurements |
 | 7 | Parallelism within one node | Planned | Planned — no measurements |
 | 8 | Parallelism across nodes | Planned | Planned — no measurements |
 | 9 | Prefill/decode disaggregation and cache-aware routing | Planned | Planned — no measurements |

@@ -28,39 +28,41 @@
       "id": "episode-3",
       "number": 3,
       "title": "Prefix reuse",
-      "summary": "Control exact shared-prefix ratios and compare cold and warm cache behavior.",
-      "status": "planned",
+      "summary": "Two sequential recorded studies: a within-engine comparison followed by a same-GPU vLLM tail-latency investigation.",
+      "status": "available",
+      "evidence": "Recorded exploratory study; p99 remains descriptive",
+      "guide": "episodes/03-prefix-reuse/README.md",
       "roadmapAnchor": "3-prefix-reuse"
     },
     {
       "id": "episode-4",
       "number": 4,
-      "title": "Batching, scheduling and mixed traffic",
-      "summary": "Study chunked prefill and scheduler behavior under controlled long/short traffic mixes.",
+      "title": "Speculative decoding",
+      "summary": "Can drafting ahead reduce decode time enough to pay for verification, without losing output quality?",
       "status": "planned",
-      "roadmapAnchor": "4-batching-scheduling-and-mixed-traffic"
+      "roadmapAnchor": "4-speculative-decoding"
     },
     {
       "id": "episode-5",
       "number": 5,
-      "title": "Attention kernels and precision",
-      "summary": "Compare verified attention backends, then separately compare weight and KV precision.",
+      "title": "Mixture-of-experts inference",
+      "summary": "Measure conditional computation, expert routing and memory traffic before assuming fewer active parameters mean lower latency.",
       "status": "planned",
-      "roadmapAnchor": "5-attention-kernels-and-precision"
+      "roadmapAnchor": "5-mixture-of-experts-inference"
     },
     {
       "id": "episode-6",
       "number": 6,
-      "title": "Speculative decoding and structured outputs",
-      "summary": "Evaluate compatible proposal paths and constrained generation without assuming speedup.",
+      "title": "Serving tune-up: scheduling and precision",
+      "summary": "Two controlled studies: batching/scheduling first, then attention kernels and precision.",
       "status": "planned",
-      "roadmapAnchor": "6-speculative-decoding-and-structured-outputs"
+      "roadmapAnchor": "6-serving-tune-up-scheduling-and-precision"
     },
     {
       "id": "episode-7",
       "number": 7,
       "title": "Parallelism within one node",
-      "summary": "Compare DP, TP and justified PP or EP layouts under one declared GPU budget.",
+      "summary": "Two studies on a fixed GPU budget: DP/TP layouts, then MoE expert parallelism and load balance.",
       "status": "planned",
       "roadmapAnchor": "7-parallelism-within-one-node"
     },

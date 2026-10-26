@@ -1,6 +1,6 @@
 # Token by Token — Inference Lab roadmap
 
-**Token by Token** is the working name for this learning series; **Inference Lab** is its tagline. Episode 0 is a completed exploratory warm-up with a local viewer and offline fixture workflow. Every later stage below is **planned**. This roadmap does not authorize GPU spending or claim that the integrations or experiments already exist.
+**Token by Token** is the working name for this learning series; **Inference Lab** is its tagline. Episodes 00–02 have recorded public studies. Episode 03 has retained measurements and a local dashboard/article awaiting owner release review. Episodes 04 onward are **planned**. This roadmap does not authorize GPU spending or claim that the integrations or experiments already exist.
 
 This is the canonical sixteen-part map of future work. The main serving path is **measurement → equal-work baseline → single-GPU optimization → parallelism → routing and operations**. Sections 11–13 are companion studies to take alongside that path, not prerequisites for the next optimization experiment. The roadmap supports the [three capstone project families](capstone-projects.md); it does not create a fourth project.
 
@@ -16,6 +16,8 @@ A faster configuration that fails the quality gate is not a winner. A quality co
 For service experiments, preserve request and repetition IDs, input/output token counts, stop reasons, stream-event timestamps, warmup state, errors and request class. Record the exact model, tokenizer/template hashes, image digest, harness commit, runtime flags, hardware and pricing basis. Capture runtime queue, prefill, decode, KV-cache and scheduler counters when exposed, plus host, GPU and network telemetry at a documented sampling interval. Correlate request traces with OpenTelemetry, service metrics in Prometheus/Grafana and GPU counters from DCGM where supported. A missing metric stays unavailable with its reason.
 
 Pooled percentiles, per-repetition percentiles and confidence intervals are different objects. Use uncertainty estimates appropriate to independent repetitions. Do not claim that a fixed sample count automatically makes p99 reliable, and never reconstruct request distributions from aggregate p50/p95/p99.
+
+Packaging, accelerator visibility, reproducible inputs and bounded cleanup are prerequisites for every paid experiment. Episode 14 is a dedicated reliability/containment study, not the first time those prerequisites are checked. New speculative and MoE profiles remain unverified until model/runtime compatibility and the full local execution path are demonstrated.
 
 ## The experiment map
 
@@ -39,31 +41,29 @@ Within each runtime, compare cache enabled and disabled where supported. Control
 
 **Evidence:** eligible and reused tokens, cache-hit definition, KV capacity, evictions or recomputation, prefill duration, TTFT and SLO-qualified goodput. Reset cache state between the appropriate arms.
 
-### 4. Batching, scheduling and mixed traffic
+### 4. Speculative decoding
 
-Hold the workload fixed while changing chunked-prefill support or configuration, chunk size and token budget one variable at a time. Then vary the long/short traffic mix. Continuous batching is part of the scheduler; do not assume every engine exposes a valid off mode. A static-batch reference is a separate workload if the runtime supports it.
+Compare a target-only baseline with a runtime-verified compatible draft or proposal path. Hold model, quality contract and workload fixed; record proposal acceptance, draft/verification overhead and memory. Test short and longer outputs separately. Structured-output compatibility is a separate control, not an assumed speedup.
 
-**Evidence:** verified effective flags, running/waiting requests, scheduled tokens per iteration when exposed, queue time, TTFT and decode gaps by request class, maximum wait, starvation indicators and KV time series.
+**Evidence:** accepted tokens per step, target/draft/verification time, TTFT/TPOT, delivered token counts, task correctness, memory and full cost.
 
-### 5. Attention kernels and precision
+### 5. Mixture-of-experts inference
 
-Compare two supported attention backends with verified dispatch, then run a separate weight/KV precision comparison. Unsupported combinations are excluded rather than forced. Record the actual attention backend and version; “Flash on/off” is insufficient provenance.
+Fix one supported MoE model and runtime. Establish a single-device or minimum-fit baseline; vary only supported routing/batching settings with quality held fixed. Record total versus active parameters and expert routing skew. A dense-versus-MoE comparison is contextual unless output quality and work can be matched; it is not an architecture winner claim.
 
-**Evidence:** compatibility record, profiler confirmation where available, memory use, latency, useful throughput and results on the fixed quality set against its acceptance threshold.
+**Evidence:** total/active parameter basis, router/expert utilization, expert imbalance, memory residency, token throughput, TTFT/TPOT tails, output quality and cost.
 
-### 6. Speculative decoding and structured outputs
+### 6. Serving tune-up: scheduling and precision
 
-Compare a target-only baseline with a compatible draft/verification path while sweeping proposal length and load. Separately compare prompt-only structured output with constrained generation under equivalent contracts. Parse or schema validity and independently judged semantic correctness remain separate outcomes.
+Study A changes chunked-prefill/token budgets and then long/short traffic mix, one factor at a time. Study B holds scheduling fixed while comparing verified attention backends, then separately weight/KV precision. Keep model, delivered work and quality checks fixed within each study. Unsupported paths stay unavailable. Earlier episodes recorded these settings but did not complete these isolated comparisons.
 
-**Evidence:** accepted tokens per step and its definition, draft and verification duration, added memory, TTFT/TPOT/goodput, retries, schema validity, semantic correctness, unsupported claims and total cost.
+**Evidence:** effective settings, queue/prefill/decode timings by class, starvation/KV counters, verified kernel dispatch, memory, quality, latency, throughput and cost.
 
 ### 7. Parallelism within one node
 
-Compare **data parallelism (DP)** replicas with **tensor parallelism (TP)** partitioning under the same total GPU budget and workload. Add **pipeline parallelism (PP)** when model fit or topology justifies it. For mixture-of-experts models, study **expert parallelism (EP)** and expert load balance as a separate dimension.
+Study A compares DP replicas and TP partitioning on a fixed model and GPU budget; add PP only when model fit or topology justifies it. Study B uses one MoE model to compare supported EP and compatible DP/TP/EP combinations, measuring expert balance and all-to-all overhead. Do not pool different models or hardware budgets.
 
-DP replicates model workers and partitions requests or training examples; TP divides tensor work; PP divides layers or stages; EP places experts across devices. The useful combination depends on model architecture, memory, batch shape, topology and communication cost.
-
-**Evidence:** GPU topology and NVLink/PCIe paths, placement, memory per rank, collective time/bytes, PP stage balance, expert load/skew, throughput and request tails.
+**Evidence:** GPU/NVLink/PCIe topology, placement, memory per rank, collective time/bytes, PP stage balance when used, expert skew/all-to-all overhead, request tails, goodput and cost.
 
 ### 8. Parallelism across nodes
 
@@ -133,7 +133,7 @@ Combine promising settings for the declared use case and test interactions again
 
 **Measured or verified in the Episode 0 candidate:** sanitized historical aggregates, the native dashboard, metric/schema checks, synthetic offline rehearsal and a manual existing-endpoint benchmarking path. Each capability is labeled with its actual validation status in the package.
 
-**Planned:** the experiments above beyond the Episode 0 foundations. TensorRT-LLM can join after its model, image, launch, streaming and output-validation contracts pass. NVIDIA Triton Inference Server is a planned deployment comparison with its execution backend identified explicitly; it is distinct from the Triton attention backend recorded in Episode 0. TGI remains a compatibility candidate only if its selected version fits the intended scope. No backend receives a chart entry for a run that never happened.
+**Planned:** Episodes 04 onward in the revised order. Earlier episodes recording a setting does not count as an isolated test of it. TensorRT-LLM can join after its model, image, launch, streaming and output-validation contracts pass. NVIDIA Triton Inference Server is a planned deployment comparison with its execution backend identified explicitly; it is distinct from the Triton attention backend recorded in Episode 0. TGI remains a compatibility candidate only if its selected version fits the intended scope. No backend receives a chart entry for a run that never happened.
 
 Each later topic can produce a concept post and a measured lab note. Do not publish a claimed result before the experiment exists. The minimum useful contribution is one named hypothesis, one reproducible configuration, one interpretable chart, and a report that includes a failed or inconclusive result when that is what happened.
 

@@ -1,0 +1,284 @@
+{
+  "schema_version": "episode03.public-descriptive-projection.v1",
+  "status": "recorded_public_candidate_not_yet_released",
+  "configuration": {
+    "model": "Qwen3.8-27B-FP8",
+    "runtime": "vLLM0.31.0",
+    "gpu": "H200",
+    "concurrency": 4,
+    "input_tokens": 32768,
+    "nominal_prefix_percent": 75,
+    "output_tokens_range": [
+      32,
+      37
+    ]
+  },
+  "contrast": {
+    "off": "cache_disabled,hybridnone",
+    "on": "cache_enabled,hybridalign",
+    "same_pod_pairs": 3,
+    "cross_run_pairs": 5,
+    "time_counterbalanced": false
+  },
+  "combined_cross_run_descriptive": {
+    "off": {
+      "scheduled": 400,
+      "terminal": 400,
+      "task_valid": 400,
+      "latency_eligible": 400,
+      "dispatch_excluded": 0,
+      "content_ttft_ms": {
+        "n": 400,
+        "p50_ms": 4869.9828959999995,
+        "p95_ms": 8521.4057878,
+        "p99_descriptive_ms": 8601.789018009998,
+        "g95_ms": 3651.422891800001,
+        "g99_descriptive_ms": 3731.806122009999
+      },
+      "content_tpot_ms": {
+        "n": 400,
+        "p50_ms": 67.47660138809523,
+        "p95_ms": 201.1395415921875,
+        "p99_descriptive_ms": 213.66454706966667,
+        "g95_ms": 133.66294020409225,
+        "g99_descriptive_ms": 146.18794568157142
+      },
+      "last_output_e2e_ms": {
+        "n": 400,
+        "p50_ms": 8804.159812,
+        "p95_ms": 8978.80307145,
+        "p99_descriptive_ms": 9250.58380125,
+        "g95_ms": 174.6432594500002,
+        "g99_descriptive_ms": 446.4239892500009
+      },
+      "terminal_e2e_ms": {
+        "n": 400,
+        "p50_ms": 8818.2987705,
+        "p95_ms": 8983.82445655,
+        "p99_descriptive_ms": 9263.85342467,
+        "g95_ms": 165.52568605000124,
+        "g99_descriptive_ms": 445.5546541700005
+      },
+      "client_content_event_gap_ms": {
+        "n": 13162,
+        "p50_ms": 13.579604,
+        "p95_ms": 535.91180175,
+        "p99_descriptive_ms": 581.0663558800001
+      },
+      "output_tokens": {
+        "min": 32,
+        "max": 37
+      }
+    },
+    "on": {
+      "scheduled": 400,
+      "terminal": 400,
+      "task_valid": 400,
+      "latency_eligible": 400,
+      "dispatch_excluded": 0,
+      "content_ttft_ms": {
+        "n": 400,
+        "p50_ms": 2581.1723125,
+        "p95_ms": 3151.51693305,
+        "p99_descriptive_ms": 3704.6254562500003,
+        "g95_ms": 570.34462055,
+        "g99_descriptive_ms": 1123.4531437500004
+      },
+      "content_tpot_ms": {
+        "n": 400,
+        "p50_ms": 15.535435606060606,
+        "p95_ms": 52.82917980781249,
+        "p99_descriptive_ms": 55.345544272,
+        "g95_ms": 37.29374420175188,
+        "g99_descriptive_ms": 39.810108665939396
+      },
+      "last_output_e2e_ms": {
+        "n": 400,
+        "p50_ms": 3085.2077504999997,
+        "p95_ms": 3646.975191699981,
+        "p99_descriptive_ms": 4145.802954829999,
+        "g95_ms": 561.7674411999815,
+        "g99_descriptive_ms": 1060.5952043299994
+      },
+      "terminal_e2e_ms": {
+        "n": 400,
+        "p50_ms": 3097.7516244999997,
+        "p95_ms": 3663.1656639499815,
+        "p99_descriptive_ms": 4157.7723773299995,
+        "g95_ms": 565.4140394499818,
+        "g99_descriptive_ms": 1060.0207528299998
+      },
+      "client_content_event_gap_ms": {
+        "n": 13162,
+        "p50_ms": 13.0922705,
+        "p95_ms": 80.11737679999987,
+        "p99_descriptive_ms": 510.2523288799998
+      },
+      "output_tokens": {
+        "min": 32,
+        "max": 37
+      }
+    }
+  },
+  "same_pod_blocks6to8": {
+    "off": {
+      "scheduled": 150,
+      "terminal": 150,
+      "task_valid": 150,
+      "latency_eligible": 150,
+      "dispatch_excluded": 0,
+      "content_ttft_ms": {
+        "n": 150,
+        "p50_ms": 4839.449957999999,
+        "p95_ms": 8486.4886792,
+        "p99_descriptive_ms": 8547.594390170001,
+        "g95_ms": 3647.0387212000005,
+        "g99_descriptive_ms": 3708.144432170002
+      },
+      "content_tpot_ms": {
+        "n": 150,
+        "p50_ms": 67.7933527044592,
+        "p95_ms": 189.9145897102941,
+        "p99_descriptive_ms": 191.19693617147058,
+        "g95_ms": 122.12123700583491,
+        "g99_descriptive_ms": 123.40358346701139
+      },
+      "last_output_e2e_ms": {
+        "n": 150,
+        "p50_ms": 8787.726938,
+        "p95_ms": 8887.12065205,
+        "p99_descriptive_ms": 8960.66466483,
+        "g95_ms": 99.3937140500002,
+        "g99_descriptive_ms": 172.93772682999952
+      },
+      "terminal_e2e_ms": {
+        "n": 150,
+        "p50_ms": 8806.418062,
+        "p95_ms": 8900.27807255,
+        "p99_descriptive_ms": 8975.761545579999,
+        "g95_ms": 93.86001054999906,
+        "g99_descriptive_ms": 169.34348357999806
+      },
+      "client_content_event_gap_ms": {
+        "n": 4963,
+        "p50_ms": 13.563958,
+        "p95_ms": 533.3169756,
+        "p99_descriptive_ms": 579.1903460000001
+      },
+      "output_tokens": {
+        "min": 33,
+        "max": 37
+      }
+    },
+    "on": {
+      "scheduled": 150,
+      "terminal": 150,
+      "task_valid": 150,
+      "latency_eligible": 150,
+      "dispatch_excluded": 0,
+      "content_ttft_ms": {
+        "n": 150,
+        "p50_ms": 2582.2777085,
+        "p95_ms": 3475.639439399999,
+        "p99_descriptive_ms": 3706.28576875,
+        "g95_ms": 893.3617308999992,
+        "g99_descriptive_ms": 1124.0080602500002
+      },
+      "content_tpot_ms": {
+        "n": 150,
+        "p50_ms": 15.329140323529412,
+        "p95_ms": 50.964315872773106,
+        "p99_descriptive_ms": 52.42805131147059,
+        "g95_ms": 35.6351755492437,
+        "g99_descriptive_ms": 37.09891098794118
+      },
+      "last_output_e2e_ms": {
+        "n": 150,
+        "p50_ms": 3080.7376875,
+        "p95_ms": 4079.06909155,
+        "p99_descriptive_ms": 4218.088703,
+        "g95_ms": 998.33140405,
+        "g99_descriptive_ms": 1137.3510155000004
+      },
+      "terminal_e2e_ms": {
+        "n": 150,
+        "p50_ms": 3092.5374789999996,
+        "p95_ms": 4091.8986898,
+        "p99_descriptive_ms": 4218.182730840001,
+        "g95_ms": 999.3612108000002,
+        "g99_descriptive_ms": 1125.645251840001
+      },
+      "client_content_event_gap_ms": {
+        "n": 4963,
+        "p50_ms": 12.981583,
+        "p95_ms": 79.27880449999996,
+        "p99_descriptive_ms": 511.26115058
+      },
+      "output_tokens": {
+        "min": 33,
+        "max": 37
+      }
+    }
+  },
+  "blocks": [
+    {
+      "block": 1,
+      "design": "cross_run_different_pod",
+      "ttft_p95_delta_on_minus_off_ms": -5239.896762350001
+    },
+    {
+      "block": 2,
+      "design": "cross_run_different_pod",
+      "ttft_p95_delta_on_minus_off_ms": -5427.749326499999
+    },
+    {
+      "block": 3,
+      "design": "cross_run_different_pod",
+      "ttft_p95_delta_on_minus_off_ms": -5421.211025150002
+    },
+    {
+      "block": 4,
+      "design": "cross_run_different_pod",
+      "ttft_p95_delta_on_minus_off_ms": -5484.67462335
+    },
+    {
+      "block": 5,
+      "design": "cross_run_different_pod",
+      "ttft_p95_delta_on_minus_off_ms": -5349.686846200002
+    },
+    {
+      "block": 6,
+      "design": "same_pod_OFF_then_ON",
+      "ttft_p95_delta_on_minus_off_ms": -5395.59162675
+    },
+    {
+      "block": 7,
+      "design": "same_pod_OFF_then_ON",
+      "ttft_p95_delta_on_minus_off_ms": -4834.57095845
+    },
+    {
+      "block": 8,
+      "design": "same_pod_OFF_then_ON",
+      "ttft_p95_delta_on_minus_off_ms": -5089.01630465
+    }
+  ],
+  "p99_status": "descriptive_only;400primaryperarm;requiredheadline1000",
+  "scientific_flags_preserved": [
+    "native_sampling_gap",
+    "warm_hit_not_verified"
+  ],
+  "native_evidence": {
+    "cache_ratio_percent": 74.169921875,
+    "available_ON_rows": 7,
+    "missing_ON_rows": 1,
+    "clock_alignment": "unverified",
+    "sample_interval_median_seconds": [
+      1.63,
+      1.67
+    ],
+    "maximum_gap_seconds": 2.8
+  },
+  "rca": "consistent_with_reduced_prefix_prefill;individualp99causeunproven;compositepolicyandtimeconfounded",
+  "cleanup": "permanentdeletionverified;bothoriginalguards exited",
+  "cost_status": "provider_reported_not_invoice_certified;episode03_attributed_usd=35.04166290606372;earlier_trials_usd=28.823776262113824;final_measurements_usd=6.217886643949896;disk_included;no_per_setting_claim"
+}

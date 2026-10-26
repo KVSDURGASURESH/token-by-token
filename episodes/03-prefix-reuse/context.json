@@ -1,0 +1,82 @@
+{
+  "schema_version": "episode03.reader-context.v1",
+  "evidence_sha256": "cc6b15e7b75e13f0a8f56145986cf1c9f8d17c4beb4ff181f5e6246b24885b57",
+  "claims_sha256": "a82a692a170323fe5fc11a975c1f0c647d90ef98c0da976398f20ed77565d622",
+  "report_sha256": "ee898f04b9a996eb2de2a2d95010228aa807e1695411808b098d4993120e36af",
+  "attribution": "AgentBench from Mirastack Labs powers the benchmarking workflow",
+  "prompt_context": {
+    "declared_input_tokens": 32768,
+    "measured_input_distribution": {
+      "n": 800,
+      "min": 32768,
+      "max": 32768,
+      "median": 32768
+    },
+    "token_count_basis": "retained primary-request input_tokens fields; no independent post-run retokenization",
+    "type": "structured text output under long shared-prefix input",
+    "requested_output_cap": 256,
+    "actual_output_min": 32,
+    "actual_output_max": 37
+  },
+  "cost": {
+    "status": "provider_reported_not_invoice_certified",
+    "episode03_attributed_usd": 35.04166290606372,
+    "earlier_trials_recovery_and_engine_work_usd": 28.823776262113824,
+    "final_measurements_usd": 6.217886643949896,
+    "account_window_usd": 35.052895514061674,
+    "unassigned_account_usd": 0.011232607997953892,
+    "gpu_usd": 34.957172164693475,
+    "disk_usd": 0.08449074137024581,
+    "attributed_allocations": 20,
+    "prior_trials_included": true,
+    "read_at": "2026-10-25T23:59:54.978473+00:00",
+    "per_setting_cost_claim": false
+  },
+  "supplementary_partial_primary_excluded": 32,
+  "engine_study": {
+    "path": "engine-study.json",
+    "scope": "separate within-engine descriptive comparisons; no engine ranking",
+    "measured_rows": 40,
+    "measured_requests": 2000
+  },
+  "grafana": {
+    "status": "local_recorded_replay_available;public_snapshot_unavailable",
+    "url": null,
+    "client_server_clock_alignment": "unverified;separateaxes",
+    "template_basis": "AgentBench client/server/correlation Grafana JSON",
+    "derived_artifact_sha256": "9d9bea4a7534daf26d717ea37eec26cb83784a225a6208314ed8cd3f30046104"
+  },
+  "automated_comparison": "unavailable; original fresh eight-pair population absent; preserved unchanged",
+  "slo": {
+    "status": "retained_per_request_flags",
+    "population": "combined 400 primary per policy",
+    "off": {
+      "pass": 208,
+      "fail": 192,
+      "unavailable": 0
+    },
+    "on": {
+      "pass": 400,
+      "fail": 0,
+      "unavailable": 0
+    },
+    "thresholds": {
+      "content_ttft_ms": 30000,
+      "content_tpot_ms": 100,
+      "terminal_e2e_ms": 60000
+    },
+    "row_scientific_flags_unchanged": true,
+    "wallclock_goodput_claim": false,
+    "addendum_sha256": "904af48419e6c76fde26a859a8cc6421573e6ad54d5e3f86a52c9fbea714f4ac"
+  },
+  "input_length_addendum_sha256": "66767c0a754139a37cf0678a7b6287ced31307169a4441e38cd396cea3480372",
+  "cost_addendum_sha256": "2fde2404f6ca8590de495db5b9f6ee181443564052161571d55b2fda0c3b132f",
+  "work_equivalence": {
+    "matched_pairs": 400,
+    "workload_identity_matches": 400,
+    "input_token_count_matches": 400,
+    "output_token_count_matches": 400,
+    "both_task_valid_pairs": 400,
+    "source_sha256": "f2c2eb80def63579bdaf49a2eb498245b7f76384b94baf3b3d79fc532832fb75"
+  }
+}

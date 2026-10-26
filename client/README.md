@@ -73,7 +73,7 @@ token-by-token episode 16 selftest --offline --users 8 --seed 42 --output ./epis
 ```
 
 Use only a `--users` value declared by `episode N describe`. `--seed` controls
-the deterministic synthetic stream. Episode 06 is the only current contract
+the deterministic synthetic stream. Episode 04 is the only current contract
 that identifies speculative decoding as a future study variable; no CLI switch
 claims that the capability exists today.
 
