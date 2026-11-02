@@ -39,7 +39,7 @@ limits are tracked in the [local wrapper implementation status](docs/agentbench-
 | 1 | [Measure what matters](episodes/01-measure-what-matters/README.md) | Available | Recorded exploratory H200 runtime comparison at tested loads; maximum sustainable rate not measured |
 | 2 | Equal-work runtime baseline | Planned | Planned — no measurements |
 | 3 | [Prefix reuse](episodes/03-prefix-reuse/README.md) | Available | Recorded exploratory study; 59% lower same-GPU content-TTFT p95 for the tested composite policy, with p99 descriptive |
-| 4 | Speculative decoding | Planned | Planned — no measurements |
+| 4 | [Speculative decoding](episodes/04-speculative-decoding/README.md) | Available | Recorded descriptive latency study; all speed differences pending task-specific output adjudication |
 | 5 | Mixture-of-experts inference | Planned | Planned — no measurements |
 | 6 | Serving tune-up: scheduling and precision | Planned | Planned — no measurements |
 | 7 | Parallelism within one node | Planned | Planned — no measurements |

@@ -120,6 +120,11 @@ def _parse_events(raw: bytes, classification: str) -> list[dict[str, object]]:
         raise ClientError("INVALID_EVENTS", "plan event users value is invalid")
     plan_seed = plan_payload.get("seed")
     plan_users = plan_payload["users"]
+    allowed_arms = (
+        {"synthetic-target-only", "synthetic-eagle3"}
+        if plan_payload["episode"] == 4
+        else {"synthetic-a", "synthetic-b"}
+    )
     if (
         not isinstance(plan_seed, int)
         or isinstance(plan_seed, bool)
@@ -134,7 +139,7 @@ def _parse_events(raw: bytes, classification: str) -> list[dict[str, object]]:
         if "classification" in payload and payload["classification"] != classification:
             raise ClientError("MIXED_CLASSIFICATION", "event and inventory classifications do not match")
         if "arm" in payload and (
-            not isinstance(payload["arm"], str) or payload["arm"] not in {"synthetic-a", "synthetic-b"}
+            not isinstance(payload["arm"], str) or payload["arm"] not in allowed_arms
         ):
             raise ClientError("INVALID_EVENTS", "event arm is invalid")
         if kind == "request" and (

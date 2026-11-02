@@ -1,0 +1,65 @@
+{
+  "schema_version": "episode04.public-descriptive-projection.v1",
+  "status": "recorded_descriptive_pending_output_adjudication",
+  "configuration": {
+    "model": "Qwen3-32B BF16",
+    "gpu": "one H200",
+    "tensor_parallel": 1,
+    "concurrency": 1,
+    "output_classes": {
+      "short_tokens": 128,
+      "long_tokens": 512
+    },
+    "runtimes": ["vLLM 0.32.0", "SGLang 0.5.22"]
+  },
+  "configuration_notation": {
+    "vllm": {
+      "k1": {"num_speculative_tokens": 1},
+      "k3": {"num_speculative_tokens": 3},
+      "k5": {"num_speculative_tokens": 5}
+    },
+    "sglang": {
+      "s1d2": {"speculative_num_steps": 1, "speculative_num_draft_tokens": 2, "speculative_eagle_topk": 1},
+      "s3d4": {"speculative_num_steps": 3, "speculative_num_draft_tokens": 4, "speculative_eagle_topk": 1},
+      "s5d6": {"speculative_num_steps": 5, "speculative_num_draft_tokens": 6, "speculative_eagle_topk": 1}
+    },
+    "observed_adjudication_balance_candidates": ["vllm-k3", "sglang-s3d4"],
+    "candidate_boundary": "observed candidates only; not universal recommendations or accepted production settings"
+  },
+  "measurement_basis": "Client first-content/end timing at the inference-worker read boundary; mean token interval uses reported completion tokens.",
+  "comparison_scope": "within-runtime paired target-only versus EAGLE-3; no cross-runtime ranking",
+  "pairing": {
+    "pairs_per_cell": 12,
+    "cells_per_runtime": 6,
+    "paired_primary_requests_per_runtime": 72
+  },
+  "claim_status": "pending_output_adjudication",
+  "claim_boundary": "Latency differences are descriptive. Exact-output hashes differ and the task-specific oracle was unavailable; no correctness or losslessness claim is made.",
+  "valid_sources": {
+    "vllm": "main-store vLLM-only projection",
+    "sglang": "clean SGLang recovery-only projection"
+  },
+  "excluded_source": {
+    "scope": "earlier main-store SGLang observations",
+    "reason": "all requests returned HTTP 400 after an incompatible streaming telemetry option; retained only as setup-failure/RCA evidence"
+  },
+  "output_hash_adjudication": {
+    "vllm": {"complete_pairs": 72, "exact_matches": 26, "exact_mismatches": 46},
+    "sglang": {"complete_pairs": 72, "exact_matches": 8, "exact_mismatches": 64},
+    "task_oracle": "unavailable"
+  },
+  "telemetry": {
+    "draft_miss_rate_definition": "per-request ratio: 1 - accepted draft tokens / proposed draft tokens",
+    "aggregate_rejected_proposed_definition": "sum(proposed - accepted) / sum(proposed); not a median of per-request ratios",
+    "highest_miss_settings": {
+      "vllm-k5": {"primary_requests": 24, "rejected": 12549, "proposed": 16725, "ratio": 0.7503139013452915},
+      "sglang-s5d6": {"primary_requests": 24, "rejected": 17809, "proposed": 21135, "ratio": 0.8426307073574639}
+    },
+    "applicable_primary_speculative_responses": 144,
+    "speculative_responses_missing_draft_telemetry": 0,
+    "status": "complete_for_valid_projections"
+  },
+  "quantile_method": "linear interpolation over available nonnegative finite observed values",
+  "p99_status": "descriptive_only_not_service_level_guarantee",
+  "cleanup": "identified owned allocations permanently deleted; direct not-found and empty inventory verified"
+}

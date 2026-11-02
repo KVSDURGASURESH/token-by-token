@@ -41,11 +41,11 @@ python3 -m venv .venv
 python3 -m pip install ./client
 token-by-token --version
 token-by-token episodes
-token-by-token episode 2 describe
-token-by-token capabilities --episode 2
+token-by-token episode 4 describe
+token-by-token capabilities --episode 4
 token-by-token doctor --offline
-token-by-token episode 2 selftest --offline --output ./token-by-token-selftest.tbt.zip
-token-by-token evidence verify ./token-by-token-selftest.tbt.zip
+token-by-token episode 4 selftest --offline --users 1 --seed 42 --output ./episode-04-rehearsal.tbt.zip
+token-by-token evidence verify ./episode-04-rehearsal.tbt.zip
 ```
 
 The output archive must not already exist. A successful self-test reports the
@@ -73,9 +73,32 @@ token-by-token episode 16 selftest --offline --users 8 --seed 42 --output ./epis
 ```
 
 Use only a `--users` value declared by `episode N describe`. `--seed` controls
-the deterministic synthetic stream. Episode 04 is the only current contract
-that identifies speculative decoding as a future study variable; no CLI switch
-claims that the capability exists today.
+the deterministic synthetic stream. Episode 04 is the current recorded contract
+that identifies speculative decoding as its study variable. Its self-test uses
+synthetic target-only and EAGLE-3 arm labels to rehearse the evidence pipeline;
+no CLI switch accepts a model, GPU, provider, profile, endpoint, or paid action.
+
+### Episode 04 offline rehearsal
+
+Use the checked-in
+[`episode-04-offline-rehearsal.json`](../examples/episode-04-offline-rehearsal.json)
+as the machine-readable configuration reference. The complete flow is:
+
+```bash
+token-by-token episode 4 describe --format json
+token-by-token capabilities --episode 4 --format json
+token-by-token doctor --offline --format json
+token-by-token episode 4 selftest --offline --users 1 --seed 42 \
+  --output ./episode-04-rehearsal.tbt.zip --format json
+token-by-token evidence verify ./episode-04-rehearsal.tbt.zip --format json
+```
+
+`describe` binds the recorded public reference and allowed synthetic load.
+`capabilities` returns `execution_status: unavailable`, `real_submission:
+false`, and empty model/GPU/load-profile lists. `doctor` and `selftest` forbid
+network use. `evidence verify` checks the synthetic archive's canonical
+inventory and reports `synthetic_mock`; it does not certify the recorded
+Episode 04 measurements or output quality.
 
 ### Command reference
 

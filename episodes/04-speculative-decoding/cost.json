@@ -1,0 +1,21 @@
+{
+  "schema_version": "episode04.modeled-cost-and-cleanup.v1",
+  "status": "modeled_not_provider_billed",
+  "currency": "USD",
+  "known_modeled_exposure": "12.455083155780555555555555556",
+  "breakdown": [
+    {"stage":"initial_canary_bootstrap_failure","modeled_usd":"0.5506247914","measurement_rows_completed":0,"cleanup_verified":true},
+    {"stage":"corrected_canary","modeled_usd":"1.13492824165","measurement_scope":"two valid vLLM rows and two failed/flagged SGLang rows","cleanup_verified":true},
+    {"stage":"full_main_tuning","modeled_usd":"5.927111018315277777777777778","public_performance_scope":"vLLM only; invalid SGLang HTTP-400 observations excluded","cleanup_verified":true},
+    {"stage":"clean_sglang_recovery","modeled_usd":"4.842419104415277777777777778","public_performance_scope":"SGLang recovery-only projection","cleanup_verified":true}
+  ],
+  "cleanup_proof": "permanent-delete acknowledgments, direct not-found lookups, owned inventory absence, and final empty provider CLI inventory for every identified owned allocation",
+  "unknown_create_outcome": {
+    "resource_handle_returned": false,
+    "provider_backed_charge_observed": false,
+    "external_inventory_observed_empty": true,
+    "private_store_disposition": "cleanup_pending_no_replay"
+  },
+  "provider_reported_or_invoice_certified": false,
+  "per_setting_cost_claim": false
+}

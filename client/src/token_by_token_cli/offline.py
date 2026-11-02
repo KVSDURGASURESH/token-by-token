@@ -43,7 +43,12 @@ def run_synthetic_episode(
         },
     )
 
-    for arm_index, arm in enumerate(("synthetic-a", "synthetic-b")):
+    arms = (
+        ("synthetic-target-only", "synthetic-eagle3")
+        if episode == 4
+        else ("synthetic-a", "synthetic-b")
+    )
+    for arm_index, arm in enumerate(arms):
         if stop_requested():
             yield event("run_interrupted", {"classification": "synthetic_mock", "completed_events": sequence})
             return

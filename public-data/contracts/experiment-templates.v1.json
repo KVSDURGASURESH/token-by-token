@@ -53,7 +53,7 @@
         "speculative_decoding",
         "structured_output"
       ],
-      "note": "Can drafting ahead reduce decode time enough to pay for verification, without losing output quality? Planned only; verify compatible engine/model paths and local fixture coverage before a paid card."
+      "note": "Recorded descriptive timing is available for the tested vLLM and SGLang configurations. Exact-output hashes differed and task-specific adjudication remains separate; the public client supports only a synthetic offline rehearsal and accepts no provider configuration."
     },
     {
       "id": "episode-5-moe",

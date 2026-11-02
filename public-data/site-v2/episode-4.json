@@ -1,0 +1,56 @@
+{
+  "schema_version": "episode04.public-site-projection.v1",
+  "episode": 4,
+  "title": "Speculative decoding",
+  "status": "recorded_descriptive_pending_output_adjudication",
+  "summary": "Within each tested runtime, EAGLE-3 reduced median TPOT and end-to-end timing in all measured cells. Exact-output hashes differed and task-specific output adjudication remains separate from the timing result.",
+  "configuration": {
+    "model": "Qwen3-32B BF16",
+    "hardware": "one H200 per recorded allocation",
+    "tensor_parallel": 1,
+    "concurrency": 1,
+    "output_tokens": [128, 512],
+    "runtimes": ["vLLM 0.32.0", "SGLang 0.5.22"]
+  },
+  "evidence_boundary": {
+    "comparison": "within-runtime paired target-only versus EAGLE-3",
+    "pairs_per_cell": 12,
+    "cells_per_runtime": 6,
+    "claim_status": "pending_output_adjudication",
+    "cross_runtime_ranking": false,
+    "correctness_or_losslessness_claim": false,
+    "excluded": "earlier main-store SGLang HTTP-400 observations"
+  },
+  "chart_rows": [
+    {"runtime":"vllm-0.32.0","output_class":"short","policy":"vllm-k1","tpot_improvement_pct":33.63987298891632,"e2e_improvement_pct":32.04379950753017,"ttft_improvement_pct":-4.6122724214908235,"draft_miss_rate_p50":0.4300734993875051,"exact_output_match_rate":0.16666666666666666},
+    {"runtime":"vllm-0.32.0","output_class":"short","policy":"vllm-k3","tpot_improvement_pct":46.51529551048867,"e2e_improvement_pct":45.677008690152306,"ttft_improvement_pct":-7.280798666324841,"draft_miss_rate_p50":0.6528773907103825,"exact_output_match_rate":0.5},
+    {"runtime":"vllm-0.32.0","output_class":"short","policy":"vllm-k5","tpot_improvement_pct":49.092548760200884,"e2e_improvement_pct":48.85048178673423,"ttft_improvement_pct":-8.735300971627591,"draft_miss_rate_p50":0.7508771929824561,"exact_output_match_rate":0.75},
+    {"runtime":"vllm-0.32.0","output_class":"long","policy":"vllm-k1","tpot_improvement_pct":36.33499389149607,"e2e_improvement_pct":36.064143245511815,"ttft_improvement_pct":-6.673992508001574,"draft_miss_rate_p50":0.3726114649681529,"exact_output_match_rate":0.0},
+    {"runtime":"vllm-0.32.0","output_class":"long","policy":"vllm-k3","tpot_improvement_pct":50.18329090134027,"e2e_improvement_pct":49.873937776972625,"ttft_improvement_pct":-27.67874912562011,"draft_miss_rate_p50":0.602275518223794,"exact_output_match_rate":0.0},
+    {"runtime":"vllm-0.32.0","output_class":"long","policy":"vllm-k5","tpot_improvement_pct":49.26727110143267,"e2e_improvement_pct":49.142810082087465,"ttft_improvement_pct":-2.328943972739028,"draft_miss_rate_p50":0.7537032799389779,"exact_output_match_rate":0.75},
+    {"runtime":"sglang-0.5.22","output_class":"short","policy":"sglang-s1d2","tpot_improvement_pct":27.710684710266726,"e2e_improvement_pct":27.151856995261262,"ttft_improvement_pct":12.090427265135297,"draft_miss_rate_p50":0.5344827586206897,"exact_output_match_rate":0.16666666666666666},
+    {"runtime":"sglang-0.5.22","output_class":"short","policy":"sglang-s3d4","tpot_improvement_pct":32.091365877793066,"e2e_improvement_pct":31.270128290325985,"ttft_improvement_pct":-4.5464383697919954,"draft_miss_rate_p50":0.7863247863247863,"exact_output_match_rate":0.25},
+    {"runtime":"sglang-0.5.22","output_class":"short","policy":"sglang-s5d6","tpot_improvement_pct":30.981561749941708,"e2e_improvement_pct":30.133784546227798,"ttft_improvement_pct":-7.342053503767325,"draft_miss_rate_p50":0.8630995670995671,"exact_output_match_rate":0.25},
+    {"runtime":"sglang-0.5.22","output_class":"long","policy":"sglang-s1d2","tpot_improvement_pct":29.67092911258111,"e2e_improvement_pct":29.606501699339255,"ttft_improvement_pct":2.2345606108786926,"draft_miss_rate_p50":0.4977617347202815,"exact_output_match_rate":0.0},
+    {"runtime":"sglang-0.5.22","output_class":"long","policy":"sglang-s3d4","tpot_improvement_pct":37.347054901870436,"e2e_improvement_pct":37.12458440679168,"ttft_improvement_pct":-5.3269513299409805,"draft_miss_rate_p50":0.7443861114425486,"exact_output_match_rate":0.0},
+    {"runtime":"sglang-0.5.22","output_class":"long","policy":"sglang-s5d6","tpot_improvement_pct":36.093709832124695,"e2e_improvement_pct":35.92499644298208,"ttft_improvement_pct":-0.2048900181275172,"draft_miss_rate_p50":0.83886925795053,"exact_output_match_rate":0.0}
+  ],
+  "output_adjudication": {
+    "vllm_complete_pairs": 72,
+    "vllm_exact_mismatches": 46,
+    "sglang_complete_pairs": 72,
+    "sglang_exact_mismatches": 64,
+    "task_oracle": "unavailable"
+  },
+  "cost_and_cleanup": {
+    "known_modeled_usd": "12.455083155780555555555555556",
+    "provider_billing": "unavailable",
+    "identified_owned_allocations_cleanup": "verified"
+  },
+  "source_bindings": {
+    "results": "episodes/04-speculative-decoding/results.json",
+    "charts": "episodes/04-speculative-decoding/charts.json",
+    "context": "episodes/04-speculative-decoding/context.json",
+    "cost": "episodes/04-speculative-decoding/cost.json"
+  }
+}

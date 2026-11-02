@@ -38,8 +38,10 @@
       "id": "episode-4",
       "number": 4,
       "title": "Speculative decoding",
-      "summary": "Can drafting ahead reduce decode time enough to pay for verification, without losing output quality?",
-      "status": "planned",
+      "summary": "Recorded within-runtime target-only versus EAGLE-3 timing, with output adjudication kept separate from the timing result.",
+      "status": "available",
+      "evidence": "Recorded descriptive latency study; output adjudication pending",
+      "guide": "episodes/04-speculative-decoding/README.md",
       "roadmapAnchor": "4-speculative-decoding"
     },
     {

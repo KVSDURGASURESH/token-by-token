@@ -1,6 +1,6 @@
 # Token by Token — Inference Lab roadmap
 
-**Token by Token** is the working name for this learning series; **Inference Lab** is its tagline. Episodes 00–02 have recorded public studies. Episode 03 has retained measurements and a local dashboard/article awaiting owner release review. Episodes 04 onward are **planned**. This roadmap does not authorize GPU spending or claim that the integrations or experiments already exist.
+**Token by Token** is the working name for this learning series; **Inference Lab** is its tagline. Episodes 00, 01, and 03 have recorded public studies. Episode 04 has recorded descriptive latency measurements, but every speed difference remains pending task-specific output adjudication and is not a correctness or losslessness claim. Episode 02 and Episodes 05 onward are **planned**. This roadmap does not authorize GPU spending or claim that planned integrations or experiments already exist.
 
 This is the canonical sixteen-part map of future work. The main serving path is **measurement → equal-work baseline → single-GPU optimization → parallelism → routing and operations**. Sections 11–13 are companion studies to take alongside that path, not prerequisites for the next optimization experiment. The roadmap supports the [three capstone project families](capstone-projects.md); it does not create a fourth project.
 
@@ -46,6 +46,8 @@ Within each runtime, compare cache enabled and disabled where supported. Control
 Compare a target-only baseline with a runtime-verified compatible draft or proposal path. Hold model, quality contract and workload fixed; record proposal acceptance, draft/verification overhead and memory. Test short and longer outputs separately. Structured-output compatibility is a separate control, not an assumed speedup.
 
 **Evidence:** accepted tokens per step, target/draft/verification time, TTFT/TPOT, delivered token counts, task correctness, memory and full cost.
+
+**Recorded Episode 04 disposition:** the valid vLLM and clean SGLang recovery projections each contain 72 paired primary comparisons across three draft configurations and two output classes. Descriptive median TPOT and end-to-end latency improved in every tested speculative cell, while TTFT was mixed and often regressed. Draft misses rose at more aggressive settings. Exact-output hashes differed in both runtimes and the task-specific oracle was unavailable, so all speed differences remain pending output adjudication; no setting is accepted as lossless, correct, or eligible for provider-serving selection. The earlier main-store SGLang HTTP-400 responses are setup-failure/RCA evidence only and are excluded from performance results. See the [allowlisted Episode 04 package](../episodes/04-speculative-decoding/README.md).
 
 ### 5. Mixture-of-experts inference
 
@@ -133,7 +135,9 @@ Combine promising settings for the declared use case and test interactions again
 
 **Measured or verified in the Episode 0 candidate:** sanitized historical aggregates, the native dashboard, metric/schema checks, synthetic offline rehearsal and a manual existing-endpoint benchmarking path. Each capability is labeled with its actual validation status in the package.
 
-**Planned:** Episodes 04 onward in the revised order. Earlier episodes recording a setting does not count as an isolated test of it. TensorRT-LLM can join after its model, image, launch, streaming and output-validation contracts pass. NVIDIA Triton Inference Server is a planned deployment comparison with its execution backend identified explicitly; it is distinct from the Triton attention backend recorded in Episode 0. TGI remains a compatibility candidate only if its selected version fits the intended scope. No backend receives a chart entry for a run that never happened.
+**Recorded but unresolved:** Episode 04 has allowlisted descriptive runtime measurements, complete speculative telemetry for the valid projections, verified cleanup, and an unresolved output-quality gate. Its speed differences are not accepted optimization wins until task-specific adjudication is available.
+
+**Planned:** Episodes 05 onward in the revised order. Earlier episodes recording a setting does not count as an isolated test of it. TensorRT-LLM can join after its model, image, launch, streaming and output-validation contracts pass. NVIDIA Triton Inference Server is a planned deployment comparison with its execution backend identified explicitly; it is distinct from the Triton attention backend recorded in Episode 0. TGI remains a compatibility candidate only if its selected version fits the intended scope. No backend receives a chart entry for a run that never happened.
 
 Each later topic can produce a concept post and a measured lab note. Do not publish a claimed result before the experiment exists. The minimum useful contribution is one named hypothesis, one reproducible configuration, one interpretable chart, and a report that includes a failed or inconclusive result when that is what happened.
 

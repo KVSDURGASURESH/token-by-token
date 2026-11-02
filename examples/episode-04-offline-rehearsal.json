@@ -1,0 +1,36 @@
+{
+  "schema_version": "episode04.offline-rehearsal.v1",
+  "classification": "synthetic_mock",
+  "episode": 4,
+  "protocol": "episode-04-public-v1",
+  "purpose": "Rehearse the public Episode 04 client and evidence-bundle path without reproducing benchmark measurements.",
+  "parameters": {
+    "users": 1,
+    "seed": 42,
+    "output_suffix": ".tbt.zip"
+  },
+  "synthetic_arms": [
+    {
+      "id": "synthetic-target-only",
+      "meaning": "Synthetic baseline label for client plumbing only"
+    },
+    {
+      "id": "synthetic-eagle3",
+      "meaning": "Synthetic speculative label for client plumbing only"
+    }
+  ],
+  "recorded_evidence": {
+    "guide": "episodes/04-speculative-decoding/README.md",
+    "results": "episodes/04-speculative-decoding/results.json",
+    "charts": "episodes/04-speculative-decoding/charts.json",
+    "projection": "public-data/site-v2/episode-4.json"
+  },
+  "execution_boundary": {
+    "network": "forbidden",
+    "provider_submission": false,
+    "gpu_execution": false,
+    "inference_engine": false,
+    "recorded_values_replayed": false,
+    "performance_or_quality_claim": false
+  }
+}

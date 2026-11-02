@@ -1,0 +1,30 @@
+{
+  "schema_version": "episode04.reader-context.v1",
+  "evidence_class": "recorded_descriptive_pending_output_adjudication",
+  "question": "Which EAGLE-3 draft-token configuration improves decode latency in vLLM and SGLang without output regression?",
+  "primary_estimand": "within-runtime paired-block relative improvement in median TPOT, separately for short and long outputs",
+  "quality_contract": {
+    "exact_output_hashes": "differed in both runtime projections",
+    "task_specific_oracle": "unavailable",
+    "disposition": "all speed differences pending output adjudication; no correctness or losslessness claim"
+  },
+  "attribution": "Benchmarking harness powered by AgentBench from Mirastack Labs",
+  "source_bindings": {
+    "vllm_facts_file_sha256": "5a31bfe976635e7f054b2e8fa79bb07dc4b228d3e9b6b3069413f4cde72cff64",
+    "vllm_facts_content_sha256": "aef0ba305eff1a8480d79b048d2cc5f8ae55539f3c0f738e7b5db4805acdb633",
+    "sglang_recovery_facts_file_sha256": "59e53b5b0552d2f16df8ea97ec5ff02ba05163bc762016ade711c15fb1fe48a0",
+    "sglang_recovery_facts_content_sha256": "2591749790357be8922ae0f808203540e061519e0735fef88ba34f5e402ae933",
+    "observability_receipt_file_sha256": "02d76610ec72e17d0c6d35d07fdeaddb65541d1636a70dd41010cba9aee3492a",
+    "status_handoff_file_sha256": "0dbddc5fe3eef5dd8ffa6dc570e8824fdadfe8624d7ef5d0f32c2a59b821e348"
+  },
+  "observability": {
+    "status": "local aggregate projection imported and read back",
+    "rows": 271,
+    "projection_sha256": "916ea12a0d1c02d98e9811621ba075876f7fba84dbace0aa9532852d3f87fcfe",
+    "payload_sha256": "262c344b49eef5925485c17adc281ea929d34ca623ac29afc89014c0cfcf8e02",
+    "public_dashboard_status": "unverified_not_part_of_this_package"
+  },
+  "privacy_boundary": "aggregate measurements only; no prompts, outputs, traces, profiles, provider/account/allocation identifiers, credentials, internal endpoints, or deployment recipes",
+  "roadmap_link": "../../docs/roadmap.md#4-speculative-decoding",
+  "next_gate": "task-specific output adjudication"
+}
