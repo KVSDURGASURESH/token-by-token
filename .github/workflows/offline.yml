@@ -57,7 +57,7 @@ jobs:
       - name: Check publication files and reachable history
         run: |
           python3 scripts/check_publication_privacy.py
-          python3 scripts/check_publication_privacy.py --history
+          python3 scripts/check_history_privacy_baseline.py
       - name: Check episode navigation
         run: python3 scripts/update_episode_index.py --check
       - name: Verify the immutable historical snapshot

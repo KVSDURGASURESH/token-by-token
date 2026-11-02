@@ -1,0 +1,278 @@
+{
+  "schema_version": "token-by-token.history-privacy-baseline.v1",
+  "approved_by": "owner directive 2026-11-01",
+  "scope": "findings reachable from public main at 6af5c268ff40b97cc5fa875a55ce98da2ff67515",
+  "policy": "exact fingerprint match; any new or missing finding fails",
+  "approved_findings": [
+    {
+      "location": "commit=0d6cacc0d637:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=0d6cacc0d637:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=0d6cacc0d637:skills/token-by-token-video/references/workflow.md",
+      "line": 7,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:docs/agentbench-wrapper-implementation.md",
+      "line": 63,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:docs/publication-drafts/2026-10-10-methodology-video/revision-4/BRAG-REVIEW.md",
+      "line": 73,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:docs/publication-drafts/2026-10-10-methodology-video/revision-4/CLAUDE-FINISH.md",
+      "line": 9,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:docs/publication-drafts/2026-10-10-methodology-video/revision-4/CLAUDE-TASK.md",
+      "line": 9,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:docs/publication-drafts/2026-10-10-methodology-video/revision-4/not-published.json",
+      "line": 13,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:docs/publication-drafts/2026-10-10-methodology-video/revision-4/preview/REVIEW-NOTES.md",
+      "line": 11,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:docs/publication-drafts/2026-10-10-methodology-video/revision-4/preview/REVIEW-NOTES.md",
+      "line": 60,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aeb3f4e985e:docs/publication-drafts/2026-10-10-methodology-video/revision-5/CLAUDE-TASK.md",
+      "line": 21,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=3aee6f6a8917:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=3aee6f6a8917:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=6af5c268ff40:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=6af5c268ff40:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=73a758e26af2:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=73a758e26af2:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=73a758e26af2:skills/token-by-token-video/references/workflow.md",
+      "line": 7,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=7a4e3cc03d96:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=7a4e3cc03d96:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=8f51dcb91295:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=8f51dcb91295:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=8f51dcb91295:docs/agentbench-wrapper-implementation.md",
+      "line": 63,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=8f51dcb91295:docs/publication-drafts/2026-10-10-methodology-video/revision-4/BRAG-REVIEW.md",
+      "line": 73,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=8f51dcb91295:docs/publication-drafts/2026-10-10-methodology-video/revision-4/CLAUDE-FINISH.md",
+      "line": 9,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=8f51dcb91295:docs/publication-drafts/2026-10-10-methodology-video/revision-4/CLAUDE-TASK.md",
+      "line": 9,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=8f51dcb91295:docs/publication-drafts/2026-10-10-methodology-video/revision-4/not-published.json",
+      "line": 13,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=8f51dcb91295:docs/publication-drafts/2026-10-10-methodology-video/revision-4/preview/REVIEW-NOTES.md",
+      "line": 11,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=8f51dcb91295:docs/publication-drafts/2026-10-10-methodology-video/revision-4/preview/REVIEW-NOTES.md",
+      "line": 60,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=8f51dcb91295:docs/publication-drafts/2026-10-10-methodology-video/revision-5/CLAUDE-TASK.md",
+      "line": 21,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=9aaebef6b763:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=9aaebef6b763:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=9aaebef6b763:docs/agentbench-wrapper-implementation.md",
+      "line": 63,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=9aaebef6b763:docs/publication-drafts/2026-10-10-methodology-video/revision-4/BRAG-REVIEW.md",
+      "line": 73,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=9aaebef6b763:docs/publication-drafts/2026-10-10-methodology-video/revision-4/CLAUDE-FINISH.md",
+      "line": 9,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=9aaebef6b763:docs/publication-drafts/2026-10-10-methodology-video/revision-4/CLAUDE-TASK.md",
+      "line": 9,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=9aaebef6b763:docs/publication-drafts/2026-10-10-methodology-video/revision-4/not-published.json",
+      "line": 13,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=9aaebef6b763:docs/publication-drafts/2026-10-10-methodology-video/revision-4/preview/REVIEW-NOTES.md",
+      "line": 11,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=9aaebef6b763:docs/publication-drafts/2026-10-10-methodology-video/revision-4/preview/REVIEW-NOTES.md",
+      "line": 60,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=9aaebef6b763:docs/publication-drafts/2026-10-10-methodology-video/revision-5/CLAUDE-TASK.md",
+      "line": 21,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a0dc5058ee40:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=a0dc5058ee40:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=a0dc5058ee40:docs/agentbench-wrapper-implementation.md",
+      "line": 63,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a0dc5058ee40:docs/publication-drafts/2026-10-10-methodology-video/revision-4/BRAG-REVIEW.md",
+      "line": 73,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a0dc5058ee40:docs/publication-drafts/2026-10-10-methodology-video/revision-4/CLAUDE-FINISH.md",
+      "line": 9,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a0dc5058ee40:docs/publication-drafts/2026-10-10-methodology-video/revision-4/CLAUDE-TASK.md",
+      "line": 9,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a0dc5058ee40:docs/publication-drafts/2026-10-10-methodology-video/revision-4/not-published.json",
+      "line": 13,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a0dc5058ee40:docs/publication-drafts/2026-10-10-methodology-video/revision-4/preview/REVIEW-NOTES.md",
+      "line": 11,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a0dc5058ee40:docs/publication-drafts/2026-10-10-methodology-video/revision-4/preview/REVIEW-NOTES.md",
+      "line": 60,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a0dc5058ee40:docs/publication-drafts/2026-10-10-methodology-video/revision-5/CLAUDE-TASK.md",
+      "line": 21,
+      "category": "private-home-path"
+    },
+    {
+      "location": "commit=a74506209df7:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=a74506209df7:<metadata>",
+      "line": 4,
+      "category": "email-address"
+    }
+  ]
+}
