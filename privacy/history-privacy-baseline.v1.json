@@ -273,6 +273,16 @@
       "location": "commit=a74506209df7:<metadata>",
       "line": 4,
       "category": "email-address"
+    },
+    {
+      "location": "commit=4bbe988a6ba2:<metadata>",
+      "line": 2,
+      "category": "email-address"
+    },
+    {
+      "location": "commit=4bbe988a6ba2:<metadata>",
+      "line": 4,
+      "category": "email-address"
     }
   ]
 }
