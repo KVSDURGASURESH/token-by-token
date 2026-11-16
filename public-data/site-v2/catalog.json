@@ -56,8 +56,8 @@
       "id": "episode-6",
       "number": 6,
       "title": "Serving tune-up: scheduling and precision",
-      "summary": "Two controlled studies: batching/scheduling first, then attention kernels and precision.",
-      "status": "planned",
+      "summary": "Smaller chunks reduced burst-induced streaming pauses by 57.6 ms across eight paired blocks.",
+      "status": "available",
       "roadmapAnchor": "6-serving-tune-up-scheduling-and-precision"
     },
     {

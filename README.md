@@ -41,7 +41,7 @@ limits are tracked in the [local wrapper implementation status](docs/agentbench-
 | 3 | [Prefix reuse](episodes/03-prefix-reuse/README.md) | Available | Recorded exploratory study; 59% lower same-GPU content-TTFT p95 for the tested composite policy, with p99 descriptive |
 | 4 | [Speculative decoding](episodes/04-speculative-decoding/README.md) | Available | Recorded descriptive latency study; all speed differences pending task-specific output adjudication |
 | 5 | Mixture-of-experts inference | Planned | Planned — no measurements |
-| 6 | Serving tune-up: scheduling and precision | Planned | Planned — no measurements |
+| 6 | [Serving tune-up: prefill interference and batch invariance](episodes/06-serving-tune-up-scheduling-and-precision/README.md) | Available | Smaller chunks reduced added streaming pauses by 57.6 ms in eight paired burst blocks |
 | 7 | Parallelism within one node | Planned | Planned — no measurements |
 | 8 | Parallelism across nodes | Planned | Planned — no measurements |
 | 9 | Prefill/decode disaggregation and cache-aware routing | Planned | Planned — no measurements |

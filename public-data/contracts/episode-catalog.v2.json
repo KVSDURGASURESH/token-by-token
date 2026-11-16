@@ -39,9 +39,9 @@
       "evidence": "Exploratory recorded study",
       "guide": "episodes/00-warm-up/README.md",
       "dashboardView": "qwen32b-runtime-study",
-      "model": "Qwen2.5-32B-Instruct \u00b7 BF16",
+      "model": "Qwen2.5-32B-Instruct · BF16",
       "hardware": "One H100 80GB per run",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-1",
@@ -55,9 +55,9 @@
       "roadmapAnchor": "1-measurement-and-quality-contracts",
       "templateId": "episode-1-contract",
       "dashboardView": "episode1-instrument",
-      "model": "Matched model \u00b7 serving details withheld",
+      "model": "Matched model · serving details withheld",
       "hardware": "One H200 per recorded arm",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-2",
@@ -66,12 +66,12 @@
       "title": "Equal-work runtime baseline",
       "summary": "Compare HF/PyTorch, vLLM and SGLang under the same model, corpus, template and output contract.",
       "status": "planned",
-      "evidence": "Planned \u2014 no measurements",
+      "evidence": "Planned — no measurements",
       "roadmapAnchor": "equal-work-runtime-baseline",
       "templateId": "episode-2-runtime-baseline",
       "model": "Selected in planner",
-      "hardware": "Candidate hardware \u2014 availability unverified",
-      "runtimes": "vLLM \u00b7 SGLang \u00b7 control"
+      "hardware": "Candidate hardware — availability unverified",
+      "runtimes": "vLLM · SGLang · control"
     },
     {
       "id": "episode-3",
@@ -86,7 +86,7 @@
       "templateId": "episode-3-prefix-reuse",
       "model": "Qwen3.8-27B-FP8",
       "hardware": "One H200 per recorded allocation",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-4",
@@ -101,7 +101,7 @@
       "templateId": "episode-4-speculative",
       "model": "Qwen3-32B BF16 with runtime-compatible EAGLE-3 drafts",
       "hardware": "One H200 per recorded allocation",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-5",
@@ -110,26 +110,27 @@
       "title": "Mixture-of-experts inference",
       "summary": "Measure conditional computation, expert routing and memory traffic before assuming fewer active parameters mean lower latency.",
       "status": "planned",
-      "evidence": "Planned \u2014 no measurements",
+      "evidence": "Planned — no measurements",
       "roadmapAnchor": "mixture-of-experts-inference",
       "templateId": "episode-5-moe",
       "model": "Selected after compatibility verification",
-      "hardware": "Planned setup \u2014 unverified",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "hardware": "Planned setup — unverified",
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-6",
       "number": 6,
       "previousNumber": 11,
-      "title": "Serving tune-up: scheduling and precision",
-      "summary": "Two controlled studies: batching/scheduling first, then attention kernels and precision.",
-      "status": "planned",
-      "evidence": "Planned \u2014 no measurements",
+      "title": "Serving tune-up: prefill interference and batch invariance",
+      "summary": "Compare two prefill chunk budgets under an identical burst and locate the extra decode time in one matched SGLang batch-invariance trace pair.",
+      "status": "available",
+      "evidence": "Smaller chunks reduced added streaming pauses by 57.6 ms in eight paired burst blocks",
       "roadmapAnchor": "serving-tune-up-scheduling-and-precision",
       "templateId": "episode-6-serving-tuneup",
-      "model": "Selected after compatibility verification",
-      "hardware": "Planned setup \u2014 unverified",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "model": "Qwen3-30B-A3B",
+      "hardware": "One NVIDIA H200",
+      "runtimes": "SGLang 0.5.21",
+      "guide": "episodes/06-serving-tune-up-scheduling-and-precision/README.md"
     },
     {
       "id": "episode-7",
@@ -138,12 +139,12 @@
       "title": "Parallelism within one node",
       "summary": "Two studies on a fixed GPU budget: DP/TP layouts, then MoE expert parallelism and load balance.",
       "status": "planned",
-      "evidence": "Planned \u2014 no measurements",
+      "evidence": "Planned — no measurements",
       "roadmapAnchor": "parallelism-within-one-node",
       "templateId": "episode-7-single-node-parallelism",
       "model": "Selected after compatibility verification",
-      "hardware": "Planned setup \u2014 unverified",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "hardware": "Planned setup — unverified",
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-8",
@@ -152,12 +153,12 @@
       "title": "Parallelism across nodes",
       "summary": "Test placement and communication costs on a documented multi-node network topology.",
       "status": "planned",
-      "evidence": "Planned \u2014 no measurements",
+      "evidence": "Planned — no measurements",
       "roadmapAnchor": "parallelism-across-nodes",
       "templateId": "episode-8-multi-node-parallelism",
       "model": "Selected in planner",
-      "hardware": "Candidate multi-node topology \u2014 unverified",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "hardware": "Candidate multi-node topology — unverified",
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-9",
@@ -166,12 +167,12 @@
       "title": "Prefill/decode disaggregation and cache-aware routing",
       "summary": "Compare colocated and supported disaggregated serving with queue- and cache-aware routing.",
       "status": "planned",
-      "evidence": "Planned \u2014 no measurements",
+      "evidence": "Planned — no measurements",
       "roadmapAnchor": "prefilldecode-disaggregation-and-cache-aware-routing",
       "templateId": "episode-9-disaggregation-routing",
       "model": "Selected in planner",
-      "hardware": "Candidate serving pools \u2014 unverified",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "hardware": "Candidate serving pools — unverified",
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-10",
@@ -180,11 +181,11 @@
       "title": "Slurm and Kubernetes orchestration",
       "summary": "Compare representative scheduled jobs and long-running services as platform choices, separate from engines.",
       "status": "planned",
-      "evidence": "Planned platform study \u2014 no measurements",
+      "evidence": "Planned platform study — no measurements",
       "roadmapAnchor": "slurm-and-kubernetes-orchestration",
       "templateId": "episode-10-orchestration",
       "model": "Workload selected in planner",
-      "hardware": "Candidate platform resources \u2014 unverified",
+      "hardware": "Candidate platform resources — unverified",
       "runtimes": "Platform track"
     },
     {
@@ -194,10 +195,10 @@
       "title": "Model internals: weights to optimization",
       "summary": "Trace weights, attention, gradients and optimizer state with a small inspectable model.",
       "status": "planned",
-      "evidence": "Planned companion study \u2014 no measurements",
+      "evidence": "Planned companion study — no measurements",
       "roadmapAnchor": "model-internals-weights-to-optimization",
       "templateId": "episode-11-model-internals",
-      "model": "Small inspectable model \u2014 selected in planner",
+      "model": "Small inspectable model — selected in planner",
       "hardware": "Companion study",
       "runtimes": "Training/model track"
     },
@@ -208,10 +209,10 @@
       "title": "LoRA and QLoRA with held-out evaluation",
       "summary": "Compare adapter training with fixed data, budgets and held-out quality evaluation.",
       "status": "planned",
-      "evidence": "Planned companion study \u2014 no measurements",
+      "evidence": "Planned companion study — no measurements",
       "roadmapAnchor": "lora-and-qlora-with-held-out-evaluation",
       "templateId": "episode-12-lora-qlora",
-      "model": "Base and adapter lineage \u2014 selected in planner",
+      "model": "Base and adapter lineage — selected in planner",
       "hardware": "Companion study",
       "runtimes": "Training/model track"
     },
@@ -222,10 +223,10 @@
       "title": "SYSTEM 1 and LLMs on labeled decision tasks",
       "summary": "Compare typed and LLM decision approaches on one versioned labeled task contract.",
       "status": "planned",
-      "evidence": "Planned companion study \u2014 no measurements",
+      "evidence": "Planned companion study — no measurements",
       "roadmapAnchor": "jev-and-llms-on-labeled-decision-tasks",
       "templateId": "episode-13-jev-decisions",
-      "model": "Decision systems \u2014 selected in planner",
+      "model": "Decision systems — selected in planner",
       "hardware": "Companion study",
       "runtimes": "Decision track"
     },
@@ -236,12 +237,12 @@
       "title": "Packaging, accelerator preflight and memory containment",
       "summary": "Verify reproducible containers, accelerator visibility, model loading and bounded memory behavior.",
       "status": "planned",
-      "evidence": "Planned \u2014 no measurements",
+      "evidence": "Planned — no measurements",
       "roadmapAnchor": "packaging-accelerator-preflight-and-memory-containment",
       "templateId": "episode-14-packaging",
       "model": "Selected in planner",
-      "hardware": "Candidate accelerator \u2014 unverified",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "hardware": "Candidate accelerator — unverified",
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-15",
@@ -250,12 +251,12 @@
       "title": "Saturation, SLO and cost",
       "summary": "Sweep concurrency and offered rate to find SLO-qualified goodput and attributable cost.",
       "status": "planned",
-      "evidence": "Planned \u2014 no measurements",
+      "evidence": "Planned — no measurements",
       "roadmapAnchor": "saturation-slo-and-cost",
       "templateId": "episode-15-saturation",
       "model": "Selected in planner",
-      "hardware": "Candidate GPU topology \u2014 unverified",
-      "runtimes": "vLLM \u00b7 SGLang"
+      "hardware": "Candidate GPU topology — unverified",
+      "runtimes": "vLLM · SGLang"
     },
     {
       "id": "episode-16",
@@ -264,11 +265,11 @@
       "title": "Release gates, recovery and capstone synthesis",
       "summary": "Combine promising settings, reject regressions and exercise rollback and recovery against original gates.",
       "status": "planned",
-      "evidence": "Planned capstone synthesis \u2014 no measurements",
+      "evidence": "Planned capstone synthesis — no measurements",
       "roadmapAnchor": "release-gates-recovery-and-capstone-synthesis",
       "templateId": "episode-16-release-gates",
       "model": "Selected release candidate",
-      "hardware": "Candidate release topology \u2014 unverified",
+      "hardware": "Candidate release topology — unverified",
       "runtimes": "Selected serving/runtime path"
     }
   ]
