@@ -3,7 +3,8 @@ name: Offline validation
 on:
   pull_request:
   push:
-    branches: [main]
+    # Validate the exact candidate commits before a public fast-forward.
+    branches: [main, "codex/public-release-*"]
 
 permissions:
   contents: read
