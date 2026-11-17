@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokenbytoken.org/schemas/episode2-trace.schema.json",
+  "$defs": {
+    "map": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "type": "integer"
+        }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workflow_id",
+        "session_id",
+        "class_id",
+        "arrival_index"
+      ],
+      "properties": {
+        "workflow_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "class_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "arrival_index": {
+          "type": "integer"
+        }
+      }
+    },
+    "turn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logical_request_id",
+        "workflow_id",
+        "session_id",
+        "turn_id",
+        "class_id",
+        "predecessor_id",
+        "messages_sha256",
+        "corpus_ref",
+        "output_policy",
+        "tool_fixture_ref",
+        "eligibility"
+      ],
+      "properties": {
+        "logical_request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "workflow_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "turn_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "class_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "predecessor_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "messages_sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "corpus_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "output_policy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "tool_fixture_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "eligibility": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "protocol_sha256",
+    "seed",
+    "mode",
+    "blocks",
+    "logical_sha256",
+    "tool_fixtures_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "episode2.trace.v1"
+    },
+    "protocol_sha256": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "mode": {
+      "enum": [
+        "closed-loop",
+        "open-loop"
+      ]
+    },
+    "logical_sha256": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "tool_fixtures_sha256": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "block_id",
+          "class_counts",
+          "class_weights",
+          "workflows",
+          "turns"
+        ],
+        "properties": {
+          "block_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "class_counts": {
+            "$ref": "#/$defs/map"
+          },
+          "class_weights": {
+            "$ref": "#/$defs/map"
+          },
+          "workflows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/workflow"
+            }
+          },
+          "turns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/turn"
+            }
+          }
+        }
+      },
+      "minItems": 6,
+      "maxItems": 8
+    }
+  }
+}

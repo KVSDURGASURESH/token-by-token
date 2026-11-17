@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokenbytoken.org/schemas/episode2-arm-proposal.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "arm_id",
+    "engine",
+    "runtime_version",
+    "hypothesis_id",
+    "evidence_sha256",
+    "control_sha256",
+    "source_protocol_sha256",
+    "frozen_work_sha256",
+    "trace_sha256",
+    "changed_group",
+    "configuration_before",
+    "configuration_after",
+    "coupled_flags",
+    "limits",
+    "execution_ready",
+    "paid_approval_required",
+    "proposal_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "episode2.arm-proposal.v1"
+    },
+    "arm_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "engine": {
+      "enum": [
+        "vllm",
+        "sglang"
+      ]
+    },
+    "runtime_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "hypothesis_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "evidence_sha256": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "control_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_protocol_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "frozen_work_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "trace_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "changed_group": {
+      "enum": [
+        "chunked_prefill",
+        "prefix_reuse",
+        "batching"
+      ]
+    },
+    "configuration_before": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 4,
+      "properties": {
+        "chunked_prefill": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_num_batched_tokens": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "chunked_prefill_size": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_prefill_tokens": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "prefix_caching": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "radix_cache": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "cache_salt": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_num_seqs": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_running_requests": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_batch_size": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        }
+      }
+    },
+    "configuration_after": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 4,
+      "properties": {
+        "chunked_prefill": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_num_batched_tokens": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "chunked_prefill_size": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_prefill_tokens": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "prefix_caching": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "radix_cache": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "cache_salt": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_num_seqs": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_running_requests": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        },
+        "max_batch_size": {
+          "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string"
+          ],
+          "maxLength": 512
+        }
+      }
+    },
+    "coupled_flags": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "enum": [
+          "chunked_prefill",
+          "max_num_batched_tokens",
+          "chunked_prefill_size",
+          "max_prefill_tokens",
+          "prefix_caching",
+          "radix_cache",
+          "cache_salt",
+          "max_num_seqs",
+          "max_running_requests",
+          "max_batch_size"
+        ]
+      }
+    },
+    "limits": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "maxLength": 1024
+      }
+    },
+    "execution_ready": {
+      "const": false
+    },
+    "paid_approval_required": {
+      "const": true
+    },
+    "proposal_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

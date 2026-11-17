@@ -1,0 +1,162 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "runtime",
+    "version",
+    "unit",
+    "scope",
+    "source",
+    "execution_id",
+    "engine",
+    "arm",
+    "cell_id",
+    "block_id",
+    "clock_domain",
+    "window",
+    "cadence_ns",
+    "offset_ns",
+    "uncertainty_ns",
+    "kind",
+    "samples",
+    "unavailable_reason"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "runtime": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "unit": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "scope": {
+      "enum": [
+        "runtime",
+        "gpu",
+        "host",
+        "client"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "execution_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "engine": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "arm": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "cell_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "block_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "clock_domain": {
+      "enum": [
+        "client_monotonic",
+        "remote_monotonic"
+      ]
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_ns",
+        "end_ns"
+      ],
+      "properties": {
+        "start_ns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_ns": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "cadence_ns": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "offset_ns": {
+      "type": "integer"
+    },
+    "uncertainty_ns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "kind": {
+      "enum": [
+        "gauge",
+        "counter"
+      ]
+    },
+    "samples": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "timestamp_ns",
+          "value",
+          "process_attributed"
+        ],
+        "properties": {
+          "timestamp_ns": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0
+          },
+          "process_attributed": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "unavailable_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 512
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokenbytoken.org/schemas/episode2-telemetry.schema.json"
+}

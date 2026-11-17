@@ -1,0 +1,904 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tokenbytoken.org/schemas/episode2-observation.schema.json",
+  "$defs": {
+    "stream_reply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "text",
+        "tool_calls",
+        "actual_send_ns",
+        "first_content_ns",
+        "last_content_ns",
+        "terminal_ns",
+        "input_tokens",
+        "output_tokens",
+        "stop_reason",
+        "content_events",
+        "tool_events"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "episode2.observation.v1"
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 65536
+        },
+        "tool_calls": {
+          "type": "array",
+          "maxItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "type",
+              "function"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "type": {
+                "const": "function"
+              },
+              "function": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "arguments"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "arguments": {
+                    "type": "string",
+                    "maxLength": 65536
+                  }
+                }
+              }
+            }
+          }
+        },
+        "actual_send_ns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "first_content_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "last_content_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "terminal_ns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stop_reason": {
+          "enum": [
+            "stop",
+            "length",
+            "tool_calls"
+          ]
+        },
+        "content_events": {
+          "type": "array",
+          "maxItems": 65536,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "received_ns",
+              "text"
+            ],
+            "properties": {
+              "received_ns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 65536
+              }
+            }
+          }
+        },
+        "tool_events": {
+          "type": "array",
+          "maxItems": 65536,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "received_ns",
+              "delta"
+            ],
+            "properties": {
+              "received_ns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "delta": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "index"
+                ],
+                "properties": {
+                  "index": {
+                    "const": 0
+                  },
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "type": {
+                    "const": "function"
+                  },
+                  "function": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 64
+                      },
+                      "arguments": {
+                        "type": "string",
+                        "maxLength": 65536
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "campaign_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "execution_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "attempt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "arm": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "cell_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "block_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "logical_request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "workflow_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "turn_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "protocol_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "trace_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "messages_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tool_fixtures_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "effective_config_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "engine": {
+          "enum": [
+            "vllm",
+            "sglang"
+          ]
+        },
+        "class_id": {
+          "enum": [
+            "short",
+            "long_prefill",
+            "output_heavy",
+            "structured",
+            "code_reasoning",
+            "tool_call",
+            "conversation",
+            "agent_chain"
+          ]
+        },
+        "predecessor_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "scheduled_ns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligible_ns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_class": {
+          "enum": [
+            "synthetic_mock",
+            "recorded"
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "admission": {
+          "enum": [
+            "admitted",
+            "dropped",
+            "dependency_blocked",
+            "cancelled"
+          ]
+        },
+        "quality_valid": {
+          "type": "boolean"
+        },
+        "schema_valid": {
+          "type": "boolean"
+        },
+        "tool_valid": {
+          "type": "boolean"
+        },
+        "work_equivalent": {
+          "type": "boolean"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "raw_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "first_content_ns",
+        "ttft_ms",
+        "messages_sha256",
+        "tool_calls",
+        "scheduled_ns",
+        "tool_duration_ns",
+        "execution_id",
+        "predecessor_valid_ns",
+        "session_id",
+        "eligible_send_lag_ns",
+        "protocol_sha256",
+        "tool_fixtures_sha256",
+        "eligible_ns",
+        "stop_reason",
+        "campaign_id",
+        "last_content_ns",
+        "semantic_valid",
+        "schema_version",
+        "engine",
+        "text",
+        "content_events",
+        "input_tokens",
+        "predecessor_id",
+        "cell_id",
+        "send_lag_ns",
+        "schema_valid",
+        "tool_valid",
+        "arm",
+        "block_id",
+        "effective_config_sha256",
+        "status",
+        "output_tokens",
+        "turn_id",
+        "actual_send_ns",
+        "requested_output_tokens",
+        "attempt_id",
+        "terminal_ns",
+        "dependency_wait_ns",
+        "work_equivalent",
+        "e2e_ms",
+        "trace_sha256",
+        "tpot_ms",
+        "tool_events",
+        "logical_request_id",
+        "workflow_id",
+        "success",
+        "validation_terminal_ns",
+        "quality_valid",
+        "class_id",
+        "evidence_class"
+      ],
+      "properties": {
+        "first_content_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "ttft_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "messages_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tool_calls": {
+          "type": "array",
+          "maxItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "type",
+              "function"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "type": {
+                "const": "function"
+              },
+              "function": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "arguments"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "arguments": {
+                    "type": "string",
+                    "maxLength": 65536
+                  }
+                }
+              }
+            }
+          }
+        },
+        "scheduled_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "tool_duration_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "execution_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "predecessor_valid_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "eligible_send_lag_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "protocol_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tool_fixtures_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "eligible_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "stop_reason": {
+          "enum": [
+            "stop",
+            "length",
+            "tool_calls",
+            null
+          ]
+        },
+        "campaign_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "last_content_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "semantic_valid": {
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "episode2.observation.v1"
+        },
+        "engine": {
+          "enum": [
+            "vllm",
+            "sglang"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 65536
+        },
+        "content_events": {
+          "type": "array",
+          "maxItems": 65536,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "received_ns",
+              "text"
+            ],
+            "properties": {
+              "received_ns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 65536
+              }
+            }
+          }
+        },
+        "input_tokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "predecessor_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "cell_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "send_lag_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "schema_valid": {
+          "type": "boolean"
+        },
+        "tool_valid": {
+          "type": "boolean"
+        },
+        "arm": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "block_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "effective_config_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "enum": [
+            "success",
+            "semantic_invalid",
+            "transport_error",
+            "timing_invalid",
+            "continuation_mismatch",
+            "dependency_blocked",
+            "admission_dropped",
+            "cancelled",
+            "warmup_failed"
+          ]
+        },
+        "output_tokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "turn_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "actual_send_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "requested_output_tokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 512
+        },
+        "attempt_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "terminal_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "dependency_wait_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "work_equivalent": {
+          "type": "boolean"
+        },
+        "e2e_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "trace_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tpot_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "tool_events": {
+          "type": "array",
+          "maxItems": 65536,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "received_ns",
+              "delta"
+            ],
+            "properties": {
+              "received_ns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "delta": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "index"
+                ],
+                "properties": {
+                  "index": {
+                    "const": 0
+                  },
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "type": {
+                    "const": "function"
+                  },
+                  "function": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 64
+                      },
+                      "arguments": {
+                        "type": "string",
+                        "maxLength": 65536
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "logical_request_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "workflow_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "validation_terminal_ns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "quality_valid": {
+          "type": "boolean"
+        },
+        "class_id": {
+          "enum": [
+            "short",
+            "long_prefill",
+            "output_heavy",
+            "structured",
+            "code_reasoning",
+            "tool_call",
+            "conversation",
+            "agent_chain"
+          ]
+        },
+        "evidence_class": {
+          "enum": [
+            "synthetic_mock",
+            "recorded"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "success": {
+                "const": true
+              }
+            },
+            "required": [
+              "success"
+            ]
+          },
+          "then": {
+            "properties": {
+              "actual_send_ns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "terminal_ns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "input_tokens": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "output_tokens": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "dependency_blocked",
+                  "admission_dropped",
+                  "cancelled",
+                  "warmup_failed",
+                  "continuation_mismatch"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "attempt_id": {
+                "const": null
+              },
+              "actual_send_ns": {
+                "const": null
+              },
+              "terminal_ns": {
+                "const": null
+              },
+              "input_tokens": {
+                "const": null
+              },
+              "output_tokens": {
+                "const": null
+              },
+              "text": {
+                "const": null
+              },
+              "stop_reason": {
+                "const": null
+              },
+              "first_content_ns": {
+                "const": null
+              },
+              "last_content_ns": {
+                "const": null
+              },
+              "validation_terminal_ns": {
+                "const": null
+              },
+              "ttft_ms": {
+                "const": null
+              },
+              "tpot_ms": {
+                "const": null
+              },
+              "e2e_ms": {
+                "const": null
+              },
+              "success": {
+                "const": false
+              },
+              "semantic_valid": {
+                "const": false
+              },
+              "schema_valid": {
+                "const": false
+              },
+              "tool_valid": {
+                "const": false
+              },
+              "quality_valid": {
+                "const": false
+              },
+              "work_equivalent": {
+                "const": false
+              },
+              "content_events": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "tool_events": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "tool_calls": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/stream_reply"
+    },
+    {
+      "$ref": "#/$defs/raw_observation"
+    }
+  ]
+}

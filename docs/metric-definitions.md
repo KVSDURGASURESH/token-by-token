@@ -107,3 +107,47 @@ gate fixed. Randomize repeated arm order and disclose drift.
 
 Cross-GPU or historical comparisons may be descriptive context only. A same-GPU
 paired arm is required to attribute a change to an optimization.
+
+## Episode 02 qualified work and repeated blocks
+
+Episode 02 keeps all scheduled logical requests, including work that was never
+sent. Its public `attempted_requests` denominator is the scheduled logical set;
+`sent_requests` counts actual transport attempts. Warmup attempts are excluded
+from measured latency distributions and retained in separate records. A retry
+requires a distinct attempt identity and cannot become an invisible extra sample.
+
+A complete terminal response and a qualified serving observation are separate
+counts. Qualification requires exact usage, the frozen request and tool identities,
+valid schema and semantic output, declared output bounds, and equivalent delivered
+work. Tool-only responses can complete successfully with content TTFT and TPOT
+unavailable. `tool_event_latency_ms` is actual send to the first received tool delta, with its own applicable observation count. It is reported separately from content TTFT and TPOT. Local tool execution and
+validation time enter workflow duration; serving E2E ends at terminal stream
+validation. Failed predecessors leave explicitly blocked descendants in the
+offered-work denominator. Admission drops and client cancellation remain visible.
+
+Each engine/arm/cell retains 6–8 paired measured repetition blocks. Load mode,
+thermal condition, mixture, trace, reset policy, model/tokenizer/template material,
+and physical allocation must match before qualified comparisons are made.
+Delivered-output tolerance is explicitly frozen; there is no inferred tolerance.
+Raw observations are pooled within compatible cells. Class, workflow, TTFT, TPOT,
+and request E2E distributions each have their own applicable count. A p99 headline
+requires at least 1,000 applicable qualified observations in every compared arm
+for that particular claim. Otherwise the comparison uses p95 and retains p99 as
+`descriptive p99` with its count. Empty groups remain unavailable.
+
+The absolute tail gap is `tail - p50`, in milliseconds, using the same selected
+percentile in both arms. Gap improvement is `baseline gap - treatment gap`.
+Uncertainty resamples paired whole block identities and recomputes pooled raw
+percentiles on every draw. It does not average block percentiles or resample
+individual correlated turns independently. At least six complete block pairs are
+required; an interval crossing zero does not establish improvement.
+
+A narrower gap alone cannot establish an accepted treatment. The median, overall
+and class quality, error and admission rates, applicable latency SLOs, SLO-qualified
+goodput, attributed cost, and resource bounds must satisfy their frozen safeguards.
+Cost and resource receipts must bind the measured block windows and source hashes.
+Missing bounds, unavailable evidence, unverified reset/material, incompatible
+work, sparse paired groups, or missing physical lineage prevent a winner claim.
+Known safeguard breaches are rejected even when another metric improves. Synthetic
+rehearsals can exercise the calculations and demonstrate rejection; they cannot
+establish a measured winner or any hosted readiness.

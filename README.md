@@ -158,6 +158,12 @@ to see how realistic multi-turn sessions, protocol gates, and aligned client,
 engine, and GPU measurements become a public result. Both pages are static and
 work in Light or Dark mode.
 
+Episode 02 now includes a recorded six-pair, warm closed-loop baseline on one
+H200 with Qwen2.5-32B-Instruct. All 144 measured requests completed; each
+engine qualified 66 of 72 replies. The frozen comparison is rejected, with
+no supported winner. Read the [results and limitations](docs/episode-2-results.md)
+and the [sanitized evidence index](public-data/evidence/episode-2/index.json).
+
 For a zero-GPU streamed request race, use the Episode 1
 [Quick test](docs/episode-1-preparation/quick-test.md). The supported path is the
 operator CLI; it is separate from this static public dashboard. Quick-test
@@ -189,7 +195,7 @@ The metrics import is a one-time construction step for each approved evidence
 release. Local VictoriaMetrics and Grafana are used to validate the source
 windows and produce the allowlisted aggregate document; they are not website
 dependencies. Ordinary builds and every public page use only the committed
-`public-data/site-v2/episode-1.json`. The raw metrics export, private
+recorded projections under `public-data/site-v2/`. The raw metrics export, private
 reports, receipts, containers, and dashboards are neither published nor needed
 again unless the approved source evidence changes.
 

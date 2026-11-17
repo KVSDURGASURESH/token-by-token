@@ -1,0 +1,45 @@
+{
+  "campaign_id": "episode2-synthetic-rehearsal-v1",
+  "catalog_sha256": "fc1407fb3db7427601922e1f97db738731040526c6feb0d71f1ee705971b5116",
+  "cells": [{"arrival_policy": "completion", "cell_id": "closed-loop-c2-warm", "concurrency": 2, "mode": "closed-loop", "temperature": "warm"}],
+  "classification": "synthetic_mock",
+  "continuation_version": "episode2.continuation.v1",
+  "episode": 2,
+  "exclusions": ["external tool latency", "synthetic result values", "speculative decoding"],
+  "material": {
+    "artifact_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "common_launch_overrides": [], "context_window": 8192, "execution_ready": false,
+    "harness_version": "episode2-harness.v1", "model_id": "fixture/model",
+    "model_revision": "1111111111111111111111111111111111111111111111111111111111111111",
+    "physical_gpu_policy": "same-physical-allocation",
+    "sglang_defaults_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+    "sglang_image": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "template_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "tokenizer_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "vllm_defaults_sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+    "vllm_image": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+  },
+  "metrics": {"companions": ["ttft_ms", "tpot_ms", "workflow_e2e_ms"], "p99_min_n": 1000, "primary_tail": "request_e2e_ms"},
+  "mixture": {
+    "classes": {
+      "agent_chain": {"corpus_ref": "episode2.public.agent_chain.v1", "input_tokens_max": 2048, "input_tokens_min": 1, "output_policy": "dependent_agent_chain", "requested_output_tokens": 96, "turns": 3},
+      "code_reasoning": {"corpus_ref": "episode2.public.code_reasoning.v1", "input_tokens_max": 2048, "input_tokens_min": 1, "output_policy": "allowlisted_expression_json", "requested_output_tokens": 96, "turns": 1},
+      "conversation": {"corpus_ref": "episode2.public.conversation.v1", "input_tokens_max": 2048, "input_tokens_min": 1, "output_policy": "validated_conversation_state", "requested_output_tokens": 64, "turns": 2},
+      "long_prefill": {"corpus_ref": "episode2.public.long_prefill.v1", "input_tokens_max": 4096, "input_tokens_min": 2048, "output_policy": "indexed_rows_json", "requested_output_tokens": 64, "turns": 1},
+      "output_heavy": {"corpus_ref": "episode2.public.output_heavy.v1", "input_tokens_max": 2048, "input_tokens_min": 1, "output_policy": "ordered_concepts_and_length", "requested_output_tokens": 512, "turns": 1},
+      "short": {"corpus_ref": "episode2.public.short.v1", "input_tokens_max": 256, "input_tokens_min": 1, "output_policy": "nonempty_text", "requested_output_tokens": 64, "turns": 1},
+      "structured": {"corpus_ref": "episode2.public.structured.v1", "input_tokens_max": 2048, "input_tokens_min": 1, "output_policy": "closed_json_answer", "requested_output_tokens": 64, "turns": 1},
+      "tool_call": {"corpus_ref": "episode2.public.tool_call.v1", "input_tokens_max": 2048, "input_tokens_min": 1, "output_policy": "tool_call_then_answer", "requested_output_tokens": 64, "turns": 2}
+    },
+    "units_per_class": 1,
+    "weights": {"agent_chain": 1, "code_reasoning": 1, "conversation": 1, "long_prefill": 1, "output_heavy": 1, "short": 1, "structured": 1, "tool_call": 1}
+  },
+  "order_policy": {"engine": "counterbalanced", "treatment": "paired", "within_session": "dependency_order"},
+  "quality": {"equal_work": "required", "schema_validity": "required", "semantic_contract": "canonical"},
+  "repetition_blocks": 6,
+  "safeguards": {"cost_status": "required", "error_rate_max": 0.01, "median_ceiling_ms": 30000, "quality_min": 1.0, "resource_pressure": "reported"},
+  "schema_version": "episode2.protocol.v1", "seed": 42, "title": "Equal-work runtime baseline",
+  "tool_fixtures_sha256": "e30382d8221d74e24a9cfc2f7df9a64a601ce027c720a8722dbcf6ac642bfbcc",
+  "uncertainty": {"confidence": 0.95, "method": "paired_block_bootstrap", "minimum_blocks": 6, "resamples": 2000, "seed": 42},
+  "warmup_reset": {"cache_reset_between_arms": true, "cold_separate": true, "warmup_requests": 1}
+}

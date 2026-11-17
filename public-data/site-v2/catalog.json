@@ -20,8 +20,8 @@
       "id": "episode-2",
       "number": 2,
       "title": "Equal-work runtime baseline",
-      "summary": "Compare HF/PyTorch, vLLM and SGLang under the same model, corpus, template and output contract.",
-      "status": "planned",
+      "summary": "A completed six-pair vLLM and SGLang baseline on one H200: 144 measured requests, rejected comparison and no winner.",
+      "status": "available",
       "roadmapAnchor": "2-equal-work-runtime-baseline"
     },
     {
