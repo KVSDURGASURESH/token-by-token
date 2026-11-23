@@ -4,7 +4,7 @@
 
 Run `python3 replay.py` next to `episode-07.json`. The command reproduces the steady-load comparison, both burst outcomes and the four sustained rates from the retained paired aggregates. It needs only the Python standard library and makes no network or GPU calls.
 
-Explore the [live Episode 07 dashboard](https://tokenbytoken.org/episodes/07-prefill-and-decode-disaggregation/) or [play the Episode 07 video](https://tokenbytoken.org/videos/episode-07.mp4). These links present the same recorded study; the files in this directory remain the offline arithmetic-replay surface.
+Read the companion article, [“We Split Prefill and Decode. Why Did First Text Still Get Slower?”](https://durgasuresh.substack.com/p/we-split-prefill-and-decode-why-did), explore the [live Episode 07 dashboard](https://tokenbytoken.org/episodes/07-prefill-and-decode-disaggregation/), or [play the Episode 07 video](https://tokenbytoken.org/videos/episode-07.mp4). These links present the same recorded study; the files in this directory remain the offline arithmetic-replay surface.
 
 The steady result averages the p95 from four windows at 0.5 requests/sec and 4,096-token chunks. The burst result averages the four block-level burst-minus-control changes. Incoming first text is the mean of the four per-block medians. The sustained sweep uses four 240-second offers per rate and layout. A null latency summary at 4 requests/sec indicates that client dispatch missed the timing gate. The observed counts at that rate remain in the packet for diagnostics.
 

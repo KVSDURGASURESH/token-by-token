@@ -54,6 +54,10 @@ limits are tracked in the [local wrapper implementation status](docs/agentbench-
 | 16 | Release gates, recovery and capstone synthesis | Planned | Planned capstone synthesis — no measurements |
 <!-- END EPISODE INDEX -->
 
+Read the Episode 07 companion article,
+[“We Split Prefill and Decode. Why Did First Text Still Get Slower?”](https://durgasuresh.substack.com/p/we-split-prefill-and-decode-why-did),
+alongside the recorded aggregate and dashboard.
+
 The [three capstone projects](docs/capstone-projects.md) explain where these
 experiments lead. The [canonical roadmap](docs/roadmap.md) owns the planned sequence. Future
 topics are proposals until an episode publishes evidence; they are not results
