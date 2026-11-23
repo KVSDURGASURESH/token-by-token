@@ -71,5 +71,6 @@ verifier. That follow-up may accept a reader-owned endpoint while excluding
 provider provisioning. It must be approved and tested as a new public
 capability; this package does not imply that it already exists.
 
-This local candidate is prepared for private review only. It has not been
-pushed, published, deployed or staged in a native publishing surface.
+This package is published on the public repository's `main` branch. Its
+supported reader surface remains the offline arithmetic replay described
+above; it does not add an endpoint client, provider launcher or native GPU run.
