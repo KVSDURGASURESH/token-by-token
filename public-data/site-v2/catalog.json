@@ -63,26 +63,26 @@
     {
       "id": "episode-7",
       "number": 7,
-      "title": "Parallelism within one node",
-      "summary": "Two studies on a fixed GPU budget: DP/TP layouts, then MoE expert parallelism and load balance.",
-      "status": "planned",
-      "roadmapAnchor": "7-parallelism-within-one-node"
+      "title": "Prefill and decode disaggregation",
+      "summary": "Recorded NVLink aggregate; arithmetic replay available, native rerun not public.",
+      "status": "available",
+      "roadmapAnchor": "7-prefill-and-decode-disaggregation"
     },
     {
       "id": "episode-8",
       "number": 8,
-      "title": "Parallelism across nodes",
-      "summary": "Test placement and communication costs on a documented multi-node network topology.",
+      "title": "Parallelism within one node",
+      "summary": "Two studies on a fixed GPU budget: DP/TP layouts, then MoE expert parallelism and load balance.",
       "status": "planned",
-      "roadmapAnchor": "8-parallelism-across-nodes"
+      "roadmapAnchor": "8-parallelism-within-one-node"
     },
     {
       "id": "episode-9",
       "number": 9,
-      "title": "Prefill/decode disaggregation and cache-aware routing",
-      "summary": "Compare colocated and supported disaggregated serving with queue- and cache-aware routing.",
+      "title": "Parallelism across nodes",
+      "summary": "Test placement and communication costs on a documented multi-node network topology.",
       "status": "planned",
-      "roadmapAnchor": "9-prefilldecode-disaggregation-and-cache-aware-routing"
+      "roadmapAnchor": "9-parallelism-across-nodes"
     },
     {
       "id": "episode-10",

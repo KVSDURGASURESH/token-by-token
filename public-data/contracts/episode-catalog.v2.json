@@ -20,9 +20,9 @@
       "9": 4,
       "10": 5,
       "11": 6,
-      "12": 7,
-      "13": 8,
-      "14": 9,
+      "12": 8,
+      "13": 9,
+      "14": 7,
       "15": 10,
       "16": 16
     },
@@ -135,6 +135,21 @@
     {
       "id": "episode-7",
       "number": 7,
+      "previousNumber": 14,
+      "title": "Prefill and decode disaggregation",
+      "summary": "Compare colocated and split prefill/decode serving under matched NVLink steady, burst and sustained-load conditions.",
+      "status": "available",
+      "evidence": "Recorded NVLink aggregate; arithmetic replay available, native rerun not public",
+      "roadmapAnchor": "prefill-and-decode-disaggregation",
+      "templateId": "episode-9-disaggregation-routing",
+      "model": "Qwen3-30B-A3B",
+      "hardware": "Two NVIDIA H100 SXM 80 GB GPUs (NV18)",
+      "runtimes": "SGLang 0.5.23",
+      "guide": "episodes/07-prefill-and-decode-disaggregation/README.md"
+    },
+    {
+      "id": "episode-8",
+      "number": 8,
       "previousNumber": 12,
       "title": "Parallelism within one node",
       "summary": "Two studies on a fixed GPU budget: DP/TP layouts, then MoE expert parallelism and load balance.",
@@ -147,8 +162,8 @@
       "runtimes": "vLLM · SGLang"
     },
     {
-      "id": "episode-8",
-      "number": 8,
+      "id": "episode-9",
+      "number": 9,
       "previousNumber": 13,
       "title": "Parallelism across nodes",
       "summary": "Test placement and communication costs on a documented multi-node network topology.",
@@ -158,20 +173,6 @@
       "templateId": "episode-8-multi-node-parallelism",
       "model": "Selected in planner",
       "hardware": "Candidate multi-node topology — unverified",
-      "runtimes": "vLLM · SGLang"
-    },
-    {
-      "id": "episode-9",
-      "number": 9,
-      "previousNumber": 14,
-      "title": "Prefill/decode disaggregation and cache-aware routing",
-      "summary": "Compare colocated and supported disaggregated serving with queue- and cache-aware routing.",
-      "status": "planned",
-      "evidence": "Planned — no measurements",
-      "roadmapAnchor": "prefilldecode-disaggregation-and-cache-aware-routing",
-      "templateId": "episode-9-disaggregation-routing",
-      "model": "Selected in planner",
-      "hardware": "Candidate serving pools — unverified",
       "runtimes": "vLLM · SGLang"
     },
     {

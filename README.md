@@ -42,9 +42,9 @@ limits are tracked in the [local wrapper implementation status](docs/agentbench-
 | 4 | [Speculative decoding](episodes/04-speculative-decoding/README.md) | Available | Recorded descriptive latency study; all speed differences pending task-specific output adjudication |
 | 5 | Mixture-of-experts inference | Planned | Planned — no measurements |
 | 6 | [Serving tune-up: prefill interference and batch invariance](episodes/06-serving-tune-up-scheduling-and-precision/README.md) | Available | Smaller chunks reduced added streaming pauses by 57.6 ms in eight paired burst blocks |
-| 7 | Parallelism within one node | Planned | Planned — no measurements |
-| 8 | Parallelism across nodes | Planned | Planned — no measurements |
-| 9 | Prefill/decode disaggregation and cache-aware routing | Planned | Planned — no measurements |
+| 7 | [Prefill and decode disaggregation](episodes/07-prefill-and-decode-disaggregation/README.md) | Available | Recorded NVLink aggregate; arithmetic replay available, native rerun not public |
+| 8 | Parallelism within one node | Planned | Planned — no measurements |
+| 9 | Parallelism across nodes | Planned | Planned — no measurements |
 | 10 | Slurm and Kubernetes orchestration | Planned | Planned platform study — no measurements |
 | 11 | Model internals: weights to optimization | Planned | Planned companion study — no measurements |
 | 12 | LoRA and QLoRA with held-out evaluation | Planned | Planned companion study — no measurements |

@@ -11,7 +11,7 @@ BEGIN = "<!-- BEGIN EPISODE INDEX -->"
 END = "<!-- END EPISODE INDEX -->"
 NUMBERING_VERSION = "episode-catalog.v2"
 OLD_TO_CURRENT = {0: 0, 1: 1, 2: 2, 3: 11, 4: 12, 5: 13, 6: 14, 7: 15,
-                  8: 3, 9: 4, 10: 5, 11: 6, 12: 7, 13: 8, 14: 9, 15: 10, 16: 16}
+                  8: 3, 9: 4, 10: 5, 11: 6, 12: 8, 13: 9, 14: 7, 15: 10, 16: 16}
 
 
 def table(registry: Path, root: Path) -> str:

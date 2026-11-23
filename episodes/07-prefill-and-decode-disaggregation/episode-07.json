@@ -1,0 +1,750 @@
+{
+  "schema": "token-by-token.episode07.1",
+  "episode": 7,
+  "evidence": "recorded NVLink",
+  "headline": "We Split Prefill and Decode. Why Did First Text Still Get Slower?",
+  "next_question": "What happens when both GPUs work on each token instead of handing off the prompt state?",
+  "configuration": {
+    "runtime": "SGLang 0.5.23",
+    "model": "Qwen3-30B-A3B",
+    "precision": "BF16",
+    "gpus": 2,
+    "gpu": "NVIDIA H100 SXM 80 GB",
+    "link": "NV18",
+    "cache_reuse": false,
+    "layouts": {
+      "colocated": "two full replicas",
+      "split": "one prefill GPU, one decode GPU"
+    }
+  },
+  "steady": {
+    "windows": [
+      {
+        "block": 1,
+        "setting": "CO512",
+        "load": "lower",
+        "offers": 48,
+        "valid": 48,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 242.94755079999996,
+        "valid_output_tokens_per_s": 102.4
+      },
+      {
+        "block": 1,
+        "setting": "PD512",
+        "load": "lower",
+        "offers": 48,
+        "valid": 48,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 250.89831819999998,
+        "valid_output_tokens_per_s": 102.4
+      },
+      {
+        "block": 1,
+        "setting": "CO512",
+        "load": "busy",
+        "offers": 92,
+        "valid": 92,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 249.64628265000002,
+        "valid_output_tokens_per_s": 196.26666666666668
+      },
+      {
+        "block": 1,
+        "setting": "PD512",
+        "load": "busy",
+        "offers": 92,
+        "valid": 92,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 259.26198995000004,
+        "valid_output_tokens_per_s": 196.26666666666668
+      },
+      {
+        "block": 1,
+        "setting": "CO4096",
+        "load": "busy",
+        "offers": 92,
+        "valid": 92,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 157.94538910000003,
+        "valid_output_tokens_per_s": 196.26666666666668
+      },
+      {
+        "block": 1,
+        "setting": "PD4096",
+        "load": "busy",
+        "offers": 92,
+        "valid": 92,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 177.89649105,
+        "valid_output_tokens_per_s": 196.26666666666668
+      },
+      {
+        "block": 2,
+        "setting": "PD512",
+        "load": "busy",
+        "offers": 123,
+        "valid": 123,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 273.09561829999996,
+        "valid_output_tokens_per_s": 262.4
+      },
+      {
+        "block": 2,
+        "setting": "CO4096",
+        "load": "busy",
+        "offers": 123,
+        "valid": 123,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 144.7651618,
+        "valid_output_tokens_per_s": 262.4
+      },
+      {
+        "block": 2,
+        "setting": "PD4096",
+        "load": "busy",
+        "offers": 123,
+        "valid": 123,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 199.54269289999982,
+        "valid_output_tokens_per_s": 262.4
+      },
+      {
+        "block": 2,
+        "setting": "CO512",
+        "load": "busy",
+        "offers": 123,
+        "valid": 123,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 231.46213089999998,
+        "valid_output_tokens_per_s": 262.4
+      },
+      {
+        "block": 2,
+        "setting": "PD512",
+        "load": "lower",
+        "offers": 55,
+        "valid": 55,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 244.09950849999998,
+        "valid_output_tokens_per_s": 117.33333333333333
+      },
+      {
+        "block": 2,
+        "setting": "CO512",
+        "load": "lower",
+        "offers": 55,
+        "valid": 55,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 214.6522895,
+        "valid_output_tokens_per_s": 117.33333333333333
+      },
+      {
+        "block": 3,
+        "setting": "CO512",
+        "load": "lower",
+        "offers": 65,
+        "valid": 65,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 225.3709772,
+        "valid_output_tokens_per_s": 138.66666666666666
+      },
+      {
+        "block": 3,
+        "setting": "PD512",
+        "load": "lower",
+        "offers": 65,
+        "valid": 65,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 266.8093966,
+        "valid_output_tokens_per_s": 138.66666666666666
+      },
+      {
+        "block": 3,
+        "setting": "CO4096",
+        "load": "busy",
+        "offers": 121,
+        "valid": 121,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 170.399033,
+        "valid_output_tokens_per_s": 258.1333333333333
+      },
+      {
+        "block": 3,
+        "setting": "PD4096",
+        "load": "busy",
+        "offers": 121,
+        "valid": 121,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 201.066156,
+        "valid_output_tokens_per_s": 258.1333333333333
+      },
+      {
+        "block": 3,
+        "setting": "CO512",
+        "load": "busy",
+        "offers": 121,
+        "valid": 121,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 243.422392,
+        "valid_output_tokens_per_s": 258.1333333333333
+      },
+      {
+        "block": 3,
+        "setting": "PD512",
+        "load": "busy",
+        "offers": 121,
+        "valid": 121,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 278.817951,
+        "valid_output_tokens_per_s": 258.1333333333333
+      },
+      {
+        "block": 4,
+        "setting": "PD4096",
+        "load": "busy",
+        "offers": 111,
+        "valid": 111,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 233.03463349999998,
+        "valid_output_tokens_per_s": 236.8
+      },
+      {
+        "block": 4,
+        "setting": "CO512",
+        "load": "busy",
+        "offers": 111,
+        "valid": 111,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 250.91835150000003,
+        "valid_output_tokens_per_s": 236.8
+      },
+      {
+        "block": 4,
+        "setting": "PD512",
+        "load": "busy",
+        "offers": 111,
+        "valid": 111,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 294.94746599999996,
+        "valid_output_tokens_per_s": 236.8
+      },
+      {
+        "block": 4,
+        "setting": "CO4096",
+        "load": "busy",
+        "offers": 111,
+        "valid": 111,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 150.9743755,
+        "valid_output_tokens_per_s": 236.8
+      },
+      {
+        "block": 4,
+        "setting": "PD512",
+        "load": "lower",
+        "offers": 64,
+        "valid": 64,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 250.37362005,
+        "valid_output_tokens_per_s": 136.53333333333333
+      },
+      {
+        "block": 4,
+        "setting": "CO512",
+        "load": "lower",
+        "offers": 64,
+        "valid": 64,
+        "dispatch_limited": true,
+        "p95_first_text_ms": 238.25173955,
+        "valid_output_tokens_per_s": 136.53333333333333
+      }
+    ],
+    "busy_rps": 0.5,
+    "offered_seconds": 240
+  },
+  "burst": {
+    "windows": 16,
+    "pairs": [
+      {
+        "block": 1,
+        "colocated_added_pause_ms": 41.11002575,
+        "split_added_pause_ms": 4.599164999999999,
+        "colocated_incoming_first_text_ms": 212.9167895,
+        "split_incoming_first_text_ms": 414.99693049999996
+      },
+      {
+        "block": 2,
+        "colocated_added_pause_ms": 31.579777249999992,
+        "split_added_pause_ms": 4.946267249999998,
+        "colocated_incoming_first_text_ms": 217.24969500000003,
+        "split_incoming_first_text_ms": 411.65004999999996
+      },
+      {
+        "block": 3,
+        "colocated_added_pause_ms": 58.857769125000004,
+        "split_added_pause_ms": 6.320131125,
+        "colocated_incoming_first_text_ms": 217.995904,
+        "split_incoming_first_text_ms": 432.0222395
+      },
+      {
+        "block": 4,
+        "colocated_added_pause_ms": 40.329923625000006,
+        "split_added_pause_ms": 5.191929249999998,
+        "colocated_incoming_first_text_ms": 213.69372700000002,
+        "split_incoming_first_text_ms": 442.7892985
+      }
+    ],
+    "foreground": {
+      "concurrency": 8,
+      "input_tokens": 1024,
+      "output_tokens": 1024
+    },
+    "incoming": {
+      "concurrency": 4,
+      "input_tokens": 6144,
+      "output_tokens": 32
+    },
+    "observed_requests": {
+      "burst": 32,
+      "foreground": 128,
+      "warmup": 64
+    },
+    "cells": {
+      "CO4096_burst": {
+        "mean_longest_foreground_gap_ms": 80.0052315625,
+        "mean_window_median_incoming_first_text_ms": 215.464028875
+      },
+      "CO4096_control": {
+        "mean_longest_foreground_gap_ms": 37.035857625,
+        "mean_window_median_incoming_first_text_ms": null
+      },
+      "PD4096_burst": {
+        "mean_longest_foreground_gap_ms": 20.589157906249998,
+        "mean_window_median_incoming_first_text_ms": 425.36462962499996
+      },
+      "PD4096_control": {
+        "mean_longest_foreground_gap_ms": 15.32478475,
+        "mean_window_median_incoming_first_text_ms": null
+      }
+    },
+    "long_prompt_transfer": {
+      "requests": 16,
+      "median_mib": 576.0015258789062,
+      "median_active_ms": 77.282618,
+      "median_span_ms": 92.029032
+    }
+  },
+  "sweep": {
+    "windows": [
+      {
+        "block": 1,
+        "layout": "colocated",
+        "rate_rps": 0.5,
+        "state": "passes",
+        "offers": 92,
+        "valid": 92,
+        "within_targets": 92,
+        "p95_first_text_ms": 144.41356855,
+        "p99_dispatch_lag_ms": 4.66483378
+      },
+      {
+        "block": 1,
+        "layout": "split",
+        "rate_rps": 0.5,
+        "state": "passes",
+        "offers": 92,
+        "valid": 92,
+        "within_targets": 92,
+        "p95_first_text_ms": 151.574739,
+        "p99_dispatch_lag_ms": 5.020371320000007
+      },
+      {
+        "block": 2,
+        "layout": "colocated",
+        "rate_rps": 0.5,
+        "state": "passes",
+        "offers": 123,
+        "valid": 123,
+        "within_targets": 123,
+        "p95_first_text_ms": 143.72788869999997,
+        "p99_dispatch_lag_ms": 4.816519780000001
+      },
+      {
+        "block": 2,
+        "layout": "split",
+        "rate_rps": 0.5,
+        "state": "passes",
+        "offers": 123,
+        "valid": 123,
+        "within_targets": 123,
+        "p95_first_text_ms": 163.34386959999998,
+        "p99_dispatch_lag_ms": 3.7793986200000003
+      },
+      {
+        "block": 3,
+        "layout": "colocated",
+        "rate_rps": 0.5,
+        "state": "passes",
+        "offers": 121,
+        "valid": 121,
+        "within_targets": 121,
+        "p95_first_text_ms": 134.338297,
+        "p99_dispatch_lag_ms": 4.4541716000000005
+      },
+      {
+        "block": 3,
+        "layout": "split",
+        "rate_rps": 0.5,
+        "state": "passes",
+        "offers": 121,
+        "valid": 121,
+        "within_targets": 121,
+        "p95_first_text_ms": 165.125278,
+        "p99_dispatch_lag_ms": 4.8456154
+      },
+      {
+        "block": 4,
+        "layout": "colocated",
+        "rate_rps": 0.5,
+        "state": "passes",
+        "offers": 111,
+        "valid": 111,
+        "within_targets": 111,
+        "p95_first_text_ms": 135.936389,
+        "p99_dispatch_lag_ms": 4.538598100000001
+      },
+      {
+        "block": 4,
+        "layout": "split",
+        "rate_rps": 0.5,
+        "state": "passes",
+        "offers": 111,
+        "valid": 111,
+        "within_targets": 111,
+        "p95_first_text_ms": 155.198281,
+        "p99_dispatch_lag_ms": 3.8898172
+      },
+      {
+        "block": 1,
+        "layout": "colocated",
+        "rate_rps": 1,
+        "state": "passes",
+        "offers": 200,
+        "valid": 200,
+        "within_targets": 200,
+        "p95_first_text_ms": 148.19967735,
+        "p99_dispatch_lag_ms": 5.828672649999954
+      },
+      {
+        "block": 1,
+        "layout": "split",
+        "rate_rps": 1,
+        "state": "passes",
+        "offers": 200,
+        "valid": 200,
+        "within_targets": 200,
+        "p95_first_text_ms": 186.3139838499998,
+        "p99_dispatch_lag_ms": 6.074478369999998
+      },
+      {
+        "block": 2,
+        "layout": "colocated",
+        "rate_rps": 1,
+        "state": "passes",
+        "offers": 241,
+        "valid": 241,
+        "within_targets": 241,
+        "p95_first_text_ms": 145.559882,
+        "p99_dispatch_lag_ms": 5.333790599999999
+      },
+      {
+        "block": 2,
+        "layout": "split",
+        "rate_rps": 1,
+        "state": "passes",
+        "offers": 241,
+        "valid": 241,
+        "within_targets": 241,
+        "p95_first_text_ms": 172.701065,
+        "p99_dispatch_lag_ms": 6.756997599999997
+      },
+      {
+        "block": 3,
+        "layout": "colocated",
+        "rate_rps": 1,
+        "state": "passes",
+        "offers": 251,
+        "valid": 251,
+        "within_targets": 251,
+        "p95_first_text_ms": 140.134616,
+        "p99_dispatch_lag_ms": 5.943321
+      },
+      {
+        "block": 3,
+        "layout": "split",
+        "rate_rps": 1,
+        "state": "passes",
+        "offers": 251,
+        "valid": 251,
+        "within_targets": 251,
+        "p95_first_text_ms": 196.22103149999998,
+        "p99_dispatch_lag_ms": 6.437459499999999
+      },
+      {
+        "block": 4,
+        "layout": "colocated",
+        "rate_rps": 1,
+        "state": "passes",
+        "offers": 229,
+        "valid": 229,
+        "within_targets": 229,
+        "p95_first_text_ms": 143.5135782,
+        "p99_dispatch_lag_ms": 5.31858624
+      },
+      {
+        "block": 4,
+        "layout": "split",
+        "rate_rps": 1,
+        "state": "passes",
+        "offers": 229,
+        "valid": 229,
+        "within_targets": 229,
+        "p95_first_text_ms": 156.9629028,
+        "p99_dispatch_lag_ms": 5.06274872
+      },
+      {
+        "block": 1,
+        "layout": "colocated",
+        "rate_rps": 2,
+        "state": "passes",
+        "offers": 441,
+        "valid": 441,
+        "within_targets": 441,
+        "p95_first_text_ms": 160.821952,
+        "p99_dispatch_lag_ms": 16.89151300000005
+      },
+      {
+        "block": 1,
+        "layout": "split",
+        "rate_rps": 2,
+        "state": "passes",
+        "offers": 441,
+        "valid": 441,
+        "within_targets": 441,
+        "p95_first_text_ms": 262.08683,
+        "p99_dispatch_lag_ms": 11.79565920000002
+      },
+      {
+        "block": 2,
+        "layout": "colocated",
+        "rate_rps": 2,
+        "state": "passes",
+        "offers": 471,
+        "valid": 470,
+        "within_targets": 470,
+        "p95_first_text_ms": 157.72853095,
+        "p99_dispatch_lag_ms": 10.189030900000011
+      },
+      {
+        "block": 2,
+        "layout": "split",
+        "rate_rps": 2,
+        "state": "passes",
+        "offers": 471,
+        "valid": 471,
+        "within_targets": 449,
+        "p95_first_text_ms": 210.418218,
+        "p99_dispatch_lag_ms": 10.09759490000002
+      },
+      {
+        "block": 3,
+        "layout": "colocated",
+        "rate_rps": 2,
+        "state": "passes",
+        "offers": 494,
+        "valid": 494,
+        "within_targets": 494,
+        "p95_first_text_ms": 154.1953254,
+        "p99_dispatch_lag_ms": 16.646978769999997
+      },
+      {
+        "block": 3,
+        "layout": "split",
+        "rate_rps": 2,
+        "state": "passes",
+        "offers": 494,
+        "valid": 494,
+        "within_targets": 493,
+        "p95_first_text_ms": 315.02145425,
+        "p99_dispatch_lag_ms": 15.369462379999996
+      },
+      {
+        "block": 4,
+        "layout": "colocated",
+        "rate_rps": 2,
+        "state": "passes",
+        "offers": 475,
+        "valid": 475,
+        "within_targets": 475,
+        "p95_first_text_ms": 156.51866349999997,
+        "p99_dispatch_lag_ms": 10.130993519999995
+      },
+      {
+        "block": 4,
+        "layout": "split",
+        "rate_rps": 2,
+        "state": "passes",
+        "offers": 475,
+        "valid": 475,
+        "within_targets": 475,
+        "p95_first_text_ms": 230.46090069999994,
+        "p99_dispatch_lag_ms": 13.260994179999978
+      },
+      {
+        "block": 1,
+        "layout": "colocated",
+        "rate_rps": 4,
+        "state": "client_limited",
+        "offers": 959,
+        "valid": 959,
+        "within_targets": 952,
+        "p95_first_text_ms": 264.02281679999993,
+        "p99_dispatch_lag_ms": 116.46715065999975
+      },
+      {
+        "block": 1,
+        "layout": "split",
+        "rate_rps": 4,
+        "state": "client_limited",
+        "offers": 959,
+        "valid": 907,
+        "within_targets": 104,
+        "p95_first_text_ms": 18190.358457099996,
+        "p99_dispatch_lag_ms": 74.72352169999984
+      },
+      {
+        "block": 2,
+        "layout": "colocated",
+        "rate_rps": 4,
+        "state": "client_limited",
+        "offers": 940,
+        "valid": 940,
+        "within_targets": 940,
+        "p95_first_text_ms": 203.7655539,
+        "p99_dispatch_lag_ms": 54.259046330000004
+      },
+      {
+        "block": 2,
+        "layout": "split",
+        "rate_rps": 4,
+        "state": "client_limited",
+        "offers": 940,
+        "valid": 940,
+        "within_targets": 69,
+        "p95_first_text_ms": 18458.6218607,
+        "p99_dispatch_lag_ms": 42.67196783
+      },
+      {
+        "block": 3,
+        "layout": "colocated",
+        "rate_rps": 4,
+        "state": "client_limited",
+        "offers": 956,
+        "valid": 956,
+        "within_targets": 956,
+        "p95_first_text_ms": 198.64419825,
+        "p99_dispatch_lag_ms": 79.68355070000003
+      },
+      {
+        "block": 3,
+        "layout": "split",
+        "rate_rps": 4,
+        "state": "client_limited",
+        "offers": 956,
+        "valid": 916,
+        "within_targets": 22,
+        "p95_first_text_ms": 20621.92330975,
+        "p99_dispatch_lag_ms": 39.31151595000004
+      },
+      {
+        "block": 4,
+        "layout": "colocated",
+        "rate_rps": 4,
+        "state": "client_limited",
+        "offers": 952,
+        "valid": 952,
+        "within_targets": 952,
+        "p95_first_text_ms": 183.80120374999998,
+        "p99_dispatch_lag_ms": 35.681451700000004
+      },
+      {
+        "block": 4,
+        "layout": "split",
+        "rate_rps": 4,
+        "state": "client_limited",
+        "offers": 952,
+        "valid": 952,
+        "within_targets": 215,
+        "p95_first_text_ms": 12137.504681,
+        "p99_dispatch_lag_ms": 51.84516216000001
+      }
+    ],
+    "offer_seconds": 240,
+    "output_tokens": 512,
+    "chunk_tokens": 4096,
+    "targets": {
+      "first_text_ms": 2000,
+      "longest_pause_ms": 250,
+      "within_targets_fraction": 0.95,
+      "valid_fraction": 0.99,
+      "p99_dispatch_lag_ms": 25,
+      "fraction_dispatch_lag_over_50ms": 0.01,
+      "maximum_queue_growth": 2
+    },
+    "allocation_blocks": [
+      [
+        1
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ]
+  },
+  "pcie": {
+    "status": "qualification_failed",
+    "hardware": "Two NVIDIA H100 PCIe GPUs in one Hyperstack Spot VM",
+    "test": "CUDA direct GPU memory access in both directions",
+    "qualified_host": false,
+    "qualification_attempts": 2,
+    "measured_burst_cells": 0,
+    "qualification_spend_usd": "0.80"
+  },
+  "cost": {
+    "observed_debits_usd": "68.7031089631",
+    "items": [
+      {
+        "label": "Earlier H100 setup and retries",
+        "usd": "11.1207212428",
+        "basis": "account interval"
+      },
+      {
+        "label": "Steady load and client recovery",
+        "usd": "25.6431272815",
+        "basis": "Runpod prepaid debit"
+      },
+      {
+        "label": "Paired NVLink burst",
+        "usd": "2.7300931501",
+        "basis": "Runpod prepaid debit"
+      },
+      {
+        "label": "NVLink rate sweep and recovery",
+        "usd": "29.2091672887",
+        "basis": "Runpod prepaid debit"
+      }
+    ]
+  }
+}

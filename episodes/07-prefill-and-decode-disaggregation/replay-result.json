@@ -1,0 +1,84 @@
+{
+  "colocated": {
+    "steady_mean_window_p95_ms": 156.02098985,
+    "steady_valid_output_tokens_per_s": 238.4,
+    "mean_added_foreground_pause_ms": 42.9693739375,
+    "mean_window_median_incoming_first_text_ms": 215.464028875,
+    "sweep": {
+      "0.5": {
+        "passing_windows": 4,
+        "eligible_windows": 4,
+        "mean_window_p95_first_text_ms": 139.6040358125,
+        "offered_requests": 447,
+        "requests_within_targets": 447
+      },
+      "1": {
+        "passing_windows": 4,
+        "eligible_windows": 4,
+        "mean_window_p95_first_text_ms": 144.3519383875,
+        "offered_requests": 921,
+        "requests_within_targets": 921
+      },
+      "2": {
+        "passing_windows": 4,
+        "eligible_windows": 4,
+        "mean_window_p95_first_text_ms": 157.3161179625,
+        "offered_requests": 1881,
+        "requests_within_targets": 1880
+      },
+      "4": {
+        "passing_windows": 0,
+        "eligible_windows": 0,
+        "mean_window_p95_first_text_ms": null,
+        "offered_requests": 3807,
+        "requests_within_targets": 3800
+      }
+    }
+  },
+  "split": {
+    "steady_mean_window_p95_ms": 202.88499336249996,
+    "steady_valid_output_tokens_per_s": 238.4,
+    "mean_added_foreground_pause_ms": 5.264373156249999,
+    "mean_window_median_incoming_first_text_ms": 425.36462962499996,
+    "sweep": {
+      "0.5": {
+        "passing_windows": 4,
+        "eligible_windows": 4,
+        "mean_window_p95_first_text_ms": 158.8105419,
+        "offered_requests": 447,
+        "requests_within_targets": 447
+      },
+      "1": {
+        "passing_windows": 4,
+        "eligible_windows": 4,
+        "mean_window_p95_first_text_ms": 178.04974578749994,
+        "offered_requests": 921,
+        "requests_within_targets": 921
+      },
+      "2": {
+        "passing_windows": 4,
+        "eligible_windows": 4,
+        "mean_window_p95_first_text_ms": 254.49685073749998,
+        "offered_requests": 1881,
+        "requests_within_targets": 1858
+      },
+      "4": {
+        "passing_windows": 0,
+        "eligible_windows": 0,
+        "mean_window_p95_first_text_ms": null,
+        "offered_requests": 3807,
+        "requests_within_targets": 410
+      }
+    }
+  },
+  "cost_boundary": {
+    "runpod_observed_debits_usd": "68.7031089631",
+    "hyperstack_qualification_spend_usd": "0.80",
+    "combined_total_not_claimed": true
+  },
+  "pcie_boundary": {
+    "status": "qualification_failed",
+    "qualification_attempts": 2,
+    "measured_performance_cells": 0
+  }
+}
