@@ -53,10 +53,10 @@ There are three different reproducibility levels:
    publicly implemented for Episode 07.** Public client version 0.1.0 accepts
    no endpoint, provider, model, GPU or live load profile. Its `capabilities`
    response reports `execution_status: unavailable` and `real_submission:
-   false`. Its versioned Episode 7 catalog entry still describes the earlier
-   “Parallelism within one node” plan, so `episode 7 describe` and `episode 7
-   selftest` are not this recorded NVLink workload. The self-test is synthetic
-   client plumbing only.
+   false`. `episode 7 describe` identifies this recorded disaggregation study,
+   but `episode 7 selftest` still accepts only the client's synthetic integer
+   `users` diagnostic; it does not encode the recorded rate-based workload or
+   reproduce these measurements.
 3. **Exact original native campaign — not publicly reproducible.** It requires
    the reviewed private AgentBench execution worker, frozen request material,
    runtime and launch closure, provider environment, scheduling controls and

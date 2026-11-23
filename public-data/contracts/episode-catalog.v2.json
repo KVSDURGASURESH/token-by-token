@@ -141,7 +141,7 @@
       "status": "available",
       "evidence": "Recorded NVLink aggregate; arithmetic replay available, native rerun not public",
       "roadmapAnchor": "prefill-and-decode-disaggregation",
-      "templateId": "episode-9-disaggregation-routing",
+      "templateId": "episode-7-disaggregation-routing",
       "model": "Qwen3-30B-A3B",
       "hardware": "Two NVIDIA H100 SXM 80 GB GPUs (NV18)",
       "runtimes": "SGLang 0.5.23",
@@ -156,7 +156,7 @@
       "status": "planned",
       "evidence": "Planned — no measurements",
       "roadmapAnchor": "parallelism-within-one-node",
-      "templateId": "episode-7-single-node-parallelism",
+      "templateId": "episode-8-single-node-parallelism",
       "model": "Selected after compatibility verification",
       "hardware": "Planned setup — unverified",
       "runtimes": "vLLM · SGLang"
@@ -170,7 +170,7 @@
       "status": "planned",
       "evidence": "Planned — no measurements",
       "roadmapAnchor": "parallelism-across-nodes",
-      "templateId": "episode-8-multi-node-parallelism",
+      "templateId": "episode-9-multi-node-parallelism",
       "model": "Selected in planner",
       "hardware": "Candidate multi-node topology — unverified",
       "runtimes": "vLLM · SGLang"

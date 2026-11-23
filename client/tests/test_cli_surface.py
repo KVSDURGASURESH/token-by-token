@@ -62,6 +62,24 @@ class CliSurfaceTests(unittest.TestCase):
         self.assertEqual(document["models"], [])
         self.assertEqual(document["gpus"], [])
 
+    def test_episode_07_is_discoverable_without_claiming_execution(self) -> None:
+        described = self.run_cli("episode", "7", "describe", "--format", "json")
+        self.assertEqual(described.returncode, 0, described.stderr)
+        manifest = json.loads(described.stdout)
+        self.assertEqual(manifest["title"], "Prefill and decode disaggregation")
+        self.assertEqual(manifest["status"], "recorded")
+        self.assertEqual(manifest["classification"], "synthetic_mock")
+
+        capabilities = self.run_cli("capabilities", "--episode", "7", "--format", "json")
+        self.assertEqual(capabilities.returncode, 0, capabilities.stderr)
+        document = json.loads(capabilities.stdout)
+        self.assertEqual(document["episode_status"], "recorded")
+        self.assertEqual(document["execution_status"], "unavailable")
+        self.assertFalse(document["real_submission"])
+        self.assertEqual(document["models"], [])
+        self.assertEqual(document["gpus"], [])
+        self.assertEqual(document["load_profiles"], [])
+
     def test_offline_doctor_checks_install_without_leaving_a_bundle(self) -> None:
         result = self.run_cli("doctor", "--offline", "--format", "json")
         self.assertEqual(result.returncode, 0, result.stderr)

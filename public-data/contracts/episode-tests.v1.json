@@ -124,6 +124,28 @@
     },
     {
       "episode": 7,
+      "title": "Prefill and decode disaggregation",
+      "track": "topology",
+      "objective": "Compare profiles representing colocated and split prefill/decode serving paths.",
+      "limitation": "The bridge does not reproduce the recorded NVLink campaign or expose its private worker, prompts, deployment recipes, traces or provider environment.",
+      "cells": [
+        {
+          "id": "disaggregation-tradeoff",
+          "label": "Disaggregation tradeoff probe",
+          "prompt": "Explain one latency tradeoff between colocating and splitting prefill and decode.",
+          "maximum_output_tokens": 96
+        },
+        {
+          "id": "disaggregation-evidence-boundary",
+          "label": "Evidence boundary probe",
+          "prompt": "Name the evidence needed to distinguish streaming interruption from incoming-request first-text latency.",
+          "maximum_output_tokens": 112
+        }
+      ],
+      "previousEpisode": 14
+    },
+    {
+      "episode": 8,
       "title": "Single-node parallelism",
       "track": "topology",
       "objective": "Compare profiles already deployed with declared single-node DP or TP layouts.",
@@ -139,7 +161,7 @@
       "previousEpisode": 12
     },
     {
-      "episode": 8,
+      "episode": 9,
       "title": "Multi-node parallelism",
       "track": "topology",
       "objective": "Compare profiles already deployed on documented multi-node layouts.",
@@ -153,28 +175,6 @@
         }
       ],
       "previousEpisode": 13
-    },
-    {
-      "episode": 9,
-      "title": "Disaggregation and routing",
-      "track": "topology",
-      "objective": "Compare profiles representing colocated or disaggregated/routed serving paths.",
-      "limitation": "KV transfer, cache ownership and routing decisions require platform telemetry not exposed by this bridge.",
-      "cells": [
-        {
-          "id": "routing-short",
-          "label": "Short routed request",
-          "prompt": "Define cache-aware routing in one sentence.",
-          "maximum_output_tokens": 48
-        },
-        {
-          "id": "routing-long",
-          "label": "Long routed request",
-          "prompt": "Explain how queue delay, cache reuse, load skew, cancellation and fairness interact in cache-aware routing.",
-          "maximum_output_tokens": 160
-        }
-      ],
-      "previousEpisode": 14
     },
     {
       "episode": 10,

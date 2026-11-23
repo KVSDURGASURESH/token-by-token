@@ -84,9 +84,9 @@
       "note": "Two controlled studies: batching/scheduling first, then attention kernels and precision. Planned only; verify compatible engine/model paths and local fixture coverage before a paid card."
     },
     {
-      "id": "episode-7-single-node-parallelism",
+      "id": "episode-8-single-node-parallelism",
       "version": 3,
-      "episode": 7,
+      "episode": 8,
       "previousEpisode": 12,
       "track": "topology",
       "label": "Parallelism within one node",
@@ -97,9 +97,9 @@
       "note": "Two studies on a fixed GPU budget: DP/TP layouts, then MoE expert parallelism and load balance. Planned only; verify compatible engine/model paths and local fixture coverage before a paid card."
     },
     {
-      "id": "episode-8-multi-node-parallelism",
+      "id": "episode-9-multi-node-parallelism",
       "version": 2,
-      "episode": 8,
+      "episode": 9,
       "previousEpisode": 13,
       "track": "topology",
       "label": "Multi-node parallelism",
@@ -110,18 +110,18 @@
       "note": "Network and placement are part of the experiment contract."
     },
     {
-      "id": "episode-9-disaggregation-routing",
+      "id": "episode-7-disaggregation-routing",
       "version": 2,
-      "episode": 9,
+      "episode": 7,
       "previousEpisode": 14,
       "track": "topology",
-      "label": "Disaggregation and routing",
+      "label": "Prefill and decode disaggregation",
       "hypothesis": "slow_first_token",
       "suggestedControls": [
         "prefix_caching",
         "parallelism"
       ],
-      "note": "Executable distributed layouts are outside this planner."
+      "note": "The recorded aggregate is public; executable distributed layouts and the native campaign are outside this planner."
     },
     {
       "id": "episode-10-orchestration",

@@ -20,9 +20,9 @@ def test_catalog_is_exact_canonical_zero_through_sixteen():
     assert [episode["number"] for episode in catalog["episodes"]] == list(range(17))
     assert catalog["episodeNumbering"]["version"] == "episode-catalog.v2"
     assert catalog["episodeNumbering"]["oldToCurrent"] == {
-        str(old): new for old, new in enumerate((0, 1, 2, 11, 12, 13, 14, 15, 3, 4, 5, 6, 7, 8, 9, 10, 16))
+        str(old): new for old, new in enumerate((0, 1, 2, 11, 12, 13, 14, 15, 3, 4, 5, 6, 8, 9, 7, 10, 16))
     }
-    assert [episode["previousNumber"] for episode in catalog["episodes"]] == [0, 1, 2, 8, 9, 10, 11, 12, 13, 14, 15, 3, 4, 5, 6, 7, 16]
+    assert [episode["previousNumber"] for episode in catalog["episodes"]] == [0, 1, 2, 8, 9, 10, 11, 14, 12, 13, 15, 3, 4, 5, 6, 7, 16]
     assert catalog["episodes"][0]["evidence"] == "Exploratory recorded study"
     assert catalog["episodes"][1]["evidence"] == "Recorded exploratory H200 runtime comparison at tested loads; maximum sustainable rate not measured"
     assert catalog["episodes"][3]["evidence"].startswith("Recorded exploratory study")
@@ -40,7 +40,7 @@ def test_catalog_is_exact_canonical_zero_through_sixteen():
         "episode-4-speculative",
         "episode-5-moe",
         "episode-6-serving-tuneup",
-        "episode-7-single-node-parallelism",
+        "episode-8-single-node-parallelism",
     }
     assert all(template["version"] in {2, 3} for template in TEMPLATES.values())
 
